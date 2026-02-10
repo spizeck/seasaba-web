@@ -12,25 +12,70 @@ The site should feel composed and intentional, not promotional.
 
 ---
 
+## Brand Colors
+
+### Primary Brand Colors
+- **Sea Saba Blue:** `#171C8F` (PMS 2746 C) — headers, primary buttons, key accents
+- **Sea Saba Red:** `#9D2235` (PMS 201 C) — sparingly for emphasis, warnings, or a single standout CTA
+
+### Deep Tones
+- **Abyss Navy:** `#0B0F3B` — dark backgrounds, footer, hero overlays. Darker than brand blue, creates deep-water feel without going pure black
+- **Volcanic Slate:** `#2C3E50` — secondary text, subtle UI elements. Nods to Saba's volcanic rock
+
+### Neutral Foundation
+- **Drift White:** `#F5F6FA` — primary page background. Slightly cool-toned, not stark white
+- **Pure White:** `#FFFFFF` — cards, content areas, contrast panels
+- **Sand:** `#E8E0D5` — warm accent backgrounds, section dividers. Keeps it from feeling too cold/clinical
+
+### Text Colors
+- **Primary Text:** `#1A1A2E` — near-black with a hint of blue, softer than pure black
+- **Secondary Text:** `#6B7280` — captions, metadata, supporting copy
+- **Inverse Text:** `#FFFFFF` — on dark backgrounds
+
+### Functional Colors
+- **Success / Conservation Green:** `#2E7D6F` — conservation messaging, confirmations, availability indicators. Teal-leaning, not tropical
+- **Warning:** `#D4A843` — muted gold, for alerts or attention without alarm
+- **Error:** Sea Saba Red `#9D2235`
+
+### Color Usage Principles
+- Blue is the dominant brand color across the site
+- Red is a secondary accent — use as deliberate punctuation, not a theme color
+- Neither primary brand color should be used for large background fills
+- The palette stays in the cool/deep range most of the time, with Sand as the warm counterpoint
+- Avoid oversaturated tropical colors
+- Avoid competing accent colors outside the brand palette
+- Maintain high contrast pairings for readability
+
+---
+
 ## Visual Tone
-- Ocean-inspired palette
+- Ocean-inspired palette grounded by brand blue
 - Deep blues, slate tones, neutral sands
 - High contrast for readability
-- Avoid oversaturated tropical colors
+- The brand red should feel like a deliberate punctuation, not a theme color
 
 ---
 
 ## Typography
-- Headings:
-  - Confident
-  - Spacious
-  - Clear hierarchy
-- Body text:
-  - Highly readable
-  - Short paragraphs (2–3 lines max)
-- Avoid novelty or decorative fonts
 
-Typography should do most of the visual work.
+### Font Stack
+- **Headings:** Century Gothic
+- **Body / Copy:** Open Sans
+
+### Heading Style
+- Confident and spacious
+- Clear hierarchy (H1 → H2 → H3 with distinct sizing)
+- Century Gothic provides a clean, geometric feel that reinforces the brand's modern professionalism
+
+### Body Style
+- Highly readable at all screen sizes
+- Short paragraphs (2–3 lines max)
+- Open Sans is a versatile, legible workhorse that pairs well with Century Gothic's geometry
+
+### General Rules
+- Avoid novelty or decorative fonts — the two-font system handles everything
+- Typography should do most of the visual work
+- Use font weight and size for hierarchy, not color or decoration
 
 ---
 

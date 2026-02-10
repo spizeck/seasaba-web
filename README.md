@@ -1,36 +1,103 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Sea Saba — Professional Scuba Diving Website
+
+A fast, SEO-first marketing website for a professional scuba diving operation, migrated from Wix to a custom Next.js stack.
+
+## Tech Stack
+
+- **Framework:** Next.js (App Router)
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS + shadcn/ui
+- **Content:** MDX for marketing/informational pages
+- **Dynamic Data:** Firestore (testimonials, reviews, staff profiles)
+- **Booking:** Checkfront (deep links, embedded widgets, availability API)
+- **Deployment:** Vercel
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to view the site.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+app/
+├── layout.tsx              # Root layout (shared header/footer)
+├── page.tsx                # Homepage
+├── (content)/              # Standard content layout group
+│   ├── layout.tsx          # Content layout (breadcrumbs, text-first)
+│   ├── about/
+│   ├── diving/
+│   ├── courses/
+│   └── contact/
+components/
+├── ui/                     # shadcn/ui components
+├── header.tsx              # Site header & navigation
+├── footer.tsx              # Site footer
+├── hero.tsx                # Homepage hero section
+├── breadcrumbs.tsx         # Breadcrumb navigation
+├── booking-cta.tsx         # Reusable booking call-to-action
+└── booking-widget.tsx      # Checkfront embedded widget with fallback
+content/                    # MDX content files
+lib/
+├── metadata.ts             # SEO metadata helpers
+└── constants.ts            # Site-wide constants (URLs, nav items)
+public/
+├── images/                 # Optimized site images
+└── video/                  # Homepage video assets
+```
 
-## Learn More
+## Roadmap
 
-To learn more about Next.js, take a look at the following resources:
+### Phase 1 — Foundation (Complete)
+- [x] Project scaffolding (Next.js, Tailwind, TypeScript)
+- [x] shadcn/ui setup and design system (ocean palette, typography)
+- [x] Root layout with Header and Footer
+- [x] Homepage layout with hero section
+- [x] Standard content layout with breadcrumbs
+- [x] Global SEO setup (metadata helper, sitemap, robots.txt)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Phase 2 — Core Pages (Complete)
+- [x] MDX pipeline for content pages
+- [x] About page
+- [x] Diving pages (dive sites, conditions, what to expect)
+- [x] Courses / certifications page
+- [x] Contact page
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Phase 3 — Booking Integration (Complete)
+- [x] Reusable BookingCTA component
+- [x] Embedded booking widget with graceful fallback
+- [x] Dedicated /book page
+- [x] Checkfront deep link CTAs on all relevant pages
 
-## Deploy on Vercel
+### Phase 4 — Dynamic Content
+- [ ] Firestore integration
+- [ ] Testimonials / reviews section
+- [ ] Staff profiles
+- [ ] Dynamic operational data (conditions, schedules)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Phase 5 — Polish & Launch (In Progress)
+- [x] Custom 404 page
+- [x] Skip-to-content accessibility link
+- [x] 301 redirect scaffold in next.config.ts
+- [x] Structured data (JSON-LD LocalBusiness)
+- [x] Open Graph / Twitter Card image metadata
+- [ ] Add real OG image to public/images/og-image.jpg
+- [ ] Image optimization pass (Next/Image everywhere)
+- [ ] Homepage video section (scroll-based, mobile fallback)
+- [ ] Performance audit (Core Web Vitals)
+- [ ] Accessibility audit (contrast, semantics, keyboard nav)
+- [ ] Populate 301 redirects from old Wix URLs
+- [ ] Final SEO review and launch
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Design Principles
+
+- **Clarity over flash** — text-first, SEO-focused content pages
+- **Trust over hype** — calm, professional, conservation-minded tone
+- **Speed over spectacle** — static generation, minimal JS, optimized assets
+- **Motion is minimal** — only on homepage, degrades gracefully on mobile
+
+See [THEME_UX_GUIDE.md](./THEME_UX_GUIDE.md) and [AI_INSTRUCTIONS.md](./AI_INSTRUCTIONS.md) for full design and development guidelines.
