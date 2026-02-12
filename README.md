@@ -25,28 +25,32 @@ Open [http://localhost:3000](http://localhost:3000) to view the site.
 
 ```
 app/
-├── layout.tsx              # Root layout (shared header/footer)
-├── page.tsx                # Homepage
+├── layout.tsx              # Root layout (header, footer, fonts, SEO, JSON-LD)
+├── page.tsx                # Homepage (5-section layout)
+├── not-found.tsx           # Custom 404 page
+├── book/page.tsx           # Booking page (Checkfront widget)
 ├── (content)/              # Standard content layout group
-│   ├── layout.tsx          # Content layout (breadcrumbs, text-first)
+│   ├── layout.tsx          # Content layout (breadcrumbs, prose)
 │   ├── about/
 │   ├── diving/
 │   ├── courses/
 │   └── contact/
 components/
 ├── ui/                     # shadcn/ui components
-├── header.tsx              # Site header & navigation
+├── header.tsx              # Sticky header (transparent on homepage hero, solid on scroll)
 ├── footer.tsx              # Site footer
-├── hero.tsx                # Homepage hero section
+├── hero.tsx                # Homepage hero (full-screen, behind navbar)
+├── video-section.tsx       # Homepage video background section + CTA
 ├── breadcrumbs.tsx         # Breadcrumb navigation
 ├── booking-cta.tsx         # Reusable booking call-to-action
-└── booking-widget.tsx      # Checkfront embedded widget with fallback
+├── booking-widget.tsx      # Checkfront embedded widget with fallback
+└── structured-data.tsx     # JSON-LD LocalBusiness structured data
 content/                    # MDX content files
 lib/
 ├── metadata.ts             # SEO metadata helpers
 └── constants.ts            # Site-wide constants (URLs, nav items)
 public/
-├── images/                 # Optimized site images
+├── images/                 # Site images (hero, OG)
 └── video/                  # Homepage video assets
 ```
 
@@ -56,7 +60,7 @@ public/
 - [x] Project scaffolding (Next.js, Tailwind, TypeScript)
 - [x] shadcn/ui setup and design system (ocean palette, typography)
 - [x] Root layout with Header and Footer
-- [x] Homepage layout with hero section
+- [x] Homepage layout with hero section (hero image can extend under navbar; no full-image color filter overlay by default)
 - [x] Standard content layout with breadcrumbs
 - [x] Global SEO setup (metadata helper, sitemap, robots.txt)
 
@@ -87,7 +91,7 @@ public/
 - [x] Open Graph / Twitter Card image metadata
 - [ ] Add real OG image to public/images/og-image.jpg
 - [ ] Image optimization pass (Next/Image everywhere)
-- [ ] Homepage video section (scroll-based, mobile fallback)
+- [ ] Homepage video section as the **3rd major section** (scroll-based or pinned feel, mobile poster fallback) with a clear CTA
 - [ ] Performance audit (Core Web Vitals)
 - [ ] Accessibility audit (contrast, semantics, keyboard nav)
 - [ ] Populate 301 redirects from old Wix URLs

@@ -43,19 +43,47 @@ There are exactly **two** page layouts:
 
 Do not create additional layouts unless explicitly requested.
 
+
+## Homepage Section Order (Strict)
+The homepage must follow this high-level order of major sections:
+
+1. **Hero (Static Image)**
+   - No full-image color filter overlay by default
+   - May extend behind the navbar/header
+   - Primary headline + short subline + primary CTA
+
+2. **Supporting Section (Static)**
+   - One concise value section (e.g., “Why Sea Saba” or “Why Saba”)
+   - No video backgrounds
+
+3. **Video Section + CTA (Single Video Background)**
+   - One looping/cinematic video background (no audio)
+   - One clear CTA (e.g., “Explore Dive Sites” or “Book Now”)
+   - Keep copy minimal (1–2 short lines)
+
+4. **Routing Sections (Static)**
+   - Brief cards/links to: Diving, Dive Sites, How It Works, Boats, etc.
+
+5. **Final CTA (Static)**
+   - Strong, simple booking CTA
+
+Notes:
+- Do not add additional video sections.
+- On mobile, the video section must degrade to a static poster image.
+
 ---
 
 ## Motion & Animation Rules
 - Motion is allowed **only on the homepage**
 - Allowed:
-  - One scroll-over video background section
+  - One video background section used as the **3rd homepage section**, with a single, clear CTA
   - Subtle fade-in transitions
 - Not allowed:
   - Parallax effects
   - Scroll hijacking
   - Autoplay audio
   - Motion-heavy UI components
-- Mobile must degrade gracefully to static imagery
+- Mobile must degrade gracefully to static imagery (poster image)
 
 ---
 
@@ -119,3 +147,11 @@ Do not create additional layouts unless explicitly requested.
 Build for clarity, speed, and trust.
 Do not over-design.
 Do not over-animate.
+
+
+---
+
+## Hero Image Rules
+- No color filter overlay on the hero image by default.
+- Maintain text readability via typography, subtle text-shadow, or a very light local gradient behind text only (do not apply a full-image tint/filter).
+- The hero can extend behind the homepage navbar; ensure navbar contrast via background blur/opacity and scroll state.

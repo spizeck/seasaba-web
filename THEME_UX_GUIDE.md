@@ -97,6 +97,30 @@ Consistency signals professionalism and trust.
 - Strong imagery
 - One primary call to action
 
+### Homepage Hero
+- Use a **full-bleed static hero image** with **no color filter overlay** by default.
+- The hero image may extend **behind the navbar** on the homepage.
+- Ensure readability by:
+  - Placing copy in an area of the image with clean negative space, **and/or**
+  - Using a **subtle local gradient behind text only** (not a full-image overlay), **and/or**
+  - A light text-shadow.
+- Navbar on hero should stay premium:
+  - Use a translucent background + blur or a subtle solid background on scroll.
+  - Keep contrast high for nav links and the “Book Now” button.
+
+### Homepage Motion Section
+- The homepage may include **one** video background section as the **3rd major section**.
+- The video section should include **one clear CTA** (e.g., “Explore Dive Sites” or “Book Now”).
+- No autoplay audio, no fast cuts, and no aggressive motion.
+- Mobile should use a static poster image fallback.
+### Homepage Section Order
+1. Hero (static image, behind navbar allowed)
+2. One supporting static section
+3. One video background section + single CTA
+4. Static routing sections
+5. Final CTA
+
+
 The homepage should invite exploration, not overwhelm.
 
 ---
