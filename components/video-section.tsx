@@ -45,8 +45,8 @@ export function VideoSection() {
         }}
       />
 
-      {/* Subtle overlay for text readability */}
-      <div className="absolute inset-0 bg-black/40" />
+      {/* Minimal overlay for text readability */}
+      <div className="absolute inset-0 bg-black/15" />
 
       {/* Content */}
       <div className="relative z-10 mx-auto max-w-2xl px-4 text-center sm:px-6 lg:px-8">

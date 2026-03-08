@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Hero } from "@/components/hero";
 import { VideoSection } from "@/components/video-section";
+import { ReviewsSection } from "@/components/reviews-section";
 import { Button } from "@/components/ui/button";
 
 const ROUTES = [
@@ -75,6 +76,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* 4.5. Reviews section — social proof */}
+      <ReviewsSection />
 
       {/* 5. Final CTA */}
       <section className="border-t border-border/40 bg-secondary/30 py-20">

@@ -8,9 +8,31 @@
 - Non-touristy
 - Experienced, not flashy
 
-The site should feel composed and intentional, not promotional.
+The site should feel composed, deliberate, and premium.
+Professional expedition diving rather than a tourist activity.
 
----
+## UX Foundations
+
+The site follows modern usability principles derived from established UX research.
+
+Key guidelines include:
+
+- Nielsen usability heuristics
+- WCAG accessibility standards
+- Mobile-first responsive design
+- Clear visual hierarchy
+- Recognition over recall
+- Minimal decision complexity (Hick’s Law)
+
+Primary UX goals:
+
+1. Immediate trust and credibility
+2. Clear understanding of what Sea Saba offers
+3. Easy navigation to diving information
+4. Clear path to booking
+5. High perceived professionalism
+
+Users should never have to search for what to do next.
 
 ## Brand Colors
 
@@ -76,6 +98,35 @@ The site should feel composed and intentional, not promotional.
 - Avoid novelty or decorative fonts — the two-font system handles everything
 - Typography should do most of the visual work
 - Use font weight and size for hierarchy, not color or decoration
+
+### Typographic Scale
+
+Typography follows a consistent scale to maintain visual hierarchy.
+
+H1
+48–56px desktop
+36–40px mobile
+
+H2
+32–36px
+
+H3
+24–28px
+
+Body
+16–18px
+
+Small text
+14px
+
+Line height:
+1.4–1.6 for body copy
+1.2–1.3 for headings
+
+Maximum readable line width:
+65–80 characters
+
+Avoid large blocks of dense text.
 
 ---
 
@@ -163,3 +214,138 @@ Users should always know where they are and what to do next.
 ## Design North Star
 The site should communicate:
 "We are experienced, deliberate, and confident enough to slow down."
+
+---
+
+## Spacing System
+
+Use consistent spacing increments to maintain rhythm.
+
+Spacing scale:
+
+4px
+8px
+16px
+24px
+32px
+48px
+64px
+96px
+
+Common layout spacing:
+
+Section padding:
+80–120px vertical
+
+Card padding:
+24–32px
+
+Component spacing:
+16–24px
+
+Avoid inconsistent spacing values.
+
+--- 
+
+## Photography Standards
+
+Photography drives the emotional impact of the site.
+
+Image style should emphasize:
+
+- Wide blue water
+- Healthy reefs and pinnacles
+- Divers in frame for scale
+- Natural lighting
+- Cinematic composition
+
+Avoid:
+
+- Dark muddy images
+- Heavy color filters
+- Stock imagery
+- Busy fish-ID style shots
+
+Images should feel editorial and documentary rather than promotional.
+
+When possible, prioritize images that communicate:
+
+depth
+scale
+open ocean
+exploration
+
+---
+
+## Conversion Hierarchy
+
+Calls to action should follow a clear priority.
+
+Primary CTA:
+Book Diving
+
+Secondary CTAs:
+Explore Dive Sites
+View Dive Packages
+Learn About Saba
+
+Only one primary CTA should dominate each page.
+Avoid multiple competing CTAs.
+
+---
+
+## Interaction Design
+
+Interactions should be subtle and refined.
+
+Allowed interactions:
+
+- Button hover states
+- Image hover zoom (very subtle)
+- Smooth page transitions
+- Fade-in content when entering viewport
+
+Avoid:
+
+- Parallax scrolling
+- Large motion effects
+- Animated backgrounds
+- Complex UI transitions
+
+Motion should reinforce quality and calm professionalism.
+
+---
+
+## Navigation Structure
+
+Primary navigation should remain simple and consistent.
+
+Recommended structure:
+
+Diving
+Dive Sites
+Courses
+Plan Your Trip
+About
+Book
+
+Avoid deep navigation trees.
+Users should reach key content within two clicks.
+
+---
+
+## Performance Targets
+
+The site should meet modern performance standards.
+
+Largest Contentful Paint:
+< 2.5 seconds
+
+Interaction latency:
+< 200ms
+
+Cumulative Layout Shift:
+< 0.1
+
+Optimize images and video aggressively.
+Prefer static rendering where possible.

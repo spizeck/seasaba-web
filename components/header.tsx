@@ -33,11 +33,14 @@ export function Header() {
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link
           href="/"
-          className={`text-xl font-semibold tracking-tight transition-colors ${
-            transparent ? "text-white" : "text-foreground"
-          }`}
+          className="relative flex items-center transition-opacity hover:opacity-90"
         >
-          {SITE_NAME}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={transparent ? "/images/White SEA SABA logo transparent.png" : "/images/Full color SEA SABA logo transparent.png"}
+            alt={SITE_NAME}
+            className="h-10 w-auto"
+          />
         </Link>
 
         {/* Desktop nav */}

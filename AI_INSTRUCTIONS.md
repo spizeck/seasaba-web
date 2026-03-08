@@ -147,6 +147,7 @@ Notes:
 Build for clarity, speed, and trust.
 Do not over-design.
 Do not over-animate.
+Understated sophistication.
 
 
 ---
