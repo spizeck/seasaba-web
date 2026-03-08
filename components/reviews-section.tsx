@@ -1,6 +1,11 @@
-import { Star } from "lucide-react";
+import { TripAdvisorWidget } from "@/components/tripadvisor-widget";
+import { TripAdvisorReviewsWidget } from "@/components/tripadvisor-reviews-widget";
+import { CuratedReviews } from "@/components/curated-reviews";
+import { getFeaturedReviews } from "@/lib/firestore/reviews";
 
-const REVIEWS = [
+// Placeholder reviews until Firestore is set up
+// Replace these by adding reviews to Firestore with featured: true
+const PLACEHOLDER_REVIEWS = [
   {
     text: "Best diving operation in the Caribbean. Professional crew, pristine sites, and they genuinely care about the marine environment.",
     author: "Sarah M.",
@@ -19,53 +24,33 @@ const REVIEWS = [
     source: "TripAdvisor",
     rating: 5,
   },
-] as const;
+];
 
-export function ReviewsSection() {
+export async function ReviewsSection() {
+  // Fetch curated reviews from Firestore
+  // Falls back to placeholder reviews if Firestore isn't set up yet
+  const firestoreReviews = await getFeaturedReviews();
+  const reviews = firestoreReviews.length > 0 ? firestoreReviews : PLACEHOLDER_REVIEWS;
+
   return (
     <section className="bg-card py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div className="text-center">
-          <div className="flex items-center justify-center gap-1 text-primary">
-            {[...Array(5)].map((_, i) => (
-              <Star key={i} className="h-6 w-6 fill-current" />
-            ))}
-          </div>
-          <h2 className="mt-4 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-            Rated 5 Stars
-          </h2>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Based on hundreds of reviews on TripAdvisor and Google
-          </p>
+        {/* TripAdvisor Traveler's Choice Badge */}
+        <div className="mb-12">
+          <TripAdvisorWidget />
         </div>
 
-        <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {REVIEWS.map((review, index) => (
-            <div
-              key={index}
-              className="rounded-lg border border-border/60 bg-background p-6"
-            >
-              <div className="flex items-center gap-1 text-primary">
-                {[...Array(review.rating)].map((_, i) => (
-                  <Star key={i} className="h-4 w-4 fill-current" />
-                ))}
-              </div>
-              <p className="mt-4 text-sm leading-relaxed text-foreground">
-                &ldquo;{review.text}&rdquo;
-              </p>
-              <div className="mt-4 flex items-center justify-between">
-                <p className="text-xs font-medium text-muted-foreground">
-                  {review.author}
-                </p>
-                <p className="text-xs text-muted-foreground">{review.source}</p>
-              </div>
-            </div>
-          ))}
+        {/* Live TripAdvisor Reviews Widget */}
+        <div className="mb-12">
+          <TripAdvisorReviewsWidget />
         </div>
+
+        {/* Curated Reviews from Firestore (or placeholders) */}
+        <CuratedReviews reviews={reviews} />
 
         <div className="mt-8 text-center">
           <a
-            href="https://www.tripadvisor.com"
+            href="https://www.tripadvisor.com/Attraction_Review-g147337-d1206831-Reviews-Sea_Saba_Dive_Center-Windwardside_Saba.html"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center text-sm font-medium text-primary hover:underline"
