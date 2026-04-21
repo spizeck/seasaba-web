@@ -5,9 +5,10 @@ export const SITE_URL = "https://www.seasaba.com";
 
 export const NAV_ITEMS = [
   { label: "Diving", href: "/diving" },
+  { label: "Dive Sites", href: "/dive-sites" },
   { label: "Courses", href: "/courses" },
+  { label: "Plan Your Trip", href: "/plan-your-trip" },
   { label: "About", href: "/about" },
-  { label: "Contact", href: "/contact" },
 ] as const;
 
 export const BOOKING_URL = "https://seasaba.checkfront.com/reserve/";

@@ -51,10 +51,10 @@ export function VideoSection() {
       {/* Content */}
       <div className="relative z-10 mx-auto max-w-2xl px-4 text-center sm:px-6 lg:px-8">
         <h2 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl drop-shadow-lg">
-          See it for yourself
+          Saba&apos;s underwater world.
         </h2>
         <p className="mt-4 text-base leading-relaxed text-white/85 drop-shadow">
-          Crystal-clear water. Pristine reefs. Unforgettable encounters.
+          Dramatic pinnacles. Open ocean. Some of the Caribbean&apos;s healthiest reefs.
         </p>
         <div className="mt-8">
           <Button
@@ -62,7 +62,7 @@ export function VideoSection() {
             size="lg"
             className="bg-white text-primary hover:bg-white/90 text-base font-semibold"
           >
-            <Link href="/diving">Explore Dive Sites</Link>
+            <Link href="/dive-sites">Explore Dive Sites</Link>
           </Button>
         </div>
       </div>
