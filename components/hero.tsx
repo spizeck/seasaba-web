@@ -4,10 +4,18 @@ import { Button } from "@/components/ui/button";
 export function Hero() {
   return (
     <section className="relative flex min-h-screen items-center justify-center overflow-hidden -mt-16 pt-16">
-      {/* Background image */}
+      {/* Background image - Current: DSC03031.jpg (left-aligned for subject on left) */}
+      {/*
       <div
         className="absolute inset-0 bg-cover bg-left bg-no-repeat"
         style={{ backgroundImage: "url('/images/DSC03031.jpg')" }}
+      />
+      */}
+
+      {/* Background image - Alternative: heroimage.jpg (centered) */}
+      <div
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: "url('/images/heroimage.jpg')" }}
       />
 
       <div className="relative z-10 mx-auto max-w-3xl px-4 py-24 text-center sm:px-6 lg:px-8">

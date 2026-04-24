@@ -1,5 +1,5 @@
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { BOOKING_URL } from "@/lib/constants";
 
 interface BookingCTAProps {
   heading?: string;
@@ -10,8 +10,8 @@ interface BookingCTAProps {
 
 export function BookingCTA({
   heading = "Ready to dive?",
-  description = "Check availability and book your next underwater adventure in Saba.",
-  buttonText = "Book Now",
+  description = "Book your Saba diving experience with Sea Saba.",
+  buttonText = "Book Diving",
   className = "",
 }: BookingCTAProps) {
   return (
@@ -21,10 +21,8 @@ export function BookingCTA({
       <h2 className="text-xl font-semibold text-foreground">{heading}</h2>
       <p className="mt-2 text-sm text-muted-foreground">{description}</p>
       <div className="mt-6">
-        <Button asChild>
-          <a href={BOOKING_URL} target="_blank" rel="noopener noreferrer">
-            {buttonText}
-          </a>
+        <Button asChild size="lg" className="text-base font-semibold">
+          <Link href="/book">{buttonText}</Link>
         </Button>
       </div>
     </div>
