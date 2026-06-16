@@ -223,13 +223,20 @@ Avoid:
 - Mobile must use a static poster image fallback
 
 ### Homepage Section Order
-1. Hero (static image, behind navbar allowed)
-2. One supporting static section (“Why Dive Saba” or “Why Sea Saba”)
-3. One video background section + single CTA
-4. Static routing sections
-5. Final CTA
+1. Hero (static image, behind navbar allowed) — with trust indicators and primary Book CTA
+2. Why Saba — destination differentiation with key themes
+3. Dive Saba's World Famous Pinnacles — featured pinnacle sites
+4. Marine Life — image-driven, key species
+5. Featured Dive Sites — cards with skill level, depth, marine life, photography
+6. Why Dive With Sea Saba — credentials and differentiators
+7. Reviews and Social Proof — TripAdvisor / Google / testimonials
+8. Group Travel — dive clubs, shops, tour operators
+9. Plan Your Trip — travel hub introduction
+10. Where to Stay — accommodation introduction
+11. FAQ — common visitor concerns
+12. Final CTA
 
-The homepage should invite exploration, not overwhelm.
+The homepage is a full destination and conversion page. It should answer all four core user questions before the footer.
 
 ---
 
