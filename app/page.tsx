@@ -225,9 +225,16 @@ export default function Home() {
           {/* Cards */}
           <div className="flex flex-col gap-16">
 
-            {/* Card 1 — Getting Here — text left, image right */}
+            {/* Card 1 — Getting Here — image right on desktop, image first on mobile */}
             <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
-              <div>
+              <div className="overflow-hidden rounded-lg lg:order-2">
+                <img
+                  src="/images/optimized/juancho-airport-approach-saba.webp"
+                  alt="Cockpit view approaching Juancho E. Yrausquin Airport on Saba."
+                  className="h-64 w-full object-cover object-center sm:h-80 lg:h-96"
+                />
+              </div>
+              <div className="lg:order-1">
                 <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Getting Here</p>
                 <h3 className="mt-2 text-xl font-semibold text-foreground sm:text-2xl">Closer than you think.</h3>
                 <p className="mt-1 text-sm text-muted-foreground">Just 15 minutes from St. Maarten.</p>
@@ -239,13 +246,6 @@ export default function Home() {
                 <Link href="/plan-your-trip" className="mt-5 inline-block text-sm font-medium text-primary hover:underline">
                   Flights and Ferries →
                 </Link>
-              </div>
-              <div className="overflow-hidden rounded-lg">
-                <img
-                  src="/images/optimized/juancho-airport-approach-saba.webp"
-                  alt="Cockpit view approaching Juancho E. Yrausquin Airport on Saba."
-                  className="h-64 w-full object-cover object-center sm:h-80 lg:h-96"
-                />
               </div>
             </div>
 
@@ -271,9 +271,16 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Card 3 — When to Visit — text left, image right */}
+            {/* Card 3 — When to Visit — image right on desktop, image first on mobile */}
             <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
-              <div>
+              <div className="overflow-hidden rounded-lg lg:order-2">
+                <img
+                  src="/images/optimized/green-turtle-with-diver-saba.webp"
+                  alt="Green turtle swimming above open water with a diver in the background, Saba."
+                  className="h-64 w-full object-cover object-center sm:h-80 lg:h-96"
+                />
+              </div>
+              <div className="lg:order-1">
                 <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">When to Visit</p>
                 <h3 className="mt-2 text-xl font-semibold text-foreground sm:text-2xl">Great diving year-round.</h3>
                 <p className="mt-4 text-sm leading-relaxed text-muted-foreground sm:text-base">
@@ -284,13 +291,6 @@ export default function Home() {
                 <Link href="/plan-your-trip" className="mt-5 inline-block text-sm font-medium text-primary hover:underline">
                   When to visit →
                 </Link>
-              </div>
-              <div className="overflow-hidden rounded-lg">
-                <img
-                  src="/images/optimized/green-turtle-with-diver-saba.webp"
-                  alt="Green turtle swimming above open water with a diver in the background, Saba."
-                  className="h-64 w-full object-cover object-center sm:h-80 lg:h-96"
-                />
               </div>
             </div>
 
