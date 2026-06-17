@@ -75,42 +75,7 @@ Explain why these sites are internationally recognized and unique.
 
 ---
 
-## 4. Marine Life
-
-Large image-driven section focused on:
-
-* Reef Sharks
-* Nurse Sharks
-* Green Turtles
-* Hawksbill Turtles
-* Eagle Rays
-* Frogfish
-* Seahorses
-* Lobsters
-* Healthy Coral Reefs
-
-### CTA
-
-* Discover Marine Life
-
----
-
-## 5. Featured Dive Sites
-
-Interactive cards highlighting representative dive sites by:
-
-* Skill level
-* Depth range
-* Marine life
-* Photography opportunities
-
-### CTA
-
-* View All Dive Sites
-
----
-
-## 6. Why Dive With Sea Saba
+## 4. Why Dive With Sea Saba
 
 Highlight:
 
@@ -132,7 +97,7 @@ Highlight:
 
 ---
 
-## 7. Reviews & Social Proof
+## 5. Reviews & Social Proof
 
 Feature verified reviews from TripAdvisor and Google.
 
@@ -150,7 +115,7 @@ Include:
 
 ---
 
-## 8. Group Travel
+## 6. Group Travel
 
 Dedicated section for:
 
@@ -171,7 +136,7 @@ Explain:
 
 ---
 
-## 9. Plan Your Trip
+## 7. Plan Your Trip
 
 Travel-planning hub introducing:
 
@@ -188,7 +153,7 @@ Travel-planning hub introducing:
 
 ---
 
-## 10. Where to Stay
+## 8. Where to Stay
 
 Accommodation recommendations and partner properties.
 
@@ -200,7 +165,7 @@ This section should support trip planning rather than dominate the homepage.
 
 ---
 
-## 11. FAQ
+## 9. FAQ
 
 Address common concerns:
 
@@ -212,7 +177,7 @@ Address common concerns:
 
 ---
 
-## 12. Footer
+## 10. Footer
 
 Contact information, booking links, policies, social channels, and quick navigation.
 

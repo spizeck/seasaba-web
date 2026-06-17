@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Open_Sans } from "next/font/google";
 import { Header } from "@/components/header";
-import { Footer } from "@/components/footer";
+import { FooterWrapper } from "@/components/footer-wrapper";
 import { SITE_NAME, SITE_DESCRIPTION, SITE_URL } from "@/lib/constants";
 import { LocalBusinessJsonLd } from "@/components/structured-data";
 import "./globals.css";
@@ -79,7 +79,7 @@ export default function RootLayout({
         </a>
         <Header />
         <main id="main-content">{children}</main>
-        <Footer />
+        <FooterWrapper />
         <LocalBusinessJsonLd />
       </body>
     </html>

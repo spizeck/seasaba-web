@@ -1,7 +1,5 @@
 import Link from "next/link";
 import { Hero } from "@/components/hero";
-import { VideoSection } from "@/components/video-section";
-import { ReviewsSection } from "@/components/reviews-section";
 import { Button } from "@/components/ui/button";
 
 const WHY_SABA_FEATURED = [
@@ -18,7 +16,7 @@ const WHY_SABA_FEATURED = [
   {
     heading: "Small Island, Big Heart",
     body: "Our greatest asset isn't found underwater. It's the people. Friendly faces, welcoming communities, and genuine island hospitality make visitors feel at home from the moment they arrive.",
-    image: "/images/SabaTidePools.jpg",
+    image: "/images/Saba-200.jpg",
   },
 ] as const;
 
@@ -37,117 +35,37 @@ const WHY_SABA_SECONDARY = [
   },
 ] as const;
 
-const PINNACLES_FEATURED = [
+const DIVE_EXPERIENCES = [
   {
-    name: "Diamond Rock",
-    subtitle: null,
-    description: "One of Saba's most recognizable dive sites. This volcanic seamount rises above the surface, while a second structure reaches toward the shallows on the north side. Healthy coral growth, green turtles, lobsters, and occasional shark encounters make Diamond Rock a favorite for photographers and naturalists alike.",
+    title: "The Pinnacles",
+    subtitle: "The dives that made Saba famous.",
+    image: "/images/DSC03073.jpg",
+    imageAlt: "Saba dive boat at Diamond Rock",
+    body: "Volcanic seamounts rise from the deep blue, attracting pelagic life and creating some of the Caribbean's most iconic dives. From Third Encounter to Diamond Rock, these underwater mountains define the Saba diving experience.",
+    sites: ["Third Encounter (The Needle)", "Twilight Zone", "Outer Limits", "Diamond Rock", "Man O'War Shoals", "Shark Shoals"],
+    note: null,
   },
   {
-    name: "Third Encounter",
-    subtitle: "The Needle",
-    description: "The pinnacle that put Saba on the map. Located just off the main pinnacle plateau, The Needle rises from the deep and appears suddenly out of the blue. Large schools of fish, pelagic encounters, and dramatic open-water scenery make it one of the Caribbean's most iconic dives.",
+    title: "Tent Reef",
+    subtitle: "Walls, reefs, and endless blue water.",
+    image: "/images/DSC03063.jpg",
+    imageAlt: "Tent Reef wall diving, Saba",
+    body: "Stretching across multiple dive sites, Tent Reef combines healthy coral growth, dramatic drop-offs, and the famous Three Sisters. It is home to some of Saba's most scenic and accessible wall diving.",
+    sites: ["Tent Shallow", "Tent Deep", "Tent Reef", "Tent Boulders", "Tent Wall", "Tedran Wall"],
+    note: "Named after Ted and Randy, Tedran Wall marks the southern extent of this remarkable reef system.",
   },
   {
-    name: "Man O'War Shoals",
-    subtitle: null,
-    description: "Known locally as the mini-cles, Man O'War Shoals features two pinnacles rising from a sandy bottom at approximately 70 ft (21 m). One pinnacle reaches 15 ft (5 m) while the other tops out around 20 ft (6 m). Healthy coral reefs, green turtles, and abundant marine life make this one of Saba's most vibrant dive areas.",
-  },
-] as const;
-
-const PINNACLES_SECONDARY = [
-  {
-    name: "Twilight Zone",
-    description: "The shallowest section of Saba's main pinnacle plateau, with the top beginning around 75 ft (23 m). Twilight Zone combines dramatic volcanic structure, healthy coral growth, and excellent visibility, making it one of the most accessible pinnacle dives on the island.",
-  },
-  {
-    name: "Outer Limits",
-    description: "The outermost pinnacle on the main plateau. Beginning around 90 ft (27 m), Outer Limits offers deep blue-water exposure, large schools of fish, and the feeling of diving far beyond the edge of the island.",
-  },
-  {
-    name: "Shark Shoals",
-    description: "An isolated pinnacle system west of Diamond Rock. Known for pelagic encounters, dramatic topography, and The Cathedral, a massive swim-through at approximately 150 ft (45 m). A favorite among experienced and technical divers.",
+    title: "Ladder Bay",
+    subtitle: "Volcanic landscapes and hidden treasures.",
+    image: "/images/CandiceLandauLobster.jpg",
+    imageAlt: "Ladder Bay, Saba",
+    body: "From warm-water vents and nurse sharks to green turtles and flying gurnards, Ladder Bay showcases the diversity that makes Saba special. This area offers some of the island's most unique underwater landscapes.",
+    sites: ["Rays n' Anchors","Hot Springs", "50/50", "Ladder Labyrinth", "Babylon", "Porites Point", "Customs House"],
+    note: null,
   },
 ] as const;
 
-const MARINE_LIFE = [
-  { name: "Reef Sharks" },
-  { name: "Nurse Sharks" },
-  { name: "Green Turtles" },
-  { name: "Hawksbill Turtles" },
-  { name: "Eagle Rays" },
-  { name: "Frogfish" },
-  { name: "Seahorses" },
-  { name: "Lobsters" },
-  { name: "Healthy Coral Reefs" },
-] as const;
 
-const FEATURED_SITES = [
-  {
-    name: "Third Encounter",
-    skillLevel: "Advanced",
-    depthRange: "18–40 m",
-    marineLife: "Sharks, rays, pelagics",
-    photography: "Wide-angle, open ocean",
-    href: "/dive-sites",
-  },
-  {
-    name: "Ladder Labyrinth",
-    skillLevel: "Beginner – Intermediate",
-    depthRange: "9–21 m",
-    marineLife: "Turtles, reef fish, eels",
-    photography: "Macro, reef portraits",
-    href: "/dive-sites",
-  },
-  {
-    name: "Shark Shoals",
-    skillLevel: "Intermediate – Advanced",
-    depthRange: "15–35 m",
-    marineLife: "Reef sharks, schooling fish",
-    photography: "Wide-angle, blue water",
-    href: "/dive-sites",
-  },
-  {
-    name: "Man O' War Shoals",
-    skillLevel: "Intermediate",
-    depthRange: "12–30 m",
-    marineLife: "Nurse sharks, rays, lobsters",
-    photography: "Reef, macro, wide",
-    href: "/dive-sites",
-  },
-] as const;
-
-const SEA_SABA_CREDENTIALS = [
-  { stat: "Max 8 Divers", label: "Per Guide" },
-  { stat: "Since 1985", label: "Operating" },
-  { stat: "PADI 5-Star", label: "IDC Center" },
-  { stat: "10–25 min", label: "Boat Rides" },
-  { stat: "Local Experts", label: "Your Guides" },
-  { stat: "Marine Conservation", label: "Supported" },
-] as const;
-
-const FAQ_ITEMS = [
-  {
-    question: "How do I get to Saba?",
-    answer: "Fly via St. Maarten (SXM) on Winair, or take the high-speed ferry from St. Maarten. Both options take under 20 minutes.",
-  },
-  {
-    question: "What certification do I need?",
-    answer: "Most dives are available from Open Water level. Some pinnacle and advanced sites require Advanced Open Water or equivalent. Technical dives require appropriate certification.",
-  },
-  {
-    question: "When is the best time to dive?",
-    answer: "Saba offers year-round diving. Visibility is consistently excellent. Winter and spring bring calmer seas; summer and fall offer warm water and excellent macro conditions.",
-  },
-  {
-    question: "Can non-divers join?",
-    answer: "Saba has excellent snorkeling and land-based activities. Non-diving partners are welcome to travel with dive groups.",
-  },
-  {
-    question: "What marine life can I expect?",
-    answer: "Reef sharks, nurse sharks, turtles, eagle rays, frogfish, seahorses, large lobsters, and some of the healthiest coral in the Caribbean.",
-  },
-] as const;
 
 export default function Home() {
   return (
@@ -212,69 +130,75 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 3. Dive Saba's Volcanic Seascape */}
+      {/* 3. The Dives That Made Saba Famous */}
       <section className="bg-[#0B0F3B] py-20">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
 
-          {/* Image + heading feature */}
-          <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
-            {/* Image */}
-            <div className="overflow-hidden rounded-lg">
-              <img
-                src="/images/DSC03073.jpg"
-                alt="Saba dive boat at Diamond Rock"
-                className="h-56 w-full object-cover object-center sm:h-72 lg:h-80"
-              />
-            </div>
-            {/* Heading + intro */}
-            <div>
-              <h2 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl">
-                The Dives That Made Saba Famous.
-              </h2>
-              <p className="mt-4 text-base leading-relaxed text-white/70">
-                Saba&apos;s volcanic peaks continue beneath the sea, creating dramatic
-                pinnacles, seamounts, walls, and shoals. These are the dives that
-                put Saba on the map.
-              </p>
-            </div>
+          {/* Section header */}
+          <div className="mb-16 max-w-2xl">
+            <h2 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+              The Dives That Made Saba Famous.
+            </h2>
+            <p className="mt-4 text-base leading-relaxed text-white/70">
+              Saba&apos;s volcanic origins created one of the Caribbean&apos;s most unique
+              underwater landscapes. Explore towering pinnacles, dramatic walls, and
+              volcanic seascapes found nowhere else in the region.
+            </p>
           </div>
 
-          {/* Primary site cards */}
-          <div className="mt-12 grid gap-5 sm:grid-cols-3">
-            {PINNACLES_FEATURED.map((site) => (
+          {/* Experience blocks */}
+          <div className="flex flex-col gap-16">
+            {DIVE_EXPERIENCES.map((exp, i) => (
               <div
-                key={site.name}
-                className="flex flex-col rounded-lg border border-white/10 bg-white/5 p-6"
+                key={exp.title}
+                className={`grid gap-8 lg:grid-cols-2 lg:items-center ${
+                  i % 2 === 1 ? "lg:[&>*:first-child]:order-2" : ""
+                }`}
               >
-                <h3 className="text-base font-semibold text-white">
-                  {site.name}
-                  {site.subtitle && (
-                    <span className="ml-2 text-sm font-normal text-white/50">
-                      ({site.subtitle})
-                    </span>
-                  )}
-                </h3>
-                <p className="mt-3 flex-1 text-sm leading-relaxed text-white/65">
-                  {site.description}
-                </p>
-              </div>
-            ))}
-          </div>
+                {/* Image */}
+                <div className="overflow-hidden rounded-lg">
+                  <img
+                    src={exp.image}
+                    alt={exp.imageAlt}
+                    className="h-64 w-full object-cover object-center sm:h-80 lg:h-96"
+                  />
+                </div>
 
-          {/* Secondary sites — compact list */}
-          <div className="mt-8 grid gap-6 border-t border-white/10 pt-8 sm:grid-cols-3">
-            {PINNACLES_SECONDARY.map((site) => (
-              <div key={site.name}>
-                <h4 className="text-sm font-semibold text-white">{site.name}</h4>
-                <p className="mt-1.5 text-xs leading-relaxed text-white/55">
-                  {site.description}
-                </p>
+                {/* Text */}
+                <div>
+                  <h3 className="text-xl font-semibold text-white sm:text-2xl">
+                    {exp.title}
+                  </h3>
+                  <p className="mt-1 text-sm text-white/45 uppercase tracking-wide">
+                    {exp.subtitle}
+                  </p>
+                  <p className="mt-4 text-sm leading-relaxed text-white/70 sm:text-base">
+                    {exp.body}
+                  </p>
+                  {/* Site tags */}
+                  <div className="mt-5 flex flex-wrap gap-2">
+                    {exp.sites.map((site) => (
+                      <span
+                        key={site}
+                        className="rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium text-white/70"
+                      >
+                        {site}
+                      </span>
+                    ))}
+                  </div>
+                  {/* Supporting note */}
+                  {exp.note && (
+                    <p className="mt-4 text-xs leading-relaxed text-white/45 italic">
+                      {exp.note}
+                    </p>
+                  )}
+                </div>
               </div>
             ))}
           </div>
 
           {/* CTA */}
-          <div className="mt-10">
+          <div className="mt-16">
             <Button asChild size="lg" className="bg-white text-primary hover:bg-white/90 text-base font-semibold">
               <Link href="/dive-sites">Explore All Dive Sites</Link>
             </Button>
@@ -283,260 +207,134 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 4. Marine Life */}
-      <section className="bg-background py-20">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <div className="mb-12 max-w-2xl">
-            <h2 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-              Remarkable marine life.
-            </h2>
-            <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-              The Saba Marine Park supports one of the healthiest reef ecosystems
-              in the Caribbean. Consistent encounters with large marine species are
-              a defining feature of diving here.
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-3">
-            {MARINE_LIFE.map((species) => (
-              <span
-                key={species.name}
-                className="rounded-full border border-border/60 bg-card px-4 py-2 text-sm font-medium text-foreground"
-              >
-                {species.name}
-              </span>
-            ))}
-          </div>
-          <div className="mt-10">
-            <Button asChild variant="outline" size="lg" className="text-base font-semibold">
-              <Link href="/dive-sites">Discover Marine Life</Link>
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* 5. Featured Dive Sites */}
+      {/* 4. Plan Your Trip */}
       <section className="bg-card py-20">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <div className="mb-12 max-w-2xl">
+
+          {/* Section header */}
+          <div className="mb-16 max-w-2xl">
             <h2 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-              Featured dive sites.
+              Plan Your Trip.
             </h2>
             <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-              Over 43 protected sites in the Saba Marine Park — from beginner-friendly
-              reefs to world-class open-ocean pinnacles.
+              Getting to Saba takes a little planning. The reward is one of the
+              Caribbean&apos;s most unforgettable destinations.
             </p>
           </div>
-          <div className="grid gap-6 sm:grid-cols-2">
-            {FEATURED_SITES.map((site) => (
-              <Link
-                key={site.name}
-                href={site.href}
-                className="group flex flex-col rounded-lg border border-border/60 bg-background p-6 transition-colors hover:border-primary/30 hover:bg-muted/40"
-              >
-                <h3 className="text-lg font-semibold text-foreground group-hover:text-primary">
-                  {site.name}
-                </h3>
-                <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
-                  <div>
-                    <dt className="text-xs uppercase tracking-wide text-muted-foreground">Skill Level</dt>
-                    <dd className="mt-0.5 font-medium text-foreground">{site.skillLevel}</dd>
-                  </div>
-                  <div>
-                    <dt className="text-xs uppercase tracking-wide text-muted-foreground">Depth</dt>
-                    <dd className="mt-0.5 font-medium text-foreground">{site.depthRange}</dd>
-                  </div>
-                  <div>
-                    <dt className="text-xs uppercase tracking-wide text-muted-foreground">Marine Life</dt>
-                    <dd className="mt-0.5 font-medium text-foreground">{site.marineLife}</dd>
-                  </div>
-                  <div>
-                    <dt className="text-xs uppercase tracking-wide text-muted-foreground">Photography</dt>
-                    <dd className="mt-0.5 font-medium text-foreground">{site.photography}</dd>
-                  </div>
-                </dl>
-                <span className="mt-6 text-sm font-medium text-primary">
-                  View site →
-                </span>
-              </Link>
-            ))}
-          </div>
-          <div className="mt-10">
-            <Button asChild variant="outline" size="lg" className="text-base font-semibold">
-              <Link href="/dive-sites">View All Dive Sites</Link>
-            </Button>
-          </div>
-        </div>
-      </section>
 
-      {/* 6. Why Dive With Sea Saba */}
-      <section className="bg-background py-20">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <div className="mb-12 max-w-2xl">
-            <h2 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-              Why dive with Sea Saba?
-            </h2>
-            <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-              Sea Saba has been operating since 1985 — one of the longest-running dive
-              operations in the Caribbean. Small groups, experienced local guides,
-              and a genuine commitment to the marine environment.
-            </p>
-          </div>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {SEA_SABA_CREDENTIALS.map((item) => (
-              <div
-                key={item.stat}
-                className="rounded-lg border border-border/60 bg-card p-6"
-              >
-                <div className="text-2xl font-semibold text-primary">{item.stat}</div>
-                <div className="mt-1 text-sm text-muted-foreground">{item.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+          {/* Cards */}
+          <div className="flex flex-col gap-16">
 
-      {/* Video section — motion break between credentials and reviews */}
-      <VideoSection />
-
-      {/* 7. Reviews & Social Proof */}
-      <ReviewsSection />
-
-      {/* 8. Group Travel */}
-      <section className="bg-background py-20">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
-            <div>
-              <h2 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-                Group travel.
-              </h2>
-              <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-                Sea Saba works regularly with dive clubs, dive shops, and tour
-                operators bringing groups to Saba. We offer flexible scheduling,
-                group coordination, and the local expertise to make a group trip
-                work smoothly.
-              </p>
-              <ul className="mt-6 space-y-2 text-sm text-muted-foreground">
-                <li>Dive clubs and membership groups</li>
-                <li>Dive shops and retail operators</li>
-                <li>Tour operators and travel agents</li>
-                <li>Flexible scheduling and group pricing</li>
-                <li>Dedicated coordination and local expertise</li>
-              </ul>
-              <div className="mt-8">
-                <Button asChild size="lg" className="text-base font-semibold">
-                  <Link href="/contact">Request Group Quote</Link>
-                </Button>
-              </div>
-            </div>
-            <div className="rounded-lg border border-border/60 bg-card p-8">
-              <h3 className="text-lg font-semibold text-foreground">
-                Bringing a group to Saba?
-              </h3>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                Contact us directly to discuss your group&apos;s needs — size, dates,
-                experience levels, and any specific requests. We&apos;ll put together
-                a plan that works for your group.
-              </p>
-              <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-                Sea Saba has hosted groups from dive clubs around the world.
-                Our boats accommodate larger groups comfortably, and our team
-                knows how to run a smooth group operation.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 9. Plan Your Trip */}
-      <section className="bg-card py-20">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <div className="mb-12 max-w-2xl">
-            <h2 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-              Plan your trip.
-            </h2>
-            <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-              Getting to Saba takes a little planning. The island is worth it.
-              Here&apos;s what you need to know.
-            </p>
-          </div>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {[
-              { title: "Getting There", body: "Fly via St. Maarten on Winair, or take the Saba Ferry. Both connections are straightforward and take under 20 minutes." },
-              { title: "Flights", body: "Most visitors fly into Princess Juliana (SXM) in St. Maarten, then connect to Saba on Winair's short regional hop." },
-              { title: "Ferry Options", body: "The high-speed ferry from St. Maarten's Great Bay Marina is a popular and scenic option for reaching Saba." },
-              { title: "What to Pack", body: "Light layers, reef-safe sunscreen, and your certification card. Sea Saba provides all dive gear if needed." },
-            ].map((item) => (
-              <div key={item.title}>
-                <h3 className="text-base font-semibold text-foreground">{item.title}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{item.body}</p>
-              </div>
-            ))}
-          </div>
-          <div className="mt-10">
-            <Button asChild size="lg" className="text-base font-semibold">
-              <Link href="/plan-your-trip">Start Planning</Link>
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* 10. Where to Stay */}
-      <section className="bg-background py-20">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <div className="max-w-2xl">
-            <h2 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-              Where to stay.
-            </h2>
-            <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-              Saba has a range of accommodation options — from intimate guesthouses
-              to boutique hotels — all within easy reach of Sea Saba&apos;s dock.
-              We can recommend properties that work well for divers.
-            </p>
-            <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-              Most accommodation is in or around Windwardside, the island&apos;s main
-              village, a short drive from the dive center.
-            </p>
-            <div className="mt-8">
-              <Button asChild variant="outline" size="lg" className="text-base font-semibold">
-                <Link href="/plan-your-trip">View Accommodations</Link>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 11. FAQ */}
-      <section className="bg-card py-20">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <div className="mb-12 max-w-2xl">
-            <h2 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-              Frequently asked questions.
-            </h2>
-          </div>
-          <div className="grid gap-8 sm:grid-cols-2">
-            {FAQ_ITEMS.map((item) => (
-              <div key={item.question}>
-                <h3 className="text-base font-semibold text-foreground">
-                  {item.question}
-                </h3>
-                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                  {item.answer}
+            {/* Card 1 — Getting Here — text left, image right */}
+            <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Getting Here</p>
+                <h3 className="mt-2 text-xl font-semibold text-foreground sm:text-2xl">Closer than you think.</h3>
+                <p className="mt-1 text-sm text-muted-foreground">Just 15 minutes from St. Maarten.</p>
+                <p className="mt-4 text-sm leading-relaxed text-muted-foreground sm:text-base">
+                  Most visitors arrive via St. Maarten, connecting to Saba by Winair or
+                  high-speed ferry. The journey is part of the adventure, and the views
+                  are unforgettable.
                 </p>
+                <Link href="/plan-your-trip" className="mt-5 inline-block text-sm font-medium text-primary hover:underline">
+                  Flights and Ferries →
+                </Link>
               </div>
-            ))}
+              <div className="overflow-hidden rounded-lg">
+                <img
+                  src="/images/Saba-003.jpg"
+                  alt="Cockpit approach to Saba"
+                  className="h-64 w-full object-cover object-center sm:h-80 lg:h-96"
+                />
+              </div>
+            </div>
+
+            {/* Card 2 — Where to Stay — image left, text right */}
+            <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
+              <div className="overflow-hidden rounded-lg">
+                <img
+                  src="/images/Saba-024.jpg"
+                  alt="Saba accommodation"
+                  className="h-64 w-full object-cover object-center sm:h-80 lg:h-96"
+                />
+              </div>
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Where to Stay</p>
+                <h3 className="mt-2 text-xl font-semibold text-foreground sm:text-2xl">Small hotels. Big hospitality.</h3>
+                <p className="mt-4 text-sm leading-relaxed text-muted-foreground sm:text-base">
+                  From charming cottages to boutique hotels, Saba&apos;s accommodations
+                  reflect the island&apos;s relaxed pace and welcoming spirit.
+                </p>
+                <Link href="/plan-your-trip" className="mt-5 inline-block text-sm font-medium text-primary hover:underline">
+                  Explore accommodations →
+                </Link>
+              </div>
+            </div>
+
+            {/* Card 3 — When to Visit — text left, image right */}
+            <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">When to Visit</p>
+                <h3 className="mt-2 text-xl font-semibold text-foreground sm:text-2xl">Great diving year-round.</h3>
+                <p className="mt-4 text-sm leading-relaxed text-muted-foreground sm:text-base">
+                  Every season brings something different, but there is no bad time to
+                  visit Saba. Warm water, healthy reefs, and changing marine life make
+                  every month rewarding.
+                </p>
+                <Link href="/plan-your-trip" className="mt-5 inline-block text-sm font-medium text-primary hover:underline">
+                  When to visit →
+                </Link>
+              </div>
+              <div className="overflow-hidden rounded-lg">
+                <img
+                  src="/images/CandiceLandau096.jpg"
+                  alt="Saba coast and tide pools"
+                  className="h-64 w-full object-cover object-center sm:h-80 lg:h-96"
+                />
+              </div>
+            </div>
+
+            {/* Card 4 — Island Life — image left, text right */}
+            <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
+              <div className="overflow-hidden rounded-lg">
+                <img
+                  src="/images/Saba-146.jpg"
+                  alt="Saba village life"
+                  className="h-64 w-full object-cover object-center sm:h-80 lg:h-96"
+                />
+              </div>
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Island Life</p>
+                <h3 className="mt-2 text-xl font-semibold text-foreground sm:text-2xl">Small island. Big welcome.</h3>
+                <p className="mt-4 text-sm leading-relaxed text-muted-foreground sm:text-base">
+                  Safe villages, friendly people, and no crowds. Many visitors return
+                  year after year, and some never really leave.
+                </p>
+                <Link href="/plan-your-trip" className="mt-5 inline-block text-sm font-medium text-primary hover:underline">
+                  Discover Saba →
+                </Link>
+              </div>
+            </div>
+
           </div>
         </div>
       </section>
 
-      {/* 12. Final CTA */}
-      <section className="border-t border-border/40 bg-[#0B0F3B] py-20">
-        <div className="mx-auto max-w-2xl px-4 text-center sm:px-6 lg:px-8">
+      {/* 5. Final CTA */}
+      <section className="relative overflow-hidden py-28 -mt-1">
+        <img
+          src="/images/SabaHarborAerial.jpg"
+          alt="Saba harbor aerial view"
+          className="absolute inset-0 h-full w-full object-cover object-center"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0B0F3B]/60 to-[#0B0F3B]/75" />
+        <div className="relative mx-auto max-w-2xl px-4 text-center sm:px-6 lg:px-8">
           <h2 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl">
             Ready to dive Saba?
           </h2>
           <p className="mt-4 text-base leading-relaxed text-white/70">
-            Book directly with Sea Saba. Small groups, professional guides, and
-            one of the Caribbean&apos;s finest dive operations.
+            Book directly with Sea Saba. Small groups, experienced guides, and
+            diving that keeps people coming back year after year.
           </p>
           <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
             <Button asChild size="lg" className="bg-white text-primary hover:bg-white/90 text-base font-semibold">
