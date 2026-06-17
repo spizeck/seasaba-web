@@ -39,38 +39,34 @@ const WHY_SABA_SECONDARY = [
 
 const PINNACLES_FEATURED = [
   {
+    name: "Diamond Rock",
+    subtitle: null,
+    description: "One of Saba's most recognizable dive sites. This volcanic seamount rises above the surface, while a second structure reaches toward the shallows on the north side. Healthy coral growth, green turtles, lobsters, and occasional shark encounters make Diamond Rock a favorite for photographers and naturalists alike.",
+  },
+  {
     name: "Third Encounter",
     subtitle: "The Needle",
-    description: "One of Saba's most celebrated pinnacle dives. An open-ocean seamount rising from depth, surrounded by sharks, rays, and pelagic life.",
+    description: "The pinnacle that put Saba on the map. Located just off the main pinnacle plateau, The Needle rises from the deep and appears suddenly out of the blue. Large schools of fish, pelagic encounters, and dramatic open-water scenery make it one of the Caribbean's most iconic dives.",
   },
   {
-    name: "Twilight Zone",
+    name: "Man O'War Shoals",
     subtitle: null,
-    description: "A dramatic deep pinnacle dive with striking coral formations, blue-water exposure, and frequent pelagic encounters.",
-  },
-  {
-    name: "Outer Limits",
-    subtitle: null,
-    description: "Remote and wild, Outer Limits rewards experienced divers with open-ocean exposure, large schools of fish, and the feeling of diving at the edge of something vast.",
+    description: "Known locally as the mini-cles, Man O'War Shoals features two pinnacles rising from a sandy bottom at approximately 70 ft (21 m). One pinnacle reaches 15 ft (5 m) while the other tops out around 20 ft (6 m). Healthy coral reefs, green turtles, and abundant marine life make this one of Saba's most vibrant dive areas.",
   },
 ] as const;
 
 const PINNACLES_SECONDARY = [
   {
-    name: "Mt. Michel",
-    description: "A deep seamount south of the main pinnacle plateau, known for dramatic structure, coral growth, and blue-water encounters.",
+    name: "Twilight Zone",
+    description: "The shallowest section of Saba's main pinnacle plateau, with the top beginning around 75 ft (23 m). Twilight Zone combines dramatic volcanic structure, healthy coral growth, and excellent visibility, making it one of the most accessible pinnacle dives on the island.",
+  },
+  {
+    name: "Outer Limits",
+    description: "The outermost pinnacle on the main plateau. Beginning around 90 ft (27 m), Outer Limits offers deep blue-water exposure, large schools of fish, and the feeling of diving far beyond the edge of the island.",
   },
   {
     name: "Shark Shoals",
-    description: "A favorite among experienced divers, known for shark encounters, blue water, and its spectacular setting near Diamond Rock.",
-  },
-  {
-    name: "Diamond Rock",
-    description: "A dramatic seamount that breaks the surface north of Saba, with deep walls, blue-water exposure, and unforgettable scenery above and below the waterline.",
-  },
-  {
-    name: "Man O'War Shoals",
-    description: "Known as Saba's mini-cles, these smaller pinnacles offer dramatic structure, healthy reef life, and an accessible taste of Saba's volcanic underwater terrain.",
+    description: "An isolated pinnacle system west of Diamond Rock. Known for pelagic encounters, dramatic topography, and The Cathedral, a massive swim-through at approximately 150 ft (45 m). A favorite among experienced and technical divers.",
   },
 ] as const;
 
@@ -227,18 +223,18 @@ export default function Home() {
               <img
                 src="/images/DSC03073.jpg"
                 alt="Saba dive boat at Diamond Rock"
-                className="h-72 w-full object-cover sm:h-96 lg:h-[28rem]"
+                className="h-56 w-full object-cover object-center sm:h-72 lg:h-80"
               />
             </div>
             {/* Heading + intro */}
             <div>
               <h2 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl">
-                Dive Saba&apos;s volcanic seascape.
+                The Dives That Made Saba Famous.
               </h2>
               <p className="mt-4 text-base leading-relaxed text-white/70">
                 Saba&apos;s volcanic peaks continue beneath the sea, creating dramatic
                 pinnacles, seamounts, walls, and shoals. These are the dives that
-                made Saba famous.
+                put Saba on the map.
               </p>
             </div>
           </div>
@@ -266,7 +262,7 @@ export default function Home() {
           </div>
 
           {/* Secondary sites — compact list */}
-          <div className="mt-8 grid gap-4 border-t border-white/10 pt-8 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-8 grid gap-6 border-t border-white/10 pt-8 sm:grid-cols-3">
             {PINNACLES_SECONDARY.map((site) => (
               <div key={site.name}>
                 <h4 className="text-sm font-semibold text-white">{site.name}</h4>
