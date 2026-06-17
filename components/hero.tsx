@@ -3,9 +3,8 @@ import { Button } from "@/components/ui/button";
 
 const TRUST_INDICATORS = [
   { stat: "Since 1985", label: "Established" },
-  { stat: "8:1", label: "Max Diver–Guide Ratio" },
-  { stat: "43+", label: "Dive Sites" },
-  { stat: "10–25 min", label: "Boat Rides" },
+  { stat: "30+", label: "Dive Sites" },
+  { stat: "Marine Park", label: "Since 1987" },
 ] as const;
 
 export function Hero() {
@@ -28,18 +27,19 @@ export function Hero() {
       {/* Subtle gradient behind text for readability */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/40" />
 
-      <div className="relative z-10 mx-auto max-w-3xl flex-1 flex flex-col items-center justify-center px-4 py-24 text-center sm:px-6 lg:px-8">
-        <h1 className="text-5xl leading-tight tracking-tight text-white sm:text-6xl lg:text-7xl font-heading italic" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.3)' }}>
-          One of the Caribbean&apos;s great dive destinations.
+      <div className="relative z-10 mx-auto max-w-3xl flex-1 flex flex-col items-center justify-center px-4 py-20 text-center sm:px-6 lg:px-8">
+        <h1 className="font-heading italic text-4xl leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl" style={{ textShadow: '0 2px 10px rgba(0,0,0,0.4)' }}>
+          Dive the Extraordinary.
         </h1>
-        <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-white/95 sm:text-xl" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.3)' }}>
-          Saba&apos;s underwater world is extraordinary. Sea Saba has been guiding divers here for decades.
+        <p className="mx-auto mt-6 max-w-lg text-base leading-relaxed text-white/90 sm:text-lg" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.35)' }}>
+          Just 5 square miles above.<br className="hidden sm:block" />{" "}
+          The Caribbean&apos;s most unique diving below.
         </p>
         <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
           <Button
             asChild
             size="lg"
-            className="bg-white text-primary hover:bg-white/90 text-base font-semibold"
+            className="bg-[#9D2235] text-white hover:bg-[#8a1e2e] text-base font-semibold"
           >
             <Link href="/book">Book Diving</Link>
           </Button>
@@ -65,10 +65,10 @@ export function Hero() {
       {/* Trust indicator bar — anchored at bottom of hero */}
       <div className="relative z-10 w-full border-t border-white/20 bg-black/30 backdrop-blur-sm">
         <div className="mx-auto max-w-6xl px-4 py-5 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+          <div className="grid grid-cols-3 gap-4">
             {TRUST_INDICATORS.map((item) => (
               <div key={item.stat} className="text-center">
-                <div className="text-xl font-semibold text-white sm:text-2xl" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.4)' }}>
+                <div className="text-base font-semibold text-white sm:text-lg" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.4)' }}>
                   {item.stat}
                 </div>
                 <div className="mt-0.5 text-xs text-white/75 uppercase tracking-wide">

@@ -4,54 +4,73 @@ import { VideoSection } from "@/components/video-section";
 import { ReviewsSection } from "@/components/reviews-section";
 import { Button } from "@/components/ui/button";
 
-const WHY_SABA = [
-  {
-    heading: "No Cruise Ships. No Mass Tourism.",
-    body: "Saba receives no cruise ship traffic. The island has intentionally kept development small, preserving its authenticity and protecting its marine environment.",
-  },
-  {
-    heading: "Protected Marine Park",
-    body: "The Saba Marine Park was one of the first in the Caribbean. Over 43 protected dive sites, carefully managed, with exceptional visibility and healthy reef systems.",
-  },
-  {
-    heading: "Volcanic Island Topography",
-    body: "Saba rises sharply from the ocean floor. Underwater, that means dramatic pinnacles, sheer walls, and seamounts that draw open-ocean pelagic species year-round.",
-  },
+const WHY_SABA_FEATURED = [
   {
     heading: "World-Famous Pinnacles",
-    body: "Saba's underwater pinnacles are internationally recognized as some of the most spectacular dive structures in the Atlantic. Nothing else in the Caribbean compares.",
+    body: "Volcanic origins created dramatic underwater pinnacles unlike anything else in the Caribbean. These seamounts rise from the deep and deliver encounters that divers remember for years.",
+    image: "/images/CandiceLandauPinnacleSquare.jpg",
   },
   {
-    heading: "Authentic Caribbean Culture",
-    body: "One of the few remaining unspoiled Caribbean islands. Saba is quiet, genuine, and unlike anything you will find on the tourist circuit.",
+    heading: "Uncrowded by Design",
+    body: "Saba has chosen a different path. There are no large resorts, no cruise ship crowds, and no busy dive boats competing for space. The result is a quieter, more personal experience both above and below the surface.",
+    image: "/images/FTDiamondRock.jpg",
   },
   {
-    heading: "Extraordinary Marine Life",
-    body: "Reef sharks, nurse sharks, green and hawksbill turtles, eagle rays, frogfish, seahorses, and some of the healthiest coral in the region.",
+    heading: "Small Island, Big Heart",
+    body: "Our greatest asset isn't found underwater. It's the people. Friendly faces, welcoming communities, and genuine island hospitality make visitors feel at home from the moment they arrive.",
+    image: "/images/SabaTidePools.jpg",
   },
 ] as const;
 
-const PINNACLES = [
+const WHY_SABA_SECONDARY = [
+  {
+    heading: "Protected Since 1987",
+    body: "The Saba Marine Park has actively protected local waters since 1987. Healthy reefs and abundant marine life are the direct result of decades of consistent stewardship.",
+  },
+  {
+    heading: "Encounters That Feel Wild",
+    body: "With relatively low dive pressure, marine life often behaves naturally. Sharks, turtles, and rays provide close encounters not because they are conditioned to divers, but because they are undisturbed.",
+  },
+  {
+    heading: "Active Conservation",
+    body: "Conservation is part of daily life on Saba. Lionfish are actively managed. Marine resources are protected. The island's commitment to stewardship preserves what makes the diving exceptional.",
+  },
+] as const;
+
+const PINNACLES_FEATURED = [
   {
     name: "Third Encounter",
-    aka: "The Needle",
-    description: "One of the most celebrated pinnacle dives in the Caribbean. An open-ocean seamount rising from depth, surrounded by sharks, rays, and pelagic life.",
+    subtitle: "The Needle",
+    description: "One of Saba's most celebrated pinnacle dives. An open-ocean seamount rising from depth, surrounded by sharks, rays, and pelagic life.",
   },
   {
     name: "Twilight Zone",
-    description: "A dramatic deep pinnacle dive with extraordinary coral formations and consistently impressive pelagic encounters. A site that defines Saba diving.",
+    subtitle: null,
+    description: "A dramatic deep pinnacle dive with striking coral formations, blue-water exposure, and frequent pelagic encounters.",
   },
   {
     name: "Outer Limits",
-    description: "Remote and wild, Outer Limits rewards experienced divers with open-ocean exposure, large schools of fish, and the sense of diving at the edge of something vast.",
+    subtitle: null,
+    description: "Remote and wild, Outer Limits rewards experienced divers with open-ocean exposure, large schools of fish, and the feeling of diving at the edge of something vast.",
   },
+] as const;
+
+const PINNACLES_SECONDARY = [
   {
     name: "Mt. Michel",
-    description: "A towering seamount that breaks the surface, diving deep with walls covered in coral growth and consistent shark activity in the blue water beyond.",
+    description: "A deep seamount south of the main pinnacle plateau, known for dramatic structure, coral growth, and blue-water encounters.",
   },
   {
     name: "Shark Shoals",
-    description: "Named for a reason. Consistently reliable shark encounters in a spectacular setting — one of the most requested sites on the Sea Saba schedule.",
+    description: "A favorite among experienced divers, known for shark encounters, blue water, and its spectacular setting near Diamond Rock.",
+  },
+  {
+    name: "Diamond Rock",
+    description: "A dramatic seamount that breaks the surface north of Saba, with deep walls, blue-water exposure, and unforgettable scenery above and below the waterline.",
+  },
+  {
+    name: "Man O'War Shoals",
+    description: "Known as Saba's mini-cles, these smaller pinnacles offer dramatic structure, healthy reef life, and an accessible taste of Saba's volcanic underwater terrain.",
   },
 ] as const;
 
@@ -143,69 +162,128 @@ export default function Home() {
       {/* 2. Why Saba */}
       <section className="bg-card py-20">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+
+          {/* Section header */}
           <div className="mb-12 max-w-2xl">
             <h2 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-              Why dive Saba?
+              Saba is just different.
             </h2>
             <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-              Saba is not a typical Caribbean dive destination. It is one of the
-              region&apos;s most rewarding — and least crowded — underwater environments.
+              Most visitors struggle to explain exactly why. They just know it doesn&apos;t feel
+              like anywhere else in the Caribbean, above the surface or below it.
             </p>
           </div>
-          <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
-            {WHY_SABA.map((item) => (
+
+          {/* Featured three — photo-backed cards */}
+          <div className="grid gap-6 sm:grid-cols-3">
+            {WHY_SABA_FEATURED.map((item) => (
+              <div
+                key={item.heading}
+                className="group relative flex flex-col overflow-hidden rounded-lg"
+              >
+                {/* Photo */}
+                <div
+                  className="h-52 w-full bg-cover bg-center transition-transform duration-500 group-hover:scale-105 sm:h-60"
+                  style={{ backgroundImage: `url('${item.image}')` }}
+                />
+                {/* Content */}
+                <div className="flex flex-1 flex-col bg-background p-5">
+                  <h3 className="text-base font-semibold text-foreground">
+                    {item.heading}
+                  </h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                    {item.body}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Secondary three — compact text row */}
+          <div className="mt-10 grid gap-6 border-t border-border/40 pt-10 sm:grid-cols-3">
+            {WHY_SABA_SECONDARY.map((item) => (
               <div key={item.heading}>
-                <h3 className="text-base font-semibold text-foreground">
+                <h3 className="text-sm font-semibold text-foreground">
                   {item.heading}
                 </h3>
-                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                   {item.body}
                 </p>
               </div>
             ))}
           </div>
+
         </div>
       </section>
 
-      {/* 3. Dive Saba's World Famous Pinnacles */}
+      {/* 3. Dive Saba's Volcanic Seascape */}
       <section className="bg-[#0B0F3B] py-20">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <div className="mb-12 max-w-2xl">
-            <h2 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl">
-              Dive Saba&apos;s world-famous pinnacles.
-            </h2>
-            <p className="mt-4 text-base leading-relaxed text-white/70">
-              Saba&apos;s underwater pinnacles are internationally recognized as some of
-              the most spectacular dive structures in the Atlantic. These seamounts
-              rise from the deep, attract open-ocean pelagic life, and deliver
-              encounters found nowhere else in the Caribbean.
-            </p>
+
+          {/* Image + heading feature */}
+          <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
+            {/* Image */}
+            <div className="overflow-hidden rounded-lg">
+              <img
+                src="/images/DSC03073.jpg"
+                alt="Saba dive boat at Diamond Rock"
+                className="h-72 w-full object-cover sm:h-96 lg:h-[28rem]"
+              />
+            </div>
+            {/* Heading + intro */}
+            <div>
+              <h2 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+                Dive Saba&apos;s volcanic seascape.
+              </h2>
+              <p className="mt-4 text-base leading-relaxed text-white/70">
+                Saba&apos;s volcanic peaks continue beneath the sea, creating dramatic
+                pinnacles, seamounts, walls, and shoals. These are the dives that
+                made Saba famous.
+              </p>
+            </div>
           </div>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {PINNACLES.map((site) => (
+
+          {/* Primary site cards */}
+          <div className="mt-12 grid gap-5 sm:grid-cols-3">
+            {PINNACLES_FEATURED.map((site) => (
               <div
                 key={site.name}
-                className="rounded-lg border border-white/10 bg-white/5 p-6"
+                className="flex flex-col rounded-lg border border-white/10 bg-white/5 p-6"
               >
                 <h3 className="text-base font-semibold text-white">
                   {site.name}
-                  {"aka" in site && (
+                  {site.subtitle && (
                     <span className="ml-2 text-sm font-normal text-white/50">
-                      ({site.aka})
+                      ({site.subtitle})
                     </span>
                   )}
                 </h3>
-                <p className="mt-3 text-sm leading-relaxed text-white/65">
+                <p className="mt-3 flex-1 text-sm leading-relaxed text-white/65">
                   {site.description}
                 </p>
               </div>
             ))}
           </div>
+
+          {/* Secondary sites — compact list */}
+          <div className="mt-8 grid gap-4 border-t border-white/10 pt-8 sm:grid-cols-2 lg:grid-cols-4">
+            {PINNACLES_SECONDARY.map((site) => (
+              <div key={site.name}>
+                <h4 className="text-sm font-semibold text-white">{site.name}</h4>
+                <p className="mt-1.5 text-xs leading-relaxed text-white/55">
+                  {site.description}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          {/* CTA */}
           <div className="mt-10">
             <Button asChild size="lg" className="bg-white text-primary hover:bg-white/90 text-base font-semibold">
               <Link href="/dive-sites">Explore All Dive Sites</Link>
             </Button>
           </div>
+
         </div>
       </section>
 

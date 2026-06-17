@@ -58,7 +58,7 @@ export function Header() {
               {item.label}
             </Link>
           ))}
-          <Button asChild size="sm" className={transparent ? "bg-white text-primary hover:bg-white/90" : ""}>
+          <Button asChild size="sm" className="bg-[#9D2235] text-white hover:bg-[#8a1e2e]">
             <Link href="/book">Book Now</Link>
           </Button>
         </nav>
@@ -89,7 +89,7 @@ export function Header() {
                 {item.label}
               </Link>
             ))}
-            <Button asChild size="sm" className="mt-2 w-full">
+            <Button asChild size="sm" className="mt-2 w-full bg-[#9D2235] text-white hover:bg-[#8a1e2e]">
               <Link href="/book" onClick={() => setMobileOpen(false)}>Book Now</Link>
             </Button>
           </div>
