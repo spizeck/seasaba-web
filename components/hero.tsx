@@ -10,18 +10,10 @@ const TRUST_INDICATORS = [
 export function Hero() {
   return (
     <section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden -mt-16 pt-16">
-      {/* Background image - Current: DSC03031.jpg (left-aligned for subject on left) */}
-      {/*
-      <div
-        className="absolute inset-0 bg-cover bg-left bg-no-repeat"
-        style={{ backgroundImage: "url('/images/DSC03031.jpg')" }}
-      />
-      */}
-
-      {/* Background image - Alternative: heroimage.jpg (centered) */}
+      {/* Background image */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: "url('/images/heroimage.jpg')" }}
+        style={{ backgroundImage: "url('/images/optimized/divers-above-reef-saba.webp')" }}
       />
 
       {/* Subtle gradient behind text for readability */}

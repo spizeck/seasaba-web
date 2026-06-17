@@ -97,7 +97,7 @@ export function Footer({ hideBookLinks = false }: { hideBookLinks?: boolean }) {
         {/* Bottom bar */}
         <div className="mt-12 border-t border-border/30 pt-8 text-center">
           <p className="text-xs text-muted-foreground/60">
-            Sea Saba &bull; Saba, Caribbean Netherlands &bull; Since 1985
+            Sea Saba, NV &bull; Saba, Caribbean Netherlands &bull; Since 1985
           </p>
           <div className="mt-3 flex justify-center gap-5">
             <a

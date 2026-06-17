@@ -6,17 +6,17 @@ const WHY_SABA_FEATURED = [
   {
     heading: "World-Famous Pinnacles",
     body: "Volcanic origins created dramatic underwater pinnacles unlike anything else in the Caribbean. These seamounts rise from the deep and deliver encounters that divers remember for years.",
-    image: "/images/CandiceLandauPinnacleSquare.jpg",
+    image: "/images/optimized/divers-above-pinnacle-saba.webp",
   },
   {
     heading: "Uncrowded by Design",
     body: "Saba has chosen a different path. There are no large resorts, no cruise ship crowds, and no busy dive boats competing for space. The result is a quieter, more personal experience both above and below the surface.",
-    image: "/images/FTDiamondRock.jpg",
+    image: "/images/optimized/fin-and-tonic-boat-diamond-rock.webp",
   },
   {
     heading: "Small Island, Big Heart",
     body: "Our greatest asset isn't found underwater. It's the people. Friendly faces, welcoming communities, and genuine island hospitality make visitors feel at home from the moment they arrive.",
-    image: "/images/Saba-200.jpg",
+    image: "/images/optimized/windwardside-village-saba.webp",
   },
 ] as const;
 
@@ -39,8 +39,8 @@ const DIVE_EXPERIENCES = [
   {
     title: "The Pinnacles",
     subtitle: "The dives that made Saba famous.",
-    image: "/images/DSC03073.jpg",
-    imageAlt: "Saba dive boat at Diamond Rock",
+    image: "/images/optimized/diver-volcanic-pinnacle-saba.webp",
+    imageAlt: "Diver above a coral-encrusted volcanic seamount in open blue water, Saba.",
     body: "Volcanic seamounts rise from the deep blue, attracting pelagic life and creating some of the Caribbean's most iconic dives. From Third Encounter to Diamond Rock, these underwater mountains define the Saba diving experience.",
     sites: ["Third Encounter (The Needle)", "Twilight Zone", "Outer Limits", "Diamond Rock", "Man O'War Shoals", "Shark Shoals"],
     note: null,
@@ -48,8 +48,8 @@ const DIVE_EXPERIENCES = [
   {
     title: "Tent Reef",
     subtitle: "Walls, reefs, and endless blue water.",
-    image: "/images/DSC03063.jpg",
-    imageAlt: "Tent Reef wall diving, Saba",
+    image: "/images/optimized/green-turtle-tent-reef.webp",
+    imageAlt: "Green turtle gliding over healthy coral reef with sea fans and sponges, Saba.",
     body: "Stretching across multiple dive sites, Tent Reef combines healthy coral growth, dramatic drop-offs, and the famous Three Sisters. It is home to some of Saba's most scenic and accessible wall diving.",
     sites: ["Tent Shallow", "Tent Deep", "Tent Reef", "Tent Boulders", "Tent Wall", "Tedran Wall"],
     note: "Named after Ted and Randy, Tedran Wall marks the southern extent of this remarkable reef system.",
@@ -57,8 +57,8 @@ const DIVE_EXPERIENCES = [
   {
     title: "Ladder Bay",
     subtitle: "Volcanic landscapes and hidden treasures.",
-    image: "/images/CandiceLandauLobster.jpg",
-    imageAlt: "Ladder Bay, Saba",
+    image: "/images/optimized/spiny-lobster-ladder-bay.webp",
+    imageAlt: "Caribbean spiny lobster sheltering beneath a coral ledge on Saba's volcanic reef.",
     body: "From warm-water vents and nurse sharks to green turtles and flying gurnards, Ladder Bay showcases the diversity that makes Saba special. This area offers some of the island's most unique underwater landscapes.",
     sites: ["Rays n' Anchors","Hot Springs", "50/50", "Ladder Labyrinth", "Babylon", "Porites Point", "Customs House"],
     note: null,
@@ -242,8 +242,8 @@ export default function Home() {
               </div>
               <div className="overflow-hidden rounded-lg">
                 <img
-                  src="/images/Saba-003.jpg"
-                  alt="Cockpit approach to Saba"
+                  src="/images/optimized/juancho-airport-approach-saba.webp"
+                  alt="Cockpit view approaching Juancho E. Yrausquin Airport on Saba."
                   className="h-64 w-full object-cover object-center sm:h-80 lg:h-96"
                 />
               </div>
@@ -253,8 +253,8 @@ export default function Home() {
             <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
               <div className="overflow-hidden rounded-lg">
                 <img
-                  src="/images/Saba-024.jpg"
-                  alt="Saba accommodation"
+                  src="/images/optimized/saba-024.webp"
+                  alt="Caribbean reef shark cruising above the reef in the Saba Marine Park."
                   className="h-64 w-full object-cover object-center sm:h-80 lg:h-96"
                 />
               </div>
@@ -287,8 +287,8 @@ export default function Home() {
               </div>
               <div className="overflow-hidden rounded-lg">
                 <img
-                  src="/images/CandiceLandau096.jpg"
-                  alt="Saba coast and tide pools"
+                  src="/images/optimized/green-turtle-with-diver-saba.webp"
+                  alt="Green turtle swimming above open water with a diver in the background, Saba."
                   className="h-64 w-full object-cover object-center sm:h-80 lg:h-96"
                 />
               </div>
@@ -298,8 +298,8 @@ export default function Home() {
             <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
               <div className="overflow-hidden rounded-lg">
                 <img
-                  src="/images/Saba-146.jpg"
-                  alt="Saba village life"
+                  src="/images/optimized/fort-bay-harbor-saba.webp"
+                  alt="Fort Bay harbor framed by Saba's volcanic hills, Caribbean Netherlands."
                   className="h-64 w-full object-cover object-center sm:h-80 lg:h-96"
                 />
               </div>
@@ -323,8 +323,8 @@ export default function Home() {
       {/* 5. Final CTA */}
       <section className="relative overflow-hidden py-28 -mt-1">
         <img
-          src="/images/SabaHarborAerial.jpg"
-          alt="Saba harbor aerial view"
+          src="/images/optimized/saba-island-aerial-golden-hour.webp"
+          alt="Aerial view of Saba rising from the Caribbean Sea at golden hour, surrounded by deep blue water."
           className="absolute inset-0 h-full w-full object-cover object-center"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0B0F3B]/60 to-[#0B0F3B]/75" />

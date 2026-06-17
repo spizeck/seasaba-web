@@ -38,7 +38,7 @@ export function Header() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={transparent ? "/images/White SEA SABA logo transparent.png" : "/images/Full color SEA SABA logo transparent.png"}
-            alt={SITE_NAME}
+            alt="Sea Saba logo"
             className="h-10 w-auto"
           />
         </Link>
