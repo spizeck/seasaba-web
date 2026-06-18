@@ -19,15 +19,15 @@ export function Hero() {
       {/* Subtle gradient behind text for readability */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/40" />
 
-      <div className="relative z-10 mx-auto max-w-3xl flex-1 flex flex-col items-center justify-center px-4 py-20 text-center sm:px-6 lg:px-8">
-        <h1 className="font-heading italic text-4xl leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl" style={{ textShadow: '0 2px 10px rgba(0,0,0,0.4)' }}>
+      <div className="relative z-10 mx-auto max-w-3xl flex-1 flex flex-col items-center justify-center px-4 py-10 text-center sm:px-6 sm:py-20 lg:px-8">
+        <h1 className="font-heading italic text-3xl leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl" style={{ textShadow: '0 2px 10px rgba(0,0,0,0.4)' }}>
           Dive the Extraordinary.
         </h1>
-        <p className="mx-auto mt-6 max-w-lg text-base leading-relaxed text-white/90 sm:text-lg" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.35)' }}>
+        <p className="mx-auto mt-4 max-w-lg text-base leading-relaxed text-white/90 sm:mt-6 sm:text-lg" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.35)' }}>
           Just 5 square miles above.<br className="hidden sm:block" />{" "}
           Some of the Caribbean&apos;s most unique diving below.
         </p>
-        <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+        <div className="mt-6 flex flex-col items-center gap-3 sm:mt-10 sm:flex-row sm:justify-center sm:gap-4">
           <Button
             asChild
             size="lg"
@@ -56,7 +56,7 @@ export function Hero() {
 
       {/* Trust indicator bar — anchored at bottom of hero */}
       <div className="relative z-10 w-full border-t border-white/20 bg-black/30 backdrop-blur-sm">
-        <div className="mx-auto max-w-6xl px-4 py-5 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-6xl px-4 py-3 sm:px-6 sm:py-5 lg:px-8">
           <div className="grid grid-cols-3 gap-4">
             {TRUST_INDICATORS.map((item) => (
               <div key={item.stat} className="text-center">
