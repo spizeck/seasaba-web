@@ -1,10 +1,11 @@
 import Link from "next/link";
 
 const SOCIAL_LINKS = [
-  { label: "Instagram", href: "https://instagram.com/seasaba" },
-  { label: "Facebook", href: "https://facebook.com/seasaba" },
-  { label: "TripAdvisor", href: "https://www.tripadvisor.com/Attraction_Review-g147353-d530986-Reviews-Sea_Saba-Saba_Caribbean_Netherlands.html" },
-  { label: "Google Reviews", href: "https://g.page/r/CeZ2Xx3h3OIOEAE/review" },
+  { label: "Instagram", href: "https://www.instagram.com/seasaba/" },
+  { label: "Facebook", href: "https://www.facebook.com/sea.saba/" },
+  { label: "YouTube", href: "https://youtube.com/@sea_saba" },
+  { label: "TripAdvisor", href: "https://www.tripadvisor.com/Attraction_Review-g147337-d1206831-Reviews-Sea_Saba_Dive_Center-Windwardside_Saba.html" },
+  { label: "Google Reviews", href: "https://share.google/WnkPS93TFHU4rCFl9" },
 ] as const;
 
 export function Footer() {
@@ -83,21 +84,6 @@ export function Footer() {
               </a>
             </div>
 
-            {/* Google Reviews rating */}
-            <div className="mt-5">
-              <p className="text-sm text-muted-foreground">
-                <span className="text-amber-500" aria-hidden="true">★★★★★</span>{" "}
-                Rated 4.9/5 on Google
-              </p>
-              <a
-                href="https://g.page/r/CeZ2Xx3h3OIOEAE/review"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-1 inline-block text-sm text-muted-foreground transition-colors hover:text-foreground"
-              >
-                Read Reviews →
-              </a>
-            </div>
           </div>
 
         </div>

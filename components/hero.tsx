@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
-const TRUST_INDICATORS = [
+const TRUST_INDICATORS: { stat: string; label: string; href?: string }[] = [
   { stat: "Since 1985", label: "Established" },
-  { stat: "30+", label: "Dive Sites" },
-  { stat: "Marine Park", label: "Since 1987" },
-] as const;
+  { stat: "30+ Dive Sites", label: "Protected Waters" },
+  { stat: "\u2605\u2605\u2605\u2605\u2605 4.8/5", label: "Google & TripAdvisor", href: "https://share.google/WnkPS93TFHU4rCFl9" },
+];
 
 export function Hero() {
   return (
@@ -58,16 +58,33 @@ export function Hero() {
       <div className="relative z-10 w-full border-t border-white/20 bg-black/30 backdrop-blur-sm">
         <div className="mx-auto max-w-6xl px-4 py-3 sm:px-6 sm:py-5 lg:px-8">
           <div className="grid grid-cols-3 gap-4">
-            {TRUST_INDICATORS.map((item) => (
-              <div key={item.stat} className="text-center">
-                <div className="text-base font-semibold text-white sm:text-lg" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.4)' }}>
-                  {item.stat}
+            {TRUST_INDICATORS.map((item) => {
+              const inner = (
+                <>
+                  <div className="text-sm font-semibold text-white sm:text-base" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.4)' }}>
+                    {item.stat}
+                  </div>
+                  <div className="mt-0.5 text-xs text-white/75 uppercase tracking-wide">
+                    {item.label}
+                  </div>
+                </>
+              );
+              return item.href ? (
+                <a
+                  key={item.stat}
+                  href={item.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-center transition-opacity hover:opacity-80"
+                >
+                  {inner}
+                </a>
+              ) : (
+                <div key={item.stat} className="text-center">
+                  {inner}
                 </div>
-                <div className="mt-0.5 text-xs text-white/75 uppercase tracking-wide">
-                  {item.label}
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>
