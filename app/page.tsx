@@ -7,16 +7,19 @@ const WHY_SABA_FEATURED = [
     heading: "World-Famous Pinnacles",
     body: "Volcanic origins created dramatic underwater pinnacles unlike anything else in the Caribbean. These seamounts rise from the deep and deliver encounters that divers remember for years.",
     image: "/images/optimized/divers-above-pinnacle-saba.webp",
+    bgPosition: "top",
   },
   {
     heading: "Uncrowded by Design",
     body: "Saba has chosen a different path. There are no large resorts, no cruise ship crowds, and no busy dive boats competing for space. The result is a quieter, more personal experience both above and below the surface.",
     image: "/images/optimized/fin-and-tonic-boat-diamond-rock.webp",
+    bgPosition: "center",
   },
   {
     heading: "Small Island, Big Heart",
     body: "Our greatest asset isn't found underwater. It's the people. Friendly faces, welcoming communities, and genuine island hospitality make visitors feel at home from the moment they arrive.",
     image: "/images/optimized/windwardside-village-saba.webp",
+    bgPosition: "center",
   },
 ] as const;
 
@@ -97,8 +100,8 @@ export default function Home() {
               >
                 {/* Photo */}
                 <div
-                  className="h-52 w-full bg-cover bg-center transition-transform duration-500 group-hover:scale-105 sm:h-60"
-                  style={{ backgroundImage: `url('${item.image}')` }}
+                  className="h-52 w-full bg-cover transition-transform duration-500 group-hover:scale-105 sm:h-60"
+                  style={{ backgroundImage: `url('${item.image}')`, backgroundPosition: item.bgPosition }}
                 />
                 {/* Content */}
                 <div className="flex flex-1 flex-col bg-background p-5">
