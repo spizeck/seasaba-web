@@ -4,26 +4,53 @@ import { useEffect, useRef, useState } from "react";
 
 const CF_SCRIPT_SRC = "//seasaba.checkfront.com/lib/interface--0.js";
 const CF_SCRIPT_ID = "checkfront-interface-script";
-const CF_WIDGET_CONFIG = {
-  host: "seasaba.checkfront.com",
-  target: "CHECKFRONT_WIDGET_01",
-  item_id: "245,244,243,246,247,248,253,249,254",
-  category_id: "4,51,49",
-  tid: "seasaba-website",
-  options: "category_select",
-  style: "font-family: Inter",
-  provider: "droplet",
-} as const;
+
+// Simplified slug to Checkfront item ID mapping
+const SLUG_TO_ITEM_ID: Record<string, string> = {
+  "classic": "244",
+  "advanced": "243",
+  "afternoon": "245",
+  "snorkel": "246",
+  "private": "254",
+};
+
+// Item ID to display name mapping
+const ITEM_NAMES: Record<string, string> = {
+  "244": "Classic 2-Tank Dive",
+  "243": "Advanced 2-Tank Dive",
+  "245": "Afternoon 1-Tank Dive",
+  "246": "Afternoon Snorkel Trip",
+  "254": "Private Charter",
+  "248": "Shore Diving (Tent Reef)",
+  "253": "Nitrox Upgrade",
+  "249": "Dive Packages",
+};
+
+const ALL_ITEM_IDS = "245,244,243,246,247,248,253,249,254";
 
 const POLL_INTERVAL_MS = 100;
 const POLL_TIMEOUT_MS = 12000;
 const DIRECT_BOOKING_URL = "https://seasaba.checkfront.com/reserve/";
 
+function getPreselectedItemId(): string | null {
+  if (typeof window === "undefined") return null;
+  const params = new URLSearchParams(window.location.search);
+  const slug = params.get("item");
+  if (!slug) return null;
+  // Translate slug to Checkfront item ID, or return slug if it's already numeric
+  return SLUG_TO_ITEM_ID[slug] || slug;
+}
+
 export function BookingWidget() {
   const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
+  const [preselectedItem, setPreselectedItem] = useState<string | null>(null);
   const renderedRef = useRef(false);
 
   useEffect(() => {
+    // Get preselected item from URL
+    const itemId = getPreselectedItemId();
+    setPreselectedItem(itemId);
+
     if (renderedRef.current) return;
 
     let pollTimer: ReturnType<typeof setInterval> | null = null;
@@ -44,9 +71,21 @@ export function BookingWidget() {
 
       suppressScroll();
 
+      // Build widget config based on preselected item
+      const widgetConfig = {
+        host: "seasaba.checkfront.com",
+        target: "CHECKFRONT_WIDGET_01",
+        item_id: itemId || ALL_ITEM_IDS,
+        category_id: itemId ? undefined : "4,51,49",
+        tid: "seasaba-website",
+        options: itemId ? undefined : "category_select",
+        style: "font-family: Inter",
+        provider: "droplet",
+      };
+
       try {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        new (window as any).DROPLET.Widget(CF_WIDGET_CONFIG).render();
+        new (window as any).DROPLET.Widget(widgetConfig).render();
         setStatus("ready");
       } catch {
         setStatus("error");
@@ -108,6 +147,20 @@ export function BookingWidget() {
               Continue to Secure Booking System
             </a>
           </div>
+        </div>
+      )}
+
+      {preselectedItem && (
+        <div className="mb-6 rounded-lg border border-primary/20 bg-primary/5 p-4">
+          <p className="text-sm font-medium text-primary">
+            Booking: {ITEM_NAMES[preselectedItem] || "Selected Dive Experience"}
+          </p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Check availability below or{" "}
+            <a href="/book" className="underline hover:text-foreground">
+              view all options
+            </a>
+          </p>
         </div>
       )}
 

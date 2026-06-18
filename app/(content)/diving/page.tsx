@@ -11,71 +11,76 @@ export const metadata = createMetadata({
 });
 
 const TRUST_SIGNALS = [
-  { icon: Users, label: "Small guided groups" },
-  { icon: Ship, label: "Custom dive boats" },
-  { icon: Droplets, label: "Nitrox available" },
+  { icon: Users, label: "Small Guided Groups" },
+  { icon: Ship, label: "Caribbean-Built Dive Boats" },
+  { icon: Droplets, label: "Free 32% Nitrox" },
   { icon: Shield, label: "Saba Marine Park" },
 ];
 
 const DIVE_EXPERIENCES = [
   {
-    title: "Advanced 2-Tank Dive",
-    subtitle: "For experienced divers",
+    title: "Classic 2-Tank Dive",
+    subtitle: "THE CLASSIC SEA SABA EXPERIENCE",
     description:
-      "Two guided dives at Saba's premier sites — pinnacles, walls, and seamounts. Maximum 6 divers per guide. Includes tanks, weights, and professional guidance.",
-    details: ["7:30 AM departure", "6+ divers max per guide", "Advanced Open Water required"],
-    cta: "Book Advanced Diving",
-    href: "/book",
+      "Two relaxed morning dives showcasing Saba's famous pinnacles, walls, and reefs. Perfect for most certified divers and our most popular option.",
+    details: ["10:30 AM departure", "8 divers max per guide", "Nitrox included", "Scuba Diver certification minimum"],
+    cta: "Book classic diving",
+    href: "/book?item=classic",
+    itemId: "classic",
     featured: true,
   },
   {
-    title: "Classic 2-Tank Dive",
-    subtitle: "Our most popular option",
+    title: "Advanced 2-Tank Dive",
+    subtitle: "FOR EXPERIENCED DIVERS",
     description:
-      "Two guided dives suitable for all certified divers. Explore Saba's dramatic underwater topography with experienced guides in small groups.",
-    details: ["7:30 AM departure", "6 divers max per guide", "Open Water certification required"],
-    cta: "Book Diving",
-    href: "/book",
+      "Explore deeper pinnacles, walls, and seamounts with extended bottom times. Designed for experienced divers comfortable with deeper profiles.",
+    details: ["9:00 AM departure", "Nitrox included", "Dive computer required", "Advanced Open Water + 20 dives OR Open Water + 50 dives"],
+    cta: "Book advanced diving",
+    href: "/book?item=advanced",
+    itemId: "advanced",
     featured: false,
   },
   {
     title: "Afternoon 1-Tank Dive",
-    subtitle: "For the time-conscious",
+    subtitle: "A RELAXED AFTERNOON DIVE",
     description:
-      "Single afternoon dive when conditions permit. A focused experience at one of Saba&apos;s signature sites. Perfect for those with limited time.",
-    details: ["2:00 PM departure", "Subject to conditions", "Open Water certification required"],
-    cta: "Check Availability",
-    href: "/book",
+      "A single afternoon dive to one of Saba's signature sites. Great for adding an extra dive or enjoying a lighter day.",
+    details: ["1:00 PM departure", "Up to 70 ft / 21 m", "Open Water minimum", "Dive computer required"],
+    cta: "Book afternoon dive",
+    href: "/book?item=afternoon",
+    itemId: "afternoon",
     featured: false,
   },
   {
     title: "Afternoon Snorkel Trip",
-    subtitle: "Surface exploration",
+    subtitle: "SURFACE EXPLORATION",
     description:
-      "Guided snorkel trip to Saba&apos;s shallow sites. Excellent visibility, volcanic formations, and abundant marine life accessible from the surface.",
-    details: ["2:00 PM departure", "All experience levels", "Equipment available"],
-    cta: "Book Snorkeling",
-    href: "/book",
-    featured: false,
-  },
-  {
-    title: "SDI / TDI Courses",
-    subtitle: "Professional instruction",
-    description:
-      "From Discover Scuba to Divemaster. Learn in one of the Caribbean's most rewarding environments with certified, experienced instructors.",
-    details: ["Small class sizes", "All certification levels", "Theory + practical"],
-    cta: "View Courses",
-    href: "/courses",
+      "Join the afternoon boat and experience Saba's clear water, coral reefs, turtles, and abundant marine life from the surface.",
+    details: ["1:00 PM departure", "Equipment included", "Open water conditions", "Optional private guide available"],
+    cta: "Book snorkeling",
+    href: "/book?item=snorkel",
+    itemId: "snorkel",
     featured: false,
   },
   {
     title: "Private Charter",
-    subtitle: "Exclusive experiences",
+    subtitle: "EXCLUSIVE EXPERIENCES",
     description:
-      "Full or half-day private boat charter with dedicated guide. Customized itinerary for your group. Ideal for photographers, families, or special occasions.",
-    details: ["Custom scheduling", "Dedicated guide", "Full boat access"],
-    cta: "Inquire Now",
-    href: "/contact",
+      "Private diving aboard our custom 38-foot catamarans. Flexible schedules and personalized dive plans for families, photographers, and groups.",
+    details: ["Half or full day", "Up to 8 guests", "Dedicated captain", "Flexible itinerary"],
+    cta: "Book private charter",
+    href: "/book?item=private",
+    itemId: "private",
+    featured: false,
+  },
+  {
+    title: "SDI / TDI Courses",
+    subtitle: "PROFESSIONAL INSTRUCTION",
+    description:
+      "From Discover Scuba to Divemaster, learn with experienced instructors in one of the Caribbean's most rewarding diving environments.",
+    details: ["All certification levels", "Small classes", "SDI and TDI training", "Private instruction available"],
+    cta: "View courses",
+    href: "/courses",
     featured: false,
   },
 ] as const;
@@ -89,9 +94,9 @@ export default function DivingPage() {
       </h1>
 
       <p className="mt-6 text-base leading-relaxed text-muted-foreground">
-        Professional boat diving in the Saba Marine Park since 1985. Small guided 
-        groups on custom dive boats with experienced local professionals who know 
-        these waters intimately.
+        Sea Saba is Saba's only continuously operating dive center since 1985. Four 
+        decades of uninterrupted operation, experienced local guides with unmatched 
+        knowledge of the island, and generations of divers have explored Saba with us.
       </p>
 
       {/* Trust Signals */}
@@ -111,30 +116,31 @@ export default function DivingPage() {
       <section className="mt-12">
         <h2 className="text-xl font-semibold text-foreground">The Sea Saba Experience</h2>
         <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-          We run small guided groups on large, comfortable dive boats. Every dive is led 
-          by experienced guides who have spent years exploring Saba&apos;s waters. Our approach 
-          is professional but unhurried — we take the time to do things right.
+          Sea Saba operates 38-foot power catamarans built in the Caribbean for Caribbean 
+          conditions. We run relaxed, professional dive days with small guided groups, 
+          experienced local guides, and spacious boats. Our approach is safety-focused 
+          and unhurried.
         </p>
         <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
           <li className="flex items-start gap-2">
             <Award className="mt-0.5 h-4 w-4 text-primary" />
-            <span>Operating in Saba since 1985 — decades of local expertise</span>
+            <span>Saba's only continuously operating dive center since 1985</span>
           </li>
           <li className="flex items-start gap-2">
             <Users className="mt-0.5 h-4 w-4 text-primary" />
-            <span>Maximum 6 divers per guide — small groups, personal attention</span>
+            <span>Maximum 8 divers per guide for small groups and personal attention</span>
           </li>
           <li className="flex items-start gap-2">
             <Ship className="mt-0.5 h-4 w-4 text-primary" />
-            <span>Custom dive boats designed for Saba&apos;s conditions — spacious and stable</span>
+            <span>38-foot power catamarans with large shaded decks, camera tables, marine head, fresh water, and stable platform</span>
           </li>
           <li className="flex items-start gap-2">
             <Droplets className="mt-0.5 h-4 w-4 text-primary" />
-            <span>Nitrox included on qualifying dives — longer bottom times, shorter surface intervals</span>
+            <span>Free 32% Nitrox for qualified divers</span>
           </li>
           <li className="flex items-start gap-2">
             <Shield className="mt-0.5 h-4 w-4 text-primary" />
-            <span>Saba Marine Park protection — healthy reefs, exceptional visibility, no crowds</span>
+            <span>Saba Marine Park diving with volcanic pinnacles, walls, reefs, and protected waters</span>
           </li>
         </ul>
       </section>
@@ -157,7 +163,7 @@ export default function DivingPage() {
               }`}
             >
               {option.featured && (
-                <span className="absolute -top-3 left-6 bg-primary px-3 py-1 text-xs font-medium text-primary-foreground">
+                <span className="absolute -top-3 left-6 bg-primary px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary-foreground">
                   Most Popular
                 </span>
               )}
@@ -179,7 +185,7 @@ export default function DivingPage() {
                   </span>
                 ))}
               </div>
-              <div className="mt-6">
+              <div className="mt-auto pt-6">
                 <Button asChild variant={option.featured ? "default" : "outline"} className="w-full">
                   <Link href={option.href}>{option.cta}</Link>
                 </Button>
@@ -202,9 +208,9 @@ export default function DivingPage() {
             <h3 className="font-medium text-foreground">Before the Dive</h3>
             <ul className="mt-2 space-y-2 text-sm text-muted-foreground">
               <li>• Hotel taxi pickup from Windwardside or The Bottom</li>
-              <li>• Check-in at Fort Bay harbor — gear setup assistance available</li>
-              <li>• Site briefing with your guide — conditions, topography, marine life</li>
-              <li>• Small group boarding — no rushing, no overcrowding</li>
+              <li>• Check-in at Fort Bay harbor. Gear setup assistance available</li>
+              <li>• Site briefing with your guide covering conditions, topography, and marine life</li>
+              <li>• Small group boarding with no rushing or overcrowding</li>
             </ul>
           </div>
           <div>
