@@ -1,7 +1,7 @@
 import { createMetadata } from "@/lib/metadata";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Users, Clock, Award, Ship, Droplets, Shield } from "lucide-react";
+import { Users, Award, Ship, Droplets } from "lucide-react";
 
 export const metadata = createMetadata({
   title: "Diving with Sea Saba",
@@ -11,10 +11,10 @@ export const metadata = createMetadata({
 });
 
 const TRUST_SIGNALS = [
-  { icon: Users, label: "Small Guided Groups" },
-  { icon: Ship, label: "Caribbean-Built Dive Boats" },
-  { icon: Droplets, label: "Free 32% Nitrox" },
-  { icon: Shield, label: "Saba Marine Park" },
+  { icon: Users, label: "Small Groups", sublabel: "Maximum 8 divers per guide" },
+  { icon: Ship, label: "Complimentary Taxi Shuttle", sublabel: "Anywhere on Saba" },
+  { icon: Droplets, label: "Free 32% Nitrox", sublabel: "For certified divers" },
+  { icon: Award, label: "Since 1985", sublabel: "Saba's only continuously operating dive center" },
 ];
 
 const DIVE_EXPERIENCES = [
@@ -22,9 +22,15 @@ const DIVE_EXPERIENCES = [
     title: "Classic 2-Tank Dive",
     subtitle: "THE CLASSIC SEA SABA EXPERIENCE",
     description:
-      "Two relaxed morning dives showcasing Saba's famous pinnacles, walls, and reefs. Perfect for most certified divers and our most popular option.",
-    details: ["10:30 AM departure", "8 divers max per guide", "Nitrox included", "Scuba Diver certification minimum"],
-    cta: "Book classic diving",
+      "Two relaxed dives in Saba's Marine Park. Perfect for most certified divers and our most popular option.",
+    details: [
+      "10:30 AM departure",
+      "Return about 2:30 PM",
+      "Two dives to ~70 ft / 21 m",
+      "Free 32% Nitrox",
+      "Scuba Diver minimum",
+    ],
+    cta: "Book Classic Diving",
     href: "/book?item=classic",
     itemId: "classic",
     featured: true,
@@ -33,9 +39,16 @@ const DIVE_EXPERIENCES = [
     title: "Advanced 2-Tank Dive",
     subtitle: "FOR EXPERIENCED DIVERS",
     description:
-      "Explore deeper pinnacles, walls, and seamounts with extended bottom times. Designed for experienced divers comfortable with deeper profiles.",
-    details: ["9:00 AM departure", "Nitrox included", "Dive computer required", "Advanced Open Water + 20 dives OR Open Water + 50 dives"],
-    cta: "Book advanced diving",
+      "Explore deeper pinnacles, walls, and seamounts with dramatic underwater terrain.",
+    details: [
+      "9:00 AM departure",
+      "Return about 1:00 PM",
+      "Dive 1 to ~110 ft / 33 m",
+      "Dive 2 to ~70 ft / 21 m",
+      "Free Nitrox (mandatory on Dive 1)",
+      "AOW + 20 dives OR OW + 50 dives",
+    ],
+    cta: "Book Advanced Diving",
     href: "/book?item=advanced",
     itemId: "advanced",
     featured: false,
@@ -44,9 +57,14 @@ const DIVE_EXPERIENCES = [
     title: "Afternoon 1-Tank Dive",
     subtitle: "A RELAXED AFTERNOON DIVE",
     description:
-      "A single afternoon dive to one of Saba's signature sites. Great for adding an extra dive or enjoying a lighter day.",
-    details: ["1:00 PM departure", "Up to 70 ft / 21 m", "Open Water minimum", "Dive computer required"],
-    cta: "Book afternoon dive",
+      "A single afternoon dive to one of Saba's signature sites. Great for adding another dive or enjoying a lighter day.",
+    details: [
+      "1:00 PM departure",
+      "Return about 3:00 PM",
+      "Up to ~70 ft / 21 m",
+      "Scuba Diver minimum",
+    ],
+    cta: "Book Afternoon Dive",
     href: "/book?item=afternoon",
     itemId: "afternoon",
     featured: false,
@@ -55,9 +73,15 @@ const DIVE_EXPERIENCES = [
     title: "Afternoon Snorkel Trip",
     subtitle: "SURFACE EXPLORATION",
     description:
-      "Join the afternoon boat and experience Saba's clear water, coral reefs, turtles, and abundant marine life from the surface.",
-    details: ["1:00 PM departure", "Equipment included", "Open water conditions", "Optional private guide available"],
-    cta: "Book snorkeling",
+      "Enjoy Saba's reefs, turtles, and marine life from the surface while divers explore below.",
+    details: [
+      "1:00 PM departure",
+      "Return about 3:00 PM",
+      "Equipment included",
+      "Comfortable swimmers",
+      "Unguided experience",
+    ],
+    cta: "Book Snorkeling",
     href: "/book?item=snorkel",
     itemId: "snorkel",
     featured: false,
@@ -66,9 +90,14 @@ const DIVE_EXPERIENCES = [
     title: "Private Charter",
     subtitle: "EXCLUSIVE EXPERIENCES",
     description:
-      "Private diving aboard our custom 38-foot catamarans. Flexible schedules and personalized dive plans for families, photographers, and groups.",
-    details: ["Half or full day", "Up to 8 guests", "Dedicated captain", "Flexible itinerary"],
-    cta: "Book private charter",
+      "Private diving aboard our custom Caribbean-built catamarans with flexible schedules and personalized itineraries.",
+    details: [
+      "Half or full day",
+      "Up to 8 guests",
+      "Dedicated captain",
+      "Flexible departure times",
+    ],
+    cta: "Book Private Charter",
     href: "/book?item=private",
     itemId: "private",
     featured: false,
@@ -89,14 +118,28 @@ export default function DivingPage() {
   return (
     <>
       {/* Page Hero */}
-      <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-        Diving with Sea Saba
-      </h1>
+      <div className="relative -mx-4 -mt-6 mb-8 overflow-hidden sm:-mx-6 lg:-mx-8">
+        <div
+          className="h-64 bg-cover bg-center sm:h-80 lg:h-96"
+          style={{ backgroundImage: "url('/images/optimized/diving-hero.webp')" }}
+        >
+          <div className="flex h-full items-center justify-center bg-black/40">
+            <div className="text-center px-4">
+              <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl drop-shadow-lg">
+                Diving with Sea Saba
+              </h1>
+              <p className="mt-3 text-base text-white/90 drop-shadow sm:text-lg max-w-xl mx-auto">
+                Professional boat diving in Saba&apos;s Marine Park since 1985
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
 
-      <p className="mt-6 text-base leading-relaxed text-muted-foreground">
-        Sea Saba is Saba's only continuously operating dive center since 1985. Four 
-        decades of uninterrupted operation, experienced local guides with unmatched 
-        knowledge of the island, and generations of divers have explored Saba with us.
+      <p className="text-base leading-relaxed text-muted-foreground">
+        Sea Saba has been introducing divers to Saba since 1985. As the island&apos;s only 
+        continuously operating dive center, we combine decades of local knowledge with 
+        small groups, comfortable boats, and personalized service.
       </p>
 
       {/* Trust Signals */}
@@ -104,43 +147,53 @@ export default function DivingPage() {
         {TRUST_SIGNALS.map((signal) => (
           <div
             key={signal.label}
-            className="flex items-center gap-3 rounded-lg border border-border/40 bg-muted/20 p-4"
+            className="flex flex-col rounded-lg border border-border/40 bg-muted/20 p-4"
           >
-            <signal.icon className="h-5 w-5 text-primary" />
-            <span className="text-sm font-medium text-foreground">{signal.label}</span>
+            <div className="flex items-center gap-2">
+              <signal.icon className="h-5 w-5 text-primary" />
+              <span className="text-sm font-semibold text-foreground">{signal.label}</span>
+            </div>
+            <span className="mt-1 text-xs text-muted-foreground">{signal.sublabel}</span>
           </div>
         ))}
       </div>
 
       {/* Dive Experience Intro */}
       <section className="mt-12">
-        <h2 className="text-xl font-semibold text-foreground">The Sea Saba Experience</h2>
+        <div className="overflow-hidden rounded-lg">
+          <img
+            src="/images/optimized/guests-on-bow-saba.webp"
+            alt="Guests sitting on the bow of a Sea Saba boat looking at Saba island."
+            className="h-56 w-full object-cover object-center sm:h-72 lg:h-80"
+          />
+        </div>
+        <h2 className="mt-8 text-xl font-semibold text-foreground">The Sea Saba Experience</h2>
         <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-          Sea Saba operates 38-foot power catamarans built in the Caribbean for Caribbean 
-          conditions. We run relaxed, professional dive days with small guided groups, 
-          experienced local guides, and spacious boats. Our approach is safety-focused 
-          and unhurried.
+          Since 1985, generations of divers have explored Saba with Sea Saba. Our custom 38-foot 
+          catamarans are built for Caribbean conditions and designed around diver comfort, with 
+          spacious shaded decks, camera tables, freshwater rinse buckets, large ladders, and 
+          experienced local crews.
         </p>
-        <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
+        <ul className="mt-5 space-y-2 text-sm text-muted-foreground">
           <li className="flex items-start gap-2">
-            <Award className="mt-0.5 h-4 w-4 text-primary" />
-            <span>Saba's only continuously operating dive center since 1985</span>
+            <span className="text-primary">✓</span>
+            <span>Complimentary taxi pickup anywhere on Saba</span>
           </li>
           <li className="flex items-start gap-2">
-            <Users className="mt-0.5 h-4 w-4 text-primary" />
-            <span>Maximum 8 divers per guide for small groups and personal attention</span>
+            <span className="text-primary">✓</span>
+            <span>Maximum 8 divers per guide</span>
           </li>
           <li className="flex items-start gap-2">
-            <Ship className="mt-0.5 h-4 w-4 text-primary" />
-            <span>38-foot power catamarans with large shaded decks, camera tables, marine head, fresh water, and stable platform</span>
+            <span className="text-primary">✓</span>
+            <span>Free 32% Nitrox for certified divers</span>
           </li>
           <li className="flex items-start gap-2">
-            <Droplets className="mt-0.5 h-4 w-4 text-primary" />
-            <span>Free 32% Nitrox for qualified divers</span>
+            <span className="text-primary">✓</span>
+            <span>Large stable catamarans with shade and marine heads</span>
           </li>
           <li className="flex items-start gap-2">
-            <Shield className="mt-0.5 h-4 w-4 text-primary" />
-            <span>Saba Marine Park diving with volcanic pinnacles, walls, reefs, and protected waters</span>
+            <span className="text-primary">✓</span>
+            <span>Saba&apos;s only continuously operating dive center since 1985</span>
           </li>
         </ul>
       </section>
@@ -178,9 +231,8 @@ export default function DivingPage() {
                 {option.details.map((detail) => (
                   <span
                     key={detail}
-                    className="inline-flex items-center gap-1 rounded-md bg-muted px-2 py-1 text-xs text-muted-foreground"
+                    className="inline-flex items-center rounded-md bg-muted px-2 py-1 text-xs text-muted-foreground"
                   >
-                    <Clock className="h-3 w-3" />
                     {detail}
                   </span>
                 ))}
@@ -195,43 +247,146 @@ export default function DivingPage() {
         </div>
       </section>
 
-      {/* What to Expect */}
-      <section className="mt-14 rounded-lg border border-border/40 bg-muted/20 p-8">
-        <h2 className="text-xl font-semibold text-foreground">What to Expect</h2>
-        <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-          A typical dive day with Sea Saba follows a relaxed but professional rhythm. 
-          We prioritize safety, comfort, and getting you in the water at the right sites 
-          under the right conditions.
+      {/* Dive More Save More */}
+      <section className="mt-14">
+        <h2 className="text-xl font-semibold text-foreground">Dive More. Save More.</h2>
+        <p className="mt-1 text-sm text-muted-foreground">Stay longer. Experience more.</p>
+        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          Most guests spend several days exploring Saba's world-famous pinnacles, walls, and reefs. 
+          Multi-day pricing rewards continuous diving schedules, and complimentary 32% Nitrox is 
+          included on qualifying dives.
         </p>
-        <div className="mt-6 grid gap-6 sm:grid-cols-2">
-          <div>
-            <h3 className="font-medium text-foreground">Before the Dive</h3>
-            <ul className="mt-2 space-y-2 text-sm text-muted-foreground">
-              <li>• Hotel taxi pickup from Windwardside or The Bottom</li>
-              <li>• Check-in at Fort Bay harbor. Gear setup assistance available</li>
-              <li>• Site briefing with your guide covering conditions, topography, and marine life</li>
-              <li>• Small group boarding with no rushing or overcrowding</li>
+
+        <div className="mt-5 grid gap-3 sm:grid-cols-2">
+          <div className="flex items-start gap-3 rounded-lg border border-border/40 bg-muted/20 p-3">
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">✓</span>
+            <div>
+              <h4 className="text-sm font-medium text-foreground">Better Daily Rates</h4>
+              <p className="text-xs text-muted-foreground">Multi-day packages lower your daily cost.</p>
+            </div>
+          </div>
+          <div className="flex items-start gap-3 rounded-lg border border-border/40 bg-muted/20 p-3">
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">✓</span>
+            <div>
+              <h4 className="text-sm font-medium text-foreground">Free 32% Nitrox</h4>
+              <p className="text-xs text-muted-foreground">Included on qualifying dives for certified divers.</p>
+            </div>
+          </div>
+          <div className="flex items-start gap-3 rounded-lg border border-border/40 bg-muted/20 p-3">
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">✓</span>
+            <div>
+              <h4 className="text-sm font-medium text-foreground">Flexible Schedule</h4>
+              <p className="text-xs text-muted-foreground">One rest day is allowed without resetting package pricing.</p>
+            </div>
+          </div>
+          <div className="flex items-start gap-3 rounded-lg border border-border/40 bg-muted/20 p-3">
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">✓</span>
+            <div>
+              <h4 className="text-sm font-medium text-foreground">Build Your Own Package</h4>
+              <p className="text-xs text-muted-foreground">Add afternoon and night dives to customize your stay.</p>
+            </div>
+          </div>
+          <div className="flex items-start gap-3 rounded-lg border border-border/40 bg-muted/20 p-3 sm:col-span-2">
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">✓</span>
+            <div>
+              <h4 className="text-sm font-medium text-foreground">Rental Equipment Available</h4>
+              <p className="text-xs text-muted-foreground">Full rental packages are available if needed.</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-5 flex justify-center">
+          <Button asChild variant="outline" size="sm">
+            <Link href="/book">View Packages & Pricing</Link>
+          </Button>
+        </div>
+      </section>
+
+      {/* A Day with Sea Saba */}
+      <section className="mt-16">
+        <h2 className="text-xl font-semibold text-foreground">A Day with Sea Saba</h2>
+        <div className="mt-6 grid gap-5 lg:grid-cols-3">
+          <div className="rounded-lg border border-border/40 bg-muted/20 p-6">
+            <h3 className="text-sm font-semibold text-foreground">Before the Dive</h3>
+            <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
+              <li className="flex items-start gap-3">
+                <span className="text-primary">✓</span>
+                <span>Complimentary island-wide taxi pickup and return service</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="text-primary">✓</span>
+                <span>Crew assistance with equipment setup and tank changes</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="text-primary">✓</span>
+                <span>PRO valves supporting both DIN and yoke regulators</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="text-primary">✓</span>
+                <span>Professional dive briefings covering conditions and marine life</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="text-primary">✓</span>
+                <span>Save-a-Dive kits, spare equipment, oxygen, and first aid always onboard</span>
+              </li>
             </ul>
           </div>
-          <div>
-            <h3 className="font-medium text-foreground">On the Boat</h3>
-            <ul className="mt-2 space-y-2 text-sm text-muted-foreground">
-              <li>• Short, comfortable ride to dive sites</li>
-              <li>• Gear check and final briefing at the site</li>
-              <li>• Entry assistance from crew</li>
-              <li>• Surface interval with refreshments and surface support</li>
+          <div className="rounded-lg border border-border/40 bg-muted/20 p-6">
+            <h3 className="text-sm font-semibold text-foreground">On the Boat</h3>
+            <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
+              <li className="flex items-start gap-3">
+                <span className="text-primary">✓</span>
+                <span>Custom 38-foot catamarans built in the Caribbean for Caribbean conditions</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="text-primary">✓</span>
+                <span>Shaded seating, spacious decks, bow sunning areas, and Fin & Tonic's upper deck</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="text-primary">✓</span>
+                <span>Camera tables, integrated freshwater rinse tanks, and freshwater hoses</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="text-primary">✓</span>
+                <span>Large deep ladders for easy exits</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="text-primary">✓</span>
+                <span>Filtered drinking water and Gatorade available onboard</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="text-primary">✓</span>
+                <span>Relaxed pace with experienced local crews</span>
+              </li>
+            </ul>
+          </div>
+          <div className="rounded-lg border border-border/40 bg-muted/20 p-6">
+            <h3 className="text-sm font-semibold text-foreground">After the Dive</h3>
+            <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
+              <li className="flex items-start gap-3">
+                <span className="text-primary">✓</span>
+                <span>At the end of their trip, guests can simply leave their equipment with us</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="text-primary">✓</span>
+                <span>Sea Saba rinses and delivers equipment back to guest accommodations</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="text-primary">✓</span>
+                <span>Guests are free to relax and enjoy Saba instead of carrying gear around the island</span>
+              </li>
             </ul>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="mt-12 text-center">
+      <section className="mt-20 text-center">
         <h2 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
           Ready to dive Saba?
         </h2>
         <p className="mt-3 text-base text-muted-foreground">
-          Book directly with Sea Saba for professional, small-group diving in the Caribbean's most pristine marine park.
+          Join us for world-famous pinnacles, walls, reefs, and unforgettable marine life.
         </p>
         <div className="mt-6 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
           <Button asChild size="lg" className="text-base font-semibold">

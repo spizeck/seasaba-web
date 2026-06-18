@@ -232,8 +232,8 @@ export default function Home() {
             <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
               <div className="overflow-hidden rounded-lg lg:order-2">
                 <img
-                  src="/images/optimized/juancho-airport-approach-saba.webp"
-                  alt="Cockpit view approaching Juancho E. Yrausquin Airport on Saba."
+                  src="/images/optimized/saba-212.webp"
+                  alt="Aerial view of Saba island from approaching aircraft."
                   className="h-64 w-full object-cover object-center sm:h-80 lg:h-96"
                 />
               </div>

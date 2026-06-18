@@ -1,86 +1,81 @@
 import { createMetadata } from "@/lib/metadata";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Mountain, Waves, Fish, Compass } from "lucide-react";
+import { DiveSitesMap } from "@/components/dive-sites-map";
 
 export const metadata = createMetadata({
   title: "Saba Dive Sites",
   description:
-    "Over 30 dive sites in the Saba Marine Park. Pinnacles, walls, seamounts, and reef gardens. Protected, pristine, and professionally guided.",
+    "Explore Saba's world-famous dive sites by area. From The Pinnacles to Diamond Rock, discover volcanic pinnacles, walls, reefs, and seamounts in the Saba Marine Park.",
   path: "/dive-sites",
 });
 
-const SITE_CATEGORIES = [
+const DIVE_AREAS = [
   {
-    icon: Mountain,
-    title: "Pinnacles & Seamounts",
+    id: "pinnacles",
+    title: "The Pinnacles",
     description:
-      "Saba's signature dives. Submerged volcanic formations rising from the deep, encrusted with sponges and black coral. Third Encounter, Eye of the Needle, and Diamond Rock define this category.",
-    sites: ["Third Encounter", "Eye of the Needle", "Diamond Rock", "Tent Reef"],
+      "Saba's most iconic dive sites. These submerged volcanic formations rise from the deep, creating dramatic underwater pinnacles encrusted with sponges and black coral.",
+    sites: ["Third Encounter", "Eye of the Needle", "The Pinnacles", "Tent Reef Pinnacle"],
     depth: "18–40m / 60–130ft",
-    experience: "Intermediate to Advanced",
+    marineLife: ["Pelagic sharks", "Eagle rays", "Schooling jacks", "Barracuda", "Turtles"],
+    image: "/images/optimized/divers-above-pinnacle-saba.webp",
+    imagePosition: "left",
   },
   {
-    icon: Waves,
-    title: "Walls & Drop-offs",
+    id: "tent-reef",
+    title: "Tent Reef",
     description:
-      "Sheer vertical walls along Saba's flanks. Dramatic topography with ledges, overhangs, and swim-throughs. Home to large grouper, turtles, and schooling fish.",
-    sites: ["Tent Reef Wall", "Ladder Bay", "Green Island"],
+      "A versatile area offering both the famous Tent Reef Pinnacle and the dramatic Tent Reef Wall. Perfect for divers of all levels with exceptional visibility.",
+    sites: ["Tent Reef Pinnacle", "Tent Reef Wall", "Tent Reef Ledge"],
     depth: "10–40m / 30–130ft",
-    experience: "All levels",
+    marineLife: ["Green turtles", "Caribbean reef sharks", "Colorful sponges", "Schooling fish"],
+    image: "/images/optimized/green-turtle-tent-reef.webp",
+    imagePosition: "right",
   },
   {
-    icon: Fish,
-    title: "Reef Gardens",
+    id: "ladder-bay",
+    title: "Ladder Bay",
     description:
-      "Colorful coral gardens with exceptional visibility. Perfect for photographers and marine life enthusiasts. Dense populations of reef fish and invertebrates.",
-    sites: ["Ladder Labyrinth", "Cove Bay", "The Hole"],
-    depth: "5–25m / 15–80ft",
-    experience: "All levels",
+      "Named for the historic 800-step ladder carved into the cliffside, this area features dramatic walls, intricate reef systems, and consistently excellent visibility.",
+    sites: ["Ladder Labyrinth", "Ladder Bay Wall", "The Hole", "Cove Bay"],
+    depth: "10–35m / 30–115ft",
+    marineLife: ["Spiny lobsters", "Spotted eagle rays", "Octopus", "Dense coral formations"],
+    image: "/images/optimized/spiny-lobster-ladder-bay.webp",
+    imagePosition: "left",
   },
   {
-    icon: Compass,
-    title: "Specialty Sites",
+    id: "wells-bay",
+    title: "Wells Bay",
     description:
-      "Unique dives with specific characteristics — from shark encounters to macro photography havens. Each offers something distinct for experienced divers.",
-    sites: ["Shark Shoals", "Twilight Zone", "Man O' War Shoals", "Customs House"],
-    depth: "12–35m / 40–115ft",
-    experience: "Intermediate",
-  },
-] as const;
-
-const FEATURED_SITES = [
-  {
-    name: "Third Encounter",
-    tagline: "Saba's most famous pinnacle",
-    description:
-      "A submerged seamount rising from the abyss, covered in sponges and coral. Expect pelagic life — sharks, rays, and large jacks. The definitive Saba dive.",
-    depth: "18–40m",
-    highlight: "Signature site",
+      "The northwest corner of Saba offers some of the island's most pristine and rarely visited sites. Expect exceptional visibility and untouched coral.",
+    sites: ["Wells Bay", "Man O' War Shoals", "Twilight Zone"],
+    depth: "15–40m / 50–130ft",
+    marineLife: ["Reef sharks", "Schooling barracuda", "Giant sponges", "Macro life"],
+    image: "/images/optimized/saba-volcanic-coastline.webp",
+    imagePosition: "right",
   },
   {
-    name: "Eye of the Needle",
-    tagline: "Dramatic spire formation",
+    id: "windwardside",
+    title: "Windwardside",
     description:
-      "A narrow volcanic spire rising vertically from the depths. Divers circumnavigate the structure, finding black coral, barracuda, and exceptional visibility.",
-    depth: "20–35m",
-    highlight: "Topography",
+      "The protected eastern side of the island offers calm, clear waters perfect for divers of all experience levels. Excellent for photographers and marine life enthusiasts.",
+    sites: ["Green Island", "Flat Point", "Sandy Bay"],
+    depth: "10–30m / 30–100ft",
+    marineLife: ["Green turtles", "Stingrays", "Seahorses", "Colorful reef fish"],
+    image: "/images/optimized/green-turtle-with-diver-saba.webp",
+    imagePosition: "left",
   },
   {
-    name: "Ladder Labyrinth",
-    tagline: "Intricate reef complexity",
+    id: "diamond-rock",
+    title: "Diamond Rock",
     description:
-      "A maze-like reef system with tunnels, overhangs, and canyons. Dense marine life in a compact area — ideal for photographers and curious explorers.",
-    depth: "10–25m",
-    highlight: "Marine life",
-  },
-  {
-    name: "Tent Reef Wall",
-    tagline: "Classic wall diving",
-    description:
-      "A dramatic vertical wall with ledges and crevices. Large grouper, turtles, and abundant reef fish. Excellent for all experience levels.",
-    depth: "12–40m",
-    highlight: "Versatile",
+      "A dramatic offshore pinnacle rising from 50 meters to within 5 meters of the surface. One of Saba's most spectacular and challenging sites.",
+    sites: ["Diamond Rock", "Shark Shoals"],
+    depth: "5–50m / 15–165ft",
+    marineLife: ["Hammerhead sharks", "Silky sharks", "Eagle rays", "Pelagic predators"],
+    image: "/images/optimized/reef-shark-pinnacle.webp",
+    imagePosition: "right",
   },
 ] as const;
 
@@ -89,117 +84,119 @@ export default function DiveSitesPage() {
     <>
       {/* Page Hero */}
       <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-        Dive Sites of Saba
+        Explore Saba&apos;s Dive Sites
       </h1>
-
-      <p className="mt-6 text-base leading-relaxed text-muted-foreground">
+      <p className="mt-4 text-base leading-relaxed text-muted-foreground">
         The Saba Marine Park protects over 30 dive sites around this volcanic island. 
-        Dramatic underwater topography — pinnacles rising from the deep, sheer walls 
-        dropping into blue water, and pristine reef systems — makes Saba one of the 
-        Caribbean&apos;s most rewarding dive destinations.
+        Click on the map to explore each area, or scroll to discover the world-famous 
+        pinnacles, walls, reefs, and seamounts that make Saba legendary.
       </p>
 
-      {/* Marine Park Note */}
-      <div className="mt-8 rounded-lg border border-primary/20 bg-primary/5 p-6">
-        <h2 className="text-base font-semibold text-foreground">The Saba Marine Park</h2>
-        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-          Established in 1987, the Saba Marine Park was one of the Caribbean&apos;s first 
-          comprehensive protected marine areas. Strict regulations — no anchoring, no 
-          fishing, no cruise ships — have preserved exceptional coral health and marine 
-          biodiversity. Visibility often exceeds 30m (100ft).
-        </p>
+      {/* Interactive Map */}
+      <section className="mt-8 rounded-xl border border-border/40 bg-muted/20 p-6">
+        <h2 className="text-lg font-semibold text-foreground mb-4">Interactive Site Map</h2>
+        <div className="grid gap-6 lg:grid-cols-2 lg:items-center">
+          <DiveSitesMap />
+          <div className="space-y-4">
+            <p className="text-sm text-muted-foreground">
+              Saba&apos;s dive sites cluster around distinct coastal areas, each offering 
+              unique topography and marine life. Click a point on the map to jump to that section.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {DIVE_AREAS.map((area) => (
+                <a
+                  key={area.id}
+                  href={`#${area.id}`}
+                  className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary hover:bg-primary/20 transition-colors"
+                >
+                  {area.title}
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Dive Area Sections */}
+      <div className="mt-12 space-y-16">
+        {DIVE_AREAS.map((area, index) => (
+          <section key={area.id} id={area.id} className="scroll-mt-20">
+            <div className={`grid gap-8 lg:grid-cols-2 lg:items-center ${area.imagePosition === "right" ? "lg:[&>*:first-child]:order-2" : ""}`}>
+              {/* Image */}
+              <div className="overflow-hidden rounded-lg">
+                <img
+                  src={area.image}
+                  alt={`Diving at ${area.title}`}
+                  className="h-64 w-full object-cover object-center sm:h-80 lg:h-96"
+                />
+              </div>
+              
+              {/* Content */}
+              <div className={area.imagePosition === "right" ? "lg:order-1" : ""}>
+                <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                  {area.title}
+                </h2>
+                <p className="mt-4 text-base leading-relaxed text-muted-foreground">
+                  {area.description}
+                </p>
+                
+                {/* Site Chips */}
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {area.sites.map((site) => (
+                    <span
+                      key={site}
+                      className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary"
+                    >
+                      {site}
+                    </span>
+                  ))}
+                </div>
+                
+                {/* Details */}
+                <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      Depth Range
+                    </h4>
+                    <p className="mt-1 text-sm font-medium text-foreground">{area.depth}</p>
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      Signature Marine Life
+                    </h4>
+                    <p className="mt-1 text-sm text-foreground">
+                      {area.marineLife.slice(0, 3).join(" • ")}
+                    </p>
+                  </div>
+                </div>
+                
+                {/* Link */}
+                <Link
+                  href={`/dive-sites/${area.id}`}
+                  className="mt-6 inline-flex items-center text-sm font-medium text-primary hover:underline"
+                >
+                  Explore {area.title} sites →
+                </Link>
+              </div>
+            </div>
+          </section>
+        ))}
       </div>
 
-      {/* Site Categories */}
-      <section className="mt-12">
-        <h2 className="text-xl font-semibold text-foreground">Site Categories</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Saba&apos;s dive sites fall into distinct types, each offering a different experience.
+      {/* CTA Section */}
+      <section className="mt-20 text-center">
+        <h2 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+          Ready to explore?
+        </h2>
+        <p className="mt-3 text-base text-muted-foreground">
+          Sea Saba&apos;s experienced guides know every site intimately and match conditions to your experience level.
         </p>
-
-        <div className="mt-6 grid gap-6 sm:grid-cols-2">
-          {SITE_CATEGORIES.map((category) => (
-            <div
-              key={category.title}
-              className="rounded-lg border border-border/60 bg-card p-6 transition-colors hover:border-primary/30"
-            >
-              <div className="flex items-center gap-3">
-                <div className="rounded-md bg-primary/10 p-2">
-                  <category.icon className="h-5 w-5 text-primary" />
-                </div>
-                <h3 className="text-lg font-semibold text-foreground">{category.title}</h3>
-              </div>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                {category.description}
-              </p>
-              <div className="mt-4 flex flex-wrap gap-2">
-                {category.sites.map((site) => (
-                  <span
-                    key={site}
-                    className="rounded-md bg-muted px-2 py-1 text-xs font-medium text-muted-foreground"
-                  >
-                    {site}
-                  </span>
-                ))}
-              </div>
-              <div className="mt-4 flex items-center gap-4 text-xs text-muted-foreground">
-                <span className="font-medium text-foreground">{category.depth}</span>
-                <span>•</span>
-                <span>{category.experience}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Featured Sites */}
-      <section className="mt-14">
-        <h2 className="text-xl font-semibold text-foreground">Featured Sites</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          These sites define the Saba diving experience and are consistently rated among the Caribbean&apos;s best.
-        </p>
-
-        <div className="mt-6 space-y-4">
-          {FEATURED_SITES.map((site) => (
-            <div
-              key={site.name}
-              className="flex flex-col gap-4 rounded-lg border border-border/60 bg-card p-6 sm:flex-row sm:items-start"
-            >
-              <div className="flex-1">
-                <div className="flex items-center gap-3">
-                  <h3 className="text-lg font-semibold text-foreground">{site.name}</h3>
-                  <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
-                    {site.highlight}
-                  </span>
-                </div>
-                <p className="mt-1 text-sm text-muted-foreground">{site.tagline}</p>
-                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                  {site.description}
-                </p>
-              </div>
-              <div className="sm:text-right">
-                <span className="text-sm font-medium text-foreground">{site.depth}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Diving with Sea Saba CTA */}
-      <section className="mt-14 rounded-lg border border-border/40 bg-muted/20 p-8">
-        <h2 className="text-xl font-semibold text-foreground">Experience These Sites</h2>
-        <p className="mt-3 text-base leading-relaxed text-muted-foreground">
-          All Saba dive sites are accessible only by boat. Sea Saba operates guided dive 
-          trips daily, with small groups led by experienced professionals who know these 
-          waters intimately. We match sites to conditions and diver experience for the 
-          best possible underwater experience.
-        </p>
-        <div className="mt-6 flex flex-col items-start gap-4 sm:flex-row">
+        <div className="mt-6 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
           <Button asChild size="lg" className="text-base font-semibold">
             <Link href="/diving">View Diving Options</Link>
           </Button>
           <Button asChild variant="outline" size="lg" className="text-base font-semibold">
-            <Link href="/book">Book Diving</Link>
+            <Link href="/book">Book Your Dive</Link>
           </Button>
         </div>
       </section>
