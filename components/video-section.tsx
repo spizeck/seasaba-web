@@ -30,7 +30,7 @@ export function VideoSection() {
         muted
         playsInline
         preload="metadata"
-        poster="/images/heroimage.jpg"
+        poster="/images/optimized/divers-above-reef-saba.webp"
       >
         <source src="/videos/final_cut.mp4" type="video/mp4" />
       </video>
@@ -39,7 +39,7 @@ export function VideoSection() {
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: "url('/images/heroimage.jpg')",
+          backgroundImage: "url('/images/optimized/divers-above-reef-saba.webp')",
           opacity: canPlay ? 0 : 1,
           transition: "opacity 700ms",
         }}
