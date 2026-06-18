@@ -25,7 +25,7 @@ export function Hero() {
         </h1>
         <p className="mx-auto mt-6 max-w-lg text-base leading-relaxed text-white/90 sm:text-lg" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.35)' }}>
           Just 5 square miles above.<br className="hidden sm:block" />{" "}
-          The Caribbean&apos;s most unique diving below.
+          Some of the Caribbean&apos;s most unique diving below.
         </p>
         <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
           <Button
