@@ -65,7 +65,14 @@ export function Hero() {
                     {item.stat}
                   </div>
                   <div className="mt-0.5 text-xs text-white/75 uppercase tracking-wide">
-                    {item.label}
+                    {item.href ? (
+                      <>
+                        <span className="sm:hidden">Reviews</span>
+                        <span className="hidden sm:inline">{item.label}</span>
+                      </>
+                    ) : (
+                      item.label
+                    )}
                   </div>
                 </>
               );
