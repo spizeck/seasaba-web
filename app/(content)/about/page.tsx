@@ -2,8 +2,8 @@ import { createMetadata } from "@/lib/metadata";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { Anchor, Users, Shield, MapPin, Star } from "lucide-react";
-import { TeamCarousel, TimelineItem } from "@/components/about-page-client";
+import { Anchor, Users, Shield, Ship, Bus, MapPin } from "lucide-react";
+import { TeamCarousel, OwnerFeature } from "@/components/about-page-client";
 
 export const metadata = createMetadata({
   title: "About Sea Saba",
@@ -19,28 +19,6 @@ const TRUST_FACTS = [
   { number: "4.8★", label: "Google & TripAdvisor" },
 ] as const;
 
-const TIMELINE = [
-  {
-    year: "1985",
-    title: "Sea Saba founded",
-    description: "The original dive center established at Fort Bay Harbor, becoming Saba's gateway to world-class diving.",
-  },
-  {
-    year: "1987",
-    title: "Saba Marine Park established",
-    description: "One of the Caribbean's first and most successful marine protected areas, preserving Saba's underwater treasures.",
-  },
-  {
-    year: "2021",
-    title: "Chad and Katy become owners",
-    description: "New ownership brings renewed commitment to the Sea Saba tradition of personalized, professional diving.",
-  },
-  {
-    year: "Today",
-    title: "Continuously operating",
-    description: "Sea Saba remains Saba's only continuously operating dive center, serving divers from around the world.",
-  },
-] as const;
 
 export default function AboutPage() {
   return (
@@ -52,7 +30,7 @@ export default function AboutPage() {
       <p className="mt-6 text-base leading-relaxed text-muted-foreground">
         Sea Saba is a professional scuba diving operation based at Fort Bay Harbor 
         on the island of Saba. Since 1985, we have guided divers through some of 
-        the Caribbean&apos;s most dramatic and pristine underwater terrain — from 
+        the Caribbean&apos;s most dramatic and pristine underwater terrain: from 
         submerged pinnacles rising from the deep to sheer walls dropping into blue water.
       </p>
 
@@ -78,7 +56,7 @@ export default function AboutPage() {
           </div>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
             We maintain a maximum 8:1 diver-to-guide ratio. This is not a marketing 
-            point — it is how we believe diving should be conducted. Small groups allow 
+            point. It is how we believe diving should be conducted. Small groups allow 
             for better briefings, more flexible site selection, and a more personal 
             experience on every dive.
           </p>
@@ -93,7 +71,7 @@ export default function AboutPage() {
           </div>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
             Our guides are not seasonal staff passing through. They are experienced 
-            professionals who have spent years — in many cases decades — diving 
+            professionals who have spent years, in some cases decades, diving 
             Saba&apos;s waters. They understand the conditions, the sites, and how 
             to match divers to the right experience.
           </p>
@@ -110,104 +88,98 @@ export default function AboutPage() {
             Saba&apos;s Marine Park was established in 1987 and remains one of the 
             Caribbean&apos;s most successful protected areas. We operate within its 
             guidelines, educate our divers on responsible reef interaction, and work 
-            to preserve what makes Saba exceptional — not just for today&apos;s divers, 
+            to preserve what makes Saba exceptional, not just for today&apos;s divers, 
             but for the future.
           </p>
         </div>
       </section>
 
-      {/* Meet the Team */}
+      {/* Meet the Owners */}
       <section className="mt-12">
-        <h2 className="text-xl font-semibold text-foreground">Meet the Team</h2>
+        <h2 className="text-xl font-semibold text-foreground">Meet the Owners</h2>
+        <div className="mt-6">
+          <OwnerFeature />
+        </div>
+      </section>
+
+      {/* Meet the Crew */}
+      <section className="mt-12">
+        <h2 className="text-xl font-semibold text-foreground">Meet the Crew</h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          Experienced professionals dedicated to making your Saba diving experience exceptional.
+          Our crew brings together local knowledge, professional experience, and
+          the warm hospitality that keeps guests coming back.
         </p>
         <div className="mt-6">
           <TeamCarousel />
         </div>
       </section>
 
-      {/* Our Story - Timeline */}
+      {/* Our Home in Fort Bay Harbor */}
       <section className="mt-12">
-        <h2 className="text-xl font-semibold text-foreground">Our Story</h2>
-        <div className="mt-6 max-w-2xl">
-          {TIMELINE.map((item, index) => (
-            <TimelineItem
-              key={item.year}
-              year={item.year}
-              title={item.title}
-              description={item.description}
-              isLast={index === TIMELINE.length - 1}
-            />
-          ))}
-        </div>
-      </section>
-
-      {/* Location */}
-      <section className="mt-12">
-        <h2 className="text-xl font-semibold text-foreground">Location</h2>
-        <div className="mt-6 grid gap-6 lg:grid-cols-2 lg:items-start">
-          <div className="rounded-lg border border-border/40 bg-muted/20 p-6">
-            <div className="flex items-start gap-3">
-              <MapPin className="mt-0.5 h-5 w-5 text-primary" />
-              <div>
-                <h3 className="font-semibold text-foreground">Fort Bay Harbor, Saba</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                  We operate from Fort Bay, Saba&apos;s small harbor on the southern coast. 
-                  The dive boats depart directly from the dock, with the island&apos;s dramatic 
-                  volcanic cliffs rising behind us. Windwardside and The Bottom are a short 
-                  drive up the mountain — our taxi service provides pickup from most accommodations.
-                </p>
-              </div>
-            </div>
-          </div>
-          <div className="relative h-64 rounded-lg overflow-hidden lg:h-full lg:min-h-[280px]">
+        <h2 className="text-xl font-semibold text-foreground">Our Home in Fort Bay Harbor</h2>
+        <div className="mt-6 grid gap-8 lg:grid-cols-5 lg:items-center">
+          {/* Image 60% */}
+          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl shadow-sm lg:col-span-3">
             <Image
-              src="/images/optimized/fort-bay-harbor-saba.webp"
-              alt="Fort Bay Harbor on Saba showing the dive boat dock and volcanic cliffs"
+              src="/images/FortBay2Boats.jpg"
+              alt="Two Sea Saba custom dive catamarans moored at Fort Bay Harbor, Saba"
               fill
-              className="object-cover"
-              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="object-cover object-center"
+              sizes="(max-width: 1024px) 100vw, 60vw"
             />
           </div>
-        </div>
-      </section>
-
-      {/* Why Saba */}
-      <section className="mt-12">
-        <h2 className="text-xl font-semibold text-foreground">Why Saba</h2>
-        <div className="mt-6 grid gap-6 lg:grid-cols-2 lg:items-start">
-          <div className="space-y-4">
-            <p className="text-base leading-relaxed text-muted-foreground">
-              Saba is five square miles of volcanic rock rising steeply from the Caribbean Sea. 
-              What Saba offers is some of the healthiest, most dramatic diving in the region.
+          {/* Text 40% */}
+          <div className="lg:col-span-2">
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              Sea Saba operates from Fort Bay Harbor on Saba&apos;s southern coast. Our custom
+              dive boats depart directly from the dock, and complimentary transportation is
+              available from accommodations anywhere on the island.
             </p>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="rounded-lg border border-border/40 bg-muted/20 p-3">
-                <p className="text-sm font-medium text-foreground">No cruise ships</p>
-                <p className="text-xs text-muted-foreground">Uncrowded waters</p>
-              </div>
-              <div className="rounded-lg border border-border/40 bg-muted/20 p-3">
-                <p className="text-sm font-medium text-foreground">Protected marine park</p>
-                <p className="text-xs text-muted-foreground">Since 1987</p>
-              </div>
-              <div className="rounded-lg border border-border/40 bg-muted/20 p-3">
-                <p className="text-sm font-medium text-foreground">Dramatic topography</p>
-                <p className="text-xs text-muted-foreground">Pinnacles & walls</p>
-              </div>
-              <div className="rounded-lg border border-border/40 bg-muted/20 p-3">
-                <p className="text-sm font-medium text-foreground">Small-island atmosphere</p>
-                <p className="text-xs text-muted-foreground">Authentic Caribbean</p>
-              </div>
-            </div>
+            <ul className="mt-5 space-y-3">
+              {[
+                { icon: Ship, label: "Direct harbor departures" },
+                { icon: Bus, label: "Complimentary island-wide shuttle" },
+                { icon: Anchor, label: "38-foot custom catamarans" },
+                { icon: MapPin, label: "Minutes from Windwardside and The Bottom" },
+              ].map(({ icon: Icon, label }) => (
+                <li key={label} className="flex items-center gap-3">
+                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10">
+                    <Icon className="h-3.5 w-3.5 text-primary" />
+                  </div>
+                  <span className="text-sm text-foreground">{label}</span>
+                </li>
+              ))}
+            </ul>
           </div>
-          <div className="relative h-64 rounded-lg overflow-hidden lg:h-full lg:min-h-[300px]">
+        </div>
+      </section>
+
+      {/* Why Divers Love Saba */}
+      <section className="mt-14">
+        <h2 className="text-xl font-semibold text-foreground">Why Divers Love Saba</h2>
+        <div className="mt-6 grid gap-8 lg:grid-cols-5 lg:items-center">
+          {/* Text left */}
+          <div className="lg:col-span-2">
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              Saba isn&apos;t a typical Caribbean destination. There are no cruise ships, no
+              sprawling resorts, and no crowds. Instead, visitors discover dramatic volcanic
+              scenery, protected reefs, exceptional visibility, and one of the Caribbean&apos;s
+              healthiest marine parks.
+            </p>
+            <blockquote className="mt-6 border-l-2 border-primary pl-4">
+              <p className="text-sm italic leading-relaxed text-foreground">
+                &ldquo;Saba rewards travelers looking for quality over crowds.&rdquo;
+              </p>
+            </blockquote>
+          </div>
+          {/* Image right 60% */}
+          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl shadow-sm lg:col-span-3">
             <Image
-              src="/images/optimized/saba-volcanic-coastline.webp"
-              alt="Dramatic volcanic coastline of Saba rising from the Caribbean Sea"
+              src="/images/Saba-186.jpg"
+              alt="Dramatic volcanic scenery and coastline of Saba, Caribbean Netherlands"
               fill
-              className="object-cover"
-              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="object-cover object-center"
+              sizes="(max-width: 1024px) 100vw, 60vw"
             />
           </div>
         </div>

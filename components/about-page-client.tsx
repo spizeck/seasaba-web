@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
 
@@ -9,191 +9,361 @@ interface TeamMember {
   title: string;
   bio: string;
   image?: string;
+  objectPosition?: string;
   funFact?: string;
   languages?: string[];
 }
 
 const TEAM_MEMBERS: TeamMember[] = [
   {
-    name: "Chad & Katy",
-    title: "Owners",
-    bio: "Chad and Katy moved from the United States to Saba in 2021 with their children, Caleb and Skylar, to continue the Sea Saba tradition. Together they oversee daily operations and are committed to preserving the relaxed, professional atmosphere that has made Sea Saba special since 1985.",
-    funFact: "Sea Saba is truly a family business.",
-  },
-  {
     name: "Mel",
     title: "Guest Services Manager",
-    bio: "Originally from Germany and the Netherlands, Mel helps guests with reservations, questions, and trip planning. She keeps everything organized behind the scenes and is often the first point of contact for visitors.",
+    bio: "A Saba resident for over 20 years, Mel is your go-to source for island tips, hidden gems, and neighboring island adventures. After spending 12 years with Sea Saba, she recently returned to the team and will likely be your first point of contact. When she's not helping guests plan their perfect trip, you'll probably find her hiking one of Saba's trails or dreaming up new ideas for the shop.",
+    image: "/images/Mel.jpeg",
     languages: ["English", "Dutch", "German"],
+    objectPosition: "center 30%",
   },
   {
     name: "Jeanine & Marc",
     title: "Dive Operations Manager & Dive Instructors",
-    bio: "Originally from the Netherlands, Jeanine and Marc help coordinate daily diving operations while teaching and guiding guests. Their experience and enthusiasm help keep everything running smoothly both in the shop and on the boats.",
-    languages: ["English", "Dutch"],
+    bio: "Originally from the Netherlands, Jeanine and Marc arrived on Saba after years working in the Maldives. Jeanine is the organizational force behind Sea Saba, keeping everything running smoothly, while Marc is always chasing his next adventure. Whether underwater with a camera or on a snowboard, he rarely sits still. Together, they bring experience, laughter, and the welcoming atmosphere that keeps guests coming back.",    image: "/images/Marc&Jeanine.jpg",
+    languages: ["English", "Dutch", "German"],
   },
   {
     name: "Otto",
     title: "Head Boat Captain & Dive Instructor",
-    bio: "Born and raised on Saba, Otto has spent decades on the water and brings unmatched local knowledge to every trip. His calm personality and experience make him one of the island's most respected captains.",
-    funFact: "More than 40 years operating boats around Saba.",
+    bio: "Born and raised on Saba, Otto has been diving and running boats for decades. He doesn't have much of a filter, loves to laugh, and believes diving should always be an adventure. A passionate technical diver and fisherman, Otto is happiest when he's on the water, below it, or telling stories about both.",
+    image: "/images/Otto.jpg",
+    languages: ["English", "Spanish"],
+    funFact: "Sea Saba's first Divemaster in 1985",
   },
   {
     name: "Aaron",
     title: "Senior Boat Captain & Dive Instructor",
-    bio: "Originally from the United States, Aaron is a USCG 150-ton Master Captain and experienced instructor. He combines professionalism with a relaxed approach that guests appreciate.",
+    bio: "Originally from the United States, Aaron has spent more than 14 years with Sea Saba. A USCG 100-ton Master Captain and instructor, he's known for his calm professionalism and easygoing personality. Off the boat, you'll usually find him watching Texas football or spoiling his cats. His experience and sense of humor have made him a favorite with guests and crew alike.",
+    languages: ["English"],
+    image: "/images/Aaron.jpeg",
   },
   {
     name: "Lenny",
     title: "Boat Captain & Divemaster",
-    bio: "Originally from St. Vincent, Lenny brings years of boating experience and is known for his friendly attitude and attention to guests. He has become a favorite among returning divers.",
+    bio: "Originally from St. Vincent, Lenny earned every certification along the way, progressing from Open Water Diver to Divemaster with Sea Saba. A guest favorite and sunset cruise entertainer, he's known for his big smile, great sense of humor, and ability to make everyone feel like part of the family.",    image: "/images/Lenny.jpg",
+    languages: ["English"],
+    objectPosition: "center 100%",
+    funFact: "Lenny is known as Captain Giggles.",
   },
   {
     name: "Robins",
     title: "Boat Captain & Divemaster",
-    bio: "Originally from Haiti, Robins combines excellent boat handling with a passion for diving. Guests appreciate his humor and easygoing personality.",
-    languages: ["English", "French"],
+    bio: "Originally from Haiti, Robins combines excellent boat handling with a passion for diving and a personality that keeps everyone smiling. Known for his humor, easygoing attitude, and love of dancing, he's happiest when he's on the water, underwater, or finding a reason to celebrate. Guests quickly discover that a day with Robins is never boring.",
+    image: "/images/Robins.jpg",
+    objectPosition: "center 100%",
+    languages: ["English", "French", "Spanish", "Haitian Creole"],
   },
   {
     name: "Lynn",
     title: "Divemaster",
-    bio: "Originally from Sint Maarten, Lynn assists with guiding and daily operations. Her enthusiasm and welcoming personality help guests feel at home.",
+    bio: "Originally from Sint Maarten, Lynn brings warmth, positivity, and a love of culture and wellness to the Sea Saba family. She enjoys helping guests relax, embrace island life, and create unforgettable memories both above and below the water.",
+    languages: ["English", "Dutch"],
+    image: "/images/Lynn.jpeg",
   },
   {
     name: "Lionel",
     title: "Dive Instructor",
-    bio: "A Saban native, Lionel shares his knowledge of the island and its marine life with guests while helping create safe and enjoyable diving experiences.",
+    bio: "A Saban native, freelance instructor, and harbor master, Lionel simply can't stay away from the ocean. Whether he's leading REEF surveys, hunting lionfish, or sharing his love of Saba's reefs with guests, he's happiest in the water. If there's a chance to dive, chances are Lionel is already geared up.",
+    languages: ["English"],
+    image: "/images/Lionel.jpeg",
+    funFact: "Lionel is a professional smiler.",
   },
   {
     name: "Anthony",
     title: "Guest Transportation",
-    bio: "Originally from Sint Maarten, Anthony provides transportation for Sea Saba guests around the island. His warm personality and local stories are often guests' first introduction to Saba.",
-  },
-  {
-    name: "Gunner",
-    title: "Dock Dog — American Vizsla",
-    bio: "Gunner is Sea Saba's four-legged ambassador and favorite dock greeter. He enjoys boat rides, meeting guests, and making sure everyone feels welcome.",
-    funFact: "Always available for pets and photos.",
+    bio: "Originally from Sint Maarten, Anthony is often the first friendly face guests meet on Saba. Loaded with island knowledge and always happy to share it, he loves introducing visitors to the people, history, and stories that make Saba special. A ride with Anthony is usually equal parts transportation and island tour.",
+    image: "/images/Anthony.jpeg",
+    languages: ["English", "Spanish", "Dutch"],
+    objectPosition: "center 100%",
   },
   {
     name: "Julijana",
     title: "Dive Instructor",
-    bio: "Originally from Serbia, Julijana brings international experience and a passion for teaching. She enjoys introducing divers to Saba's world-famous pinnacles and reefs.",
-    languages: ["English", "Serbian"],
+    bio: "Growing up in Cuba, Julijana developed a love for the ocean and adventure that eventually led her to technical diving. When she's not underwater, you'll likely find her practicing yoga or lost in a good book. Her calm energy and passion for exploration make every dive feel a little more special.",
+    image: "/images/Julijana.jpeg",
+    languages: ["English", "Serbian", "Spanish"],
+  },
+    {
+    name: "Gunner",
+    title: "Dive Dog, American Vizsla",
+    bio: "Gunner is Sea Saba's four-legged ambassador and chief food inspector. He loves meeting guests and making sure everyone feels welcome. From greeting divers at the dock to investigating unattended sandwiches, Gunner takes his responsibilities very seriously.",
+    image: "/images/20210704_094402.jpg",
+    languages: ["Woof"],
+    funFact: "Do NOT leave food unattended in his presence.",
   },
 ];
 
-export function TeamCarousel() {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(true);
+function getCardsPerView(): number {
+  if (typeof window === "undefined") return 3;
+  if (window.innerWidth >= 1024) return 3;
+  if (window.innerWidth >= 640) return 2;
+  return 1;
+}
 
-  const checkScroll = () => {
-    if (scrollRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
-      setCanScrollLeft(scrollLeft > 0);
-      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
-    }
-  };
-
-  const scroll = (direction: "left" | "right") => {
-    if (scrollRef.current) {
-      const scrollAmount = 320;
-      scrollRef.current.scrollBy({
-        left: direction === "left" ? -scrollAmount : scrollAmount,
-        behavior: "smooth",
-      });
-      setTimeout(checkScroll, 300);
-    }
-  };
+function TeamCard({ member }: { member: TeamMember }) {
+  const initials = member.name
+    .split(" ")
+    .map((n) => n[0])
+    .slice(0, 2)
+    .join("");
 
   return (
-    <div className="relative">
-      {/* Desktop Navigation */}
-      <button
-        onClick={() => scroll("left")}
-        className={`absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-10 h-10 rounded-full bg-white dark:bg-card shadow-lg border border-border flex items-center justify-center transition-opacity ${
-          canScrollLeft ? "opacity-100" : "opacity-0 pointer-events-none"
-        }`}
-        aria-label="Scroll left"
-      >
-        <ChevronLeft className="h-5 w-5" />
-      </button>
-      <button
-        onClick={() => scroll("right")}
-        className={`absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-10 h-10 rounded-full bg-white dark:bg-card shadow-lg border border-border flex items-center justify-center transition-opacity ${
-          canScrollRight ? "opacity-100" : "opacity-0 pointer-events-none"
-        }`}
-        aria-label="Scroll right"
-      >
-        <ChevronRight className="h-5 w-5" />
-      </button>
-
-      {/* Carousel */}
-      <div
-        ref={scrollRef}
-        onScroll={checkScroll}
-        className="flex gap-5 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-4 -mx-4 px-4 md:mx-0 md:px-0"
-        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-      >
-        {TEAM_MEMBERS.map((member) => (
-          <div
-            key={member.name}
-            className="flex-shrink-0 w-80 snap-start"
-          >
-            <div className="rounded-xl border border-border/60 bg-card overflow-hidden h-full flex flex-col">
-              {/* Photo or Placeholder */}
-              <div className="relative h-64 bg-gradient-to-br from-primary/10 to-primary/5">
-                {member.image ? (
-                  <Image
-                    src={member.image}
-                    alt={`Photo of ${member.name}, ${member.title} at Sea Saba`}
-                    fill
-                    className="object-cover"
-                    sizes="320px"
-                  />
-                ) : (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-28 h-28 rounded-full bg-muted border-4 border-white dark:border-card shadow-lg flex items-center justify-center">
-                      <span className="text-3xl font-bold text-primary">
-                        {member.name.split(" ").map(n => n[0]).slice(0, 2).join("")}
-                      </span>
-                    </div>
-                  </div>
-                )}
-              </div>
-              <div className="p-5 flex-1 flex flex-col">
-                <h3 className="text-lg font-semibold text-foreground">{member.name}</h3>
-                <p className="text-sm font-medium text-primary">{member.title}</p>
-                {member.languages && (
-                  <div className="mt-2 flex flex-wrap gap-1.5">
-                    {member.languages.map((lang) => (
-                      <span
-                        key={lang}
-                        className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary/10 text-primary"
-                      >
-                        {lang}
-                      </span>
-                    ))}
-                  </div>
-                )}
-                <p className="mt-3 text-sm text-muted-foreground leading-relaxed flex-1">
-                  {member.bio}
-                </p>
-                {member.funFact && (
-                  <div className="mt-4 pt-3 border-t border-border/40">
-                    <div className="flex items-start gap-2">
-                      <Sparkles className="h-4 w-4 text-primary flex-shrink-0 mt-0.5" />
-                      <p className="text-xs text-muted-foreground italic">
-                        {member.funFact}
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </div>
+    <div className="rounded-2xl border border-border/50 bg-card overflow-hidden flex flex-col h-full shadow-sm">
+      {/* Photo */}
+      <div className="relative aspect-square w-full bg-gradient-to-br from-primary/10 via-primary/5 to-muted flex-shrink-0 overflow-hidden">
+        {member.image ? (
+          <Image
+            src={member.image}
+            alt={`${member.name}, ${member.title} at Sea Saba`}
+            fill
+            className="object-cover"
+            style={{ objectPosition: member.objectPosition ?? "center center" }}
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          />
+        ) : (
+          <div className="absolute inset-0 flex items-end justify-center pb-5">
+            <div className="w-24 h-24 rounded-full bg-background border-4 border-card shadow-md flex items-center justify-center">
+              <span className="text-2xl font-bold text-primary select-none">
+                {initials}
+              </span>
             </div>
           </div>
-        ))}
+        )}
+      </div>
+
+      {/* Content */}
+      <div className="p-5 flex flex-col flex-1">
+        <div>
+          <h3 className="text-base font-semibold text-foreground leading-snug">
+            {member.name}
+          </h3>
+          <p className="mt-0.5 text-xs font-medium text-primary uppercase tracking-wide">
+            {member.title}
+          </p>
+        </div>
+
+        {member.languages && (
+          <div className="mt-2.5 flex flex-wrap gap-1">
+            {member.languages.map((lang) => (
+              <span
+                key={lang}
+                className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary/8 text-primary border border-primary/15"
+              >
+                {lang}
+              </span>
+            ))}
+          </div>
+        )}
+
+        <p className="mt-3 text-sm text-muted-foreground leading-relaxed flex-1">
+          {member.bio}
+        </p>
+
+        {member.funFact && (
+          <div className="mt-4 pt-3 border-t border-border/40 flex items-start gap-2">
+            <Sparkles className="h-3.5 w-3.5 text-primary flex-shrink-0 mt-0.5" />
+            <p className="text-xs text-muted-foreground italic leading-relaxed">
+              {member.funFact}
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export function TeamCarousel() {
+  const [index, setIndex] = useState(0);
+  const [cardsPerView, setCardsPerView] = useState(3);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const dragStart = useRef<number | null>(null);
+  const isDragging = useRef(false);
+
+  const totalGroups = Math.ceil(TEAM_MEMBERS.length / cardsPerView);
+
+  useEffect(() => {
+    const update = () => {
+      const cpv = getCardsPerView();
+      setCardsPerView(cpv);
+      setIndex((prev) => {
+        const maxGroup = Math.ceil(TEAM_MEMBERS.length / cpv) - 1;
+        return Math.min(prev, maxGroup);
+      });
+    };
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+
+  const goTo = useCallback(
+    (target: number) => {
+      const clamped = Math.max(0, Math.min(target, totalGroups - 1));
+      setIndex(clamped);
+    },
+    [totalGroups]
+  );
+
+  const prev = useCallback(() => goTo(index - 1), [goTo, index]);
+  const next = useCallback(() => goTo(index + 1), [goTo, index]);
+
+  const onPointerDown = (e: React.PointerEvent) => {
+    dragStart.current = e.clientX;
+    isDragging.current = false;
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+  };
+
+  const onPointerMove = (e: React.PointerEvent) => {
+    if (dragStart.current === null) return;
+    if (Math.abs(e.clientX - dragStart.current) > 5) isDragging.current = true;
+  };
+
+  const onPointerUp = (e: React.PointerEvent) => {
+    if (dragStart.current === null) return;
+    const delta = dragStart.current - e.clientX;
+    dragStart.current = null;
+    if (!isDragging.current) return;
+    if (delta > 40) next();
+    else if (delta < -40) prev();
+  };
+
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "ArrowLeft") prev();
+    if (e.key === "ArrowRight") next();
+  };
+
+  const translateX = -(index * 100);
+
+  return (
+    <div className="space-y-5">
+      <div className="relative">
+        {/* Prev button */}
+        <button
+          onClick={prev}
+          disabled={index === 0}
+          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-5 z-10 w-9 h-9 rounded-full bg-card border border-border/60 shadow-sm flex items-center justify-center text-muted-foreground transition-all hover:text-foreground hover:shadow-md disabled:opacity-0 disabled:pointer-events-none focus-visible:ring-2 focus-visible:ring-ring"
+          aria-label="Previous team members"
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </button>
+
+        {/* Next button */}
+        <button
+          onClick={next}
+          disabled={index >= totalGroups - 1}
+          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-5 z-10 w-9 h-9 rounded-full bg-card border border-border/60 shadow-sm flex items-center justify-center text-muted-foreground transition-all hover:text-foreground hover:shadow-md disabled:opacity-0 disabled:pointer-events-none focus-visible:ring-2 focus-visible:ring-ring"
+          aria-label="Next team members"
+        >
+          <ChevronRight className="h-4 w-4" />
+        </button>
+
+        {/* Track container */}
+        <div
+          className="overflow-hidden"
+          role="region"
+          aria-label="Team members carousel"
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={onPointerUp}
+          onKeyDown={onKeyDown}
+          tabIndex={0}
+          style={{ cursor: isDragging.current ? "grabbing" : "grab" }}
+        >
+          <div
+            ref={trackRef}
+            className="flex transition-transform duration-500 ease-in-out"
+            style={{ transform: `translateX(${translateX}%)` }}
+            aria-live="polite"
+          >
+            {Array.from({ length: totalGroups }).map((_, groupIdx) => (
+              <div
+                key={groupIdx}
+                className="w-full flex-shrink-0 grid gap-5"
+                style={{
+                  gridTemplateColumns: `repeat(${cardsPerView}, minmax(0, 1fr))`,
+                }}
+                aria-hidden={groupIdx !== index}
+              >
+                {TEAM_MEMBERS.slice(
+                  groupIdx * cardsPerView,
+                  groupIdx * cardsPerView + cardsPerView
+                ).map((member) => (
+                  <TeamCard key={member.name} member={member} />
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Pagination dots */}
+      {totalGroups > 1 && (
+        <div
+          className="flex justify-center gap-2 pt-1"
+          role="tablist"
+          aria-label="Carousel pages"
+        >
+          {Array.from({ length: totalGroups }).map((_, i) => (
+            <button
+              key={i}
+              role="tab"
+              aria-selected={i === index}
+              aria-label={`Go to page ${i + 1} of ${totalGroups}`}
+              onClick={() => goTo(i)}
+              className={`rounded-full transition-all duration-300 focus-visible:ring-2 focus-visible:ring-ring ${
+                i === index
+                  ? "w-5 h-2 bg-primary"
+                  : "w-2 h-2 bg-border hover:bg-muted-foreground/40"
+              }`}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export function OwnerFeature() {
+  return (
+    <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
+      {/* Photo */}
+      <div className="relative aspect-square w-full overflow-hidden rounded-2xl shadow-sm lg:aspect-[4/3]">
+        <Image
+          src="/images/Nuttalls.jpeg"
+          alt="Chad and Katy Nuttall, owners of Sea Saba, with their children Caleb and Skylar"
+          fill
+          className="object-cover object-center"
+          sizes="(max-width: 1024px) 100vw, 50vw"
+          priority
+        />
+      </div>
+
+      {/* Text */}
+      <div>
+        <p className="text-xs font-semibold uppercase tracking-widest text-primary">
+          Owners since 2021
+        </p>
+        <h3 className="mt-2 text-2xl font-bold text-foreground">
+          Chad &amp; Katy
+        </h3>
+        <div className="mt-4 space-y-3 text-sm leading-relaxed text-muted-foreground">
+          <p>
+            Chad and Katy moved to Saba with their children, Caleb and Skylar,
+            in 2021 to continue the Sea Saba tradition. Together they oversee
+            daily operations and are committed to preserving the relaxed,
+            professional atmosphere that has made Sea Saba special since 1985.
+          </p>
+          <p>
+            Sea Saba is a family business, and their goal is simple: help guests
+            experience the best of Saba above and below the water.
+          </p>
+        </div>
       </div>
     </div>
   );
