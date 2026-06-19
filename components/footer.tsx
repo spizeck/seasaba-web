@@ -92,7 +92,7 @@ export function Footer() {
         <div className="mt-12 border-t border-border/30 pt-8">
           <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
             <p className="text-xs text-muted-foreground/60 text-center sm:text-left">
-              &copy; 1985&ndash;2026 Sea Saba Dive Center &bull; The Bottom, Saba, Caribbean Netherlands
+              &copy; 1985&ndash;2026 Sea Saba, NV &bull; The Bottom, Saba, Caribbean Netherlands
             </p>
             <div className="flex flex-wrap justify-center gap-5 sm:justify-end">
               {SOCIAL_LINKS.map((link) => (
