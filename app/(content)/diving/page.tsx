@@ -247,6 +247,17 @@ export default function DivingPage() {
         </div>
       </section>
 
+      {/* Turtle Seagrass Divers Photo */}
+      <section className="mt-14">
+        <div className="overflow-hidden rounded-lg">
+          <img
+            src="/images/optimized/green-turtle-seagrass-divers.webp"
+            alt="Divers observing a green sea turtle resting in seagrass at Saba's Marine Park."
+            className="h-64 w-full object-cover object-center sm:h-80 lg:h-96"
+          />
+        </div>
+      </section>
+
       {/* Dive More Save More */}
       <section className="mt-14">
         <h2 className="text-xl font-semibold text-foreground">Dive More. Save More.</h2>
