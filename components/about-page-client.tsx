@@ -335,7 +335,7 @@ export function OwnerFeature() {
       {/* Photo */}
       <div className="relative aspect-square w-full overflow-hidden rounded-2xl shadow-sm lg:aspect-[4/3]">
         <Image
-          src="/images/Nuttalls.jpeg"
+          src="/images/IMG20260425131559.jpg"
           alt="Chad and Katy Nuttall, owners of Sea Saba, with their children Caleb and Skylar"
           fill
           className="object-cover object-center"
