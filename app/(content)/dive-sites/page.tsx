@@ -1,7 +1,6 @@
 import { createMetadata } from "@/lib/metadata";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { DiveSitesMap } from "@/components/dive-sites-map";
 
 export const metadata = createMetadata({
   title: "Saba Dive Sites",
@@ -15,10 +14,10 @@ const DIVE_AREAS = [
     id: "pinnacles",
     title: "The Pinnacles",
     description:
-      "Saba's most iconic dive sites. These submerged volcanic formations rise from the deep, creating dramatic underwater pinnacles encrusted with sponges and black coral.",
-    sites: ["Third Encounter", "Eye of the Needle", "The Pinnacles", "Tent Reef Pinnacle"],
-    depth: "18–40m / 60–130ft",
-    marineLife: ["Pelagic sharks", "Eagle rays", "Schooling jacks", "Barracuda", "Turtles"],
+      "The Pinnacles are the dives that helped put Saba on the map. About a mile offshore, these volcanic seamounts and deep plateau sites rise from the blue and deliver some of Saba's most dramatic underwater terrain. These dives are best suited for experienced divers due to depth and open-ocean exposure.",
+    sites: ["Third Encounter", "The Needle", "Twilight Zone", "Outer Limits", "Mt. Michel", "Shark Shoals"],
+    depth: "23–45m+ / 75–150ft+",
+    marineLife: ["Reef sharks", "Nurse sharks", "Schooling jacks", "Barracuda", "Black coral", "Large sponges"],
     image: "/images/optimized/divers-above-pinnacle-saba.webp",
     imagePosition: "left",
   },
@@ -26,10 +25,10 @@ const DIVE_AREAS = [
     id: "tent-reef",
     title: "Tent Reef",
     description:
-      "A versatile area offering both the famous Tent Reef Pinnacle and the dramatic Tent Reef Wall. Perfect for divers of all levels with exceptional visibility.",
-    sites: ["Tent Reef Pinnacle", "Tent Reef Wall", "Tent Reef Ledge"],
-    depth: "10–40m / 30–130ft",
-    marineLife: ["Green turtles", "Caribbean reef sharks", "Colorful sponges", "Schooling fish"],
+      "Tent Reef is one of Saba's most versatile dive areas, beginning with shallower reef and mini-wall profiles before developing into dramatic wall diving. The area includes healthy coral, turtles, blue-water views, and the famous Three Sisters seamounts off the wall.",
+    sites: ["Tent Shallow", "Tent Deep", "Tent Reef", "Tent Boulders", "Tent Wall", "The Three Sisters", "Tedran Wall"],
+    depth: "6–45m+ / 20–150ft+",
+    marineLife: ["Green turtles", "Reef fish", "Sponges", "Lobsters", "Occasional reef sharks", "Schooling fish"],
     image: "/images/optimized/green-turtle-tent-reef.webp",
     imagePosition: "right",
   },
@@ -37,10 +36,10 @@ const DIVE_AREAS = [
     id: "ladder-bay",
     title: "Ladder Bay",
     description:
-      "Named for the historic 800-step ladder carved into the cliffside, this area features dramatic walls, intricate reef systems, and consistently excellent visibility.",
-    sites: ["Ladder Labyrinth", "Ladder Bay Wall", "The Hole", "Cove Bay"],
-    depth: "10–35m / 30–115ft",
-    marineLife: ["Spiny lobsters", "Spotted eagle rays", "Octopus", "Dense coral formations"],
+      "Ladder Bay offers volcanic landscapes, shallow-to-mid-depth reefs, swim-throughs, and some of Saba's most interesting small marine life. This area includes Hot Springs, where volcanic vents create warm, mustard-colored sand.",
+    sites: ["Ladder Labyrinth", "Hot Springs", "50/50", "Porites Point", "Customs House", "Babylon"],
+    depth: "12–30m / 40–100ft",
+    marineLife: ["Nurse sharks", "Green turtles", "Flying gurnards", "Spiny lobsters", "Octopus", "Macro life"],
     image: "/images/optimized/spiny-lobster-ladder-bay.webp",
     imagePosition: "left",
   },
@@ -48,10 +47,10 @@ const DIVE_AREAS = [
     id: "wells-bay",
     title: "Wells Bay",
     description:
-      "The northwest corner of Saba offers some of the island's most pristine and rarely visited sites. Expect exceptional visibility and untouched coral.",
-    sites: ["Wells Bay", "Man O' War Shoals", "Twilight Zone"],
-    depth: "15–40m / 50–130ft",
-    marineLife: ["Reef sharks", "Schooling barracuda", "Giant sponges", "Macro life"],
+      "Wells Bay sits along Saba's rugged northwest coast and offers scenic volcanic terrain, healthy reefs, and sites that are often chosen when conditions favor the island's leeward side. These dives can include reef slopes, boulders, and blue-water views.",
+    sites: ["Otto's Limits", "Torrens Point", "Diamond Rock", "Man O'War Shoals"],
+    depth: "6–25m / 20–80ft",
+    marineLife: ["Green turtles", "Spiny lobsters", "Reef fish", "Occasional sharks", "Rays at Diamond Rock and Man O'War Shoals"],
     image: "/images/optimized/saba-volcanic-coastline.webp",
     imagePosition: "right",
   },
@@ -59,23 +58,12 @@ const DIVE_AREAS = [
     id: "windwardside",
     title: "Windwardside",
     description:
-      "The protected eastern side of the island offers calm, clear waters perfect for divers of all experience levels. Excellent for photographers and marine life enthusiasts.",
-    sites: ["Green Island", "Flat Point", "Sandy Bay"],
+      "The Windwardside area offers a different side of Saba diving, with reef systems and coastal sites shaped by the island's volcanic shoreline. When conditions allow, these sites provide scenic profiles, healthy coral, and rewarding marine life encounters.",
+    sites: ["Green Island", "Big Rock Market", "Core Gut", "Cove Bay", "Abrams Hole", "Hole in the Corner"],
     depth: "10–30m / 30–100ft",
-    marineLife: ["Green turtles", "Stingrays", "Seahorses", "Colorful reef fish"],
+    marineLife: ["Reef fish", "Green turtles", "Sponges", "Coral gardens", "Macro life"],
     image: "/images/optimized/green-turtle-with-diver-saba.webp",
     imagePosition: "left",
-  },
-  {
-    id: "diamond-rock",
-    title: "Diamond Rock",
-    description:
-      "A dramatic offshore pinnacle rising from 50 meters to within 5 meters of the surface. One of Saba's most spectacular and challenging sites.",
-    sites: ["Diamond Rock", "Shark Shoals"],
-    depth: "5–50m / 15–165ft",
-    marineLife: ["Hammerhead sharks", "Silky sharks", "Eagle rays", "Pelagic predators"],
-    image: "/images/optimized/reef-shark-pinnacle.webp",
-    imagePosition: "right",
   },
 ] as const;
 
@@ -87,35 +75,10 @@ export default function DiveSitesPage() {
         Explore Saba&apos;s Dive Sites
       </h1>
       <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-        The Saba Marine Park protects over 30 dive sites around this volcanic island. 
-        Click on the map to explore each area, or scroll to discover the world-famous 
-        pinnacles, walls, reefs, and seamounts that make Saba legendary.
+        The Saba Marine Park protects over 30 dive sites around this volcanic island.
+        Explore the world-famous pinnacles, dramatic walls, healthy reefs, and seamounts
+        that make Saba one of the Caribbean&apos;s most rewarding dive destinations.
       </p>
-
-      {/* Interactive Map */}
-      <section className="mt-8 rounded-xl border border-border/40 bg-muted/20 p-6">
-        <h2 className="text-lg font-semibold text-foreground mb-4">Interactive Site Map</h2>
-        <div className="grid gap-6 lg:grid-cols-2 lg:items-center">
-          <DiveSitesMap />
-          <div className="space-y-4">
-            <p className="text-sm text-muted-foreground">
-              Saba&apos;s dive sites cluster around distinct coastal areas, each offering 
-              unique topography and marine life. Click a point on the map to jump to that section.
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {DIVE_AREAS.map((area) => (
-                <a
-                  key={area.id}
-                  href={`#${area.id}`}
-                  className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary hover:bg-primary/20 transition-colors"
-                >
-                  {area.title}
-                </a>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Dive Area Sections */}
       <div className="mt-12 space-y-16">
