@@ -12,10 +12,10 @@ export function Footer() {
   return (
     <footer className="border-t border-border/40 bg-muted/30">
       <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
-        <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-4">
 
           {/* Brand */}
-          <div className="sm:col-span-2 lg:col-span-1">
+          <div>
             <p className="text-base font-semibold text-foreground">Sea Saba Dive Center</p>
             <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
               Professional scuba diving in Saba since 1985.
@@ -84,6 +84,21 @@ export function Footer() {
               </a>
             </div>
 
+          </div>
+
+          {/* Policies */}
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-widest text-foreground">
+              Policies
+            </p>
+            <nav className="mt-4 flex flex-col gap-3">
+              <Link href="/terms" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
+                Terms & Conditions
+              </Link>
+              <Link href="/privacy" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
+                Privacy Policy
+              </Link>
+            </nav>
           </div>
 
         </div>
