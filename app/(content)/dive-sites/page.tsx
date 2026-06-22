@@ -1,6 +1,8 @@
 import { createMetadata } from "@/lib/metadata";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { PageHero } from "@/components/page-hero";
+import { FeatureImage } from "@/components/feature-image";
 
 export const metadata = createMetadata({
   title: "Saba Dive Sites",
@@ -70,11 +72,14 @@ const DIVE_AREAS = [
 export default function DiveSitesPage() {
   return (
     <>
-      {/* Page Hero */}
-      <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-        Explore Saba&apos;s Dive Sites
-      </h1>
-      <p className="mt-4 text-base leading-relaxed text-muted-foreground">
+      <PageHero
+        src="/images/optimized/divers-above-coral-pinnacle-saba.webp"
+        alt="Scuba divers above a coral-encrusted pinnacle in the Saba Marine Park"
+        title="Saba Dive Sites"
+        subtitle="30+ protected sites across volcanic pinnacles, walls, and reefs"
+      />
+
+      <p className="text-base leading-relaxed text-muted-foreground">
         The Saba Marine Park protects over 30 dive sites around this volcanic island.
         Explore the world-famous pinnacles, dramatic walls, healthy reefs, and seamounts
         that make Saba one of the Caribbean&apos;s most rewarding dive destinations.
@@ -82,66 +87,59 @@ export default function DiveSitesPage() {
 
       {/* Dive Area Sections */}
       <div className="mt-12 space-y-16">
-        {DIVE_AREAS.map((area, index) => (
+        {DIVE_AREAS.map((area) => (
           <section key={area.id} id={area.id} className="scroll-mt-20">
-            <div className={`grid gap-8 lg:grid-cols-2 lg:items-center ${area.imagePosition === "right" ? "lg:[&>*:first-child]:order-2" : ""}`}>
-              {/* Image */}
-              <div className="overflow-hidden rounded-lg">
-                <img
-                  src={area.image}
-                  alt={`Diving at ${area.title}`}
-                  className="h-64 w-full object-cover object-center sm:h-80 lg:h-96"
-                />
-              </div>
-              
-              {/* Content */}
-              <div className={area.imagePosition === "right" ? "lg:order-1" : ""}>
-                <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-                  {area.title}
-                </h2>
-                <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-                  {area.description}
-                </p>
-                
-                {/* Site Chips */}
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {area.sites.map((site) => (
-                    <span
-                      key={site}
-                      className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary"
-                    >
-                      {site}
-                    </span>
-                  ))}
-                </div>
-                
-                {/* Details */}
-                <div className="mt-4 grid gap-4 sm:grid-cols-2">
-                  <div>
-                    <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      Depth Range
-                    </h4>
-                    <p className="mt-1 text-sm font-medium text-foreground">{area.depth}</p>
+            <FeatureImage
+              src={area.image}
+              alt={`Diving at ${area.title} in the Saba Marine Park`}
+              imageRight={area.imagePosition === "right"}
+            >
+              <div>
+                  <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                    {area.title}
+                  </h2>
+                  <p className="mt-4 text-base leading-relaxed text-muted-foreground">
+                    {area.description}
+                  </p>
+
+                  {/* Site Chips */}
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {area.sites.map((site) => (
+                      <span
+                        key={site}
+                        className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary"
+                      >
+                        {site}
+                      </span>
+                    ))}
                   </div>
-                  <div>
-                    <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      Signature Marine Life
-                    </h4>
-                    <p className="mt-1 text-sm text-foreground">
-                      {area.marineLife.slice(0, 3).join(" • ")}
-                    </p>
+
+                  {/* Details */}
+                  <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                    <div>
+                      <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                        Depth Range
+                      </h4>
+                      <p className="mt-1 text-sm font-medium text-foreground">{area.depth}</p>
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                        Signature Marine Life
+                      </h4>
+                      <p className="mt-1 text-sm text-foreground">
+                        {area.marineLife.slice(0, 3).join(" • ")}
+                      </p>
+                    </div>
                   </div>
-                </div>
-                
-                {/* Link */}
-                <Link
-                  href={`/dive-sites/${area.id}`}
-                  className="mt-6 inline-flex items-center text-sm font-medium text-primary hover:underline"
-                >
-                  Explore {area.title} sites →
-                </Link>
+
+                  <Link
+                    href={`/dive-sites/${area.id}`}
+                    className="mt-6 inline-flex items-center text-sm font-medium text-primary hover:underline"
+                  >
+                    Explore {area.title} sites →
+                  </Link>
               </div>
-            </div>
+            </FeatureImage>
           </section>
         ))}
       </div>

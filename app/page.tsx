@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { Hero } from "@/components/hero";
 import { Button } from "@/components/ui/button";
+import { ImageCard } from "@/components/image-card";
+import { FeatureImage } from "@/components/feature-image";
 
 const WHY_SABA_FEATURED = [
   {
@@ -94,25 +96,14 @@ export default function Home() {
           {/* Featured three — photo-backed cards */}
           <div className="grid gap-6 sm:grid-cols-3">
             {WHY_SABA_FEATURED.map((item) => (
-              <div
+              <ImageCard
                 key={item.heading}
-                className="group relative flex flex-col overflow-hidden rounded-lg"
-              >
-                {/* Photo */}
-                <div
-                  className="h-52 w-full bg-cover transition-transform duration-500 group-hover:scale-105 sm:h-60"
-                  style={{ backgroundImage: `url('${item.image}')`, backgroundPosition: item.bgPosition }}
-                />
-                {/* Content */}
-                <div className="flex flex-1 flex-col bg-background p-5">
-                  <h3 className="text-base font-semibold text-foreground">
-                    {item.heading}
-                  </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                    {item.body}
-                  </p>
-                </div>
-              </div>
+                src={item.image}
+                alt={item.heading}
+                heading={item.heading}
+                body={item.body}
+                objectPosition={item.bgPosition}
+              />
             ))}
           </div>
 
@@ -152,22 +143,12 @@ export default function Home() {
           {/* Experience blocks */}
           <div className="flex flex-col gap-16">
             {DIVE_EXPERIENCES.map((exp, i) => (
-              <div
+              <FeatureImage
                 key={exp.title}
-                className={`grid gap-8 lg:grid-cols-2 lg:items-center ${
-                  i % 2 === 1 ? "lg:[&>*:first-child]:order-2" : ""
-                }`}
+                src={exp.image}
+                alt={exp.imageAlt}
+                imageRight={i % 2 === 1}
               >
-                {/* Image */}
-                <div className="overflow-hidden rounded-lg">
-                  <img
-                    src={exp.image}
-                    alt={exp.imageAlt}
-                    className="h-64 w-full object-cover object-center sm:h-80 lg:h-96"
-                  />
-                </div>
-
-                {/* Text */}
                 <div>
                   <h3 className="text-xl font-semibold text-white sm:text-2xl">
                     {exp.title}
@@ -196,7 +177,7 @@ export default function Home() {
                     </p>
                   )}
                 </div>
-              </div>
+              </FeatureImage>
             ))}
           </div>
 
@@ -228,16 +209,12 @@ export default function Home() {
           {/* Cards */}
           <div className="flex flex-col gap-16">
 
-            {/* Card 1 — Getting Here — image right on desktop, image first on mobile */}
-            <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
-              <div className="overflow-hidden rounded-lg lg:order-2">
-                <img
-                  src="/images/optimized/saba-212.webp"
-                  alt="Aerial view of Saba island from approaching aircraft."
-                  className="h-64 w-full object-cover object-center sm:h-80 lg:h-96"
-                />
-              </div>
-              <div className="lg:order-1">
+            <FeatureImage
+              src="/images/optimized/saba-212.webp"
+              alt="Aerial view of Saba island from approaching aircraft."
+              imageRight
+            >
+              <div>
                 <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Getting Here</p>
                 <h3 className="mt-2 text-xl font-semibold text-foreground sm:text-2xl">Closer than you think.</h3>
                 <p className="mt-1 text-sm text-muted-foreground">Just 15 minutes from St. Maarten.</p>
@@ -250,17 +227,12 @@ export default function Home() {
                   Flights and Ferries →
                 </Link>
               </div>
-            </div>
+            </FeatureImage>
 
-            {/* Card 2 — Where to Stay — image left, text right */}
-            <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
-              <div className="overflow-hidden rounded-lg">
-                <img
-                  src="/images/optimized/saba-024.webp"
-                  alt="Caribbean reef shark cruising above the reef in the Saba Marine Park."
-                  className="h-64 w-full object-cover object-center sm:h-80 lg:h-96"
-                />
-              </div>
+            <FeatureImage
+              src="/images/optimized/saba-024.webp"
+              alt="Caribbean reef shark cruising above the reef in the Saba Marine Park."
+            >
               <div>
                 <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Where to Stay</p>
                 <h3 className="mt-2 text-xl font-semibold text-foreground sm:text-2xl">Small hotels. Big hospitality.</h3>
@@ -272,18 +244,14 @@ export default function Home() {
                   Explore accommodations →
                 </Link>
               </div>
-            </div>
+            </FeatureImage>
 
-            {/* Card 3 — When to Visit — image right on desktop, image first on mobile */}
-            <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
-              <div className="overflow-hidden rounded-lg lg:order-2">
-                <img
-                  src="/images/optimized/green-turtle-with-diver-saba.webp"
-                  alt="Green turtle swimming above open water with a diver in the background, Saba."
-                  className="h-64 w-full object-cover object-center sm:h-80 lg:h-96"
-                />
-              </div>
-              <div className="lg:order-1">
+            <FeatureImage
+              src="/images/optimized/green-turtle-with-diver-saba.webp"
+              alt="Green turtle swimming above open water with a diver in the background, Saba."
+              imageRight
+            >
+              <div>
                 <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">When to Visit</p>
                 <h3 className="mt-2 text-xl font-semibold text-foreground sm:text-2xl">Great diving year-round.</h3>
                 <p className="mt-4 text-sm leading-relaxed text-muted-foreground sm:text-base">
@@ -295,17 +263,12 @@ export default function Home() {
                   When to visit →
                 </Link>
               </div>
-            </div>
+            </FeatureImage>
 
-            {/* Card 4 — Island Life — image left, text right */}
-            <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
-              <div className="overflow-hidden rounded-lg">
-                <img
-                  src="/images/optimized/fort-bay-harbor-saba.webp"
-                  alt="Fort Bay harbor framed by Saba's volcanic hills, Caribbean Netherlands."
-                  className="h-64 w-full object-cover object-center sm:h-80 lg:h-96"
-                />
-              </div>
+            <FeatureImage
+              src="/images/optimized/fort-bay-harbor-saba.webp"
+              alt="Fort Bay harbor framed by Saba's volcanic hills, Caribbean Netherlands."
+            >
               <div>
                 <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Island Life</p>
                 <h3 className="mt-2 text-xl font-semibold text-foreground sm:text-2xl">Small island. Big welcome.</h3>
@@ -317,7 +280,7 @@ export default function Home() {
                   Discover Saba →
                 </Link>
               </div>
-            </div>
+            </FeatureImage>
 
           </div>
         </div>

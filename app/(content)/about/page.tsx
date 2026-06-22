@@ -1,7 +1,7 @@
 import { createMetadata } from "@/lib/metadata";
 import Link from "next/link";
-import Image from "next/image";
 import { PageHero } from "@/components/page-hero";
+import { InlineImage } from "@/components/inline-image";
 import { Button } from "@/components/ui/button";
 import { Anchor, Users, Shield, Ship, Bus, MapPin } from "lucide-react";
 import { TeamCarousel, OwnerFeature } from "@/components/about-page-client";
@@ -123,12 +123,11 @@ export default function AboutPage() {
         <h2 className="text-xl font-semibold text-foreground">Our Home in Fort Bay Harbor</h2>
         <div className="mt-6 grid gap-8 lg:grid-cols-5 lg:items-center">
           {/* Image 60% */}
-          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl shadow-sm lg:col-span-3">
-            <Image
+          <div className="lg:col-span-3">
+            <InlineImage
               src="/images/FortBay2Boats.jpg"
               alt="Two Sea Saba custom dive catamarans moored at Fort Bay Harbor, Saba"
-              fill
-              className="object-cover object-center"
+              aspectRatio="4/3"
               sizes="(max-width: 1024px) 100vw, 60vw"
             />
           </div>
@@ -177,12 +176,11 @@ export default function AboutPage() {
             </blockquote>
           </div>
           {/* Image right 60% */}
-          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl shadow-sm lg:col-span-3">
-            <Image
+          <div className="lg:col-span-3">
+            <InlineImage
               src="/images/Saba-186.jpg"
               alt="Dramatic volcanic scenery and coastline of Saba, Caribbean Netherlands"
-              fill
-              className="object-cover object-center"
+              aspectRatio="4/3"
               sizes="(max-width: 1024px) 100vw, 60vw"
             />
           </div>

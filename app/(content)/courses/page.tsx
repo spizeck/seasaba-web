@@ -1,7 +1,7 @@
 import { createMetadata } from "@/lib/metadata";
 import Link from "next/link";
-import Image from "next/image";
 import { PageHero } from "@/components/page-hero";
+import { InlineImage } from "@/components/inline-image";
 import { Button } from "@/components/ui/button";
 import { BookingCTA } from "@/components/booking-cta";
 import { Award, Users, CheckCircle, Ship, MapPin, Wrench, Car, ShieldCheck, Compass } from "lucide-react";
@@ -181,13 +181,13 @@ export default function CoursesPage() {
               </p>
             </div>
           </div>
-          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl shadow-sm lg:col-span-2">
-            <Image
+          <div className="lg:col-span-2">
+            <InlineImage
               src="/images/students.jpg"
               alt="Scuba diving students receiving instruction from a Sea Saba instructor"
-              fill
+              aspectRatio="4/3"
+              objectPosition="left"
               sizes="(max-width: 1024px) 100vw, 40vw"
-              className="object-cover object-left"
             />
           </div>
         </div>
@@ -195,13 +195,12 @@ export default function CoursesPage() {
 
       {/* Equipment Image */}
       <div className="mt-12 grid gap-8 lg:grid-cols-5 lg:items-center">
-        <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl shadow-sm lg:col-span-2">
-          <Image
+        <div className="lg:col-span-2">
+          <InlineImage
             src="/images/rental-bcd.jpg"
             alt="Sea Saba rental BCD scuba equipment available for student divers"
-            fill
+            aspectRatio="4/3"
             sizes="(max-width: 1024px) 100vw, 40vw"
-            className="object-cover object-center"
           />
         </div>
         <div className="lg:col-span-3">
