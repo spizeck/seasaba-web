@@ -1,8 +1,9 @@
 import { createMetadata } from "@/lib/metadata";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { BookingCTA } from "@/components/booking-cta";
-import { Award, Users, Droplets, CheckCircle, Ship, MapPin, Wrench } from "lucide-react";
+import { Award, Users, CheckCircle, Ship, MapPin, Wrench, Car, ShieldCheck, Compass } from "lucide-react";
 
 export const metadata = createMetadata({
   title: "Scuba Courses & Certifications",
@@ -10,42 +11,62 @@ export const metadata = createMetadata({
     "SDI and TDI scuba diving courses in Saba. From Try Scuba to Divemaster, learn with experienced instructors in the Caribbean's most unique marine park.",
   path: "/courses",
 });
-
 const WHY_TRAIN_SABA = [
   {
     icon: Award,
-    title: "5 Star SDI and TDI Instruction",
-    description: "Internationally recognized training agencies with professional, experienced instructors.",
+    title: "Professional SDI & TDI Training",
+    description:
+      "Internationally recognized training agency with professional, experienced instructors.",
   },
   {
     icon: Users,
     title: "Small Class Sizes",
-    description: "Personal attention and flexible pacing so you get the most from every dive.",
+    description:
+      "Personal attention and flexible pacing to help you learn with confidence.",
   },
+  {
+    icon: Compass, // or Anchor
+    title: "40+ Years of Experience",
+    description:
+      "Since 1985, Sea Saba has introduced thousands of divers to the underwater world and the reefs of Saba.",
+  },
+
   {
     icon: MapPin,
     title: "Protected Marine Park",
-    description: "Train in the Saba Marine Park, one of the Caribbean's most pristine and well-managed environments.",
+    description:
+      "Train in one of the Caribbean's most pristine and well-managed marine environments.",
   },
   {
     icon: Ship,
-    title: "Real Boat Diving Experience",
-    description: "Build skills on actual boat dives in open water, not just confined environments.",
+    title: "From Harbor to Reef",
+    description:
+      "Start in the calm waters of Fort Bay Harbor to perfect buoyancy and weighting before completing open water dives on Saba's spectacular reef sites.",
   },
   {
     icon: Wrench,
-    title: "Rental Equipment Available",
-    description: "Quality gear is available if you do not have your own equipment for the course.",
+    title: "Premium Equipment Included",
+    description:
+      "Train with modern Scubapro equipment and wrist-mounted dive computers. XDeep backplate and wing systems are also available for divers who prefer a streamlined setup.",
   },
+
   {
     icon: CheckCircle,
     title: "Free 32% Nitrox",
-    description: "Complimentary enriched air nitrox for qualified divers when appropriate.",
+    description:
+      "Complimentary 32% Nitrox for certified nitrox divers when appropriate.",
   },
   {
-    icon: Droplets,
+    icon: Car, 
     title: "Complimentary Taxi Transport",
-    description: "Free taxi transportation for scheduled training dives so you can focus on learning.",
+    description:
+      "Free transportation for scheduled training dives so you can focus on learning.",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Safety First",
+    description:
+      "Small groups, experienced instructors and well-maintained equipment help ensure a safe and enjoyable learning experience.",
   },
 ];
 
@@ -128,6 +149,17 @@ export default function CoursesPage() {
         instruction in the protected waters of the Saba Marine Park.
       </p>
 
+      {/* Hero Image */}
+      <div className="relative mt-8 aspect-[16/7] w-full overflow-hidden rounded-2xl shadow-sm">
+        <Image
+          src="/images/diver-in-trim.jpg"
+          alt="Scuba diver in perfect trim hovering over the reef in the Saba Marine Park"
+          fill
+          className="object-cover object-center"
+          priority
+        />
+      </div>
+
       {/* Why Train with Sea Saba */}
       <section className="mt-10">
         <h2 className="text-xl font-semibold text-foreground">Why Train with Sea Saba</h2>
@@ -143,18 +175,55 @@ export default function CoursesPage() {
       </section>
 
       {/* Personalized Instruction */}
-      <section className="mt-12 rounded-lg border border-border/40 bg-muted/20 p-6">
-        <h2 className="text-xl font-semibold text-foreground">Personalized Instruction</h2>
-        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          At Sea Saba, we&apos;ve always believed learning is better in small groups. Most courses are
-          taught 1:1 or 2:1, giving students the attention and flexibility they deserve. For larger
-          groups, additional instructors and assistants are added to maintain the same personal
-          experience.
-        </p>
-        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          Small groups aren&apos;t a new trend for us. They&apos;ve been our philosophy since 1985.
-        </p>
+      <section className="mt-12">
+        <div className="grid gap-8 lg:grid-cols-5 lg:items-center">
+          <div className="lg:col-span-3">
+            <div className="rounded-lg border border-border/40 bg-muted/20 p-6">
+              <h2 className="text-xl font-semibold text-foreground">Personalized Instruction</h2>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                At Sea Saba, we&apos;ve always believed learning is better in small groups. Most courses are
+                taught 1:1 or 2:1, giving students the attention and flexibility they deserve. For larger
+                groups, additional instructors and assistants are added to maintain the same personal
+                experience.
+              </p>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                Small groups aren&apos;t a new trend for us. They&apos;ve been our philosophy since 1985.
+              </p>
+            </div>
+          </div>
+          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl shadow-sm lg:col-span-2">
+            <Image
+              src="/images/students.jpg"
+              alt="Scuba diving students receiving instruction from a Sea Saba instructor"
+              fill
+              sizes="(max-width: 1024px) 100vw, 40vw"
+              className="object-cover object-left"
+            />
+          </div>
+        </div>
       </section>
+
+      {/* Equipment Image */}
+      <div className="mt-12 grid gap-8 lg:grid-cols-5 lg:items-center">
+        <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl shadow-sm lg:col-span-2">
+          <Image
+            src="/images/rental-bcd.jpg"
+            alt="Sea Saba rental BCD scuba equipment available for student divers"
+            fill
+            sizes="(max-width: 1024px) 100vw, 40vw"
+            className="object-cover object-center"
+          />
+        </div>
+        <div className="lg:col-span-3">
+          <h2 className="text-xl font-semibold text-foreground">Modern Rental Equipment</h2>
+          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+            All courses include full use of our modern Scubapro equipment — BCDs, regulators,
+            wetsuits, masks, fins, and wrist-mounted dive computers. XDeep backplate and wing
+            systems are also available for divers who prefer a streamlined technical setup.
+            Nitrox is complimentary for certified divers when appropriate.
+          </p>
+        </div>
+      </div>
 
       {/* Courses */}
       <section className="mt-12">
