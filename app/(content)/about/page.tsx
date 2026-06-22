@@ -1,6 +1,7 @@
 import { createMetadata } from "@/lib/metadata";
 import Link from "next/link";
 import Image from "next/image";
+import { PageHero } from "@/components/page-hero";
 import { Button } from "@/components/ui/button";
 import { Anchor, Users, Shield, Ship, Bus, MapPin } from "lucide-react";
 import { TeamCarousel, OwnerFeature } from "@/components/about-page-client";
@@ -23,11 +24,14 @@ const TRUST_FACTS = [
 export default function AboutPage() {
   return (
     <>
-      <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-        About Sea Saba
-      </h1>
+      <PageHero
+        src="/images/optimized/saba-118-about-hero.webp"
+        alt="Sea Saba diving operation at Fort Bay Harbor, Saba"
+        title="About Sea Saba"
+        subtitle="Professional diving in Saba since 1985"
+      />
 
-      <p className="mt-6 text-base leading-relaxed text-muted-foreground">
+      <p className="text-base leading-relaxed text-muted-foreground">
         Sea Saba is a professional scuba diving operation based at Fort Bay Harbor 
         on the island of Saba. Since 1985, we have guided divers through some of 
         the Caribbean&apos;s most dramatic and pristine underwater terrain: from 

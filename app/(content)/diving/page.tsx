@@ -1,4 +1,5 @@
 import { createMetadata } from "@/lib/metadata";
+import { PageHero } from "@/components/page-hero";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Users, Award, Ship, Droplets } from "lucide-react";
@@ -117,24 +118,12 @@ const DIVE_EXPERIENCES = [
 export default function DivingPage() {
   return (
     <>
-      {/* Page Hero */}
-      <div className="relative -mx-4 -mt-6 mb-8 overflow-hidden sm:-mx-6 lg:-mx-8">
-        <div
-          className="h-64 bg-cover bg-center sm:h-80 lg:h-96"
-          style={{ backgroundImage: "url('/images/optimized/diving-hero.webp')" }}
-        >
-          <div className="flex h-full items-center justify-center bg-black/40">
-            <div className="text-center px-4">
-              <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl drop-shadow-lg">
-                Diving with Sea Saba
-              </h1>
-              <p className="mt-3 text-base text-white/90 drop-shadow sm:text-lg max-w-xl mx-auto">
-                Professional boat diving in Saba&apos;s Marine Park since 1985
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
+      <PageHero
+        src="/images/optimized/diving-hero.webp"
+        alt="Scuba divers exploring the reef in the Saba Marine Park"
+        title="Diving with Sea Saba"
+        subtitle="Professional boat diving in Saba's Marine Park since 1985"
+      />
 
       <p className="text-base leading-relaxed text-muted-foreground">
         Sea Saba has been introducing divers to Saba since 1985. As the island&apos;s only 

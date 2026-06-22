@@ -115,6 +115,15 @@ const IMAGE_MAP = [
     role: "section",
   },
 
+  // About page hero
+  {
+    src: "Saba-118.jpg",
+    out: "saba-118-about-hero.webp",
+    width: 1920,
+    quality: 82,
+    role: "hero",
+  },
+
   // Unused but in folder — convert at section size
   {
     src: "DSC03031.jpg",

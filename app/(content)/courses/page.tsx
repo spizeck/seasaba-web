@@ -1,6 +1,7 @@
 import { createMetadata } from "@/lib/metadata";
 import Link from "next/link";
 import Image from "next/image";
+import { PageHero } from "@/components/page-hero";
 import { Button } from "@/components/ui/button";
 import { BookingCTA } from "@/components/booking-cta";
 import { Award, Users, CheckCircle, Ship, MapPin, Wrench, Car, ShieldCheck, Compass } from "lucide-react";
@@ -76,58 +77,58 @@ const COURSES = [
     level: "Beginner",
     duration: "Full day",
     description:
-      "Perfect for first-time divers who want to experience scuba without committing to a full certification course.",
-    includes: ["All equipment", "Supervised boat dive", "Instructor guidance"],
+      "Your first breath underwater, taken on a real dive site. No certification required — just curiosity. A Sea Saba instructor guides you every step of the way, from a quick skills introduction in Fort Bay Harbor to a supervised boat dive on the reef.",
+    includes: ["All equipment provided", "Supervised boat dive", "2:1 instructor-to-student ratio max", "No experience needed"],
     cta: "Request Try Scuba Info",
     path: "/contact?interest=try-scuba",
   },
   {
     name: "SDI Open Water Diver",
     level: "Beginner",
-    duration: "3–4 days",
+    duration: "3 days",
     description:
-      "Earn your first scuba certification and begin exploring the underwater world with confidence.",
-    includes: ["Classroom sessions", "Confined water training", "4 open water dives", "All equipment"],
+      "Complete your academics through SDI eLearning before you arrive, so your vacation is spent diving and not in a classroom. Confined water sessions take place in the calm waters of Fort Bay Harbor, and your four certification dives are completed from Sea Saba's boats on actual sites within the Saba Marine Park.",
+    includes: ["Complete eLearning before arrival", "Confined water sessions in Fort Bay Harbor", "Four boat dives in the Saba Marine Park", "All equipment included", "3:1 instructor-to-student ratio max"],
     cta: "Request Open Water Info",
     path: "/contact?interest=sdi-open-water",
   },
   {
-    name: "SDI Advanced & Specialty Training",
+    name: "SDI Advanced Adventure Diver",
     level: "Intermediate",
-    duration: "2–3 days",
+    duration: "2 days",
     description:
-      "Build confidence, improve skills, and expand your diving experience with advanced and specialty training.",
-    includes: ["Adventure dives", "Specialty options", "Equipment included"],
+      "Build confidence, sharpen your skills, and explore new areas of diving through adventure and specialty training conducted on Saba's diverse reef systems. Complete eLearning in advance and spend your time in the water.",
+    includes: ["Five boat dives","Complete eLearning before arrival", "Deep Diver and Navigation mandatory","Flexible course options", "3:1 instructor-to-student ratio max", "Equipment included"],
     cta: "Request Advanced Training Info",
     path: "/contact?interest=sdi-advanced-specialty",
   },
   {
     name: "SDI Rescue Diver",
     level: "Advanced",
-    duration: "3–4 days",
+    duration: "2-3 days",
     description:
-      "Develop awareness, confidence, and problem-solving skills that make you a stronger dive buddy. Requires current First Aid/CPR certification.",
-    includes: ["Rescue theory and practice", "Emergency scenarios", "First Aid/CPR requirement"],
+      "Become a more capable and confident diver by learning to recognize, prevent, and manage problems underwater. Rescue training makes you a stronger dive buddy and a more situationally aware diver in any environment. Requires current First Aid/CPR certification.",
+    includes: ["Complete eLearning before arrival", "Rescue scenarios and practical exercises", "Emergency management skills", "Current First Aid/CPR certification required"],
     cta: "Request Rescue Diver Info",
     path: "/contact?interest=sdi-rescue",
   },
   {
     name: "SDI Divemaster",
     level: "Professional",
-    duration: "2–4 weeks",
+    duration: "4-8 weeks",
     description:
-      "Take the first step toward professional-level diving and learn how to assist divers, support instructors, and lead with confidence.",
-    includes: ["Leadership training", "Guided dive experience", "Theory and practical exams"],
+      "Gain real-world experience assisting instructors, supporting students, and participating in daily operations aboard Sea Saba's dive boats. Divemaster training at Sea Saba is hands-on from day one, set against some of the Caribbean's most dramatic underwater terrain.",
+    includes: ["Leadership development", "Practical experience with daily operations", "Theory and watermanship evaluations", "Guided dive experience"],
     cta: "Request Divemaster Info",
     path: "/contact?interest=sdi-divemaster",
   },
   {
-    name: "TDI Technical Diving",
+    name: "TDI Technical Courses",
     level: "Technical",
     duration: "Varies",
     description:
-      "For experienced divers ready to expand beyond recreational limits, TDI courses introduce advanced planning, procedures, and equipment configurations.",
-    includes: ["Advanced dive planning", "Technical procedures", "Specialized equipment configurations"],
+      "For experienced divers ready to push beyond recreational limits, TDI training at Sea Saba focuses on proper procedures, gas management, and equipment configurations suited to Saba's deeper pinnacles and walls.",
+    includes: ["Complete eLearning before arrival", "Advanced dive planning", "Technical procedures and gas management", "Equipment configuration and streamlining"],
     cta: "Request Technical Diving Info",
     path: "/contact?interest=tdi-technical",
   },
@@ -136,29 +137,18 @@ const COURSES = [
 export default function CoursesPage() {
   return (
     <>
-      <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-        Learn to Dive with Sea Saba
-      </h1>
-      <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-        SDI and TDI training in one of the Caribbean&apos;s most unique marine parks.
-      </p>
+      <PageHero
+        src="/images/diver-in-trim.jpg"
+        alt="Scuba diver in perfect trim hovering over the reef in the Saba Marine Park"
+        title="Learn to Dive with Sea Saba"
+        subtitle="SDI and TDI training in one of the Caribbean's most unique marine parks"
+      />
 
-      <p className="mt-6 text-base leading-relaxed text-muted-foreground">
+      <p className="text-base leading-relaxed text-muted-foreground">
         Whether you are taking your first breath underwater, continuing your education,
         or building technical diving skills, Sea Saba offers professional SDI and TDI
         instruction in the protected waters of the Saba Marine Park.
       </p>
-
-      {/* Hero Image */}
-      <div className="relative mt-8 aspect-[16/7] w-full overflow-hidden rounded-2xl shadow-sm">
-        <Image
-          src="/images/diver-in-trim.jpg"
-          alt="Scuba diver in perfect trim hovering over the reef in the Saba Marine Park"
-          fill
-          className="object-cover object-center"
-          priority
-        />
-      </div>
 
       {/* Why Train with Sea Saba */}
       <section className="mt-10">

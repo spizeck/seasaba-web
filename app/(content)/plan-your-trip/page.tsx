@@ -1,6 +1,7 @@
 import { createMetadata } from "@/lib/metadata";
 import Link from "next/link";
 import Image from "next/image";
+import { PageHero } from "@/components/page-hero";
 import { Button } from "@/components/ui/button";
 import { Plane, Ship, Anchor, Check, Droplets, Eye, Sun, Thermometer, Home, HelpCircle, Fish, Camera, Calendar, AlertTriangle, Coffee, Package } from "lucide-react";
 
@@ -79,27 +80,12 @@ const FAQS = [
 export default function PlanYourTripPage() {
   return (
     <>
-      {/* Hero Section */}
-      <div className="relative -mx-4 -mt-6 mb-8 overflow-hidden sm:-mx-6 lg:-mx-8">
-        <div className="relative h-64 sm:h-80 lg:h-96">
-          <Image
-            src="/images/optimized/juancho-airport-approach-saba.webp"
-            alt="Aerial view of Saba showing the dramatic approach to Juancho Airport"
-            fill
-            className="object-cover"
-            priority
-            sizes="100vw"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-black/10" />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="text-center px-4">
-              <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl drop-shadow-lg">
-                Plan Your Trip to Saba
-              </h1>
-            </div>
-          </div>
-        </div>
-      </div>
+      <PageHero
+        src="/images/optimized/juancho-airport-approach-saba.webp"
+        alt="Aerial view of Saba showing the dramatic approach to Juancho Airport"
+        title="Plan Your Trip to Saba"
+        subtitle="Everything you need to know before you arrive"
+      />
 
       {/* Introduction */}
       <p className="text-base leading-relaxed text-muted-foreground">
