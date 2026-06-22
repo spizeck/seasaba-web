@@ -168,7 +168,7 @@ export default function AboutPage() {
             </p>
             <blockquote className="mt-6 border-l-2 border-primary pl-4">
               <p className="text-sm italic leading-relaxed text-foreground">
-                &ldquo;Saba rewards travelers looking for quality over crowds.&rdquo;
+                Saba rewards travelers looking for quality over crowds.
               </p>
             </blockquote>
           </div>

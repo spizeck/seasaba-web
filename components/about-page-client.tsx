@@ -182,9 +182,11 @@ function TeamCard({ member }: { member: TeamMember }) {
 export function TeamCarousel() {
   const [index, setIndex] = useState(0);
   const [cardsPerView, setCardsPerView] = useState(3);
+  const [isPaused, setIsPaused] = useState(false);
   const trackRef = useRef<HTMLDivElement>(null);
   const dragStart = useRef<number | null>(null);
   const isDragging = useRef(false);
+  const autoplayRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const totalGroups = Math.ceil(TEAM_MEMBERS.length / cardsPerView);
 
@@ -204,8 +206,7 @@ export function TeamCarousel() {
 
   const goTo = useCallback(
     (target: number) => {
-      const clamped = Math.max(0, Math.min(target, totalGroups - 1));
-      setIndex(clamped);
+      setIndex((target % totalGroups + totalGroups) % totalGroups);
     },
     [totalGroups]
   );
@@ -213,9 +214,21 @@ export function TeamCarousel() {
   const prev = useCallback(() => goTo(index - 1), [goTo, index]);
   const next = useCallback(() => goTo(index + 1), [goTo, index]);
 
+  // Autoplay
+  useEffect(() => {
+    if (isPaused || totalGroups <= 1) return;
+    autoplayRef.current = setInterval(() => {
+      setIndex((current) => (current + 1) % totalGroups);
+    }, 5000);
+    return () => {
+      if (autoplayRef.current) clearInterval(autoplayRef.current);
+    };
+  }, [isPaused, totalGroups]);
+
   const onPointerDown = (e: React.PointerEvent) => {
     dragStart.current = e.clientX;
     isDragging.current = false;
+    setIsPaused(true);
     (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
   };
 
@@ -228,14 +241,21 @@ export function TeamCarousel() {
     if (dragStart.current === null) return;
     const delta = dragStart.current - e.clientX;
     dragStart.current = null;
+    setIsPaused(false);
     if (!isDragging.current) return;
     if (delta > 40) next();
     else if (delta < -40) prev();
   };
 
   const onKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "ArrowLeft") prev();
-    if (e.key === "ArrowRight") next();
+    if (e.key === "ArrowLeft") {
+      prev();
+      setIsPaused(true);
+    }
+    if (e.key === "ArrowRight") {
+      next();
+      setIsPaused(true);
+    }
   };
 
   const translateX = -(index * 100);
@@ -245,9 +265,11 @@ export function TeamCarousel() {
       <div className="relative">
         {/* Prev button */}
         <button
-          onClick={prev}
-          disabled={index === 0}
-          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-5 z-10 w-9 h-9 rounded-full bg-card border border-border/60 shadow-sm flex items-center justify-center text-muted-foreground transition-all hover:text-foreground hover:shadow-md disabled:opacity-0 disabled:pointer-events-none focus-visible:ring-2 focus-visible:ring-ring"
+          onClick={() => {
+            prev();
+            setIsPaused(true);
+          }}
+          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-5 z-10 w-9 h-9 rounded-full bg-card border border-border/60 shadow-sm flex items-center justify-center text-muted-foreground transition-all hover:text-foreground hover:shadow-md focus-visible:ring-2 focus-visible:ring-ring"
           aria-label="Previous team members"
         >
           <ChevronLeft className="h-4 w-4" />
@@ -255,9 +277,11 @@ export function TeamCarousel() {
 
         {/* Next button */}
         <button
-          onClick={next}
-          disabled={index >= totalGroups - 1}
-          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-5 z-10 w-9 h-9 rounded-full bg-card border border-border/60 shadow-sm flex items-center justify-center text-muted-foreground transition-all hover:text-foreground hover:shadow-md disabled:opacity-0 disabled:pointer-events-none focus-visible:ring-2 focus-visible:ring-ring"
+          onClick={() => {
+            next();
+            setIsPaused(true);
+          }}
+          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-5 z-10 w-9 h-9 rounded-full bg-card border border-border/60 shadow-sm flex items-center justify-center text-muted-foreground transition-all hover:text-foreground hover:shadow-md focus-visible:ring-2 focus-visible:ring-ring"
           aria-label="Next team members"
         >
           <ChevronRight className="h-4 w-4" />
@@ -272,6 +296,10 @@ export function TeamCarousel() {
           onPointerMove={onPointerMove}
           onPointerUp={onPointerUp}
           onKeyDown={onKeyDown}
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+          onFocus={() => setIsPaused(true)}
+          onBlur={() => setIsPaused(false)}
           tabIndex={0}
           style={{ cursor: isDragging.current ? "grabbing" : "grab" }}
         >
@@ -315,7 +343,10 @@ export function TeamCarousel() {
               role="tab"
               aria-selected={i === index}
               aria-label={`Go to page ${i + 1} of ${totalGroups}`}
-              onClick={() => goTo(i)}
+              onClick={() => {
+                goTo(i);
+                setIsPaused(true);
+              }}
               className={`rounded-full transition-all duration-300 focus-visible:ring-2 focus-visible:ring-ring ${
                 i === index
                   ? "w-5 h-2 bg-primary"
