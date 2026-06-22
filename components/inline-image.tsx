@@ -33,7 +33,7 @@ export function InlineImage({
 }: InlineImageProps) {
   return (
     <div
-      className={`relative w-full overflow-hidden rounded-lg ${ASPECT_CLASSES[aspectRatio]} ${className}`}
+      className={`relative w-full overflow-hidden rounded-2xl ${ASPECT_CLASSES[aspectRatio]} ${className}`}
     >
       <Image
         src={src}

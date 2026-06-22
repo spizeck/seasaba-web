@@ -21,7 +21,7 @@ export function PageHero({
   objectPosition = "center",
 }: PageHeroProps) {
   return (
-    <div className="not-prose relative -mx-4 mb-8 overflow-hidden rounded-lg sm:-mx-6 lg:-mx-8">
+    <div className="not-prose relative -mx-4 mb-8 overflow-hidden rounded-3xl sm:-mx-6 lg:-mx-8">
       <div className="relative h-56 sm:h-80 lg:h-[28rem]">
         <Image
           src={src}
