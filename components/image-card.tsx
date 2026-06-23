@@ -6,6 +6,7 @@ interface ImageCardProps {
   heading: string;
   body: string;
   objectPosition?: string;
+  priority?: boolean;
 }
 
 /**
@@ -19,6 +20,7 @@ export function ImageCard({
   heading,
   body,
   objectPosition = "center",
+  priority = false,
 }: ImageCardProps) {
   return (
     <div className="group flex flex-col overflow-hidden rounded-2xl border border-border/50 bg-background">
@@ -30,6 +32,7 @@ export function ImageCard({
           className="object-cover transition-transform duration-500 group-hover:scale-105"
           style={{ objectPosition }}
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          priority={priority}
         />
       </div>
       <div className="flex flex-1 flex-col p-5">

@@ -53,7 +53,7 @@ const DIVE_AREAS = [
     sites: ["Otto's Limits", "Torrens Point", "Diamond Rock", "Man O'War Shoals"],
     depth: "6–25m / 20–80ft",
     marineLife: ["Green turtles", "Spiny lobsters", "Reef fish", "Occasional sharks", "Rays at Diamond Rock and Man O'War Shoals"],
-    image: "/images/optimized/saba-volcanic-coastline.webp",
+    image: "/images/optimized/wells-bay-dive-site-saba.webp",
     imagePosition: "right",
   },
   {
@@ -64,7 +64,7 @@ const DIVE_AREAS = [
     sites: ["Green Island", "Big Rock Market", "Core Gut", "Cove Bay", "Abrams Hole", "Hole in the Corner"],
     depth: "10–30m / 30–100ft",
     marineLife: ["Reef fish", "Green turtles", "Sponges", "Coral gardens", "Macro life"],
-    image: "/images/optimized/green-turtle-with-diver-saba.webp",
+    image: "/images/optimized/windwardside-dive-site-saba.webp",
     imagePosition: "left",
   },
 ] as const;
@@ -73,8 +73,8 @@ export default function DiveSitesPage() {
   return (
     <>
       <PageHero
-        src="/images/optimized/divers-above-coral-pinnacle-saba.webp"
-        alt="Scuba divers above a coral-encrusted pinnacle in the Saba Marine Park"
+        src="/images/optimized/green-turtle-with-diver-saba.webp"
+        alt="Green sea turtle swimming with a diver in the Saba Marine Park"
         title="Saba Dive Sites"
         subtitle="30+ protected sites across volcanic pinnacles, walls, and reefs"
       />

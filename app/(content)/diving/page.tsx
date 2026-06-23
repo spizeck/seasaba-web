@@ -228,6 +228,7 @@ export default function DivingPage() {
           src="/images/optimized/green-turtle-seagrass-divers.webp"
           alt="Divers observing a green sea turtle resting in seagrass at Saba's Marine Park."
           imageRight
+          centerText
         >
           <div>
             <h2 className="text-xl font-semibold text-foreground">Dive More. Save More.</h2>

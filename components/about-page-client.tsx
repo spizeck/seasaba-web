@@ -3,6 +3,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
+import { FeatureImage } from "@/components/feature-image";
 
 interface TeamMember {
   name: string;
@@ -81,7 +82,7 @@ const TEAM_MEMBERS: TeamMember[] = [
     bio: "Originally from Sint Maarten, Anthony is often the first friendly face guests meet on Saba. Loaded with island knowledge and always happy to share it, he loves introducing visitors to the people, history, and stories that make Saba special. A ride with Anthony is usually equal parts transportation and island tour.",
     image: "/images/optimized/anthony.webp",
     languages: ["English", "Spanish", "Dutch"],
-    objectPosition: "center 100%",
+    objectPosition: "center bottom",
   },
   {
     name: "Julijana",
@@ -362,20 +363,11 @@ export function TeamCarousel() {
 
 export function OwnerFeature() {
   return (
-    <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
-      {/* Photo */}
-      <div className="relative aspect-video w-full overflow-hidden rounded-2xl">
-        <Image
-          src="/images/optimized/chad-and-katy-nuttall.webp"
-          alt="Chad and Katy Nuttall, owners of Sea Saba, with their children Caleb and Skylar"
-          fill
-          className="object-cover object-center"
-          sizes="(max-width: 1024px) 100vw, 50vw"
-          priority
-        />
-      </div>
-
-      {/* Text */}
+    <FeatureImage
+      src="/images/optimized/chad-and-katy-nuttall.webp"
+      alt="Chad and Katy Nuttall, owners of Sea Saba, with their children Caleb and Skylar"
+      centerText
+    >
       <div>
         <p className="text-xs font-semibold uppercase tracking-widest text-primary">
           Owners since 2021
@@ -396,7 +388,7 @@ export function OwnerFeature() {
           </p>
         </div>
       </div>
-    </div>
+    </FeatureImage>
   );
 }
 

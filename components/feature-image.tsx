@@ -6,6 +6,8 @@ interface FeatureImageProps {
   objectPosition?: string;
   /** When true the image renders on the right col on desktop */
   imageRight?: boolean;
+  /** When true the text column is vertically centered (use for short text blocks) */
+  centerText?: boolean;
   children: React.ReactNode;
 }
 
@@ -20,6 +22,7 @@ export function FeatureImage({
   alt,
   objectPosition = "center",
   imageRight = false,
+  centerText = false,
   children,
 }: FeatureImageProps) {
   return (
@@ -40,7 +43,7 @@ export function FeatureImage({
           sizes="(max-width: 1024px) 100vw, 66vw"
         />
       </div>
-      <div className={imageRight ? "lg:order-1" : ""}>{children}</div>
+      <div className={`${imageRight ? "lg:order-1" : ""} ${centerText ? "lg:flex lg:flex-col lg:justify-center" : ""}`}>{children}</div>
     </div>
   );
 }

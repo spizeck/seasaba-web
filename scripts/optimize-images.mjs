@@ -18,6 +18,22 @@ await mkdir(OUT, { recursive: true });
  * role: hero | section | card
  */
 const IMAGE_MAP = [
+  // New dive-site section photos (6000px source → 1920px output)
+  {
+    src: "DSC03050.jpg",
+    out: "wells-bay-dive-site-saba.webp",
+    width: 1920,
+    quality: 82,
+    role: "section",
+  },
+  {
+    src: "DSC03271.jpg",
+    out: "windwardside-dive-site-saba.webp",
+    width: 1920,
+    quality: 82,
+    role: "section",
+  },
+
   // Interior page heroes — output at source max (2268px) for full-bleed at ultra-wide
   {
     src: "PXL_20260328_191645999.jpg",
@@ -218,6 +234,7 @@ for (const item of IMAGE_MAP) {
 
   const meta = await sharp(srcPath).metadata();
   await sharp(srcPath)
+    .rotate()                                          // bake EXIF orientation before resize
     .resize({ width: item.width, withoutEnlargement: true })
     .webp({ quality: item.quality })
     .toFile(outPath);
