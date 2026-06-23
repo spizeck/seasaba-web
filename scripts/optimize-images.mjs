@@ -18,7 +18,23 @@ await mkdir(OUT, { recursive: true });
  * role: hero | section | card
  */
 const IMAGE_MAP = [
-  // Hero — 1920px wide
+  // Interior page heroes — output at source max (2268px) for full-bleed at ultra-wide
+  {
+    src: "PXL_20260328_191645999.jpg",
+    out: "diving-hero.webp",
+    width: 2268,
+    quality: 85,
+    role: "hero",
+  },
+  {
+    src: "IMG-20240131-WA0003.jpeg",
+    out: "courses-hero.webp",
+    width: 2268,
+    quality: 85,
+    role: "hero",
+  },
+
+  // Homepage hero — 1920px wide
   {
     src: "heroimage.jpg",
     out: "divers-above-reef-saba.webp",
