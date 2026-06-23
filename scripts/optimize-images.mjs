@@ -124,6 +124,29 @@ const IMAGE_MAP = [
     role: "hero",
   },
 
+  // Staff portraits — 800px wide, 4:5 crop handled in-browser via objectPosition
+  { src: "Mel.jpeg",                out: "mel.webp",                   width: 800,  quality: 82, role: "portrait" },
+  { src: "Marc&Jeanine.jpg",        out: "marc-and-jeanine.webp",      width: 800,  quality: 82, role: "portrait" },
+  { src: "Otto.jpg",                out: "otto.webp",                  width: 800,  quality: 82, role: "portrait" },
+  { src: "Aaron.jpeg",              out: "aaron.webp",                 width: 800,  quality: 82, role: "portrait" },
+  { src: "Lenny.jpg",               out: "lenny.webp",                 width: 800,  quality: 82, role: "portrait" },
+  { src: "Robins.jpg",              out: "robins.webp",                width: 800,  quality: 82, role: "portrait" },
+  { src: "Lynn.jpeg",               out: "lynn.webp",                  width: 800,  quality: 82, role: "portrait" },
+  { src: "Lionel.jpeg",             out: "lionel.webp",                width: 800,  quality: 82, role: "portrait" },
+  { src: "Anthony.jpeg",            out: "anthony.webp",               width: 800,  quality: 82, role: "portrait" },
+  { src: "Julijana.jpeg",           out: "julijana.webp",              width: 800,  quality: 82, role: "portrait" },
+  { src: "20210704_094402.jpg",     out: "gunner-dive-dog.webp",       width: 800,  quality: 82, role: "portrait" },
+
+  // Operational / facility — section size
+  { src: "IMG20260425131559.jpg",   out: "chad-and-katy-nuttall.webp", width: 1400, quality: 82, role: "section" },
+  { src: "FortBay2Boats.jpg",       out: "fort-bay-two-boats.webp",    width: 1400, quality: 82, role: "section" },
+  { src: "Saba-186.jpg",            out: "saba-volcanic-scenery.webp", width: 1400, quality: 82, role: "section" },
+
+  // Course page images — section size
+  { src: "diver-in-trim.jpg",       out: "diver-in-trim.webp",         width: 1400, quality: 82, role: "section" },
+  { src: "students.jpg",            out: "students-instruction.webp",  width: 1200, quality: 82, role: "section" },
+  { src: "rental-bcd.jpg",          out: "rental-bcd-equipment.webp",  width: 1200, quality: 82, role: "section" },
+
   // Unused but in folder — convert at section size
   {
     src: "DSC03031.jpg",

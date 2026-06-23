@@ -138,7 +138,7 @@ export default function CoursesPage() {
   return (
     <>
       <PageHero
-        src="/images/diver-in-trim.jpg"
+        src="/images/optimized/diver-in-trim.webp"
         alt="Scuba diver in perfect trim hovering over the reef in the Saba Marine Park"
         title="Learn to Dive with Sea Saba"
         subtitle="SDI and TDI training in one of the Caribbean's most unique marine parks"
@@ -183,7 +183,7 @@ export default function CoursesPage() {
           </div>
           <div className="lg:col-span-2">
             <InlineImage
-              src="/images/students.jpg"
+              src="/images/optimized/students-instruction.webp"
               alt="Scuba diving students receiving instruction from a Sea Saba instructor"
               aspectRatio="4/3"
               objectPosition="left"
@@ -197,7 +197,7 @@ export default function CoursesPage() {
       <div className="mt-12 grid gap-8 lg:grid-cols-5 lg:items-center">
         <div className="lg:col-span-2">
           <InlineImage
-            src="/images/rental-bcd.jpg"
+            src="/images/optimized/rental-bcd-equipment.webp"
             alt="Sea Saba rental BCD scuba equipment available for student divers"
             aspectRatio="4/3"
             sizes="(max-width: 1024px) 100vw, 40vw"

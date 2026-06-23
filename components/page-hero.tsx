@@ -1,4 +1,10 @@
 import Image from "next/image";
+import Link from "next/link";
+
+interface Crumb {
+  label: string;
+  href?: string;
+}
 
 interface PageHeroProps {
   src: string;
@@ -6,12 +12,16 @@ interface PageHeroProps {
   title: string;
   subtitle?: string;
   objectPosition?: string;
+  breadcrumbs?: Crumb[];
 }
 
 /**
- * PageHero — full-width hero image with title/subtitle overlay.
- * Sits immediately below breadcrumbs with no gap or gray band.
- * Heights: mobile 14rem · tablet 20rem · desktop 28rem
+ * PageHero — interior page hero per sea-saba-image-standard.md §3.2.
+ * Sizing: aspect-ratio 4/3 mobile (min 320px, max 480px)
+ *         aspect-ratio 2.4/1 desktop (min 420px, max 640px).
+ * Uses CSS aspect-ratio — not vh — to prevent mobile CLS.
+ * Optional breadcrumb pill overlaid top-left inside the hero.
+ * Radius: rounded-none mobile · lg:rounded-3xl desktop.
  */
 export function PageHero({
   src,
@@ -19,10 +29,12 @@ export function PageHero({
   title,
   subtitle,
   objectPosition = "center",
+  breadcrumbs,
 }: PageHeroProps) {
   return (
-    <div className="not-prose relative -mx-4 mb-8 overflow-hidden rounded-3xl sm:-mx-6 lg:-mx-8">
-      <div className="relative h-56 sm:h-80 lg:h-[28rem]">
+    <div className="not-prose relative -mx-4 mb-8 overflow-hidden rounded-none sm:-mx-6 lg:-mx-8 lg:rounded-3xl">
+      {/* aspect-ratio shell: 4/3 mobile → 2.4/1 lg */}
+      <div className="relative aspect-[4/3] min-h-[320px] max-h-[480px] lg:aspect-[2.4/1] lg:min-h-[420px] lg:max-h-[640px]">
         <Image
           src={src}
           alt={alt}
@@ -33,8 +45,31 @@ export function PageHero({
           sizes="100vw"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/30 to-black/10" />
+
+        {/* Breadcrumb pill — top-left, inside hero */}
+        {breadcrumbs && breadcrumbs.length > 0 && (
+          <nav
+            aria-label="Breadcrumb"
+            className="absolute left-4 top-4 z-10 flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs text-white/90 backdrop-blur-sm"
+            style={{ background: "rgba(11,15,59,0.45)" }}
+          >
+            <Link href="/" className="transition-colors hover:text-white">Home</Link>
+            {breadcrumbs.map((crumb, i) => (
+              <span key={i} className="flex items-center gap-1.5">
+                <span className="opacity-50">/</span>
+                {crumb.href ? (
+                  <Link href={crumb.href} className="transition-colors hover:text-white">{crumb.label}</Link>
+                ) : (
+                  <span>{crumb.label}</span>
+                )}
+              </span>
+            ))}
+          </nav>
+        )}
+
+        {/* Title / subtitle overlay — vertically centered */}
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-center px-4">
+          <div className="px-4 text-center">
             <h1 className="text-3xl font-bold tracking-tight text-white drop-shadow-lg sm:text-4xl lg:text-5xl">
               {title}
             </h1>

@@ -1,5 +1,6 @@
 import { createMetadata } from "@/lib/metadata";
 import { PageHero } from "@/components/page-hero";
+import { FeatureImage } from "@/components/feature-image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Users, Award, Ship, Droplets } from "lucide-react";
@@ -149,42 +150,27 @@ export default function DivingPage() {
 
       {/* Dive Experience Intro */}
       <section className="mt-12">
-        <div className="overflow-hidden rounded-lg">
-          <img
-            src="/images/optimized/guests-on-bow-saba.webp"
-            alt="Guests sitting on the bow of a Sea Saba boat looking at Saba island."
-            className="h-56 w-full object-cover object-center sm:h-72 lg:h-80"
-          />
-        </div>
-        <h2 className="mt-8 text-xl font-semibold text-foreground">The Sea Saba Experience</h2>
-        <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-          Since 1985, generations of divers have explored Saba with Sea Saba. Our custom 38-foot 
-          catamarans are built for Caribbean conditions and designed around diver comfort, with 
-          spacious shaded decks, camera tables, freshwater rinse buckets, large ladders, and 
-          experienced local crews.
-        </p>
-        <ul className="mt-5 space-y-2 text-sm text-muted-foreground">
-          <li className="flex items-start gap-2">
-            <span className="text-primary">✓</span>
-            <span>Complimentary taxi pickup anywhere on Saba</span>
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-primary">✓</span>
-            <span>Maximum 8 divers per guide</span>
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-primary">✓</span>
-            <span>Free 32% Nitrox for certified divers</span>
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-primary">✓</span>
-            <span>Large stable catamarans with shade and marine heads</span>
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-primary">✓</span>
-            <span>Saba&apos;s only continuously operating dive center since 1985</span>
-          </li>
-        </ul>
+        <FeatureImage
+          src="/images/optimized/guests-on-bow-saba.webp"
+          alt="Guests sitting on the bow of a Sea Saba boat looking at Saba island."
+        >
+          <div>
+            <h2 className="text-xl font-semibold text-foreground">The Sea Saba Experience</h2>
+            <p className="mt-4 text-base leading-relaxed text-muted-foreground">
+              Since 1985, generations of divers have explored Saba with Sea Saba. Our custom 38-foot
+              catamarans are built for Caribbean conditions and designed around diver comfort, with
+              spacious shaded decks, camera tables, freshwater rinse buckets, large ladders, and
+              experienced local crews.
+            </p>
+            <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Complimentary taxi pickup anywhere on Saba</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Maximum 8 divers per guide</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Free 32% Nitrox for certified divers</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Large stable catamarans with shade and marine heads</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Saba&apos;s only continuously operating dive center since 1985</span></li>
+            </ul>
+          </div>
+        </FeatureImage>
       </section>
 
       {/* Dive Options Grid */}
@@ -236,28 +222,26 @@ export default function DivingPage() {
         </div>
       </section>
 
-      {/* Turtle Seagrass Divers Photo */}
-      <section className="mt-14">
-        <div className="overflow-hidden rounded-lg">
-          <img
-            src="/images/optimized/green-turtle-seagrass-divers.webp"
-            alt="Divers observing a green sea turtle resting in seagrass at Saba's Marine Park."
-            className="h-64 w-full object-cover object-center sm:h-80 lg:h-96"
-          />
-        </div>
-      </section>
-
       {/* Dive More Save More */}
       <section className="mt-14">
-        <h2 className="text-xl font-semibold text-foreground">Dive More. Save More.</h2>
-        <p className="mt-1 text-sm text-muted-foreground">Stay longer. Experience more.</p>
-        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          Most guests spend several days exploring Saba's world-famous pinnacles, walls, and reefs. 
-          Multi-day pricing rewards continuous diving schedules, and complimentary 32% Nitrox is 
-          included on qualifying dives.
-        </p>
+        <FeatureImage
+          src="/images/optimized/green-turtle-seagrass-divers.webp"
+          alt="Divers observing a green sea turtle resting in seagrass at Saba's Marine Park."
+          imageRight
+        >
+          <div>
+            <h2 className="text-xl font-semibold text-foreground">Dive More. Save More.</h2>
+            <p className="mt-1 text-sm text-muted-foreground">Stay longer. Experience more.</p>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+              Most guests spend several days exploring Saba&apos;s world-famous pinnacles, walls, and reefs.
+              Multi-day pricing rewards continuous diving schedules, and complimentary 32% Nitrox is
+              included on qualifying dives.
+            </p>
+          </div>
+        </FeatureImage>
 
-        <div className="mt-5 grid gap-3 sm:grid-cols-2">
+        {/* Feature grid — full width below the image+text row */}
+        <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           <div className="flex items-start gap-3 rounded-lg border border-border/40 bg-muted/20 p-3">
             <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">✓</span>
             <div>
@@ -286,7 +270,7 @@ export default function DivingPage() {
               <p className="text-xs text-muted-foreground">Add afternoon and night dives to customize your stay.</p>
             </div>
           </div>
-          <div className="flex items-start gap-3 rounded-lg border border-border/40 bg-muted/20 p-3 sm:col-span-2">
+          <div className="flex items-start gap-3 rounded-lg border border-border/40 bg-muted/20 p-3">
             <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">✓</span>
             <div>
               <h4 className="text-sm font-medium text-foreground">Rental Equipment Available</h4>
@@ -294,10 +278,9 @@ export default function DivingPage() {
             </div>
           </div>
         </div>
-
         <div className="mt-5 flex justify-center">
           <Button asChild variant="outline" size="sm">
-            <Link href="/book">View Packages & Pricing</Link>
+            <Link href="/book">View Packages &amp; Pricing</Link>
           </Button>
         </div>
       </section>

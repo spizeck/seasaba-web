@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-type AspectRatio = "4/3" | "16/9" | "3/4" | "1/1";
+type AspectRatio = "4/3" | "16/9" | "3/4" | "4/5" | "1/1";
 
 interface InlineImageProps {
   src: string;
@@ -15,6 +15,7 @@ const ASPECT_CLASSES: Record<AspectRatio, string> = {
   "4/3": "aspect-[4/3]",
   "16/9": "aspect-video",
   "3/4": "aspect-[3/4]",
+  "4/5": "aspect-[4/5]",
   "1/1": "aspect-square",
 };
 
@@ -33,7 +34,7 @@ export function InlineImage({
 }: InlineImageProps) {
   return (
     <div
-      className={`relative w-full overflow-hidden rounded-2xl ${ASPECT_CLASSES[aspectRatio]} ${className}`}
+      className={`not-prose relative w-full overflow-hidden rounded-2xl ${ASPECT_CLASSES[aspectRatio]} ${className}`}
     >
       <Image
         src={src}

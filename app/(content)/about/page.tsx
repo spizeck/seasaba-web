@@ -125,7 +125,7 @@ export default function AboutPage() {
           {/* Image 60% */}
           <div className="lg:col-span-3">
             <InlineImage
-              src="/images/FortBay2Boats.jpg"
+              src="/images/optimized/fort-bay-two-boats.webp"
               alt="Two Sea Saba custom dive catamarans moored at Fort Bay Harbor, Saba"
               aspectRatio="4/3"
               sizes="(max-width: 1024px) 100vw, 60vw"
@@ -178,7 +178,7 @@ export default function AboutPage() {
           {/* Image right 60% */}
           <div className="lg:col-span-3">
             <InlineImage
-              src="/images/Saba-186.jpg"
+              src="/images/optimized/saba-volcanic-scenery.webp"
               alt="Dramatic volcanic scenery and coastline of Saba, Caribbean Netherlands"
               aspectRatio="4/3"
               sizes="(max-width: 1024px) 100vw, 60vw"
