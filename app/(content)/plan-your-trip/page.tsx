@@ -4,7 +4,7 @@ import Image from "next/image";
 import { PageHero } from "@/components/page-hero";
 import { FeatureImage } from "@/components/feature-image";
 import { Button } from "@/components/ui/button";
-import { Plane, Ship, Anchor, Check, Droplets, Eye, Sun, Thermometer, Home, HelpCircle, Fish, Camera, Calendar, AlertTriangle, Coffee, Package, Bus, Ban, DollarSign, MessageCircle, Plug, Wifi, Timer } from "lucide-react";
+import { Plane, Ship, Check, Droplets, Eye, Sun, Thermometer, Home, HelpCircle, Fish, Camera, Calendar, AlertTriangle, Bus, Ban, DollarSign, MessageCircle, Plug, Wifi, Timer } from "lucide-react";
 
 export const metadata = createMetadata({
   title: "Plan Your Trip to Saba",
@@ -333,64 +333,6 @@ export default function PlanYourTripPage() {
         </div>
       </section>
 
-      {/* Typical Dive Day */}
-      <section className="mt-12">
-        <h2 className="text-xl font-semibold text-foreground">A Typical Dive Day</h2>
-
-        <div className="mt-6">
-          <div>
-            {/* Timeline */}
-            <div className="space-y-0">
-              {[
-                { time: "7:30 AM", icon: Coffee, label: "Breakfast at most hotels and a relaxed start to the day." },
-                { time: "8:30 AM", icon: Ship, label: "Taxi pickup for Advanced 2-Tank divers." },
-                { time: "9:00 AM", icon: Anchor, label: "Advanced boat departs." },
-                { time: "10:00 AM", icon: Ship, label: "Taxi pickup for Classic 2-Tank divers." },
-                { time: "10:30 AM", icon: Anchor, label: "Classic 2-Tank departure." },
-                { time: "12:30 PM", icon: Ship, label: "Taxi pickup for Afternoon Divers and Snorkelers." },
-                { time: "1:00 PM", icon: Anchor, label: "Afternoon dive and snorkel departures." },
-              ].map(({ time, icon: Icon, label }, i, arr) => (
-                <div key={time} className="flex gap-4">
-                  {/* Timeline bubble */}
-                  <div className="flex flex-col items-center">
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10">
-                      <Icon className="h-3.5 w-3.5 text-primary" />
-                    </div>
-                    {i < arr.length - 1 && <div className="w-px flex-1 bg-border/60 my-1" />}
-                  </div>
-                  {/* Content */}
-                  <div className={i < arr.length - 1 ? "pb-5" : "pb-0"}>
-                    <p className="text-xs font-semibold text-primary">{time}</p>
-                    <p className="mt-0.5 text-sm text-foreground">{label}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Approximate times note */}
-            <p className="mt-4 text-xs text-muted-foreground/70 italic">
-              Times are approximate and may vary slightly depending on accommodations and weather conditions.
-            </p>
-
-            {/* After your last dive day */}
-            <div className="mt-5 rounded-xl border border-border/50 bg-card p-4">
-              <div className="flex items-start gap-3">
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10">
-                  <Package className="h-3.5 w-3.5 text-primary" />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-foreground">After Your Last Dive Day</p>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    Our team rinses your equipment and delivers it back to your accommodation,
-                    allowing you to relax and enjoy the rest of your stay.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </section>
 
       {/* What to Bring */}
       <section className="mt-12">
