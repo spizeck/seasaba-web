@@ -1,7 +1,7 @@
 import { createMetadata } from "@/lib/metadata";
 import Link from "next/link";
 import { PageHero } from "@/components/page-hero";
-import { InlineImage } from "@/components/inline-image";
+import { FeatureImage } from "@/components/feature-image";
 import { Button } from "@/components/ui/button";
 import { BookingCTA } from "@/components/booking-cta";
 import { Award, Users, CheckCircle, Ship, MapPin, Wrench, Car, ShieldCheck, Compass } from "lucide-react";
@@ -166,53 +166,46 @@ export default function CoursesPage() {
 
       {/* Personalized Instruction */}
       <section className="mt-12">
-        <div className="grid gap-8 lg:grid-cols-5 lg:items-center">
-          <div className="lg:col-span-3">
-            <div className="rounded-lg border border-border/40 bg-muted/20 p-6">
-              <h2 className="text-xl font-semibold text-foreground">Personalized Instruction</h2>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                At Sea Saba, we&apos;ve always believed learning is better in small groups. Most courses are
-                taught 1:1 or 2:1, giving students the attention and flexibility they deserve. For larger
-                groups, additional instructors and assistants are added to maintain the same personal
-                experience.
-              </p>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                Small groups aren&apos;t a new trend for us. They&apos;ve been our philosophy since 1985.
-              </p>
-            </div>
+        <FeatureImage
+          src="/images/optimized/students-instruction.webp"
+          alt="Scuba diving students receiving instruction from a Sea Saba instructor"
+          objectPosition="left"
+          imageRight
+          centerText
+        >
+          <div>
+            <h2 className="text-xl font-semibold text-foreground">Personalized Instruction</h2>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+              At Sea Saba, we&apos;ve always believed learning is better in small groups. Most courses are
+              taught 1:1 or 2:1, giving students the attention and flexibility they deserve. For larger
+              groups, additional instructors and assistants are added to maintain the same personal
+              experience.
+            </p>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+              Small groups aren&apos;t a new trend for us. They&apos;ve been our philosophy since 1985.
+            </p>
           </div>
-          <div className="lg:col-span-2">
-            <InlineImage
-              src="/images/optimized/students-instruction.webp"
-              alt="Scuba diving students receiving instruction from a Sea Saba instructor"
-              aspectRatio="4/3"
-              objectPosition="left"
-              sizes="(max-width: 1024px) 100vw, 40vw"
-            />
-          </div>
-        </div>
+        </FeatureImage>
       </section>
 
-      {/* Equipment Image */}
-      <div className="mt-12 grid gap-8 lg:grid-cols-5 lg:items-center">
-        <div className="lg:col-span-2">
-          <InlineImage
-            src="/images/optimized/rental-bcd-equipment.webp"
-            alt="Sea Saba rental BCD scuba equipment available for student divers"
-            aspectRatio="4/3"
-            sizes="(max-width: 1024px) 100vw, 40vw"
-          />
-        </div>
-        <div className="lg:col-span-3">
-          <h2 className="text-xl font-semibold text-foreground">Modern Rental Equipment</h2>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-            All courses include full use of our modern Scubapro equipment — BCDs, regulators,
-            wetsuits, masks, fins, and wrist-mounted dive computers. XDeep backplate and wing
-            systems are also available for divers who prefer a streamlined technical setup.
-            Nitrox is complimentary for certified divers when appropriate.
-          </p>
-        </div>
-      </div>
+      {/* Modern Rental Equipment */}
+      <section className="mt-12">
+        <FeatureImage
+          src="/images/optimized/rental-bcd-equipment.webp"
+          alt="Sea Saba rental BCD scuba equipment available for student divers"
+          centerText
+        >
+          <div>
+            <h2 className="text-xl font-semibold text-foreground">Modern Rental Equipment</h2>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+              All courses include full use of our modern Scubapro equipment — BCDs, regulators,
+              wetsuits, masks, fins, and wrist-mounted dive computers. XDeep backplate and wing
+              systems are also available for divers who prefer a streamlined technical setup.
+              Nitrox is complimentary for certified divers when appropriate.
+            </p>
+          </div>
+        </FeatureImage>
+      </section>
 
       {/* Courses */}
       <section className="mt-12">

@@ -4,6 +4,7 @@ import { FeatureImage } from "@/components/feature-image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Users, Award, Ship, Droplets } from "lucide-react";
+import { ExperienceSelector } from "@/components/experience-selector";
 
 export const metadata = createMetadata({
   title: "Diving with Sea Saba",
@@ -226,6 +227,8 @@ export default function DivingPage() {
           ))}
         </div>
       </section>
+
+      <ExperienceSelector />
 
       {/* Dive More Save More */}
       <section className="mt-14">

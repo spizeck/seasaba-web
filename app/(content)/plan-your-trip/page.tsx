@@ -2,8 +2,9 @@ import { createMetadata } from "@/lib/metadata";
 import Link from "next/link";
 import Image from "next/image";
 import { PageHero } from "@/components/page-hero";
+import { FeatureImage } from "@/components/feature-image";
 import { Button } from "@/components/ui/button";
-import { Plane, Ship, Anchor, Check, Droplets, Eye, Sun, Thermometer, Home, HelpCircle, Fish, Camera, Calendar, AlertTriangle, Coffee, Package } from "lucide-react";
+import { Plane, Ship, Anchor, Check, Droplets, Eye, Sun, Thermometer, Home, HelpCircle, Fish, Camera, Calendar, AlertTriangle, Coffee, Package, Bus, Ban, DollarSign, MessageCircle, Plug, Wifi, Timer } from "lucide-react";
 
 export const metadata = createMetadata({
   title: "Plan Your Trip to Saba",
@@ -14,39 +15,44 @@ export const metadata = createMetadata({
 
 const GOOD_TO_KNOW = [
   {
-    icon: Check,
+    icon: Bus,
     title: "Complimentary Taxi Shuttle",
-    description: "Transportation anywhere on Saba is included for divers.",
+    description: "Complimentary pickup and drop-off between your accommodation and the dive center is included for divers.",
   },
   {
-    icon: Ship,
+    icon: Ban,
     title: "No Cruise Ships",
-    description: "Quiet island atmosphere and uncrowded dive sites.",
+    description: "Quiet island atmosphere, uncrowded waters, and no mass tourism.",
   },
   {
-    icon: Check,
+    icon: DollarSign,
     title: "US Dollars Accepted",
-    description: "No currency exchange needed.",
+    description: "US dollars are the official currency, and major credit cards are widely accepted.",
   },
   {
-    icon: Check,
+    icon: MessageCircle,
     title: "English Spoken Everywhere",
-    description: "Easy communication throughout the island.",
+    description: "English is the primary language, making communication easy for international visitors.",
   },
   {
-    icon: Check,
-    title: "110V US Power Outlets",
-    description: "Standard US voltage and plugs.",
+    icon: Plug,
+    title: "120V US Power Outlets",
+    description: "Standard US voltage and plugUS-style outlets are used throughout the island.",
   },
   {
     icon: Droplets,
     title: "Safe Drinking Water",
-    description: "Rainwater cistern water is used throughout the island.",
+    description: "Clean, safe drinking water is readily available. Saba Splash, the island's local bottling plant, provides filtered water across the island.",
   },
   {
-    icon: Check,
+    icon: Wifi,
     title: "Reliable Internet",
-    description: "Fiber and Starlink are widely available.",
+    description: "Fiber Internet and Starlink are widely available.",
+  },
+  {
+    icon: Timer,
+    title: "Short Boat Rides",
+    description: "Most dive sites are 5–15 minutes from the Fort Bay Harbor.",
   },
 ] as const;
 
@@ -73,7 +79,7 @@ const FAQS = [
   },
   {
     question: "Is Saba good for non-divers?",
-    answer: "Yes. Hiking, restaurants, birdwatching, and spectacular scenery make Saba enjoyable for everyone.",
+    answer: "Yes. Hiking, restaurants, birdwatching, art workshops, glass melting and spectacular scenery make Saba enjoyable for everyone.",
   },
 ] as const;
 
@@ -177,7 +183,7 @@ export default function PlanYourTripPage() {
               {[
                 "Clearest water and excellent visibility.",
                 "Humpback whales frequently seen January through April.",
-                "Trade winds bring breezier conditions.",
+                "Christmas winds bring breezier conditions and occasionally rougher seas.",
                 "Water temperatures are coolest in February.",
                 "Christmas and spring break periods book early.",
               ].map((item) => (
@@ -192,7 +198,7 @@ export default function PlanYourTripPage() {
           {/* May–Jul */}
           <div className="rounded-xl border border-border/50 bg-card p-5 flex flex-col gap-3">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-widest text-primary">May &ndash; July</p>
+              <p className="text-xs font-semibold uppercase tracking-widest text-primary">May &ndash; June</p>
               <h3 className="mt-1 text-base font-semibold text-foreground">Warm Water &amp; Fewer Crowds</h3>
             </div>
             <ul className="space-y-2">
@@ -201,6 +207,7 @@ export default function PlanYourTripPage() {
                 "Smaller crowds and relaxed atmosphere.",
                 "Excellent time for underwater photography.",
                 "Great for longer dive vacations.",
+                "Generally lighter winds and comfortable sea conditions.",
               ].map((item) => (
                 <li key={item} className="flex items-start gap-2 text-sm text-muted-foreground">
                   <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
@@ -213,12 +220,12 @@ export default function PlanYourTripPage() {
           {/* Aug–Nov */}
           <div className="rounded-xl border border-border/50 bg-card p-5 flex flex-col gap-3">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-widest text-primary">August &ndash; November</p>
+              <p className="text-xs font-semibold uppercase tracking-widest text-primary">July &ndash; November</p>
               <h3 className="mt-1 text-base font-semibold text-foreground">Calm Seas &amp; Island Festivals</h3>
             </div>
             <ul className="space-y-2">
               {[
-                "Hurricane season often brings the calmest seas when no storms are present.",
+                "Late summer and fall often bring calm seas and excellent diving conditions when no tropical systems are nearby.",
                 "Warmest water temperatures.",
                 "October features Sea & Learn.",
                 "November features Rum & Lobster Fest.",
@@ -238,7 +245,7 @@ export default function PlanYourTripPage() {
           <div className="rounded-lg border border-border/40 bg-muted/20 p-4 text-center">
             <Thermometer className="mx-auto h-5 w-5 text-primary" />
             <p className="mt-2 text-xs font-semibold text-foreground">Water Temperature</p>
-            <p className="mt-1 text-xs text-muted-foreground">78&ndash;84&deg;F (26&ndash;29&deg;C)</p>
+            <p className="mt-1 text-xs text-muted-foreground">77&ndash;86&deg;F (25&ndash;30&deg;C)</p>
             <p className="mt-0.5 text-xs text-muted-foreground">Warm year-round, coolest in February.</p>
           </div>
           <div className="rounded-lg border border-border/40 bg-muted/20 p-4 text-center">
@@ -281,8 +288,13 @@ export default function PlanYourTripPage() {
       <section className="mt-12">
         <h2 className="text-xl font-semibold text-foreground">Where to Stay</h2>
 
-        <div className="mt-6 grid gap-6 lg:grid-cols-2 lg:items-start">
-          <div className="rounded-lg border border-border/60 bg-card p-6">
+        <FeatureImage
+          src="/images/optimized/windwardside-village-saba.webp"
+          alt="Windwardside village on Saba showing traditional cottages and lush greenery"
+          imageRight
+          centerText
+        >
+          <div>
             <div className="flex items-center gap-3">
               <Home className="h-5 w-5 text-primary" />
               <h3 className="text-lg font-semibold text-foreground">Accommodation</h3>
@@ -298,20 +310,11 @@ export default function PlanYourTripPage() {
                 </span>
               ))}
             </div>
-            <p className="mt-4 text-sm text-muted-foreground">
-              Need help deciding? Our team is happy to recommend accommodations based on your budget, preferred atmosphere, and travel style.
-            </p>
           </div>
+        </FeatureImage>
 
-          <div className="relative h-64 rounded-lg overflow-hidden lg:h-full lg:min-h-[280px]">
-            <Image
-              src="/images/optimized/windwardside-village-saba.webp"
-              alt="Windwardside village on Saba showing traditional cottages and lush greenery"
-              fill
-              className="object-cover"
-              sizes="(max-width: 1024px) 100vw, 50vw"
-            />
-          </div>
+        <div className="mt-4 rounded-lg border border-border/40 bg-muted/20 px-5 py-4 text-sm text-muted-foreground">
+          Need help deciding? Our team is happy to recommend accommodations based on your budget, preferred atmosphere, and travel style.
         </div>
       </section>
 
@@ -334,7 +337,7 @@ export default function PlanYourTripPage() {
       <section className="mt-12">
         <h2 className="text-xl font-semibold text-foreground">A Typical Dive Day</h2>
 
-        <div className="mt-6 grid gap-8 lg:grid-cols-2 lg:items-start">
+        <div className="mt-6">
           <div>
             {/* Timeline */}
             <div className="space-y-0">
@@ -348,7 +351,7 @@ export default function PlanYourTripPage() {
                 { time: "1:00 PM", icon: Anchor, label: "Afternoon dive and snorkel departures." },
               ].map(({ time, icon: Icon, label }, i, arr) => (
                 <div key={time} className="flex gap-4">
-                  {/* Timeline spine */}
+                  {/* Timeline bubble */}
                   <div className="flex flex-col items-center">
                     <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10">
                       <Icon className="h-3.5 w-3.5 text-primary" />
@@ -386,15 +389,6 @@ export default function PlanYourTripPage() {
             </div>
           </div>
 
-          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl shadow-sm lg:sticky lg:top-6">
-            <Image
-              src="/images/optimized/guests-on-bow-saba.webp"
-              alt="Divers relaxing on the bow of the Sea Saba dive boat"
-              fill
-              className="object-cover object-center"
-              sizes="(max-width: 1024px) 100vw, 50vw"
-            />
-          </div>
         </div>
       </section>
 
