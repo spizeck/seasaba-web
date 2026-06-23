@@ -124,6 +124,7 @@ export default function DivingPage() {
         alt="Scuba divers exploring the reef in the Saba Marine Park"
         title="Diving with Sea Saba"
         subtitle="Professional boat diving in Saba's Marine Park since 1985"
+        objectPosition="center bottom"
       />
 
       <p className="text-base leading-relaxed text-muted-foreground">
@@ -153,6 +154,7 @@ export default function DivingPage() {
         <FeatureImage
           src="/images/optimized/guests-on-bow-saba.webp"
           alt="Guests sitting on the bow of a Sea Saba boat looking at Saba island."
+          centerText
         >
           <div>
             <h2 className="text-xl font-semibold text-foreground">The Sea Saba Experience</h2>
@@ -162,15 +164,18 @@ export default function DivingPage() {
               spacious shaded decks, camera tables, freshwater rinse buckets, large ladders, and
               experienced local crews.
             </p>
-            <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
-              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Complimentary taxi pickup anywhere on Saba</span></li>
-              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Maximum 8 divers per guide</span></li>
-              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Free 32% Nitrox for certified divers</span></li>
-              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Large stable catamarans with shade and marine heads</span></li>
-              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Saba&apos;s only continuously operating dive center since 1985</span></li>
-            </ul>
           </div>
         </FeatureImage>
+
+        {/* Feature checklist — full-width 2-col grid below the media row */}
+        <ul className="mt-6 grid gap-3 sm:grid-cols-2 text-sm text-muted-foreground">
+          <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Complimentary taxi pickup anywhere on Saba</span></li>
+          <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Free 32% Nitrox for certified divers</span></li>
+          <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Saba&apos;s only continuously operating dive center since 1985</span></li>
+          <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Maximum 8 divers per guide</span></li>
+          <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Large stable catamarans with shade and marine heads</span></li>
+          <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Equipment rinsed and delivered back to your accommodation</span></li>
+        </ul>
       </section>
 
       {/* Dive Options Grid */}
@@ -276,6 +281,13 @@ export default function DivingPage() {
             <div>
               <h4 className="text-sm font-medium text-foreground">Rental Equipment Available</h4>
               <p className="text-xs text-muted-foreground">Full rental packages are available if needed.</p>
+            </div>
+          </div>
+          <div className="flex items-start gap-3 rounded-lg border border-border/40 bg-muted/20 p-3">
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">✓</span>
+            <div>
+              <h4 className="text-sm font-medium text-foreground">Full-Service Convenience</h4>
+              <p className="text-xs text-muted-foreground">Equipment rinsed and delivered back to your accommodation.</p>
             </div>
           </div>
         </div>
