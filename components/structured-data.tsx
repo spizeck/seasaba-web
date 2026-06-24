@@ -14,7 +14,7 @@ export function LocalBusinessJsonLd() {
     name: SITE_NAME,
     description: SITE_DESCRIPTION,
     url: SITE_URL,
-    telephone: CONTACT.phoneHref.replace("tel:", ""),
+    telephone: CONTACT.phoneRaw,
     email: CONTACT.email,
     foundingDate: "1985",
     address: {

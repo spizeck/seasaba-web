@@ -22,6 +22,7 @@ export const OG_IMAGE = {
 
 export const CONTACT = {
   phone: "+599 416 2246",
+  phoneRaw: "+5994162246",
   phoneHref: "tel:+5994162246",
   whatsapp: "+599 416 2246",
   whatsappHref: "https://wa.me/5994162246",
