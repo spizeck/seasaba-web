@@ -52,7 +52,7 @@ export function Footer() {
               Contact
             </p>
             <div className="mt-4 flex flex-col gap-2 text-sm text-muted-foreground">
-              {CONTACT.addressLines.map((line) => (
+              {CONTACT.address.displayLines.map((line) => (
                 <p key={line}>{line}</p>
               ))}
               <a

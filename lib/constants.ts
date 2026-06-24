@@ -27,7 +27,13 @@ export const CONTACT = {
   whatsapp: "+599 416 2246",
   whatsappHref: "https://wa.me/5994162246",
   email: "info@seasaba.com",
-  addressLines: ["66 Fort Bay Harbor", "The Bottom, Saba", "Caribbean Netherlands"],
+  address: {
+    streetAddress: "66 Fort Bay Harbor",
+    addressLocality: "The Bottom",
+    addressRegion: "Saba",
+    addressCountry: "BQ",
+    displayLines: ["66 Fort Bay Harbor", "The Bottom, Saba", "Caribbean Netherlands"],
+  },
 } as const;
 
 export const SOCIAL_LINKS = [

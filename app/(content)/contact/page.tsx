@@ -63,7 +63,7 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
           <h2 className="text-lg font-semibold text-foreground">Phone &amp; Location</h2>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
             Sea Saba Dive Center
-            {CONTACT.addressLines.map((line) => (
+            {CONTACT.address.displayLines.map((line) => (
               <span key={line}>
                 <br />
                 {line}

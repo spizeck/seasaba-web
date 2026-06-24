@@ -19,10 +19,10 @@ export function LocalBusinessJsonLd() {
     foundingDate: "1985",
     address: {
       "@type": "PostalAddress",
-      streetAddress: "66 Fort Bay Harbor",
-      addressLocality: "The Bottom",
-      addressRegion: "Saba",
-      addressCountry: "BQ",
+      streetAddress: CONTACT.address.streetAddress,
+      addressLocality: CONTACT.address.addressLocality,
+      addressRegion: CONTACT.address.addressRegion,
+      addressCountry: CONTACT.address.addressCountry,
     },
     geo: {
       "@type": "GeoCoordinates",
