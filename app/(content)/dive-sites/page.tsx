@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { PageHero } from "@/components/page-hero";
 import { FeatureImage } from "@/components/feature-image";
+import { DiveAreaSites } from "@/components/dive-area-sites";
 
 export const metadata = createMetadata({
   title: "Saba Dive Sites",
@@ -112,27 +113,12 @@ export default function DiveSitesPage() {
                     </div>
                   </div>
 
-                  {/* Site Chips */}
+                  {/* Site Chips — interactive, open video modal */}
                   <div className="mt-4">
                     <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Dive Sites</h4>
-                    <div className="mt-2 flex flex-wrap gap-2">
-                      {area.sites.map((site) => (
-                        <span
-                          key={site}
-                          className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary"
-                        >
-                          {site}
-                        </span>
-                      ))}
-                    </div>
+                    <DiveAreaSites sites={area.sites} />
                   </div>
 
-                  <Link
-                    href={`/dive-sites/${area.id}`}
-                    className="mt-6 inline-flex items-center text-sm font-medium text-primary hover:underline"
-                  >
-                    Explore {area.title} sites →
-                  </Link>
               </div>
             </FeatureImage>
           </section>
