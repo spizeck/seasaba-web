@@ -72,13 +72,14 @@ export function BookingWidget() {
       suppressScroll();
 
       // Build widget config based on preselected item
+      const isPrivate = itemId === "254";
       const widgetConfig = {
         host: "seasaba.checkfront.com",
         target: "CHECKFRONT_WIDGET_01",
-        item_id: itemId || ALL_ITEM_IDS,
-        category_id: itemId ? undefined : "4,51,49",
+        item_id: isPrivate ? undefined : (itemId || ALL_ITEM_IDS),
+        category_id: isPrivate ? "49" : (itemId ? undefined : "4,51,49"),
         tid: "seasaba-website",
-        options: itemId ? undefined : "category_select",
+        options: itemId && !isPrivate ? undefined : "category_select",
         style: "font-family: Inter",
         provider: "droplet",
       };
