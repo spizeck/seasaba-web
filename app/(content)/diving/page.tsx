@@ -310,23 +310,23 @@ export default function DivingPage() {
             <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
               <li className="flex items-start gap-3">
                 <span className="text-primary">✓</span>
-                <span>Complimentary island-wide taxi pickup and return service</span>
+                <span>Complimentary transportation between your accommodation and the dive center</span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-primary">✓</span>
-                <span>Crew assistance with equipment setup and tank changes</span>
+                <span>Crew assistance with equipment setup, tank changes, and gear handling</span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-primary">✓</span>
-                <span>PRO valves supporting both DIN and yoke regulators</span>
+                <span>PRO valves compatible with both DIN and yoke regulators</span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-primary">✓</span>
-                <span>Professional dive briefings covering conditions and marine life</span>
+                <span>Detailed dive briefings covering conditions, marine life, and site highlights</span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-primary">✓</span>
-                <span>Save-a-Dive kits, spare equipment, oxygen, and first aid always onboard</span>
+                <span>Oxygen, first aid, spare equipment, and Save-a-Dive kits onboard</span>
               </li>
             </ul>
           </div>
@@ -335,11 +335,11 @@ export default function DivingPage() {
             <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
               <li className="flex items-start gap-3">
                 <span className="text-primary">✓</span>
-                <span>Custom 38-foot catamarans built in the Caribbean for Caribbean conditions</span>
+                <span>Custom 38-foot power catamarans designed and built for Caribbean conditions</span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-primary">✓</span>
-                <span>Shaded seating, spacious decks, bow sunning areas, and Fin & Tonic's upper deck</span>
+                <span>Shaded seating, spacious decks, bow lounging areas, and Fin & Tonic's upper observation deck</span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-primary">✓</span>
@@ -364,15 +364,19 @@ export default function DivingPage() {
             <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
               <li className="flex items-start gap-3">
                 <span className="text-primary">✓</span>
-                <span>At the end of their trip, guests can simply leave their equipment with us</span>
+                <span>At the end of your final dive day, simply leave your equipment with us</span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-primary">✓</span>
-                <span>Sea Saba rinses and delivers equipment back to guest accommodations</span>
+                <span>Sea Saba rinses, stores, and delivers equipment back to your accommodation</span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-primary">✓</span>
-                <span>Guests are free to relax and enjoy Saba instead of carrying gear around the island</span>
+                <span>Spend more time enjoying Saba instead of hauling wet gear around the island</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="text-primary">✓</span>
+                <span>Cold drinks are available at the dive center, including local juices, sodas, water, and Deep Dive Brewing Co. beer</span>
               </li>
             </ul>
           </div>

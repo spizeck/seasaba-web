@@ -65,36 +65,47 @@ export function Header() {
 
         {/* Mobile toggle */}
         <button
-          className={`inline-flex items-center justify-center rounded-md p-2 md:hidden ${
+          className={`relative inline-flex h-9 w-9 items-center justify-center rounded-md p-2 md:hidden ${
             transparent ? "text-white" : "text-muted-foreground"
           }`}
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label={mobileOpen ? "Close menu" : "Open menu"}
         >
-          {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          <Menu
+            className={`absolute h-5 w-5 transition-all duration-300 ${
+              mobileOpen ? "rotate-90 opacity-0" : "rotate-0 opacity-100"
+            }`}
+          />
+          <X
+            className={`absolute h-5 w-5 transition-all duration-300 ${
+              mobileOpen ? "rotate-0 opacity-100" : "-rotate-90 opacity-0"
+            }`}
+          />
         </button>
       </div>
 
-      {/* Mobile nav */}
-      {mobileOpen && (
-        <nav className="border-t border-border/40 bg-background px-4 pb-4 pt-2 md:hidden">
-          <div className="flex flex-col gap-3">
-            {NAV_ITEMS.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-                onClick={() => setMobileOpen(false)}
-              >
-                {item.label}
-              </Link>
-            ))}
-            <Button asChild size="sm" className="mt-2 w-full bg-[#9D2235] text-white hover:bg-[#8a1e2e]">
-              <Link href="/book" onClick={() => setMobileOpen(false)}>Book Now</Link>
-            </Button>
-          </div>
-        </nav>
-      )}
+      {/* Mobile nav — always mounted, animated in/out */}
+      <nav
+        className={`overflow-hidden border-t border-border/40 bg-background transition-all duration-500 ease-in-out md:hidden ${
+          mobileOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+        }`}
+      >
+        <div className="flex flex-col gap-3 px-4 pb-4 pt-2">
+          {NAV_ITEMS.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              onClick={() => setMobileOpen(false)}
+            >
+              {item.label}
+            </Link>
+          ))}
+          <Button asChild size="sm" className="mt-2 w-full bg-[#9D2235] text-white hover:bg-[#8a1e2e]">
+            <Link href="/book" onClick={() => setMobileOpen(false)}>Book Now</Link>
+          </Button>
+        </div>
+      </nav>
     </header>
   );
 }
