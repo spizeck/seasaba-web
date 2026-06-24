@@ -7,7 +7,7 @@ import { Anchor, Users, Shield, Ship, Bus, MapPin } from "lucide-react";
 import { TeamCarousel, OwnerFeature } from "@/components/about-page-client";
 
 export const metadata = createMetadata({
-  title: "About Sea Saba",
+  title: "About Us",
   description:
     "Professional scuba diving in Saba since 1985. Small guided groups, experienced local professionals, and a commitment to exceptional underwater experiences.",
   path: "/about",

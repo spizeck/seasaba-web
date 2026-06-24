@@ -7,7 +7,7 @@ import { Users, Award, Ship, Droplets } from "lucide-react";
 import { ExperienceSelector } from "@/components/experience-selector";
 
 export const metadata = createMetadata({
-  title: "Diving with Sea Saba",
+  title: "Diving in Saba",
   description:
     "Professional boat diving in Saba's Marine Park. Small guided groups, comfortable boats, experienced local professionals. Open Water to technical.",
   path: "/diving",
