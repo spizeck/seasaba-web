@@ -18,8 +18,7 @@ const DIVE_AREAS = [
     description:
       "The Pinnacles are the dives that helped put Saba on the map. About a mile offshore, these volcanic seamounts and deep plateau sites rise from the blue and deliver some of Saba's most dramatic underwater terrain. These dives are best suited for experienced divers due to depth and open-ocean exposure.",
     sites: ["Third Encounter", "The Needle", "Twilight Zone", "Outer Limits", "Mt. Michel", "Shark Shoals"],
-    depth: "23–45m+ / 75–150ft+",
-    marineLife: ["Reef sharks", "Nurse sharks", "Schooling jacks", "Barracuda", "Black coral", "Large sponges"],
+    knownFor: ["Volcanic seamounts rising from the blue", "Massive barrel sponges and black coral", "Deep reefs and open-ocean exposure", "Saba's most iconic advanced dives"],
     image: "/images/optimized/divers-above-pinnacle-saba.webp",
     imagePosition: "left",
   },
@@ -29,8 +28,7 @@ const DIVE_AREAS = [
     description:
       "Tent Reef is one of Saba's most versatile dive areas, beginning with shallower reef and mini-wall profiles before developing into dramatic wall diving. The area includes healthy coral, turtles, blue-water views, and the famous Three Sisters seamounts off the wall.",
     sites: ["Tent Shallow", "Tent Deep", "Tent Reef", "Tent Boulders", "Tent Wall", "The Three Sisters", "Tedran Wall"],
-    depth: "6–45m+ / 20–150ft+",
-    marineLife: ["Green turtles", "Reef fish", "Sponges", "Lobsters", "Occasional reef sharks", "Schooling fish"],
+    knownFor: ["Mini walls, canyons, and swim-throughs", "Coral gardens and healthy reef systems", "Depths ranging from shallow reefs to deep walls", "Something different on nearly every dive"],
     image: "/images/optimized/green-turtle-tent-reef.webp",
     imagePosition: "right",
   },
@@ -40,9 +38,8 @@ const DIVE_AREAS = [
     description:
       "Ladder Bay offers volcanic landscapes, shallow-to-mid-depth reefs, swim-throughs, and some of Saba's most interesting small marine life. This area includes Hot Springs, where volcanic vents create warm, mustard-colored sand.",
     sites: ["Ladder Labyrinth", "Hot Springs", "50/50", "Porites Point", "Customs House", "Babylon"],
-    depth: "12–30m / 40–100ft",
-    marineLife: ["Nurse sharks", "Green turtles", "Flying gurnards", "Spiny lobsters", "Octopus", "Macro life"],
-    image: "/images/optimized/spiny-lobster-ladder-bay.webp",
+    knownFor: ["Lava fingers separated by black sand chutes", "Giant coral-covered boulders and historic anchors", "Seagrass beds with turtles and macro life", "Flying gurnards, nudibranchs, and hidden critters"],
+    image: "/images/optimized/nurse-shark-ladder-bay-saba.webp",
     imagePosition: "left",
   },
   {
@@ -51,8 +48,7 @@ const DIVE_AREAS = [
     description:
       "Wells Bay sits along Saba's rugged northwest coast and offers scenic volcanic terrain, healthy reefs, and sites that are often chosen when conditions favor the island's leeward side. These dives can include reef slopes, boulders, and blue-water views.",
     sites: ["Otto's Limits", "Torrens Point", "Diamond Rock", "Man O'War Shoals"],
-    depth: "6–25m / 20–80ft",
-    marineLife: ["Green turtles", "Spiny lobsters", "Reef fish", "Occasional sharks", "Rays at Diamond Rock and Man O'War Shoals"],
+    knownFor: ["Healthy coral-covered pinnacles", "Diamond Rock and Man O\u2019 War Shoals", "Turtles, lobster, and reef sharks", "Remote sites with exceptional visibility"],
     image: "/images/optimized/wells-bay-dive-site-saba.webp",
     imagePosition: "right",
   },
@@ -62,8 +58,7 @@ const DIVE_AREAS = [
     description:
       "The Windwardside area offers a different side of Saba diving, with reef systems and coastal sites shaped by the island's volcanic shoreline. When conditions allow, these sites provide scenic profiles, healthy coral, and rewarding marine life encounters.",
     sites: ["Green Island", "Big Rock Market", "Core Gut", "Cove Bay", "Abrams Hole", "Hole in the Corner"],
-    depth: "10–30m / 30–100ft",
-    marineLife: ["Reef fish", "Green turtles", "Sponges", "Coral gardens", "Macro life"],
+    knownFor: ["Extensive elkhorn coral formations", "White sand and massive volcanic boulders", "Healthy biological reef systems", "Excellent conditions for photography"],
     image: "/images/optimized/windwardside-dive-site-saba.webp",
     imagePosition: "left",
   },
@@ -102,33 +97,33 @@ export default function DiveSitesPage() {
                     {area.description}
                   </p>
 
-                  {/* Site Chips */}
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    {area.sites.map((site) => (
-                      <span
-                        key={site}
-                        className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary"
-                      >
-                        {site}
-                      </span>
-                    ))}
+                  {/* Known For */}
+                  <div className="mt-4">
+                    <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Known For</h4>
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      {area.knownFor.map((item) => (
+                        <span
+                          key={item}
+                          className="rounded-md border border-border/50 bg-muted/40 px-2.5 py-1 text-xs text-foreground/80"
+                        >
+                          {item}
+                        </span>
+                      ))}
+                    </div>
                   </div>
 
-                  {/* Details */}
-                  <div className="mt-4 grid gap-4 sm:grid-cols-2">
-                    <div>
-                      <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                        Depth Range
-                      </h4>
-                      <p className="mt-1 text-sm font-medium text-foreground">{area.depth}</p>
-                    </div>
-                    <div>
-                      <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                        Signature Marine Life
-                      </h4>
-                      <p className="mt-1 text-sm text-foreground">
-                        {area.marineLife.slice(0, 3).join(" • ")}
-                      </p>
+                  {/* Site Chips */}
+                  <div className="mt-4">
+                    <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Dive Sites</h4>
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      {area.sites.map((site) => (
+                        <span
+                          key={site}
+                          className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary"
+                        >
+                          {site}
+                        </span>
+                      ))}
                     </div>
                   </div>
 

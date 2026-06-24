@@ -18,6 +18,15 @@ await mkdir(OUT, { recursive: true });
  * role: hero | section | card
  */
 const IMAGE_MAP = [
+  // Nurse shark — Ladder Bay section photo
+  {
+    src: "nurse-shark.jpg",
+    out: "nurse-shark-ladder-bay-saba.webp",
+    width: 1920,
+    quality: 82,
+    role: "section",
+  },
+
   // New dive-site section photos (6000px source → 1920px output)
   {
     src: "DSC03050.jpg",
