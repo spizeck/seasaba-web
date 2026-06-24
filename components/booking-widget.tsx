@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 
 const CF_SCRIPT_SRC = "//seasaba.checkfront.com/lib/interface--0.js";
 const CF_SCRIPT_ID = "checkfront-interface-script";
@@ -41,15 +41,24 @@ function getPreselectedItemId(): string | null {
   return SLUG_TO_ITEM_ID[slug] || slug;
 }
 
+function subscribeToNothing() {
+  return () => {};
+}
+
 export function BookingWidget() {
   const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
-  const [preselectedItem, setPreselectedItem] = useState<string | null>(null);
+  // Read the preselected item from the URL without a setState-in-effect:
+  // null on the server, resolved value on the client (hydration-safe).
+  const preselectedItem = useSyncExternalStore(
+    subscribeToNothing,
+    getPreselectedItemId,
+    () => null
+  );
   const renderedRef = useRef(false);
 
   useEffect(() => {
     // Get preselected item from URL
     const itemId = getPreselectedItemId();
-    setPreselectedItem(itemId);
 
     if (renderedRef.current) return;
 

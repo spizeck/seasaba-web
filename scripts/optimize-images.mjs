@@ -5,8 +5,8 @@
  */
 
 import sharp from "sharp";
-import { readdir, mkdir, stat } from "fs/promises";
-import { join, basename } from "path";
+import { mkdir, stat } from "fs/promises";
+import { join } from "path";
 
 const SRC = "public/images";
 const OUT = "public/images/optimized";

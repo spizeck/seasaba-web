@@ -1,12 +1,5 @@
 import Link from "next/link";
-
-const SOCIAL_LINKS = [
-  { label: "Instagram", href: "https://www.instagram.com/seasaba/" },
-  { label: "Facebook", href: "https://www.facebook.com/sea.saba/" },
-  { label: "YouTube", href: "https://youtube.com/@sea_saba" },
-  { label: "TripAdvisor", href: "https://www.tripadvisor.com/Attraction_Review-g147337-d1206831-Reviews-Sea_Saba_Dive_Center-Windwardside_Saba.html" },
-  { label: "Google Reviews", href: "https://share.google/WnkPS93TFHU4rCFl9" },
-] as const;
+import { CONTACT, SOCIAL_LINKS } from "@/lib/constants";
 
 export function Footer() {
   return (
@@ -59,28 +52,28 @@ export function Footer() {
               Contact
             </p>
             <div className="mt-4 flex flex-col gap-2 text-sm text-muted-foreground">
-              <p>66 Fort Bay Harbor</p>
-              <p>The Bottom, Saba</p>
-              <p>Caribbean Netherlands</p>
+              {CONTACT.addressLines.map((line) => (
+                <p key={line}>{line}</p>
+              ))}
               <a
-                href="tel:+5994162246"
+                href={CONTACT.phoneHref}
                 className="mt-2 transition-colors hover:text-foreground"
               >
-                Phone: +599 416 2246
+                Phone: {CONTACT.phone}
               </a>
               <a
-                href="https://wa.me/5994162246"
+                href={CONTACT.whatsappHref}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="transition-colors hover:text-foreground"
               >
-                WhatsApp: +599 416 2246
+                WhatsApp: {CONTACT.whatsapp}
               </a>
               <a
-                href="mailto:info@seasaba.com"
+                href={`mailto:${CONTACT.email}`}
                 className="transition-colors hover:text-foreground"
               >
-                info@seasaba.com
+                {CONTACT.email}
               </a>
             </div>
 

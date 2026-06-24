@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Hero } from "@/components/hero";
 import { Button } from "@/components/ui/button";
 import { ImageCard } from "@/components/image-card";
@@ -9,18 +10,21 @@ const WHY_SABA_FEATURED = [
     heading: "World-Famous Pinnacles",
     body: "Volcanic origins created dramatic underwater pinnacles unlike anything else in the Caribbean. These seamounts rise from the deep and deliver encounters that divers remember for years.",
     image: "/images/optimized/divers-above-pinnacle-saba.webp",
+    imageAlt: "Scuba divers hovering above a coral-covered volcanic pinnacle in the Saba Marine Park.",
     bgPosition: "top",
   },
   {
     heading: "Uncrowded by Design",
     body: "Saba has chosen a different path. There are no large resorts, no cruise ship crowds, and no busy dive boats competing for space. The result is a quieter, more personal experience both above and below the surface.",
     image: "/images/optimized/fin-and-tonic-boat-diamond-rock.webp",
+    imageAlt: "Sea Saba dive boat Fin & Tonic moored beside Diamond Rock off Saba.",
     bgPosition: "center",
   },
   {
     heading: "Small Island, Big Heart",
     body: "Our greatest asset isn't found underwater. It's the people. Friendly faces, welcoming communities, and genuine island hospitality make visitors feel at home from the moment they arrive.",
     image: "/images/optimized/windwardside-village-saba.webp",
+    imageAlt: "Colorful red-roofed cottages of Windwardside village on the green hillside of Saba.",
     bgPosition: "center",
   },
 ] as const;
@@ -99,7 +103,7 @@ export default function Home() {
               <ImageCard
                 key={item.heading}
                 src={item.image}
-                alt={item.heading}
+                alt={item.imageAlt}
                 heading={item.heading}
                 body={item.body}
                 objectPosition={item.bgPosition}
@@ -289,10 +293,12 @@ export default function Home() {
 
       {/* 5. Final CTA */}
       <section className="relative overflow-hidden py-28 -mt-1">
-        <img
+        <Image
           src="/images/optimized/saba-island-aerial-golden-hour.webp"
           alt="Aerial view of Saba rising from the Caribbean Sea at golden hour, surrounded by deep blue water."
-          className="absolute inset-0 h-full w-full object-cover object-center"
+          fill
+          className="object-cover object-center"
+          sizes="100vw"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0B0F3B]/60 to-[#0B0F3B]/75" />
         <div className="relative mx-auto max-w-2xl px-4 text-center sm:px-6 lg:px-8">

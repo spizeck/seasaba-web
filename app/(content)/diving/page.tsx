@@ -339,7 +339,7 @@ export default function DivingPage() {
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-primary">✓</span>
-                <span>Shaded seating, spacious decks, bow lounging areas, and Fin & Tonic's upper observation deck</span>
+                <span>Shaded seating, spacious decks, bow lounging areas, and Fin &amp; Tonic&apos;s upper observation deck</span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-primary">✓</span>

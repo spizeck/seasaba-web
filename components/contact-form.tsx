@@ -86,8 +86,6 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
     }
   }, []);
 
-  const isValid = Object.keys(validate()).length === 0;
-
   const buildEmailBody = useCallback(() => {
     const lines: string[] = [];
     lines.push(`Name: ${name.trim()}`);
@@ -359,6 +357,7 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
       <div className="flex flex-col gap-3 pt-2 sm:flex-row">
         <Button
           type="button"
+          variant={preferredContact === "email" ? "default" : "outline"}
           onClick={handleEmail}
           className="w-full sm:w-auto"
           aria-label="Send inquiry by email"
@@ -370,7 +369,11 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
           type="button"
           variant="outline"
           onClick={handleWhatsApp}
-          className="w-full border-green-600 text-green-600 hover:bg-green-50 hover:text-green-700 sm:w-auto"
+          className={
+            preferredContact === "whatsapp"
+              ? "w-full border-green-600 bg-green-600 text-white hover:bg-green-700 hover:text-white sm:w-auto"
+              : "w-full border-green-600 text-green-600 hover:bg-green-50 hover:text-green-700 sm:w-auto"
+          }
           aria-label="Send inquiry by WhatsApp"
         >
           <MessageCircle className="h-4 w-4" />
