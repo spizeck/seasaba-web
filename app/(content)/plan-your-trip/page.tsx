@@ -174,12 +174,12 @@ export default function PlanYourTripPage() {
         {/* Season cards */}
         <div className="mt-6 grid gap-5 sm:grid-cols-3">
           {/* Dec–Apr */}
-          <div className="rounded-xl border border-border/50 bg-card p-5 flex flex-col gap-3">
+          <div className="not-prose rounded-xl border border-border/50 bg-card p-5 flex flex-col gap-3">
             <div>
               <p className="text-xs font-semibold uppercase tracking-widest text-primary">December &ndash; April</p>
               <h3 className="mt-1 text-base font-semibold text-foreground">Clear Water &amp; Humpback Whales</h3>
             </div>
-            <ul className="space-y-2">
+            <ul className="w-full space-y-2">
               {[
                 "Clearest water and excellent visibility.",
                 "Humpback whales frequently seen January through April.",
@@ -196,12 +196,12 @@ export default function PlanYourTripPage() {
           </div>
 
           {/* May–Jul */}
-          <div className="rounded-xl border border-border/50 bg-card p-5 flex flex-col gap-3">
+          <div className="not-prose rounded-xl border border-border/50 bg-card p-5 flex flex-col gap-3">
             <div>
               <p className="text-xs font-semibold uppercase tracking-widest text-primary">May &ndash; June</p>
               <h3 className="mt-1 text-base font-semibold text-foreground">Warm Water &amp; Fewer Crowds</h3>
             </div>
-            <ul className="space-y-2">
+            <ul className="w-full space-y-2">
               {[
                 "Warm water and reliable diving.",
                 "Smaller crowds and relaxed atmosphere.",
@@ -218,12 +218,12 @@ export default function PlanYourTripPage() {
           </div>
 
           {/* Aug–Nov */}
-          <div className="rounded-xl border border-border/50 bg-card p-5 flex flex-col gap-3">
+          <div className="not-prose rounded-xl border border-border/50 bg-card p-5 flex flex-col gap-3">
             <div>
               <p className="text-xs font-semibold uppercase tracking-widest text-primary">July &ndash; November</p>
               <h3 className="mt-1 text-base font-semibold text-foreground">Calm Seas &amp; Island Festivals</h3>
             </div>
-            <ul className="space-y-2">
+            <ul className="w-full space-y-2">
               {[
                 "Late summer and fall often bring calm seas and excellent diving conditions when no tropical systems are nearby.",
                 "Warmest water temperatures.",

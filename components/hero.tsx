@@ -55,7 +55,7 @@ export function Hero() {
       />
 
       {/* Uniform contrast overlay — subtle, not dramatic */}
-      <div className="absolute inset-0" style={{ background: "rgba(0,0,0,0.30)" }} />
+      <div className="absolute inset-0" style={{ background: "rgba(0,0,0,0.15)" }} />
 
       {/* Bottom vignette for trust bar separation */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/40" />
