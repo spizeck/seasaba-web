@@ -133,6 +133,11 @@ The brand red should feel like deliberate punctuation, not a decorative theme co
 - Use font weight and size for hierarchy, not excessive color or decoration
 - Headlines should feel intentional and restrained, not loud
 
+### Callout Boxes
+- Use **Open Sans Medium** (`font-sans font-medium`) for all text inside inline callout boxes (warning, info, upsell)
+- Title: `font-bold`, body: `font-medium`
+- Inverse white text on brand-colored backgrounds (`bg-destructive` for warnings, `bg-primary` for positive/upsell)
+
 ### Typographic Scale
 
 H1  
