@@ -1,5 +1,6 @@
 import { createMetadata } from "@/lib/metadata";
 import { ContactForm } from "@/components/contact-form";
+import { CONTACT } from "@/lib/constants";
 
 export const metadata = createMetadata({
   title: "Contact",
@@ -51,20 +52,40 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
             For general inquiries, booking questions, or course information:
           </p>
           <a
-            href="mailto:info@seasaba.com"
+            href={`mailto:${CONTACT.email}`}
             className="mt-2 inline-block text-sm font-medium text-primary transition-colors hover:text-primary/80"
           >
-            info@seasaba.com
+            {CONTACT.email}
           </a>
         </div>
 
         <div className="rounded-lg border border-border/60 bg-card p-6">
-          <h2 className="text-lg font-semibold text-foreground">Location</h2>
+          <h2 className="text-lg font-semibold text-foreground">Phone &amp; Location</h2>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-            Saba, Dutch Caribbean
-            <br />
-            Netherlands Antilles
+            Sea Saba Dive Center
+            {CONTACT.addressLines.map((line) => (
+              <span key={line}>
+                <br />
+                {line}
+              </span>
+            ))}
           </p>
+          <div className="mt-3 flex flex-col gap-1 text-sm">
+            <a
+              href={CONTACT.phoneHref}
+              className="font-medium text-primary transition-colors hover:text-primary/80"
+            >
+              Phone: {CONTACT.phone}
+            </a>
+            <a
+              href={CONTACT.whatsappHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-primary transition-colors hover:text-primary/80"
+            >
+              WhatsApp: {CONTACT.whatsapp}
+            </a>
+          </div>
         </div>
       </div>
 

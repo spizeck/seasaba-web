@@ -215,9 +215,15 @@ export function TeamCarousel() {
   const prev = useCallback(() => goTo(index - 1), [goTo, index]);
   const next = useCallback(() => goTo(index + 1), [goTo, index]);
 
-  // Autoplay
+  // Autoplay — disabled when the visitor prefers reduced motion
   useEffect(() => {
     if (isPaused || totalGroups <= 1) return;
+    if (
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      return;
+    }
     autoplayRef.current = setInterval(() => {
       setIndex((current) => (current + 1) % totalGroups);
     }, 5000);
@@ -290,7 +296,7 @@ export function TeamCarousel() {
 
         {/* Track container */}
         <div
-          className="overflow-hidden"
+          className="overflow-hidden cursor-grab active:cursor-grabbing"
           role="region"
           aria-label="Team members carousel"
           onPointerDown={onPointerDown}
@@ -302,7 +308,6 @@ export function TeamCarousel() {
           onFocus={() => setIsPaused(true)}
           onBlur={() => setIsPaused(false)}
           tabIndex={0}
-          style={{ cursor: isDragging.current ? "grabbing" : "grab" }}
         >
           <div
             ref={trackRef}

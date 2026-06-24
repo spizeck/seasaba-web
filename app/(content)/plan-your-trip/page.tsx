@@ -1,10 +1,9 @@
 import { createMetadata } from "@/lib/metadata";
 import Link from "next/link";
-import Image from "next/image";
 import { PageHero } from "@/components/page-hero";
 import { FeatureImage } from "@/components/feature-image";
 import { Button } from "@/components/ui/button";
-import { Plane, Ship, Check, Droplets, Eye, Sun, Thermometer, Home, HelpCircle, Fish, Camera, Calendar, AlertTriangle, Bus, Ban, DollarSign, MessageCircle, Plug, Wifi, Timer } from "lucide-react";
+import { Plane, Ship, Check, Droplets, Eye, Sun, Thermometer, Home, HelpCircle, Fish, Calendar, AlertTriangle, Bus, Ban, DollarSign, MessageCircle, Plug, Wifi, Timer } from "lucide-react";
 
 export const metadata = createMetadata({
   title: "Plan Your Trip to Saba",
@@ -37,7 +36,7 @@ const GOOD_TO_KNOW = [
   {
     icon: Plug,
     title: "120V US Power Outlets",
-    description: "Standard US voltage and plugUS-style outlets are used throughout the island.",
+    description: "Standard US voltage and US-style outlets are used throughout the island.",
   },
   {
     icon: Droplets,
