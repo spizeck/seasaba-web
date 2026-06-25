@@ -51,8 +51,8 @@ const HOTELS: Hotel[] = [
     name: "Cottage Club",
     description:
       "A collection of private self-contained cottages set in beautifully maintained gardens with a pool. The Cottage Club suits guests who value privacy, space, and a home-away-from-home feel while remaining close to the island's amenities.",
-    image: "/images/optimized/fort-bay-harbor-saba.webp",
-    imageAlt: "Fort Bay harbor and Saba's tropical hillsides",
+    image: "/images/optimized/cove-bay-saba.webp",
+    imageAlt: "Cove Bay and Saba's tropical hillsides",
     website: "https://www.cottage-club.com/",
     village: "Windwardside",
     minutesFromSeaSaba: 5,

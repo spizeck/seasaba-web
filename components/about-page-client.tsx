@@ -371,6 +371,7 @@ export function OwnerFeature() {
     <FeatureImage
       src="/images/optimized/chad-and-katy-nuttall.webp"
       alt="Chad and Katy Nuttall, owners of Sea Saba, with their children Caleb and Skylar"
+      objectPosition="center 40%"
       centerText
     >
       <div>

@@ -13,6 +13,8 @@ interface PageHeroProps {
   subtitle?: string;
   objectPosition?: string;
   breadcrumbs?: Crumb[];
+  /** Optional absolutely-positioned overlay content rendered inside the image container */
+  overlay?: React.ReactNode;
 }
 
 /**
@@ -30,6 +32,7 @@ export function PageHero({
   subtitle,
   objectPosition = "center",
   breadcrumbs,
+  overlay,
 }: PageHeroProps) {
   return (
     <div
@@ -48,6 +51,9 @@ export function PageHero({
           sizes="100vw"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/30 to-black/10" />
+
+        {/* Optional overlay slot (e.g. location pin) */}
+        {overlay}
 
         {/* Breadcrumb pill — top-left, inside hero */}
         {breadcrumbs && breadcrumbs.length > 0 && (

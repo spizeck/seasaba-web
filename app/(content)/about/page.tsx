@@ -25,7 +25,7 @@ export default function AboutPage() {
   return (
     <>
       <PageHero
-        src="/images/optimized/saba-118-about-hero.webp"
+        src="/images/optimized/fort-bay-harbor-saba.webp"
         alt="Sea Saba diving operation at Fort Bay Harbor, Saba"
         title="About Sea Saba"
         subtitle="Professional diving in Saba since 1985"

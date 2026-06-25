@@ -263,8 +263,8 @@ export default function Home() {
             </FeatureImage>
 
             <FeatureImage
-              src="/images/optimized/fort-bay-harbor-saba.webp"
-              alt="Fort Bay harbor framed by Saba's volcanic hills, Caribbean Netherlands."
+              src="/images/optimized/cove-bay-saba.webp"
+              alt="Cove Bay, Saba, framed by volcanic hills, Caribbean Netherlands."
             >
               <div>
                 <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Island Life</p>

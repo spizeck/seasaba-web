@@ -1,6 +1,10 @@
 import { createMetadata } from "@/lib/metadata";
+import Link from "next/link";
 import { ContactForm } from "@/components/contact-form";
+import { FindSeaSaba } from "@/components/find-sea-saba";
+import { Button } from "@/components/ui/button";
 import { CONTACT } from "@/lib/constants";
+import { MapPin, Phone, MessageCircle, Mail, Luggage } from "lucide-react";
 
 export const metadata = createMetadata({
   title: "Contact",
@@ -45,60 +49,100 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
         <ContactForm initialInterest={interest} />
       </div>
 
-      <div className="mt-10 grid gap-8 sm:grid-cols-2">
-        <div className="rounded-lg border border-border/60 bg-card p-6">
-          <h2 className="text-lg font-semibold text-foreground">Email</h2>
-          <p className="mt-3 text-sm text-muted-foreground">
-            For general inquiries, booking questions, or course information:
-          </p>
-          <a
-            href={`mailto:${CONTACT.email}`}
-            className="mt-2 inline-block text-sm font-medium text-primary transition-colors hover:text-primary/80"
-          >
-            {CONTACT.email}
-          </a>
-        </div>
+      {/* Contact Info + Find Sea Saba */}
+      <div className="mt-10 grid gap-6 lg:grid-cols-2">
 
-        <div className="rounded-lg border border-border/60 bg-card p-6">
-          <h2 className="text-lg font-semibold text-foreground">Phone &amp; Location</h2>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-            Sea Saba Dive Center
-            {CONTACT.address.displayLines.map((line) => (
-              <span key={line}>
-                <br />
-                {line}
-              </span>
-            ))}
-          </p>
-          <div className="mt-3 flex flex-col gap-1 text-sm">
-            <a
-              href={CONTACT.phoneHref}
-              className="font-medium text-primary transition-colors hover:text-primary/80"
-            >
-              Phone: {CONTACT.phone}
-            </a>
-            <a
-              href={CONTACT.whatsappHref}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-medium text-primary transition-colors hover:text-primary/80"
-            >
-              WhatsApp: {CONTACT.whatsapp}
-            </a>
+        {/* Contact Information */}
+        <div className="rounded-xl border border-border/60 bg-card p-6">
+          <h2 className="text-lg font-semibold text-foreground">Contact Information</h2>
+
+          <div className="mt-6 flex items-start gap-4">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10">
+              <MapPin className="h-4 w-4 text-primary" />
+            </div>
+            <div className="text-sm">
+              <p className="font-semibold text-foreground">Sea Saba Dive Center</p>
+              {CONTACT.address.displayLines.map((line) => (
+                <p key={line} className="text-muted-foreground">{line}</p>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-6 space-y-5">
+            <div className="flex items-center gap-4">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10">
+                <Phone className="h-4 w-4 text-primary" />
+              </div>
+              <div className="text-sm">
+                <p className="font-semibold text-foreground">Phone</p>
+                <a
+                  href={CONTACT.phoneHref}
+                  className="font-medium text-foreground transition-colors hover:text-primary"
+                >
+                  {CONTACT.phone}
+                </a>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10">
+                <MessageCircle className="h-4 w-4 text-primary" />
+              </div>
+              <div className="text-sm">
+                <p className="font-semibold text-foreground">WhatsApp</p>
+                <a
+                  href={CONTACT.whatsappHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-medium text-foreground transition-colors hover:text-primary"
+                >
+                  {CONTACT.whatsapp}
+                </a>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10">
+                <Mail className="h-4 w-4 text-primary" />
+              </div>
+              <div className="text-sm">
+                <p className="font-semibold text-foreground">Email</p>
+                <a
+                  href={`mailto:${CONTACT.email}`}
+                  className="font-medium text-foreground transition-colors hover:text-primary"
+                >
+                  {CONTACT.email}
+                </a>
+              </div>
+            </div>
           </div>
         </div>
+
+        {/* Find Sea Saba map card */}
+        <FindSeaSaba />
+
       </div>
 
-      <div className="mt-10 rounded-lg border border-border/40 bg-muted/20 p-6">
-        <h2 className="text-lg font-semibold text-foreground">
-          Before You Visit
-        </h2>
-        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          Saba is accessible by small aircraft from St. Maarten (SXM) or by
-          ferry. We recommend booking your dives in advance, especially during
-          peak season (December through April). We are happy to help with
-          logistics and planning.
-        </p>
+      {/* Planning Your Trip */}
+      <div className="mt-6 rounded-xl border border-border/40 bg-muted/20 p-6">
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-start gap-4">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10">
+              <Luggage className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <h2 className="text-lg font-semibold text-foreground">Planning Your Trip?</h2>
+              <p className="mt-1 max-w-xl text-sm leading-relaxed text-muted-foreground">
+                Looking for flights, ferry schedules, accommodations, rental cars, weather, FAQs, or travel insurance?
+              </p>
+            </div>
+          </div>
+          <div className="shrink-0">
+            <Button asChild variant="destructive" className="font-semibold">
+              <Link href="/plan-your-trip">Plan Your Trip →</Link>
+            </Button>
+          </div>
+        </div>
       </div>
     </>
   );
