@@ -60,27 +60,27 @@ const GOOD_TO_KNOW = [
 const FAQS = [
   {
     question: "How do I get to Saba?",
-    answer: "Most visitors connect through St. Maarten by Winair or Makana Ferry.",
+    answer: "Most visitors travel through St. Maarten and connect to Saba by Winair flight or Makana Ferry. Sea Saba is located at Fort Bay Harbor, where most dive trips depart.",
   },
   {
     question: "How many days should I stay?",
-    answer: "Most guests spend 5–7 days.",
+    answer: "Most divers are happiest with 5–7 days on Saba. This gives you time for multiple dive days, a weather buffer, and a chance to enjoy hiking, restaurants, and island exploring.",
   },
   {
     question: "Is Nitrox included?",
-    answer: "Complimentary 32% Nitrox is included for certified divers.",
+    answer: "Complimentary 32% Nitrox is included for certified Nitrox divers. Please bring proof of Nitrox certification.",
   },
   {
     question: "Do I need a rental car?",
-    answer: "No. Sea Saba provides transportation and taxis are readily available.",
+    answer: "Not usually. Sea Saba provides transportation for scheduled dive trips, and taxis are available for restaurants, hikes, and island exploring. Some guests still prefer a rental car for extra flexibility.",
   },
   {
     question: "Is Saba crowded?",
-    answer: "No. Saba has no cruise ships and very little mass tourism.",
+    answer: "No. Saba has no cruise ships, no mega resorts, and very little mass tourism. The island is quiet, natural, and best suited for travelers looking for something different.",
   },
   {
     question: "Is Saba good for non-divers?",
-    answer: "Yes. Hiking, restaurants, birdwatching, art workshops, glass melting and spectacular scenery make Saba enjoyable for everyone.",
+    answer: "Yes. Hiking, restaurants, birdwatching, art workshops, glass melting, scenic views, and a relaxed island atmosphere make Saba enjoyable for non-divers too.",
   },
 ] as const;
 
@@ -343,7 +343,7 @@ export default function PlanYourTripPage() {
             <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
               <li className="flex items-start gap-2">
                 <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                Certification card
+                Certification card or digital certification
               </li>
               <li className="flex items-start gap-2">
                 <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
@@ -351,7 +351,19 @@ export default function PlanYourTripPage() {
               </li>
               <li className="flex items-start gap-2">
                 <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                Logbook (digital acceptable)
+                Logbook or digital dive history
+              </li>
+              <li className="flex items-start gap-2">
+                <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                Swimwear
+              </li>
+              <li className="flex items-start gap-2">
+                <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                Towel
+              </li>
+              <li className="flex items-start gap-2">
+                <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                Reusable water bottle
               </li>
             </ul>
           </div>
@@ -360,7 +372,7 @@ export default function PlanYourTripPage() {
             <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
               <li className="flex items-start gap-2">
                 <Sun className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                Personal gear
+                Personal dive gear
               </li>
               <li className="flex items-start gap-2">
                 <Sun className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
@@ -372,10 +384,18 @@ export default function PlanYourTripPage() {
               </li>
               <li className="flex items-start gap-2">
                 <Sun className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                Hat and light jacket
+                Hat or light jacket for the boat ride
+              </li>
+              <li className="flex items-start gap-2">
+                <Sun className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                Dry bag
+              </li>
+              <li className="flex items-start gap-2">
+                <Sun className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                Motion sickness medication if needed
               </li>
             </ul>
-            <p className="mt-4 text-xs text-muted-foreground">Rental equipment is available.</p>
+            <p className="mt-4 text-xs text-muted-foreground">Rental equipment is available, including BCD, regulator, wetsuit, mask, fins, and dive computer.</p>
           </div>
         </div>
       </section>
