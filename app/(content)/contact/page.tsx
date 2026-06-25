@@ -4,7 +4,7 @@ import { ContactForm } from "@/components/contact-form";
 import { FindSeaSaba } from "@/components/find-sea-saba";
 import { Button } from "@/components/ui/button";
 import { CONTACT } from "@/lib/constants";
-import { MapPin, Phone, MessageCircle, Mail, Luggage } from "lucide-react";
+import { MapPin, Phone, MessageCircle, Mail, Luggage, ChevronRight } from "lucide-react";
 
 export const metadata = createMetadata({
   title: "Contact",
@@ -52,68 +52,67 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
       {/* Contact Info + Find Sea Saba */}
       <div className="mt-10 grid gap-6 lg:grid-cols-2">
 
-        {/* Contact Information */}
-        <div className="rounded-xl border border-border/60 bg-card p-6">
-          <h2 className="text-lg font-semibold text-foreground">Contact Information</h2>
+        {/* Visit Sea Saba */}
+        <div className="flex h-full flex-col rounded-xl border border-border/60 bg-card px-6 pt-0 pb-6">
+          <h2 className="text-lg font-semibold text-foreground">Visit Sea Saba</h2>
 
-          <div className="mt-6 flex items-start gap-4">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10">
-              <MapPin className="h-4 w-4 text-primary" />
-            </div>
-            <div className="text-sm">
-              <p className="font-semibold text-foreground">Sea Saba Dive Center</p>
-              {CONTACT.address.displayLines.map((line) => (
-                <p key={line} className="text-muted-foreground">{line}</p>
-              ))}
-            </div>
-          </div>
-
-          <div className="mt-6 space-y-5">
-            <div className="flex items-center gap-4">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10">
-                <Phone className="h-4 w-4 text-primary" />
-              </div>
-              <div className="text-sm">
-                <p className="font-semibold text-foreground">Phone</p>
-                <a
-                  href={CONTACT.phoneHref}
-                  className="font-medium text-foreground transition-colors hover:text-primary"
-                >
-                  {CONTACT.phone}
-                </a>
+          <div className="mt-0 flex flex-1 flex-col justify-between">
+            <div className="flex items-start gap-3">
+              <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+              <div>
+                <p className="text-sm font-semibold text-foreground">Sea Saba Dive Center</p>
+                {CONTACT.address.displayLines.map((line) => (
+                  <p key={line} className="text-sm text-muted-foreground">{line}</p>
+                ))}
               </div>
             </div>
 
-            <div className="flex items-center gap-4">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10">
-                <MessageCircle className="h-4 w-4 text-primary" />
-              </div>
-              <div className="text-sm">
-                <p className="font-semibold text-foreground">WhatsApp</p>
-                <a
-                  href={CONTACT.whatsappHref}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-medium text-foreground transition-colors hover:text-primary"
-                >
-                  {CONTACT.whatsapp}
-                </a>
-              </div>
-            </div>
+            <div className="space-y-3.5 pt-2">
+              <div className="h-px bg-border/60" />
 
-            <div className="flex items-center gap-4">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10">
-                <Mail className="h-4 w-4 text-primary" />
-              </div>
-              <div className="text-sm">
-                <p className="font-semibold text-foreground">Email</p>
-                <a
-                  href={`mailto:${CONTACT.email}`}
-                  className="font-medium text-foreground transition-colors hover:text-primary"
-                >
-                  {CONTACT.email}
-                </a>
-              </div>
+              <a
+                href={CONTACT.phoneHref}
+                className="group flex items-center gap-3 no-underline"
+              >
+                <Phone className="h-4 w-4 shrink-0 text-primary" />
+                <div className="flex flex-col">
+                  <span className="text-xs font-medium text-muted-foreground">Phone</span>
+                  <span className="text-sm font-medium text-foreground transition-colors group-hover:text-primary">
+                    {CONTACT.phone}
+                  </span>
+                </div>
+                <ChevronRight className="ml-auto h-4 w-4 shrink-0 text-muted-foreground transition-colors group-hover:text-primary" />
+              </a>
+
+              <a
+                href={CONTACT.whatsappHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex items-center gap-3 no-underline"
+              >
+                <MessageCircle className="h-4 w-4 shrink-0 text-primary" />
+                <div className="flex flex-col">
+                  <span className="text-xs font-medium text-muted-foreground">WhatsApp</span>
+                  <span className="text-sm font-medium text-foreground transition-colors group-hover:text-primary">
+                    {CONTACT.whatsapp}
+                  </span>
+                </div>
+                <ChevronRight className="ml-auto h-4 w-4 shrink-0 text-muted-foreground transition-colors group-hover:text-primary" />
+              </a>
+
+              <a
+                href={`mailto:${CONTACT.email}`}
+                className="group flex items-center gap-3 no-underline"
+              >
+                <Mail className="h-4 w-4 shrink-0 text-primary" />
+                <div className="flex flex-col">
+                  <span className="text-xs font-medium text-muted-foreground">Email</span>
+                  <span className="text-sm font-medium text-foreground transition-colors group-hover:text-primary">
+                    {CONTACT.email}
+                  </span>
+                </div>
+                <ChevronRight className="ml-auto h-4 w-4 shrink-0 text-muted-foreground transition-colors group-hover:text-primary" />
+              </a>
             </div>
           </div>
         </div>
@@ -138,7 +137,7 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
             </div>
           </div>
           <div className="shrink-0">
-            <Button asChild variant="destructive" className="font-semibold">
+            <Button asChild variant="destructive" className="font-semibold no-underline">
               <Link href="/plan-your-trip">Plan Your Trip →</Link>
             </Button>
           </div>
