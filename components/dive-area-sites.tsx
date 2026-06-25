@@ -7,9 +7,11 @@ import type { DiveSite } from "@/data/dive-site-videos";
 
 type Props = {
   sites: readonly string[];
+  /** Use dark pill styles when rendered on a dark background */
+  dark?: boolean;
 };
 
-export function DiveAreaSites({ sites }: Props) {
+export function DiveAreaSites({ sites, dark = false }: Props) {
   const [activeSite, setActiveSite] = useState<DiveSite | null>(null);
 
   // Only sites that exist in the data file are clickable with a modal
@@ -17,6 +19,18 @@ export function DiveAreaSites({ sites }: Props) {
     const site = DIVE_SITE_MAP[name];
     if (site) setActiveSite(site);
   };
+
+  const pillBase = dark
+    ? "rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium text-white/70 transition-colors"
+    : "rounded-full px-3 py-1 text-xs font-medium transition-colors";
+
+  const pillActive = dark
+    ? "hover:bg-white/15 hover:text-white cursor-pointer"
+    : "bg-primary/10 text-primary hover:bg-primary/20 cursor-pointer";
+
+  const pillInactive = dark
+    ? "cursor-default opacity-50"
+    : "bg-primary/10 text-primary cursor-default";
 
   return (
     <>
@@ -28,11 +42,7 @@ export function DiveAreaSites({ sites }: Props) {
               key={site}
               onClick={() => openSite(site)}
               disabled={!hasData}
-              className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
-                hasData
-                  ? "bg-primary/10 text-primary hover:bg-primary/20 cursor-pointer"
-                  : "bg-primary/10 text-primary cursor-default"
-              }`}
+              className={`${pillBase} ${hasData ? pillActive : pillInactive}`}
             >
               {site}
             </button>

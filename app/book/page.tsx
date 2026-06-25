@@ -18,7 +18,7 @@ const DISCOUNT_HIGHLIGHTS = [
 
 export default function BookPage() {
   return (
-    <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
       <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
         Book Your Dive
       </h1>

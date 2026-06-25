@@ -4,6 +4,7 @@ import { Hero } from "@/components/hero";
 import { Button } from "@/components/ui/button";
 import { ImageCard } from "@/components/image-card";
 import { FeatureImage } from "@/components/feature-image";
+import { DiveAreaSites } from "@/components/dive-area-sites";
 
 const WHY_SABA_FEATURED = [
   {
@@ -66,8 +67,8 @@ const DIVE_EXPERIENCES = [
   {
     title: "Ladder Bay",
     subtitle: "Volcanic landscapes and hidden treasures.",
-    image: "/images/optimized/spiny-lobster-ladder-bay.webp",
-    imageAlt: "Caribbean spiny lobster sheltering beneath a coral ledge on Saba's volcanic reef.",
+    image: "/images/optimized/nurse-shark-ladder-bay-saba.webp",
+    imageAlt: "Nurse shark resting on the sandy bottom at Ladder Bay, Saba.",
     body: "From warm-water vents and nurse sharks to green turtles and flying gurnards, Ladder Bay showcases the diversity that makes Saba special. This area offers some of the island's most unique underwater landscapes.",
     sites: ["Rays n' Anchors","Hot Springs", "50/50", "Ladder Labyrinth", "Babylon", "Porites Point", "Customs House"],
     note: null,
@@ -164,17 +165,8 @@ export default function Home() {
                   <p className="mt-4 text-sm leading-relaxed text-white/70 sm:text-base">
                     {exp.body}
                   </p>
-                  {/* Site tags */}
-                  <div className="mt-5 flex flex-wrap gap-2">
-                    {exp.sites.map((site) => (
-                      <span
-                        key={site}
-                        className="rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium text-white/70"
-                      >
-                        {site}
-                      </span>
-                    ))}
-                  </div>
+                  {/* Site tags — interactive, open video modal */}
+                  <DiveAreaSites sites={exp.sites} dark />
                   {/* Supporting note */}
                   {exp.note && (
                     <p className="mt-4 text-xs leading-relaxed text-white/45 italic">
