@@ -3,7 +3,8 @@ import { PageHero } from "@/components/page-hero";
 import { FeatureImage } from "@/components/feature-image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Users, Award, Ship, Droplets } from "lucide-react";
+import { Users, Award, Ship, Droplets, ShieldCheck } from "lucide-react";
+import { InsuranceCTAs } from "@/components/insurance-ctas";
 import { ExperienceSelector } from "@/components/experience-selector";
 
 export const metadata = createMetadata({
@@ -382,6 +383,23 @@ export default function DivingPage() {
           </div>
         </div>
       </section>
+
+      {/* Dive Insurance */}
+      <div className="not-prose mt-10 flex items-start gap-3 rounded-xl border border-border/50 bg-muted/20 p-5">
+        <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+        <div className="flex-1">
+          <p className="text-sm font-semibold text-foreground">Dive Accident Insurance Recommended</p>
+          <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
+            Sea Saba carries oxygen and first aid onboard, but we strongly recommend all divers carry
+            personal dive accident insurance. Short-term coverage through DAN covers a single trip and
+            is available right up until departure. Comprehensive travel insurance covering medical
+            evacuation is also strongly recommended.
+          </p>
+          <div className="mt-4">
+            <InsuranceCTAs />
+          </div>
+        </div>
+      </div>
 
       {/* CTA Section */}
       <section className="mt-20 text-center">

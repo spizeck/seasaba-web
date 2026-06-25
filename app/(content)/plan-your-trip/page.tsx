@@ -4,6 +4,8 @@ import { PageHero } from "@/components/page-hero";
 import { FeatureImage } from "@/components/feature-image";
 import { Button } from "@/components/ui/button";
 import { Plane, Ship, Check, Droplets, Eye, Sun, Thermometer, Home, HelpCircle, Fish, Calendar, AlertTriangle, Bus, Ban, DollarSign, MessageCircle, Plug, Wifi, Timer } from "lucide-react";
+import { HotelPills } from "@/components/hotel-pills";
+import { InsuranceCTAs } from "@/components/insurance-ctas";
 
 export const metadata = createMetadata({
   title: "Plan Your Trip to Saba",
@@ -98,7 +100,7 @@ export default function PlanYourTripPage() {
       </p>
 
       {/* Getting to Saba */}
-      <section className="mt-12">
+      <section id="getting-here" className="mt-12 scroll-mt-24">
         <h2 className="text-xl font-semibold text-foreground">Getting to Saba</h2>
 
         <div className="mt-6 grid gap-6 sm:grid-cols-2">
@@ -167,7 +169,7 @@ export default function PlanYourTripPage() {
       </section>
 
       {/* When to Visit */}
-      <section className="mt-12">
+      <section id="when-to-visit" className="mt-12 scroll-mt-24">
         <h2 className="text-xl font-semibold text-foreground">When to Visit</h2>
 
         {/* Season cards */}
@@ -270,21 +272,25 @@ export default function PlanYourTripPage() {
         <div className="mt-6 rounded-xl border border-amber-200/60 bg-amber-50/50 dark:border-amber-900/40 dark:bg-amber-950/20 p-5">
           <div className="flex items-start gap-3">
             <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-600 dark:text-amber-500" />
-            <div>
+            <div className="flex-1">
               <p className="text-sm font-semibold text-foreground">Travel Insurance Recommended</p>
               <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
                 Because Saba is a small island served by flights and ferries, weather
                 occasionally affects travel plans. We strongly recommend travel insurance
                 for all visitors, regardless of season. Coverage for trip delays, weather
-                disruptions, and medical emergencies provides peace of mind.
+                disruptions, and medical emergencies provides peace of mind. Dive accident
+                insurance and emergency medical evacuation coverage are also strongly recommended.
               </p>
+              <div className="mt-4">
+                <InsuranceCTAs />
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Where to Stay */}
-      <section className="mt-12">
+      <section id="where-to-stay" className="mt-12 scroll-mt-24">
         <h2 className="text-xl font-semibold text-foreground">Where to Stay</h2>
 
         <FeatureImage
@@ -302,23 +308,17 @@ export default function PlanYourTripPage() {
               Saba has no large resorts. Instead, visitors enjoy boutique hotels and intimate
               accommodations in Windwardside and The Bottom, all within a short drive of Fort Bay Harbor.
             </p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {["Juliana's Hotel", "Saba Arawak Hotel", "El Momo Cottages", "Cottage Club", "Scenery Hotel"].map((name) => (
-                <span key={name} className="inline-flex items-center rounded-full border border-border/50 bg-muted/30 px-3 py-1 text-xs text-foreground">
-                  {name}
-                </span>
-              ))}
-            </div>
+            <HotelPills />
           </div>
         </FeatureImage>
 
         <div className="mt-4 rounded-lg border border-border/40 bg-muted/20 px-5 py-4 text-sm text-muted-foreground">
-          Need help deciding? Our team is happy to recommend accommodations based on your budget, preferred atmosphere, and travel style.
+          Select a hotel above to view photos, amenities, and a quick overview. Need personalized advice? Our team is happy to recommend the perfect place to stay based on your budget, travel style, and diving plans.
         </div>
       </section>
 
       {/* Good to Know */}
-      <section className="mt-12">
+      <section id="good-to-know" className="mt-12 scroll-mt-24">
         <h2 className="text-xl font-semibold text-foreground">Good to Know</h2>
 
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -334,7 +334,7 @@ export default function PlanYourTripPage() {
 
 
       {/* What to Bring */}
-      <section className="mt-12">
+      <section id="what-to-bring" className="mt-12 scroll-mt-24">
         <h2 className="text-xl font-semibold text-foreground">What to Bring</h2>
 
         <div className="mt-6 grid gap-6 sm:grid-cols-2">
@@ -381,7 +381,7 @@ export default function PlanYourTripPage() {
       </section>
 
       {/* FAQ */}
-      <section className="mt-12">
+      <section id="faq" className="mt-12 scroll-mt-24">
         <h2 className="text-xl font-semibold text-foreground">Frequently Asked Questions</h2>
 
         <div className="mt-6 grid gap-4 sm:grid-cols-2">

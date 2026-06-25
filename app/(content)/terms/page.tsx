@@ -1,4 +1,5 @@
 import { createMetadata } from "@/lib/metadata";
+import { InsuranceCTAs } from "@/components/insurance-ctas";
 
 export const metadata = createMetadata({
   title: "Terms & Conditions",
@@ -70,6 +71,9 @@ export default function TermsPage() {
           <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-relaxed text-muted-foreground">
             <li>We strongly recommend purchasing travel insurance to protect against unforeseen travel disruptions, medical issues, or travel delays. Dive accident insurance and emergency medical evacuation coverage are strongly recommended.</li>
           </ul>
+          <div className="mt-4">
+            <InsuranceCTAs />
+          </div>
         </section>
 
         <section>
