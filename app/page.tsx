@@ -70,7 +70,7 @@ const DIVE_EXPERIENCES = [
     image: "/images/optimized/nurse-shark-ladder-bay-saba.webp",
     imageAlt: "Nurse shark resting on the sandy bottom at Ladder Bay, Saba.",
     body: "From warm-water vents and nurse sharks to green turtles and flying gurnards, Ladder Bay showcases the diversity that makes Saba special. This area offers some of the island's most unique underwater landscapes.",
-    sites: ["Rays n' Anchors","Hot Springs", "50/50", "Ladder Labyrinth", "Babylon", "Porites Point", "Customs House"],
+    sites: ["Rays n\u2019 Anchors", "Hot Springs", "50/50", "Ladder Labyrinth", "Babylon", "Porites Point", "Customs House"],
     note: null,
   },
 ] as const;

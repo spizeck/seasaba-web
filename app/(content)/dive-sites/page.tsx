@@ -38,7 +38,7 @@ const DIVE_AREAS = [
     title: "Ladder Bay",
     description:
       "Ladder Bay offers volcanic landscapes, shallow-to-mid-depth reefs, swim-throughs, and some of Saba's most interesting small marine life. This area includes Hot Springs, where volcanic vents create warm, mustard-colored sand.",
-    sites: ["Ladder Labyrinth", "Hot Springs", "50/50", "Porites Point", "Customs House", "Babylon"],
+    sites: ["Rays n\u2019 Anchors", "Ladder Labyrinth", "Hot Springs", "50/50", "Porites Point", "Customs House", "Babylon"],
     knownFor: ["Lava fingers separated by black sand chutes", "Giant coral-covered boulders and historic anchors", "Seagrass beds with turtles and macro life", "Flying gurnards, nudibranchs, and hidden critters"],
     image: "/images/optimized/nurse-shark-ladder-bay-saba.webp",
     imagePosition: "left",

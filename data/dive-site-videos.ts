@@ -113,6 +113,13 @@ export const DIVE_SITES: DiveSite[] = [
 
   // ── Ladder Bay ─────────────────────────────────────────────────────────────
   {
+    name: "Rays n\u2019 Anchors",
+    area: "Ladder Bay",
+    description:
+      "A classic Ladder Bay site named for the rays that glide over sandy patches between coral heads, and the historic anchors scattered across the bottom. A relaxed dive with reliable marine life encounters.",
+    videoId: undefined,
+  },
+  {
     name: "Ladder Labyrinth",
     area: "Ladder Bay",
     description:

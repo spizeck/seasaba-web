@@ -13,12 +13,12 @@ export const metadata = createMetadata({
   path: "/about",
 });
 
-const TRUST_FACTS = [
+const TRUST_FACTS: { number: string; label: string; href?: string }[] = [
   { number: "1985", label: "Operating continuously since 1985" },
   { number: "8:1", label: "Maximum guide ratio" },
   { number: "30+", label: "Dive sites" },
-  { number: "4.8★", label: "Google & TripAdvisor" },
-] as const;
+  { number: "4.8★", label: "Google & TripAdvisor", href: "https://share.google/WnkPS93TFHU4rCFl9" },
+];
 
 
 export default function AboutPage() {
@@ -40,12 +40,20 @@ export default function AboutPage() {
 
       {/* Trust Facts */}
       <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
-        {TRUST_FACTS.map((fact) => (
-          <div key={fact.label} className="rounded-lg border border-border/40 bg-muted/20 p-4 text-center">
-            <p className="text-2xl font-bold text-primary">{fact.number}</p>
-            <p className="mt-1 text-xs text-muted-foreground">{fact.label}</p>
-          </div>
-        ))}
+        {TRUST_FACTS.map((fact) => {
+          const cls = "rounded-lg border border-border/40 bg-muted/20 p-4 text-center";
+          const inner = (
+            <>
+              <p className="text-2xl font-bold text-primary">{fact.number}</p>
+              <p className="mt-1 text-xs text-muted-foreground">{fact.label}</p>
+            </>
+          );
+          return fact.href ? (
+            <a key={fact.label} href={fact.href} target="_blank" rel="noopener noreferrer" className={`${cls} block transition-opacity hover:opacity-80`}>{inner}</a>
+          ) : (
+            <div key={fact.label} className={cls}>{inner}</div>
+          );
+        })}
       </div>
 
       {/* Our Approach */}
@@ -118,9 +126,9 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Our Home in Fort Bay Harbor */}
+      {/* Our Historic Home in Fort Bay Harbor */}
       <section className="mt-12">
-        <h2 className="text-xl font-semibold text-foreground">Our Home in Fort Bay Harbor</h2>
+        <h2 className="text-xl font-semibold text-foreground">Our Historic Home in Fort Bay Harbor</h2>
         <div className="mt-6 grid gap-8 lg:grid-cols-5 lg:items-center">
           {/* Image 60% */}
           <div className="lg:col-span-3">
@@ -134,16 +142,21 @@ export default function AboutPage() {
           {/* Text 40% */}
           <div className="lg:col-span-2">
             <p className="text-sm leading-relaxed text-muted-foreground">
-              Sea Saba operates from Fort Bay Harbor on Saba&apos;s southern coast. Our custom
-              dive boats depart directly from the dock, and complimentary transportation is
-              available from accommodations anywhere on the island.
+              Sea Saba has proudly operated from Fort Bay Harbor for decades, the island&apos;s
+              traditional gateway to the sea. Every dive trip begins just steps from our dock,
+              with complimentary transportation available from accommodations anywhere on Saba.
+            </p>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+              As Saba prepares for the future with the new Black Rocks Harbor development, we
+              continue to welcome divers from our historic Fort Bay location while looking
+              forward to an even better waterfront home in the years ahead.
             </p>
             <ul className="mt-5 space-y-3">
               {[
                 { icon: Ship, label: "Direct harbor departures" },
                 { icon: Bus, label: "Complimentary island-wide shuttle" },
-                { icon: Anchor, label: "38-foot custom catamarans" },
-                { icon: MapPin, label: "Minutes from Windwardside and The Bottom" },
+                { icon: Anchor, label: "Custom dive catamarans" },
+                { icon: MapPin, label: "Conveniently located minutes from Windwardside and The Bottom" },
               ].map(({ icon: Icon, label }) => (
                 <li key={label} className="flex items-center gap-3">
                   <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10">
@@ -164,12 +177,26 @@ export default function AboutPage() {
           {/* Text left */}
           <div className="lg:col-span-2">
             <p className="text-sm leading-relaxed text-muted-foreground">
-              Saba isn&apos;t a typical Caribbean destination. There are no cruise ships, no
-              sprawling resorts, and no crowds. Instead, visitors discover dramatic volcanic
-              scenery, protected reefs, exceptional visibility, and one of the Caribbean&apos;s
-              healthiest marine parks.
+              Saba isn&apos;t a typical Caribbean destination. There are no cruise ships,
+              sprawling resorts, or crowded beaches. Instead, visitors come for dramatic
+              volcanic scenery, protected reefs, exceptional visibility, and a slower island
+              rhythm that feels worlds away from the usual tourist trail.
             </p>
-            <blockquote className="mt-6 border-l-2 border-primary pl-4">
+            <div className="mt-4 space-y-3">
+              <div>
+                <p className="text-xs font-semibold text-foreground">No crowds, no cruise ships</p>
+                <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">Saba has deliberately kept large-scale tourism at arm&apos;s length. The result is an island that still feels like itself.</p>
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-foreground">Protected Marine Park</p>
+                <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">The Saba Marine Park has actively managed its reefs since 1987. Healthy coral, abundant fish life, and exceptional visibility are the direct result.</p>
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-foreground">Adventure beyond the dive</p>
+                <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">Volcanic peaks, cloud forest trails, and a quiet village pace give topside days their own reward.</p>
+              </div>
+            </div>
+            <blockquote className="mt-5 border-l-2 border-primary pl-4">
               <p className="text-sm italic leading-relaxed text-foreground">
                 Saba rewards travelers looking for quality over crowds.
               </p>
