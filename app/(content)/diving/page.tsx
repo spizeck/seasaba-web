@@ -29,7 +29,7 @@ const DIVE_EXPERIENCES = [
       "Two relaxed dives in Saba's Marine Park. Perfect for most certified divers and our most popular option.",
     details: [
       "10:30 AM departure",
-      "Return about 2:30 PM",
+      "Return about 3:00 PM",
       "Two dives to ~70 ft / 21 m",
       "Free 32% Nitrox",
       "Scuba Diver minimum",

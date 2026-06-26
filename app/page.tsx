@@ -52,7 +52,7 @@ const DIVE_EXPERIENCES = [
     image: "/images/optimized/diver-volcanic-pinnacle-saba.webp",
     imageAlt: "Diver above a coral-encrusted volcanic seamount in open blue water, Saba.",
     body: "Volcanic seamounts rise from the deep blue, attracting pelagic life and creating some of the Caribbean's most iconic dives. From Third Encounter to Diamond Rock, these underwater mountains define the Saba diving experience.",
-    sites: ["Third Encounter (The Needle)", "Twilight Zone", "Outer Limits", "Diamond Rock", "Man O'War Shoals", "Shark Shoals"],
+    sites: ["Third Encounter", "The Needle", "Twilight Zone", "Outer Limits", "Diamond Rock", "Man O'War Shoals", "Shark Shoals"],
     note: null,
   },
   {

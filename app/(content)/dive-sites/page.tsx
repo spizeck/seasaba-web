@@ -18,7 +18,7 @@ const DIVE_AREAS = [
     title: "The Pinnacles",
     description:
       "The Pinnacles are the dives that helped put Saba on the map. About a mile offshore, these volcanic seamounts and deep plateau sites rise from the blue and deliver some of Saba's most dramatic underwater terrain. These dives are best suited for experienced divers due to depth and open-ocean exposure.",
-    sites: ["Third Encounter (The Needle)", "Twilight Zone", "Outer Limits", "Mt. Michel", "Shark Shoals"],
+    sites: ["Third Encounter", "The Needle", "Twilight Zone", "Outer Limits", "Mt. Michel", "Shark Shoals"],
     knownFor: ["Volcanic seamounts rising from the blue", "Massive barrel sponges and black coral", "Deep reefs and open-ocean exposure", "Saba's most iconic advanced dives"],
     image: "/images/optimized/divers-above-pinnacle-saba.webp",
     imagePosition: "left",
