@@ -8,6 +8,8 @@ interface FeatureImageProps {
   imageRight?: boolean;
   /** When true the text column is vertically centered (use for short text blocks) */
   centerText?: boolean;
+  /** When true, text is stacked above the image on mobile instead of below it. */
+  mobileTextFirst?: boolean;
   children: React.ReactNode;
 }
 
@@ -23,6 +25,7 @@ export function FeatureImage({
   objectPosition = "center",
   imageRight = false,
   centerText = false,
+  mobileTextFirst = false,
   children,
 }: FeatureImageProps) {
   return (
@@ -32,7 +35,13 @@ export function FeatureImage({
       }`}
     >
       <div className={`relative aspect-[4/3] w-full overflow-hidden rounded-lg lg:aspect-auto lg:h-full lg:min-h-[280px] ${
-        imageRight ? "lg:order-2" : ""
+        imageRight
+          ? mobileTextFirst
+            ? "order-2 lg:order-2"
+            : "lg:order-2"
+          : mobileTextFirst
+            ? "order-2"
+            : ""
       }`}>
         <Image
           src={src}
@@ -43,7 +52,15 @@ export function FeatureImage({
           sizes="(max-width: 1024px) 100vw, 66vw"
         />
       </div>
-      <div className={`${imageRight ? "lg:order-1" : ""} ${centerText ? "lg:flex lg:flex-col lg:justify-center" : ""}`}>{children}</div>
+      <div className={`${
+        imageRight
+          ? mobileTextFirst
+            ? "order-1 lg:order-1"
+            : "lg:order-1"
+          : mobileTextFirst
+            ? "order-1"
+            : ""
+      } ${centerText ? "lg:flex lg:flex-col lg:justify-center" : ""}`}>{children}</div>
     </div>
   );
 }

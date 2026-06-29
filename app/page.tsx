@@ -4,7 +4,6 @@ import { Hero } from "@/components/hero";
 import { Button } from "@/components/ui/button";
 import { ImageCard } from "@/components/image-card";
 import { FeatureImage } from "@/components/feature-image";
-import { DiveAreaSites } from "@/components/dive-area-sites";
 
 const WHY_SABA_FEATURED = [
   {
@@ -47,31 +46,54 @@ const WHY_SABA_SECONDARY = [
 
 const DIVE_EXPERIENCES = [
   {
+    id: "pinnacles",
     title: "The Pinnacles",
     subtitle: "The dives that made Saba famous.",
-    image: "/images/optimized/diver-volcanic-pinnacle-saba.webp",
-    imageAlt: "Diver above a coral-encrusted volcanic seamount in open blue water, Saba.",
-    body: "Volcanic seamounts rise from the deep blue, attracting pelagic life and creating some of the Caribbean's most iconic dives. From Third Encounter to Diamond Rock, these underwater mountains define the Saba diving experience.",
-    sites: ["Third Encounter", "The Needle", "Twilight Zone", "Outer Limits", "Diamond Rock", "Man O'War Shoals", "Shark Shoals"],
-    note: null,
+    image: "/images/optimized/divers-above-pinnacle-saba.webp",
+    imageAlt: "Divers above a coral-covered volcanic pinnacle in the Saba Marine Park.",
+    objectPosition: "top",
+    body: "Towering volcanic seamounts rise from the deep blue, attracting sharks, turtles, schooling fish, and unforgettable pelagic encounters that define Saba diving.",
+    sites: ["Third Encounter", "The Needle", "Twilight Zone", "Outer Limits", "Mt. Michel", "Shark Shoals"],
   },
   {
+    id: "tent-reef",
     title: "Tent Reef",
-    subtitle: "Walls, reefs, and endless blue water.",
+    subtitle: "Something different on every dive.",
     image: "/images/optimized/green-turtle-tent-reef.webp",
     imageAlt: "Green turtle gliding over healthy coral reef with sea fans and sponges, Saba.",
-    body: "Stretching across multiple dive sites, Tent Reef combines healthy coral growth, dramatic drop-offs, and the famous Three Sisters. It is home to some of Saba's most scenic and accessible wall diving.",
+    objectPosition: "center",
+    body: "A diverse mix of coral gardens, mini walls, canyons, swim-throughs, and dramatic drop-offs sits just minutes from Fort Bay Harbor.",
     sites: ["Tent Shallow", "Tent Deep", "Tent Reef", "Tent Boulders", "Tent Wall", "Tedran Wall"],
-    note: "Named after Ted and Randy, Tedran Wall marks the southern extent of this remarkable reef system.",
   },
   {
+    id: "ladder-bay",
     title: "Ladder Bay",
-    subtitle: "Volcanic landscapes and hidden treasures.",
+    subtitle: "History meets volcanic geology.",
     image: "/images/optimized/nurse-shark-ladder-bay-saba.webp",
     imageAlt: "Nurse shark resting on the sandy bottom at Ladder Bay, Saba.",
-    body: "From warm-water vents and nurse sharks to green turtles and flying gurnards, Ladder Bay showcases the diversity that makes Saba special. This area offers some of the island's most unique underwater landscapes.",
-    sites: ["Rays n\u2019 Anchors", "Hot Springs", "50/50", "Ladder Labyrinth", "Babylon", "Porites Point", "Customs House"],
-    note: null,
+    objectPosition: "center",
+    body: "Explore lava formations, underwater hot springs, coral-covered boulders, resting turtles, and some of the best macro life in the Caribbean.",
+    sites: ["Rays n\u2019 Anchors", "Ladder Labyrinth", "Hot Springs", "50/50", "Porites Point", "Customs House", "Babylon"],
+  },
+  {
+    id: "wells-bay",
+    title: "Wells Bay",
+    subtitle: "Classic Caribbean reef diving.",
+    image: "/images/optimized/wells-bay-dive-site-saba.webp",
+    imageAlt: "Wells Bay along Saba's rugged northwest coast, Caribbean Netherlands.",
+    objectPosition: "center",
+    body: "Healthy coral reefs, Diamond Rock, Man O' War Shoals, turtles, reef sharks, and long relaxing dives create spectacular scenery above and below.",
+    sites: ["Otto's Limits", "Torrens Point", "Diamond Rock", "Man O'War Shoals"],
+  },
+  {
+    id: "windwardside",
+    title: "Windwardside",
+    subtitle: "A completely different side of Saba.",
+    image: "/images/optimized/windwardside-dive-site-saba.webp",
+    imageAlt: "Dramatic coastline along Saba's Windwardside, Caribbean Netherlands.",
+    objectPosition: "center",
+    body: "White sand, thriving hard corals, and Saba's only true coral reefs create a vibrant underwater landscape unlike anywhere else around the island.",
+    sites: ["Green Island", "Big Rock Market", "Core Gut", "Cove Bay", "Abrams Hole", "Hole in the Corner"],
   },
 ] as const;
 
@@ -140,39 +162,46 @@ export default function Home() {
               The Dives That Made Saba Famous.
             </h2>
             <p className="mt-4 text-base leading-relaxed text-white/70">
-              Saba&apos;s volcanic origins created one of the Caribbean&apos;s most unique
-              underwater landscapes. Explore towering pinnacles, dramatic walls, and
-              volcanic seascapes found nowhere else in the region.
+              Ancient volcanic forces created one of the Caribbean&apos;s most spectacular
+              underwater landscapes. From towering seamounts and dramatic walls to thriving
+              coral reefs and volcanic lava formations, every corner of Saba offers a distinctly
+              different diving experience.
             </p>
           </div>
 
-          {/* Experience blocks */}
-          <div className="flex flex-col gap-16">
+          {/* Experience rows — alternating image/text magazine layout */}
+          <div className="flex flex-col gap-20">
             {DIVE_EXPERIENCES.map((exp, i) => (
               <FeatureImage
                 key={exp.title}
                 src={exp.image}
                 alt={exp.imageAlt}
+                objectPosition={exp.objectPosition}
                 imageRight={i % 2 === 1}
+                mobileTextFirst={i % 2 === 1}
+                centerText
               >
                 <div>
-                  <h3 className="text-xl font-semibold text-white sm:text-2xl">
+                  <h3 className="text-2xl font-semibold text-white sm:text-3xl">
                     {exp.title}
                   </h3>
                   <p className="mt-1 text-sm text-white/45 uppercase tracking-wide">
                     {exp.subtitle}
                   </p>
-                  <p className="mt-4 text-sm leading-relaxed text-white/70 sm:text-base">
+                  <p className="mt-4 text-base leading-relaxed text-white/70">
                     {exp.body}
                   </p>
-                  {/* Site tags — interactive, open video modal */}
-                  <DiveAreaSites sites={exp.sites} dark />
-                  {/* Supporting note */}
-                  {exp.note && (
-                    <p className="mt-4 text-xs leading-relaxed text-white/45 italic">
-                      {exp.note}
-                    </p>
-                  )}
+                  <div className="mt-5 flex flex-wrap gap-2">
+                    {exp.sites.map((site) => (
+                      <Link
+                        key={site}
+                        href={`/dive-sites#${exp.id}`}
+                        className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/60 transition-colors hover:border-white/20 hover:bg-white/10 hover:text-white"
+                      >
+                        {site}
+                      </Link>
+                    ))}
+                  </div>
                 </div>
               </FeatureImage>
             ))}

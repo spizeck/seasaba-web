@@ -17,9 +17,9 @@ const DIVE_AREAS = [
     id: "pinnacles",
     title: "The Pinnacles",
     description:
-      "The Pinnacles are the dives that helped put Saba on the map. About a mile offshore, these volcanic seamounts and deep plateau sites rise from the blue and deliver some of Saba's most dramatic underwater terrain. These dives are best suited for experienced divers due to depth and open-ocean exposure.",
+      "The Pinnacles are the dives that helped put Saba on the map. Formed by ancient volcanic activity, these towering seamounts rise dramatically from the deep ocean floor, nourished by nutrient-rich currents that support some of the island's healthiest marine life. Massive barrel sponges, black corals, schools of jacks, turtles, large groupers, and frequent shark encounters make this one of the Caribbean's most iconic advanced diving areas.",
     sites: ["Third Encounter", "The Needle", "Twilight Zone", "Outer Limits", "Mt. Michel", "Shark Shoals"],
-    knownFor: ["Volcanic seamounts rising from the blue", "Massive barrel sponges and black coral", "Deep reefs and open-ocean exposure", "Saba's most iconic advanced dives"],
+    knownFor: ["Towering volcanic seamounts rising from the deep blue", "Giant barrel sponges, black corals, and vibrant reef life", "Reef sharks, nurse sharks, jacks, turtles, and large groupers", "The famous Eye of the Needle swim-through", "Saba's signature advanced diving experience"],
     image: "/images/optimized/divers-above-pinnacle-saba.webp",
     imagePosition: "left",
   },
@@ -27,9 +27,9 @@ const DIVE_AREAS = [
     id: "tent-reef",
     title: "Tent Reef",
     description:
-      "Tent Reef is one of Saba's most versatile dive areas, beginning with shallower reef and mini-wall profiles before developing into dramatic wall diving. The area includes healthy coral, turtles, blue-water views, and the famous Three Sisters seamounts off the wall.",
+      "Just minutes from Fort Bay Harbor, Tent Reef is one of Saba's most diverse dive areas. What begins as a shallow volcanic ledge gradually transforms into dramatic walls, coral-covered buttresses, deep sand channels, and the famous Three Sisters seamounts. Every section offers something different, making Tent Reef a favorite for both daytime exploration and unforgettable night dives.",
     sites: ["Tent Shallow", "Tent Deep", "Tent Reef", "Tent Boulders", "Tent Wall", "The Three Sisters", "Tedran Wall"],
-    knownFor: ["Mini walls, canyons, and swim-throughs", "Coral gardens and healthy reef systems", "Depths ranging from shallow reefs to deep walls", "Something different on nearly every dive"],
+    knownFor: ["Mini walls, canyons, and swim-throughs", "Healthy coral gardens and giant barrel sponges", "The Three Sisters seamounts", "Octopus, turtles, lobster, and colorful reef life", "A different experience on every dive"],
     image: "/images/optimized/green-turtle-tent-reef.webp",
     imagePosition: "right",
   },
@@ -37,9 +37,9 @@ const DIVE_AREAS = [
     id: "ladder-bay",
     title: "Ladder Bay",
     description:
-      "Ladder Bay offers volcanic landscapes, shallow-to-mid-depth reefs, swim-throughs, and some of Saba's most interesting small marine life. This area includes Hot Springs, where volcanic vents create warm, mustard-colored sand.",
+      "Ladder Bay blends Saba's rich history with its volcanic origins. Named for the historic stone staircase that once served as the island's only gateway, this area features lava formations sculpted into a maze of ridges, coral-covered boulders, and warm volcanic sands. From grazing green turtles to tiny nudibranchs, Ladder Bay offers something for photographers, history buffs, and marine life enthusiasts alike.",
     sites: ["Rays n\u2019 Anchors", "Ladder Labyrinth", "Hot Springs", "50/50", "Porites Point", "Customs House", "Babylon"],
-    knownFor: ["Lava fingers separated by black sand chutes", "Giant coral-covered boulders and historic anchors", "Seagrass beds with turtles and macro life", "Flying gurnards, nudibranchs, and hidden critters"],
+    knownFor: ["Historic Ladder Bay and Saba's original island landing", "Volcanic lava fingers and warm underwater hot springs", "Coral-covered boulders and historic anchors", "Green turtles, flying gurnards, nudibranchs, and macro life", "A unique blend of history, geology, and marine life"],
     image: "/images/optimized/nurse-shark-ladder-bay-saba.webp",
     imagePosition: "left",
   },
@@ -47,9 +47,9 @@ const DIVE_AREAS = [
     id: "wells-bay",
     title: "Wells Bay",
     description:
-      "Wells Bay sits along Saba's rugged northwest coast and offers scenic volcanic terrain, healthy reefs, and sites that are often chosen when conditions favor the island's leeward side. These dives can include reef slopes, boulders, and blue-water views.",
+      "Wells Bay is home to some of Saba's most picturesque dive sites, where Diamond Rock and Man O' War Shoals rise from clear Caribbean waters to create vibrant, coral-covered reefs. These shallower dives offer long bottom times, abundant marine life, and spectacular volcanic scenery both above and below the surface, making them favorites for divers of all experience levels.",
     sites: ["Otto's Limits", "Torrens Point", "Diamond Rock", "Man O'War Shoals"],
-    knownFor: ["Healthy coral-covered pinnacles", "Diamond Rock and Man O\u2019 War Shoals", "Turtles, lobster, and reef sharks", "Remote sites with exceptional visibility"],
+    knownFor: ["Diamond Rock and Man O\u2019 War Shoals", "Healthy coral reefs with excellent fish life", "Green turtles, reef sharks, stingrays, and lobster", "Long bottom times and exceptional visibility", "Dramatic coastal scenery above and below the water"],
     image: "/images/optimized/wells-bay-dive-site-saba.webp",
     imagePosition: "right",
   },
@@ -57,9 +57,9 @@ const DIVE_AREAS = [
     id: "windwardside",
     title: "Windwardside",
     description:
-      "The Windwardside area offers a different side of Saba diving, with reef systems and coastal sites shaped by the island's volcanic shoreline. When conditions allow, these sites provide scenic profiles, healthy coral, and rewarding marine life encounters.",
+      "When the Atlantic Ocean is calm, the Windwardside reveals a completely different side of Saba diving. Here you'll find the island's only true coral reefs, built from limestone rather than volcanic rock, alongside brilliant white sand, thriving hard corals, and expansive elkhorn coral formations. The result is a colorful, high-contrast underwater landscape unlike anywhere else around the island.",
     sites: ["Green Island", "Big Rock Market", "Core Gut", "Cove Bay", "Abrams Hole", "Hole in the Corner"],
-    knownFor: ["Extensive elkhorn coral formations", "White sand and massive volcanic boulders", "Healthy biological reef systems", "Excellent conditions for photography"],
+    knownFor: ["Saba's only true coral reef systems", "Extensive elkhorn coral formations", "White sand, clear water, and vibrant hard corals", "Exceptional underwater photography opportunities", "A unique contrast to Saba's volcanic dive sites"],
     image: "/images/optimized/windwardside-dive-site-saba.webp",
     imagePosition: "left",
   },
@@ -91,33 +91,33 @@ export default function DiveSitesPage() {
               imageRight={area.imagePosition === "right"}
             >
               <div>
-                  <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-                    {area.title}
-                  </h2>
-                  <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-                    {area.description}
-                  </p>
+                <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                  {area.title}
+                </h2>
+                <p className="mt-4 text-base leading-relaxed text-muted-foreground">
+                  {area.description}
+                </p>
 
-                  {/* Known For */}
-                  <div className="mt-4">
-                    <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Known For</h4>
-                    <div className="mt-2 flex flex-wrap gap-2">
-                      {area.knownFor.map((item) => (
-                        <span
-                          key={item}
-                          className="rounded-md border border-border/50 bg-muted/40 px-2.5 py-1 text-xs text-foreground/80"
-                        >
-                          {item}
-                        </span>
-                      ))}
-                    </div>
+                {/* Known For */}
+                <div className="mt-4">
+                  <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Known For</h4>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {area.knownFor.map((item) => (
+                      <span
+                        key={item}
+                        className="rounded-md border border-border/50 bg-muted/40 px-2.5 py-1 text-xs text-foreground/80"
+                      >
+                        {item}
+                      </span>
+                    ))}
                   </div>
+                </div>
 
-                  {/* Site Chips — interactive, open video modal */}
-                  <div className="mt-4">
-                    <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Dive Sites</h4>
-                    <DiveAreaSites sites={area.sites} />
-                  </div>
+                {/* Site Chips — interactive, open video modal */}
+                <div className="mt-4">
+                  <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Dive Sites</h4>
+                  <DiveAreaSites sites={area.sites} />
+                </div>
 
               </div>
             </FeatureImage>
