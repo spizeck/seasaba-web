@@ -49,7 +49,7 @@ export default function AboutPage() {
             </>
           );
           return fact.href ? (
-            <a key={fact.label} href={fact.href} target="_blank" rel="noopener noreferrer" className={`${cls} block transition-opacity hover:opacity-80`}>{inner}</a>
+            <a key={fact.label} href={fact.href} target="_blank" rel="noopener noreferrer" className={`${cls} block no-underline transition-opacity hover:opacity-80`}>{inner}</a>
           ) : (
             <div key={fact.label} className={cls}>{inner}</div>
           );
