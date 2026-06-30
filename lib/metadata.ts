@@ -6,6 +6,7 @@ interface PageMetadataOptions {
   description?: string;
   path?: string;
   noIndex?: boolean;
+  searchParams?: Record<string, string | string[] | undefined>;
 }
 
 export function createMetadata({
@@ -13,8 +14,11 @@ export function createMetadata({
   description = SITE_DESCRIPTION,
   path = "",
   noIndex = false,
+  searchParams,
 }: PageMetadataOptions): Metadata {
   const url = `${SITE_URL}${path}`;
+  const hasSearchParams =
+    searchParams && Object.keys(searchParams).length > 0;
 
   return {
     title,
@@ -44,10 +48,10 @@ export function createMetadata({
       description,
       images: [OG_IMAGE.url],
     },
-    ...(noIndex && {
+    ...((noIndex || hasSearchParams) && {
       robots: {
         index: false,
-        follow: false,
+        follow: true,
       },
     }),
   };

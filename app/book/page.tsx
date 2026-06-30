@@ -1,13 +1,24 @@
+import type { Metadata } from "next";
 import { createMetadata } from "@/lib/metadata";
 import { BookingWidget } from "@/components/booking-widget";
 import { CheckCircle2, MessageSquare } from "lucide-react";
 
-export const metadata = createMetadata({
-  title: "Book Your Dive",
-  description:
-    "Reserve your scuba diving experience in Saba. Check availability, book dives, courses, and packages online.",
-  path: "/book",
-});
+interface BookPageProps {
+  searchParams: Promise<{ item?: string }>;
+}
+
+export async function generateMetadata({
+  searchParams,
+}: BookPageProps): Promise<Metadata> {
+  const params = await searchParams;
+  return createMetadata({
+    title: "Book Your Dive",
+    description:
+      "Reserve your scuba diving experience in Saba. Check availability, book dives, courses, and packages online.",
+    path: "/book",
+    searchParams: params,
+  });
+}
 
 const DISCOUNT_HIGHLIGHTS = [
   "Discounts apply automatically to consecutive Classic and Advanced 2-Tank Dive days",

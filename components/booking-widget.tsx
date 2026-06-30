@@ -196,6 +196,8 @@ export function BookingWidget() {
           JavaScript is required to load the booking widget.{" "}
           <a
             href={DIRECT_BOOKING_URL}
+            target="_blank"
+            rel="noopener noreferrer"
             className="underline underline-offset-2 hover:text-foreground"
           >
             Continue to Secure Booking System

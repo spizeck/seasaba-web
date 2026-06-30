@@ -39,7 +39,7 @@ const HOTELS: Hotel[] = [
       "Charming wooden cottages nestled in a hillside garden above Windwardside. El Momo offers a peaceful, back-to-nature retreat with sweeping views and a genuine sense of seclusion — ideal for visitors who want to disconnect after a day of diving.",
     image: "/images/optimized/saba-volcanic-coastline.webp",
     imageAlt: "Saba's dramatic volcanic coastline seen from the hillside",
-    website: "http://elmomocottages.com/",
+    website: "https://elmomocottages.com/",
     village: "Windwardside",
     minutesFromSeaSaba: 7,
     restaurant: false,

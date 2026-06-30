@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 
 const MAPS_URL = "https://www.google.com/maps/place/Sea+Saba+Dive+Center/@17.6163,-63.2317,17z";
@@ -25,10 +26,12 @@ export function FindSeaSaba() {
       <div
         className="relative h-[240px] w-full sm:h-[260px] lg:h-[280px]"
       >
-        <img
+        <Image
           src={HERO_IMAGE.src}
           alt={HERO_IMAGE.alt}
-          className="h-full w-full object-cover object-center"
+          fill
+          className="object-cover object-center"
+          sizes="(max-width: 1024px) 100vw, 50vw"
         />
 
         {/* Pin */}

@@ -4,6 +4,7 @@ import { Hero } from "@/components/hero";
 import { Button } from "@/components/ui/button";
 import { ImageCard } from "@/components/image-card";
 import { FeatureImage } from "@/components/feature-image";
+import { createMetadata } from "@/lib/metadata";
 
 const WHY_SABA_FEATURED = [
   {
@@ -98,6 +99,13 @@ const DIVE_EXPERIENCES = [
 ] as const;
 
 
+
+export const metadata = createMetadata({
+  title: "Professional Scuba Diving in Saba",
+  description:
+    "Professional scuba diving in Saba, Dutch Caribbean. Expert-guided dives, certifications, and underwater experiences on one of the Caribbean's best-kept secrets.",
+  path: "/",
+});
 
 export default function Home() {
   return (

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { createMetadata } from "@/lib/metadata";
 import Link from "next/link";
 import { ContactForm } from "@/components/contact-form";
@@ -6,15 +7,21 @@ import { Button } from "@/components/ui/button";
 import { CONTACT } from "@/lib/constants";
 import { MapPin, Phone, MessageCircle, Mail, Luggage, ChevronRight } from "lucide-react";
 
-export const metadata = createMetadata({
-  title: "Contact",
-  description:
-    "Get in touch with Sea Saba. Questions about diving, courses, or booking. We are here to help.",
-  path: "/contact",
-});
-
 interface ContactPageProps {
   searchParams: Promise<{ interest?: string }>;
+}
+
+export async function generateMetadata({
+  searchParams,
+}: ContactPageProps): Promise<Metadata> {
+  const params = await searchParams;
+  return createMetadata({
+    title: "Contact",
+    description:
+      "Get in touch with Sea Saba. Questions about diving, courses, or booking. We are here to help.",
+    path: "/contact",
+    searchParams: params,
+  });
 }
 
 export default async function ContactPage({ searchParams }: ContactPageProps) {
