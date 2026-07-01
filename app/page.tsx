@@ -186,7 +186,6 @@ export default function Home() {
                 alt={exp.imageAlt}
                 objectPosition={exp.objectPosition}
                 imageRight={i % 2 === 1}
-                mobileTextFirst={i % 2 === 1}
                 centerText
               >
                 <div>
