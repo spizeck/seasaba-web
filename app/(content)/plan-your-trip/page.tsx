@@ -3,7 +3,7 @@ import Link from "next/link";
 import { PageHero } from "@/components/page-hero";
 import { FeatureImage } from "@/components/feature-image";
 import { Button } from "@/components/ui/button";
-import { Plane, Ship, Check, Droplets, Eye, Sun, Thermometer, Home, HelpCircle, Fish, Calendar, AlertTriangle, Bus, Ban, DollarSign, MessageCircle, Plug, Wifi, Timer } from "lucide-react";
+import { Plane, PlaneTakeoff, Ship, Helicopter, Check, Droplets, Eye, Sun, Thermometer, Home, HelpCircle, Fish, Calendar, AlertTriangle, Bus, Ban, DollarSign, MessageCircle, Plug, Wifi, Timer } from "lucide-react";
 import { HotelPills } from "@/components/hotel-pills";
 import { InsuranceCTAs } from "@/components/insurance-ctas";
 
@@ -104,66 +104,172 @@ export default function PlanYourTripPage() {
         <h2 className="text-xl font-semibold text-foreground">Getting to Saba</h2>
 
         <div className="mt-6 grid gap-6 sm:grid-cols-2">
-          {/* Winair Flight */}
-          <div className="rounded-lg border border-border/60 bg-card p-6">
-            <div className="flex items-center gap-3">
-              <div className="rounded-md bg-primary/10 p-2">
-                <Plane className="h-5 w-5 text-primary" />
+          {/* Winair */}
+          <div className="flex flex-col justify-between rounded-lg border border-border/60 bg-card p-6">
+            <div>
+              <div className="flex items-center gap-3">
+                <div className="rounded-md bg-primary/10 p-2">
+                  <Plane className="h-5 w-5 text-primary" />
+                </div>
+                <h3 className="text-lg font-semibold text-foreground">Winair</h3>
               </div>
-              <h3 className="text-lg font-semibold text-foreground">Winair Flight</h3>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                Most visitors arrive via St. Maarten (SXM) and connect to Saba aboard Winair&apos;s iconic Twin Otter. The short flight offers one of the world&apos;s most spectacular airport approaches.
+              </p>
+              <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+                <span aria-hidden="true">⭐</span>
+                Most Popular Option
+              </div>
+              <ul className="mt-4 space-y-1.5 text-sm text-muted-foreground">
+                <li className="flex items-center gap-2">
+                  <Check className="h-3.5 w-3.5 text-primary" />
+                  Approximately 12-minute flight
+                </li>
+                <li className="flex items-center gap-2">
+                  <Check className="h-3.5 w-3.5 text-primary" />
+                  19-seat DHC-6 Twin Otter
+                </li>
+                <li className="flex items-center gap-2">
+                  <Check className="h-3.5 w-3.5 text-primary" />
+                  Multiple departures daily
+                </li>
+                <li className="flex items-center gap-2">
+                  <Check className="h-3.5 w-3.5 text-primary" />
+                  Lands at the world&apos;s shortest commercial runway
+                </li>
+              </ul>
             </div>
-            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              Most visitors arrive via St. Maarten (SXM) and connect to Saba on Winair. The short 12-minute flight offers one of the world&apos;s most spectacular airport approaches and multiple departures daily.
-            </p>
-            <ul className="mt-4 space-y-1.5 text-sm text-muted-foreground">
-              <li className="flex items-center gap-2">
-                <Check className="h-3.5 w-3.5 text-primary" />
-                12-minute flight
-              </li>
-              <li className="flex items-center gap-2">
-                <Check className="h-3.5 w-3.5 text-primary" />
-                Most popular option
-              </li>
-              <li className="flex items-center gap-2">
-                <Check className="h-3.5 w-3.5 text-primary" />
-                Multiple departures daily
-              </li>
-              <li className="flex items-center gap-2">
-                <Check className="h-3.5 w-3.5 text-primary" />
-                Incredible views
-              </li>
-            </ul>
+            <Button asChild variant="outline" className="mt-6 w-full border-primary/60 text-primary hover:border-primary hover:bg-primary hover:text-white">
+              <a href="https://www.winair.sx/" target="_blank" rel="noopener noreferrer" aria-label="Check Winair Flight Schedule, opens in a new tab">
+                Check Flight Schedule ↗
+              </a>
+            </Button>
           </div>
 
           {/* Makana Ferry */}
-          <div className="rounded-lg border border-border/60 bg-card p-6">
-            <div className="flex items-center gap-3">
-              <div className="rounded-md bg-primary/10 p-2">
-                <Ship className="h-5 w-5 text-primary" />
+          <div className="flex flex-col justify-between rounded-lg border border-border/60 bg-card p-6">
+            <div>
+              <div className="flex items-center gap-3">
+                <div className="rounded-md bg-primary/10 p-2">
+                  <Ship className="h-5 w-5 text-primary" />
+                </div>
+                <h3 className="text-lg font-semibold text-foreground">Makana Ferry</h3>
               </div>
-              <h3 className="text-lg font-semibold text-foreground">Makana Ferry</h3>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                The Makana Ferry provides a comfortable and scenic connection between St. Maarten and Saba, offering beautiful Caribbean views along the way.
+              </p>
+              <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+                <span aria-hidden="true">🌊</span>
+                Most Scenic Journey
+              </div>
+              <ul className="mt-4 space-y-1.5 text-sm text-muted-foreground">
+                <li className="flex items-center gap-2">
+                  <Check className="h-3.5 w-3.5 text-primary" />
+                  Approximately 90-minute crossing
+                </li>
+                <li className="flex items-center gap-2">
+                  <Check className="h-3.5 w-3.5 text-primary" />
+                  Air-conditioned passenger cabin
+                </li>
+                <li className="flex items-center gap-2">
+                  <Check className="h-3.5 w-3.5 text-primary" />
+                  Open sun deck
+                </li>
+                <li className="flex items-center gap-2">
+                  <Check className="h-3.5 w-3.5 text-primary" />
+                  Onboard refreshments
+                </li>
+              </ul>
             </div>
-            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              The Makana Ferry operates between St. Maarten and Saba in approximately 90 minutes. It offers beautiful views and a relaxing alternative to flying.
-            </p>
-            <ul className="mt-4 space-y-1.5 text-sm text-muted-foreground">
-              <li className="flex items-center gap-2">
-                <Check className="h-3.5 w-3.5 text-primary" />
-                About 90 minutes
-              </li>
-              <li className="flex items-center gap-2">
-                <Check className="h-3.5 w-3.5 text-primary" />
-                Scenic route
-              </li>
-              <li className="flex items-center gap-2">
-                <Check className="h-3.5 w-3.5 text-primary" />
-                Comfortable catamaran
-              </li>
-              <li className="flex items-center gap-2">
-                <Check className="h-3.5 w-3.5 text-primary" />
-                Weather dependent
-              </li>
-            </ul>
+            <Button asChild variant="outline" className="mt-6 w-full border-primary/60 text-primary hover:border-primary hover:bg-primary hover:text-white">
+              <a href="https://makanaferryservice.com/" target="_blank" rel="noopener noreferrer" aria-label="View Makana Ferry Schedule, opens in a new tab">
+                View Ferry Schedule ↗
+              </a>
+            </Button>
+          </div>
+
+          {/* West Indies Helicopters */}
+          <div className="flex flex-col justify-between rounded-lg border border-border/60 bg-card p-6">
+            <div>
+              <div className="flex items-center gap-3">
+                <div className="rounded-md bg-primary/10 p-2">
+                  <Helicopter className="h-5 w-5 text-primary" />
+                </div>
+                <h3 className="text-lg font-semibold text-foreground">West Indies Helicopters</h3>
+              </div>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                West Indies Helicopters offers luxury helicopter transfers from St. Maarten and St. Barths, providing the fastest and most flexible way to reach Saba.
+              </p>
+              <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+                <span aria-hidden="true">⚡</span>
+                Fastest &amp; Most Flexible
+              </div>
+              <ul className="mt-4 space-y-1.5 text-sm text-muted-foreground">
+                <li className="flex items-center gap-2">
+                  <Check className="h-3.5 w-3.5 text-primary" />
+                  Airbus H125 / AS350 helicopters
+                </li>
+                <li className="flex items-center gap-2">
+                  <Check className="h-3.5 w-3.5 text-primary" />
+                  Up to 5 passengers
+                </li>
+                <li className="flex items-center gap-2">
+                  <Check className="h-3.5 w-3.5 text-primary" />
+                  Approximately 20–25 minute flight
+                </li>
+                <li className="flex items-center gap-2">
+                  <Check className="h-3.5 w-3.5 text-primary" />
+                  Ideal for private transfers
+                </li>
+              </ul>
+            </div>
+            <Button asChild variant="outline" className="mt-6 w-full border-primary/60 text-primary hover:border-primary hover:bg-primary hover:text-white">
+              <a href="https://westindieshelicopters.com/" target="_blank" rel="noopener noreferrer" aria-label="Request Helicopter Charter, opens in a new tab">
+                Request Helicopter Charter ↗
+              </a>
+            </Button>
+          </div>
+
+          {/* Windward Express */}
+          <div className="flex flex-col justify-between rounded-lg border border-border/60 bg-card p-6">
+            <div>
+              <div className="flex items-center gap-3">
+                <div className="rounded-md bg-primary/10 p-2">
+                  <PlaneTakeoff className="h-5 w-5 text-primary" />
+                </div>
+                <h3 className="text-lg font-semibold text-foreground">Windward Express</h3>
+              </div>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                Windward Express provides private fixed-wing charter flights for travelers seeking flexible schedules and personalized service throughout the northeastern Caribbean.
+              </p>
+              <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+                <span aria-hidden="true">👥</span>
+                Best for Small Groups &amp; Custom Charters
+              </div>
+              <ul className="mt-4 space-y-1.5 text-sm text-muted-foreground">
+                <li className="flex items-center gap-2">
+                  <Check className="h-3.5 w-3.5 text-primary" />
+                  9-seat Britten-Norman Islander
+                </li>
+                <li className="flex items-center gap-2">
+                  <Check className="h-3.5 w-3.5 text-primary" />
+                  Private charter flights
+                </li>
+                <li className="flex items-center gap-2">
+                  <Check className="h-3.5 w-3.5 text-primary" />
+                  Flexible departure times
+                </li>
+                <li className="flex items-center gap-2">
+                  <Check className="h-3.5 w-3.5 text-primary" />
+                  Ideal for custom itineraries
+                </li>
+              </ul>
+            </div>
+            <Button asChild variant="outline" className="mt-6 w-full border-primary/60 text-primary hover:border-primary hover:bg-primary hover:text-white">
+              <a href="http://www.windwardexpress.com/" target="_blank" rel="noopener noreferrer" aria-label="Book Private Charter, opens in a new tab">
+                Book Private Charter ↗
+              </a>
+            </Button>
           </div>
         </div>
       </section>
