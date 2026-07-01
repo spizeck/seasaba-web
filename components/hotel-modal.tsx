@@ -2,7 +2,12 @@
 
 import { useEffect, useRef } from "react";
 import Image from "next/image";
-import { X, ExternalLink, MapPin, Clock, UtensilsCrossed, Waves, DollarSign, Star } from "lucide-react";
+import { X, ExternalLink, Star } from "lucide-react";
+
+export interface HotelSpec {
+  icon: string;
+  label: string;
+}
 
 export interface Hotel {
   name: string;
@@ -10,12 +15,8 @@ export interface Hotel {
   image: string;
   imageAlt: string;
   website: string;
-  village: string;
-  minutesFromSeaSaba: number;
-  restaurant: boolean;
-  pool: boolean;
-  priceCategory: "$" | "$$" | "$$$";
-  bestFor: string;
+  specs: [HotelSpec, HotelSpec, HotelSpec, HotelSpec, HotelSpec, HotelSpec];
+  recommendation: string;
 }
 
 interface HotelModalProps {
@@ -64,7 +65,6 @@ export function HotelModal({ hotel, onClose }: HotelModalProps) {
     return () => { document.body.style.overflow = prev; };
   }, []);
 
-  const priceFull = { "$": "$", "$$": "$$", "$$$": "$$$" }[hotel.priceCategory];
 
   return (
     <div
@@ -106,32 +106,23 @@ export function HotelModal({ hotel, onClose }: HotelModalProps) {
           <h2 className="text-lg font-semibold text-foreground">{hotel.name}</h2>
           <p className="text-sm leading-relaxed text-muted-foreground">{hotel.description}</p>
 
-          {/* Quick facts */}
-          <div className="grid grid-cols-2 gap-x-4 gap-y-2.5 rounded-lg border border-border/40 bg-muted/20 p-4 text-xs">
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <MapPin className="h-3.5 w-3.5 shrink-0 text-primary" />
-              <span>{hotel.village}</span>
+          {/* Specs grid */}
+          <div className="grid grid-cols-2 gap-x-4 gap-y-2 rounded-lg border border-border/40 bg-muted/20 p-4 text-xs">
+            {hotel.specs.map((spec) => (
+              <div key={spec.label} className="flex items-center gap-2 text-muted-foreground">
+                <span className="shrink-0 text-sm leading-none">{spec.icon}</span>
+                <span className="truncate">{spec.label}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Recommendation callout */}
+          <div className="rounded-lg border border-primary/20 bg-primary/5 px-4 py-3">
+            <div className="flex items-center gap-1.5 mb-1.5">
+              <Star className="h-3.5 w-3.5 shrink-0 text-primary" />
+              <span className="text-xs font-semibold text-primary">Sea Saba Recommendation</span>
             </div>
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <Clock className="h-3.5 w-3.5 shrink-0 text-primary" />
-              <span>{hotel.minutesFromSeaSaba} min from Sea Saba</span>
-            </div>
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <UtensilsCrossed className="h-3.5 w-3.5 shrink-0 text-primary" />
-              <span>{hotel.restaurant ? "Restaurant on site" : "No restaurant"}</span>
-            </div>
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <Waves className="h-3.5 w-3.5 shrink-0 text-primary" />
-              <span>{hotel.pool ? "Pool" : "No pool"}</span>
-            </div>
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <DollarSign className="h-3.5 w-3.5 shrink-0 text-primary" />
-              <span>{priceFull} &mdash; Price range</span>
-            </div>
-            <div className="flex items-start gap-2 text-muted-foreground">
-              <Star className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
-              <span>{hotel.bestFor}</span>
-            </div>
+            <p className="text-xs leading-relaxed text-muted-foreground">{hotel.recommendation}</p>
           </div>
 
           {/* Actions */}

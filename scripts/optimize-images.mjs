@@ -188,6 +188,12 @@ const IMAGE_MAP = [
   { src: "students.jpg",            out: "students-instruction.webp",  width: 1200, quality: 82, role: "section" },
   { src: "rental-bcd.jpg",          out: "rental-bcd-equipment.webp",  width: 1200, quality: 82, role: "section" },
 
+  // Hotel modal photos — card size (800px wide)
+  { src: "el-momo.jpg",       out: "el-momo-cottages.webp",  width: 800, quality: 82, role: "card" },
+  { src: "julianas.jpg",      out: "julianas-hotel.webp",    width: 800, quality: 82, role: "card" },
+  { src: "cottage-club.jpg",  out: "cottage-club.webp",      width: 800, quality: 82, role: "card" },
+  { src: "scenery-hotel.jpg", out: "scenery-hotel.webp",     width: 800, quality: 82, role: "card" },
+
   // Unused but in folder — convert at section size
   {
     src: "DSC03031.jpg",
