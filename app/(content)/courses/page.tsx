@@ -142,6 +142,7 @@ export default function CoursesPage() {
         alt="Scuba diver in perfect trim hovering over the reef in the Saba Marine Park"
         title="Learn to Dive with Sea Saba"
         subtitle="SDI and TDI training in one of the Caribbean's most unique marine parks"
+        imageClassName="object-[80%_center] md:object-[75%_center] lg:object-center"
       />
 
       <p className="text-base leading-relaxed text-muted-foreground">

@@ -12,6 +12,8 @@ interface PageHeroProps {
   title: string;
   subtitle?: string;
   objectPosition?: string;
+  /** Tailwind classes applied to the image; when provided, overrides the inline objectPosition style. */
+  imageClassName?: string;
   breadcrumbs?: Crumb[];
   /** Optional absolutely-positioned overlay content rendered inside the image container */
   overlay?: React.ReactNode;
@@ -31,6 +33,7 @@ export function PageHero({
   title,
   subtitle,
   objectPosition = "center",
+  imageClassName,
   breadcrumbs,
   overlay,
 }: PageHeroProps) {
@@ -45,8 +48,8 @@ export function PageHero({
           src={src}
           alt={alt}
           fill
-          className="object-cover"
-          style={{ objectPosition }}
+          className={`object-cover ${imageClassName ?? ""}`}
+          style={imageClassName ? undefined : { objectPosition }}
           priority
           sizes="100vw"
         />
