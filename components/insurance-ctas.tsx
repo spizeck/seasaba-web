@@ -41,8 +41,8 @@ export function InsuranceCTAs({
           aria-label="Get travel insurance through DiveAssure, opens in a new tab"
           className={
             equalWeight
-              ? `${btnOutline} border-primary/50 text-primary focus-visible:outline-primary`
-              : `${btnPrimary} focus-visible:outline-primary`
+              ? `${btnOutline} no-underline border-primary/50 text-primary focus-visible:outline-primary`
+              : `${btnPrimary} no-underline focus-visible:outline-primary`
           }
           style={!equalWeight ? { backgroundColor: "#9D2235" } : undefined}
         >
@@ -71,7 +71,7 @@ export function InsuranceCTAs({
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Get short-term dive accident insurance through DAN, opens in a new tab"
-          className={`${btnOutline} border-border/60 text-foreground hover:border-primary/40 hover:text-primary focus-visible:outline-primary`}
+          className={`${btnOutline} no-underline border-primary/60 text-primary hover:border-primary hover:bg-primary hover:text-white focus-visible:outline-primary`}
         >
           Get Short-Term Dive Insurance
           <svg

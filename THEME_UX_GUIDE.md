@@ -387,6 +387,13 @@ Reusable components should feel:
 
 ---
 
+## Links
+- Links do not use underlines by default.
+- Clickability should be communicated through color, hover state, and context rather than text decoration.
+- Underlines may be reserved for rare exceptions where the surrounding context makes a link indistinguishable from static text.
+
+---
+
 ## Conversion Hierarchy
 
 Calls to action should follow a clear priority.
