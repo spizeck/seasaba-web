@@ -149,6 +149,13 @@ const IMAGE_MAP = [
     role: "section",
   },
   {
+    src: "island-paradise-cafe.jpg",
+    out: "island-paradise-cafe-saba.webp",
+    width: 1200,
+    quality: 82,
+    role: "section",
+  },
+  {
     src: "glass-art.jpg",
     out: "saba-glass-art.webp",
     width: 1200,
@@ -158,6 +165,34 @@ const IMAGE_MAP = [
   {
     src: "saba-ladder.jpg",
     out: "saba-ladder-bay.webp",
+    width: 1200,
+    quality: 82,
+    role: "section",
+  },
+  {
+    src: "hiking-signs.jpg",
+    out: "saba-hiking-signs.webp",
+    width: 1200,
+    quality: 82,
+    role: "section",
+  },
+  {
+    src: "sunset-cruise.JPG",
+    out: "saba-sunset-cruise.webp",
+    width: 1200,
+    quality: 82,
+    role: "section",
+  },
+  {
+    src: "indigo.jpeg",
+    out: "saba-indigo-arts.webp",
+    width: 1200,
+    quality: 82,
+    role: "section",
+  },
+  {
+    src: "paint.jpeg",
+    out: "saba-paint-arts.webp",
     width: 1200,
     quality: 82,
     role: "section",
