@@ -524,9 +524,24 @@ export default function PlanYourTripPage() {
             <li className="flex items-start gap-2"><Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />Reservations are strongly recommended, especially for dinner. Many restaurants are small and fill quickly.</li>
             <li className="flex items-start gap-2"><Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />Opening days vary and can change seasonally. Call ahead or ask your accommodation to confirm.</li>
             <li className="flex items-start gap-2"><Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />Most restaurants are in Windwardside, within walking distance of the main hotels.</li>
-            <li className="flex items-start gap-2"><Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />Local favorites include Tropics Café at Juliana&apos;s, Brigadoon, and Scout&apos;s Place.</li>
-            <li className="flex items-start gap-2"><Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />Saba has a craft brewery — Deep Dive Brewing Co. Cold beers are available at the dive center after your dives.</li>
+            <li className="flex items-start gap-2"><Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />Local favorites include Tropics Café at Juliana&apos;s, Brigadoon, and Amonhana.</li>
+            <li className="flex items-start gap-2"><Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />Saba has a craft brewery — Deep Dive Brewing Co. Cold beers are available at most restaurants and the dive center after your dives.</li>
           </ul>
+        </div>
+        <div className="mt-5">
+          <FeatureImage
+            src="/images/optimized/colibri-cafe-saba.webp"
+            alt="Colibri Café on Saba serving fresh food and drinks with island views"
+            imageRight
+            centerText
+          >
+            <div>
+              <h3 className="text-lg font-semibold text-foreground">Colibri Café &amp; Local Dining</h3>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                Saba&apos;s intimate restaurants are owner-operated and reflect the island&apos;s character. Colibri Café is a favorite for fresh, casual dining, while Tropics Café, Brigadoon, and Scout&apos;s Place offer everything from beachside bites to relaxed dinners.
+              </p>
+            </div>
+          </FeatureImage>
         </div>
         <p className="mt-3 text-sm text-muted-foreground">
           See our{" "}
@@ -541,6 +556,20 @@ export default function PlanYourTripPage() {
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
           Saba is a five-square-mile extinct volcanic island and a Special Municipality of the Netherlands. It rises steeply from the Caribbean Sea to nearly 3,000 feet at the summit of Mount Scenery — the highest point in the Kingdom of the Netherlands. The island has a permanent population of around 2,000 people and almost no flat land.
         </p>
+        <div className="mt-5">
+          <FeatureImage
+            src="/images/optimized/saba-the-road.webp"
+            alt="The winding road through Saba's lush green hills and traditional cottages"
+            centerText
+          >
+            <div>
+              <h3 className="text-lg font-semibold text-foreground">The Road That Couldn&apos;t Be Built</h3>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                Saba&apos;s single main road winds through steep volcanic terrain, connecting Windwardside, The Bottom, and Fort Bay. Once considered impossible to build, the drive is now one of the island&apos;s most memorable experiences.
+              </p>
+            </div>
+          </FeatureImage>
+        </div>
         <div className="mt-5 grid gap-4 sm:grid-cols-2">
           <div className="rounded-lg border border-border/40 bg-muted/20 p-4">
             <h3 className="text-sm font-semibold text-foreground">A Unique Caribbean History</h3>
@@ -574,6 +603,21 @@ export default function PlanYourTripPage() {
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
           Saba is the rare destination where world-class diving and world-class hiking exist on the same island. The trail network winds through cloud forest, elfin woodland, and tropical rainforest, and the views from the upper trails are spectacular.
         </p>
+        <div className="mt-5">
+          <FeatureImage
+            src="/images/optimized/saba-ladder-bay.webp"
+            alt="The historic stone ladder carved into the cliffs at Ladder Bay, Saba"
+            imageRight
+            centerText
+          >
+            <div>
+              <h3 className="text-lg font-semibold text-foreground">Ladder Bay</h3>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                Before the road and airport, Saba&apos;s only link to the sea was a steep stone staircase carved into the cliff face at Ladder Bay. Today it remains one of the island&apos;s most dramatic and historic coastal landmarks.
+              </p>
+            </div>
+          </FeatureImage>
+        </div>
         <div className="mt-5 grid gap-4 sm:grid-cols-3">
           <div className="rounded-lg border border-border/40 bg-muted/20 p-4">
             <h3 className="text-sm font-semibold text-foreground">Mount Scenery</h3>
@@ -608,6 +652,20 @@ export default function PlanYourTripPage() {
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
           Diving is the primary draw, but there is more than enough to fill a week on Saba. Most guests find the island itself — its pace, its scenery, and its community — becomes part of the experience.
         </p>
+        <div className="mt-5">
+          <FeatureImage
+            src="/images/optimized/saba-glass-art.webp"
+            alt="Colorful hand-blown glass art made on Saba"
+            centerText
+          >
+            <div>
+              <h3 className="text-lg font-semibold text-foreground">Arts &amp; Crafts on Saba</h3>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                Saba is known for handmade Saba lace — a delicate needlework tradition unique to the island. Glass-melting demonstrations and local art studios also offer a chance to watch artisans at work and take home a unique piece of the island.
+              </p>
+            </div>
+          </FeatureImage>
+        </div>
         <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <div className="rounded-lg border border-border/40 bg-muted/20 p-4">
             <h3 className="text-sm font-semibold text-foreground">Sunset Cruises</h3>
@@ -631,12 +689,6 @@ export default function PlanYourTripPage() {
             <h3 className="text-sm font-semibold text-foreground">Hiking &amp; Nature Walks</h3>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
               Saba&apos;s trail network covers the island from the coast to the cloud forest summit. Mount Scenery, the highest point in the Kingdom of the Netherlands, is a half-day hike from Windwardside.
-            </p>
-          </div>
-          <div className="rounded-lg border border-border/40 bg-muted/20 p-4">
-            <h3 className="text-sm font-semibold text-foreground">Arts &amp; Crafts</h3>
-            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              Saba is known for handmade Saba lace — a delicate needlework tradition unique to the island. Glass-melting demonstrations and local art studios are also worth exploring during your stay.
             </p>
           </div>
           <div className="rounded-lg border border-border/40 bg-muted/20 p-4">
