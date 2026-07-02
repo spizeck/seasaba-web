@@ -439,7 +439,6 @@ export default function PlanYourTripPage() {
         </div>
       </section>
 
-
       {/* What to Bring */}
       <section id="what-to-bring" className="mt-12 scroll-mt-24">
         <h2 className="text-xl font-semibold text-foreground">What to Bring</h2>
@@ -526,7 +525,6 @@ export default function PlanYourTripPage() {
             <li className="flex items-start gap-2"><Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />Reservations are strongly recommended, especially for dinner. Many restaurants are small and fill quickly.</li>
             <li className="flex items-start gap-2"><Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />Opening days vary and can change seasonally. Call ahead or ask your accommodation to confirm.</li>
             <li className="flex items-start gap-2"><Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />Most restaurants are in Windwardside, within walking distance of the main hotels.</li>
-            <li className="flex items-start gap-2"><Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />Local favorites include Tropics Café at Juliana&apos;s, Brigadoon, and Amonhana.</li>
             <li className="flex items-start gap-2"><Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />Saba has a craft brewery: Deep Dive Brewing Co. Cold beers are available at most restaurants and the dive center after your dives.</li>
           </ul>
         </div>
@@ -553,6 +551,9 @@ export default function PlanYourTripPage() {
             <div>
               <h3 className="text-lg font-semibold text-foreground">Our Recommended Partners</h3>
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                Looking for our favorite places to eat, stay, and explore?
+              </p>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
                 We&apos;ve curated a collection of restaurants, accommodations, transportation providers, and local experiences that we confidently recommend to our guests. Browse our favorite local businesses to help you plan the perfect stay on Saba.
               </p>
               <Button asChild className="mt-4">
@@ -560,6 +561,106 @@ export default function PlanYourTripPage() {
               </Button>
             </div>
           </FeatureImage>
+        </div>
+      </section>
+
+      {/* Things to Do on Saba */}
+      <section id={planYourTripAnchors.experiences} className="mt-12 scroll-mt-24">
+        <div className="flex items-center gap-3">
+          <Compass className="h-5 w-5 text-primary" />
+          <h2 className="text-xl font-semibold text-foreground">Things to Do on Saba</h2>
+        </div>
+        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          Saba offers far more than world-class diving. Spend a day hiking through cloud forests, exploring local art galleries, snorkeling crystal-clear waters, enjoying a sunset cruise, or discovering one of the Caribbean&apos;s most unique island communities.
+        </p>
+
+        <div className="mt-8 flex flex-col gap-16 lg:gap-20">
+          <FeatureImage
+            src="/images/optimized/saba-sunset-cruise.webp"
+            alt="Guests watching the sunset from the deck of a Sea Saba boat off Saba's coast"
+            centerText
+            imageRight
+          >
+            <div>
+              <h3 className="text-lg font-semibold text-foreground">Sunset Cruise</h3>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                Sea Saba runs private sunset cruises along the island&apos;s rugged coastline. Watch the sun drop behind Saba, enjoy drinks on deck, and see the island from the water.
+              </p>
+              <Button asChild className="mt-4">
+                <Link href="/contact?interest=sunset-cruise">Book a Sunset Cruise &rarr;</Link>
+              </Button>
+            </div>
+          </FeatureImage>
+
+          <FeatureImage
+            src="/images/optimized/saba-hiking-signs.webp"
+            alt="Trail signs marking hiking routes across Saba's rainforest and cloud forest"
+            centerText
+          >
+            <div>
+              <h3 className="text-lg font-semibold text-foreground">Hiking on Saba</h3>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                Saba&apos;s award-winning trail network winds through dry coastal hillsides, lush rainforest, and misty cloud forests near the summit of Mount Scenery. Free trail maps are available.
+              </p>
+            </div>
+          </FeatureImage>
+
+          <FeatureImage
+            src="/images/optimized/saba-snorkeling.webp"
+            alt="Sea turtle swimming at the surface while snorkeling on Saba"
+            imageRight
+            centerText
+          >
+            <div>
+              <h3 className="text-lg font-semibold text-foreground">Snorkeling</h3>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                Saba&apos;s shallow reefs are excellent for snorkeling. The afternoon snorkel trip runs alongside the dive boats, so snorkelers stay at the surface while divers go deeper. No certification required.
+              </p>
+            </div>
+          </FeatureImage>
+
+          <div>
+            <h3 className="text-lg font-semibold text-foreground">Arts &amp; Crafts</h3>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+              Saba has a long tradition of handmade work, from delicate Saba lace to glass-melting demonstrations and local art studios. Visitors can watch artisans at work and take home a piece of the island.
+            </p>
+            <div className="mt-6 grid gap-6 sm:grid-cols-2">
+              <ImageCard
+                src="/images/optimized/saba-indigo-arts.webp"
+                alt="Indigo dye and textile work on Saba"
+                heading="Indigo &amp; Textiles"
+                body="Traditional dyeing and textile work reflect the island's creative heritage. Watch artisans at work and find a unique piece to take home."
+              />
+              <ImageCard
+                src="/images/optimized/saba-paint-arts.webp"
+                alt="Paint and artwork from a Saba artist's studio"
+                heading="Local Art &amp; Painting"
+                body="Local studios and galleries showcase paintings, glasswork, and crafts inspired by Saba's landscapes and marine life."
+              />
+            </div>
+          </div>
+
+          {/* Jewelry Making */}
+          <div>
+            <h3 className="text-lg font-semibold text-foreground">Jewelry Making</h3>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+              Saba&apos;s local jewelers work with volcanic stone, sea glass, and silver to create pieces inspired by the island&apos;s colors and textures. Many designs are made entirely by hand and can only be found here.
+            </p>
+            <div className="mt-6 grid gap-6 sm:grid-cols-2">
+              <ImageCard
+                src="/images/optimized/saba-beads-jewelry.webp"
+                alt="Handmade beads and jewelry on Saba"
+                heading="Beads &amp; Charms"
+                body="Colorful beads and handcrafted charms reflect the island&apos;s creative spirit. Browse pieces made by local artisans and find something uniquely Saba."
+              />
+              <ImageCard
+                src="/images/optimized/saba-glass-art.webp"
+                alt="Glass art and jewelry inspired by Saba"
+                heading="Glass Art Jewelry"
+                body="Molten glass is shaped into pendants, earrings, and ornaments inspired by Saba&apos;s marine life and landscapes."
+              />
+            </div>
+          </div>
         </div>
       </section>
 
@@ -580,10 +681,10 @@ export default function PlanYourTripPage() {
               <h3 className="text-lg font-semibold text-foreground">The Ladder</h3>
               <div className="space-y-4">
                 <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                  Long before Saba had roads or a harbor, everyone and everything reached the island by climbing The Ladder: an astonishing staircase of nearly 800 stone steps carved into the cliffs. From food to building materials, everything was carried by hand from the shoreline to the villages above.
+                  Long before Saba had roads or a harbor, everyone and everything reached the island by climbing The Ladder: nearly 800 stone steps carved into the cliffs. From food to building materials, everything was carried by hand from the shoreline to the villages above.
                 </p>
                 <p className="text-sm leading-relaxed text-muted-foreground">
-                  Today, The Ladder is one of Saba&apos;s most important historic landmarks. The restored trail is a rewarding hike that combines fascinating history with spectacular coastal views.
+                  Today, The Ladder remains one of Saba&apos;s most important historic landmarks. The restored trail is a rewarding hike that combines history with spectacular coastal views.
                 </p>
               </div>
             </div>
@@ -597,10 +698,10 @@ export default function PlanYourTripPage() {
               <h3 className="text-lg font-semibold text-foreground">The Road That Couldn&apos;t Be Built</h3>
               <div className="space-y-4">
                 <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                  For generations, experts insisted Saba&apos;s steep volcanic slopes made a road impossible, earning it the nickname &quot;The Road That Couldn&apos;t Be Built.&quot; Saban engineer Josephus Lambert Hassell taught himself road construction through correspondence courses and led the effort to connect the island&apos;s villages.
+                  For generations, experts insisted Saba&apos;s steep volcanic slopes made a road impossible, earning it the nickname &quot;The Road That Couldn&apos;t Be Built.&quot; Saban engineer Josephus Lambert Hassell taught himself road construction and led the effort to connect the island&apos;s villages.
                 </p>
                 <p className="text-sm leading-relaxed text-muted-foreground">
-                  Completed in stages during the mid-20th century, the road transformed life on Saba by linking Windwardside, The Bottom, Hell&apos;s Gate, St. Johns, and Fort Bay. Today, it is one of the Caribbean&apos;s most scenic drives and a tribute to Saban ingenuity and perseverance.
+                  Completed in stages during the mid-20th century, the road transformed life on Saba by linking Windwardside, The Bottom, Hell&apos;s Gate, St. Johns, and Fort Bay. Today, it is one of the Caribbean&apos;s most scenic drives and a tribute to Saban perseverance.
                 </p>
               </div>
             </div>
@@ -627,140 +728,6 @@ export default function PlanYourTripPage() {
               <li className="flex items-start gap-2"><Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />Protected by the Saba Marine Park, established 1987</li>
             </ul>
           </div>
-        </div>
-      </section>
-
-      {/* Arts & Crafts */}
-      <section id="arts-and-crafts" className="mt-12 scroll-mt-24">
-        <div className="flex items-center gap-3">
-          <Palette className="h-5 w-5 text-primary" />
-          <h2 className="text-xl font-semibold text-foreground">Arts &amp; Crafts</h2>
-        </div>
-        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          Saba has a long tradition of handmade work, from delicate Saba lace to glass-melting demonstrations and local art studios. Visitors can watch artisans at work and take home a piece of the island.
-        </p>
-        <div className="mt-6 grid gap-6 sm:grid-cols-2">
-          <ImageCard
-            src="/images/optimized/saba-indigo-arts.webp"
-            alt="Indigo dye and textile work on Saba"
-            heading="Indigo &amp; Textiles"
-            body="Traditional dyeing and textile work reflect the island's creative heritage. Watch artisans at work and find a unique piece to take home."
-          />
-          <ImageCard
-            src="/images/optimized/saba-paint-arts.webp"
-            alt="Paint and artwork from a Saba artist's studio"
-            heading="Local Art &amp; Painting"
-            body="Local studios and galleries showcase paintings, glasswork, and crafts inspired by Saba's landscapes and marine life."
-          />
-        </div>
-      </section>
-
-      {/* Hiking */}
-      <section id={planYourTripAnchors.hiking} className="mt-12 scroll-mt-24">
-        <div className="flex items-center gap-3">
-          <Mountain className="h-5 w-5 text-primary" />
-          <h2 className="text-xl font-semibold text-foreground">Hiking on Saba</h2>
-        </div>
-        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          Saba is one of the few places in the world where world-class diving and world-class hiking come together on the same island. The island's award-winning trail network leads through tropical rainforest, enchanting elfin forest, and misty cloud forest, revealing spectacular viewpoints and an incredible diversity of plants and wildlife.
-        </p>
-        <div className="mt-5">
-          <FeatureImage
-            src="/images/optimized/saba-hiking-signs.webp"
-            alt="Trail signs marking hiking routes across Saba's rainforest and cloud forest"
-            imageRight
-            centerText
-          >
-            <div>
-              <h3 className="text-lg font-semibold text-foreground">Marked Trails</h3>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                Saba&apos;s award-winning trail network winds through an incredible variety of landscapes, from dry coastal hillsides and lush rainforest to mystical cloud forests near the summit of Mount Scenery. Maintained by the Saba Conservation Foundation, the well-marked trails showcase the island&apos;s unique biodiversity, breathtaking viewpoints, and rich natural history. Free trail maps are available, making it easy to explore one of the Caribbean&apos;s premier hiking destinations.
-              </p>
-            </div>
-          </FeatureImage>
-        </div>
-        <div className="mt-5 grid gap-4 sm:grid-cols-3">
-          <div className="rounded-lg border border-border/40 bg-muted/20 p-4">
-            <h3 className="text-sm font-semibold text-foreground">Mount Scenery</h3>
-            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              Climb to the highest point in the Kingdom of the Netherlands on Saba&apos;s most famous hiking trail. The well-maintained route winds through lush rainforest before entering a magical cloud forest of towering tree ferns, moss-covered trees, and endemic plants, culminating at the 887-meter (2,910-foot) summit.
-            </p>
-          </div>
-          <div className="rounded-lg border border-border/40 bg-muted/20 p-4">
-            <h3 className="text-sm font-semibold text-foreground">Tide Pools</h3>
-            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              For hikers looking to experience Saba's rugged coastline, the Tide Pools trail is one of the island&apos;s most rewarding adventures. Beginning at Well&apos;s Bay, the route descends through dry tropical vegetation and dramatic volcanic terrain before reaching a series of natural tide pools carved into ancient lava flows by the Atlantic Ocean.
-            </p>
-          </div>
-          <div className="rounded-lg border border-border/40 bg-muted/20 p-4">
-            <h3 className="text-sm font-semibold text-foreground">Sandy Cruz Trail</h3>
-            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              One of Saba&apos;s most scenic ridge hikes, the Sandy Cruz Trail winds through lush tropical forest before opening to spectacular views of the island&apos;s dramatic coastline. It&apos;s a quieter alternative to Mount Scenery and a favorite for birdwatching, photography, and experiencing Saba&apos;s natural beauty.
-            </p>
-          </div>
-        </div>
-        <div className="mt-4 rounded-lg border border-border/40 bg-muted/20 px-5 py-4 text-sm text-muted-foreground">
-          Trails can be muddy and steep, especially after rain. Wear sturdy footwear, bring plenty of water, and check trail conditions before setting out. Private hiking guides are available through the Saba Conservation Foundation and can greatly enhance your hike with expert interpretation of the island&apos;s unique plants, wildlife, geology, and cultural history.
-
-        </div>
-      </section>
-
-      {/* Things To Do / Experiences */}
-      <section id={planYourTripAnchors.experiences} className="mt-12 scroll-mt-24">
-        <div className="flex items-center gap-3">
-          <Compass className="h-5 w-5 text-primary" />
-          <h2 className="text-xl font-semibold text-foreground">Things To Do on Saba</h2>
-        </div>
-        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          Diving is the primary draw, but a week on Saba fills easily. Most guests find the island&apos;s pace, scenery, and community become part of the experience.
-        </p>
-        <div className="mt-5">
-          <FeatureImage
-            src="/images/optimized/saba-sunset-cruise.webp"
-            alt="Guests watching the sunset from the deck of a Sea Saba boat off Saba's coast"
-            centerText
-          >
-            <div>
-              <h3 className="text-lg font-semibold text-foreground">Sunset Cruises</h3>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                Sea Saba runs private sunset cruises along the island&apos;s rugged coastline. Watch the sun drop behind Saba, enjoy drinks on deck, and see the island from the water. Available by private charter.
-              </p>
-            </div>
-          </FeatureImage>
-        </div>
-        <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <div className="rounded-lg border border-border/40 bg-muted/20 p-4">
-            <h3 className="text-sm font-semibold text-foreground">Snorkeling</h3>
-            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              Saba&apos;s shallow reefs are excellent for snorkeling. The afternoon snorkel trip runs alongside the dive boats, so snorkelers stay at the surface while divers go deeper. No certification required.
-            </p>
-          </div>
-          <div className="rounded-lg border border-border/40 bg-muted/20 p-4">
-            <h3 className="text-sm font-semibold text-foreground">Private Charters</h3>
-            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              Book a private half or full-day charter on our custom catamarans. Combine diving, snorkeling, and coastal cruising into one flexible itinerary. Ideal for groups, families, or special occasions.
-            </p>
-          </div>
-          <div className="rounded-lg border border-border/40 bg-muted/20 p-4">
-            <h3 className="text-sm font-semibold text-foreground">Hiking &amp; Nature Walks</h3>
-            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              Saba&apos;s trail network runs from the coast to the cloud forest summit. Mount Scenery is a half-day hike from Windwardside.
-            </p>
-          </div>
-          <div className="rounded-lg border border-border/40 bg-muted/20 p-4">
-            <h3 className="text-sm font-semibold text-foreground">Sea &amp; Learn</h3>
-            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              Each October, visiting scientists lead a week of free programs on marine biology, coral ecology, and island conservation. Sea &amp; Learn is a unique event in the Caribbean.
-            </p>
-          </div>
-        </div>
-        <div className="mt-5 flex flex-col items-start gap-3 sm:flex-row">
-          <Button asChild variant="outline" size="sm">
-            <Link href="/book?item=private">Inquire About a Private Charter</Link>
-          </Button>
-          <Button asChild variant="outline" size="sm">
-            <Link href="/partners">See All Recommended Partners</Link>
-          </Button>
         </div>
       </section>
 

@@ -198,6 +198,20 @@ const IMAGE_MAP = [
     role: "section",
   },
   {
+    src: "beads.jpeg",
+    out: "saba-beads-jewelry.webp",
+    width: 1200,
+    quality: 82,
+    role: "section",
+  },
+  {
+    src: "turtle-at-surface.jpg",
+    out: "saba-snorkeling.webp",
+    width: 1200,
+    quality: 82,
+    role: "section",
+  },
+  {
     src: "CandiceLandau096.jpg",
     out: "green-turtle-with-diver-saba.webp",
     width: 1200,
