@@ -198,6 +198,13 @@ const IMAGE_MAP = [
     role: "section",
   },
   {
+    src: "saba-lace.jpg",
+    out: "saba-lace.webp",
+    width: 1200,
+    quality: 82,
+    role: "section",
+  },
+  {
     src: "beads.jpeg",
     out: "saba-beads-jewelry.webp",
     width: 1200,

@@ -2,9 +2,8 @@ import { createMetadata } from "@/lib/metadata";
 import Link from "next/link";
 import { PageHero } from "@/components/page-hero";
 import { FeatureImage } from "@/components/feature-image";
-import { ImageCard } from "@/components/image-card";
 import { Button } from "@/components/ui/button";
-import { Plane, PlaneTakeoff, Ship, Helicopter, Check, Droplets, Eye, Sun, Thermometer, Home, HelpCircle, Fish, Calendar, AlertTriangle, Bus, Ban, DollarSign, MessageCircle, Plug, Wifi, Timer, Utensils, Mountain, Compass, Palette, Clock } from "lucide-react";
+import { Plane, PlaneTakeoff, Ship, Helicopter, Check, Droplets, Eye, Sun, Thermometer, Home, HelpCircle, Fish, Calendar, AlertTriangle, Bus, Ban, DollarSign, MessageCircle, Plug, Wifi, Timer, Utensils, Compass, Clock } from "lucide-react";
 import { HotelPills } from "@/components/hotel-pills";
 import { InsuranceCTAs } from "@/components/insurance-ctas";
 import { planYourTripAnchors } from "@/lib/anchors";
@@ -622,45 +621,49 @@ export default function PlanYourTripPage() {
           <div>
             <h3 className="text-lg font-semibold text-foreground">Arts &amp; Crafts</h3>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              Saba has a long tradition of handmade work, from delicate Saba lace to glass-melting demonstrations and local art studios. Visitors can watch artisans at work and take home a piece of the island.
+              Saba has a vibrant community of local artisans producing handmade crafts, jewelry, glass art, pottery, and the famous Saba Lace. Many pieces are inspired by the island&apos;s marine life, volcanic landscape, and Caribbean culture.
             </p>
-            <div className="mt-6 grid gap-6 sm:grid-cols-2">
-              <ImageCard
-                src="/images/optimized/saba-indigo-arts.webp"
-                alt="Indigo dye and textile work on Saba"
-                heading="Indigo &amp; Textiles"
-                body="Traditional dyeing and textile work reflect the island's creative heritage. Watch artisans at work and find a unique piece to take home."
-              />
-              <ImageCard
-                src="/images/optimized/saba-paint-arts.webp"
-                alt="Paint and artwork from a Saba artist's studio"
-                heading="Local Art &amp; Painting"
-                body="Local studios and galleries showcase paintings, glasswork, and crafts inspired by Saba's landscapes and marine life."
-              />
-            </div>
           </div>
 
-          {/* Jewelry Making */}
-          <div>
-            <h3 className="text-lg font-semibold text-foreground">Jewelry Making</h3>
-            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              Saba&apos;s local jewelers work with volcanic stone, sea glass, and silver to create pieces inspired by the island&apos;s colors and textures. Many designs are made entirely by hand and can only be found here.
-            </p>
-            <div className="mt-6 grid gap-6 sm:grid-cols-2">
-              <ImageCard
-                src="/images/optimized/saba-beads-jewelry.webp"
-                alt="Handmade beads and jewelry on Saba"
-                heading="Beads &amp; Charms"
-                body="Colorful beads and handcrafted charms reflect the island&apos;s creative spirit. Browse pieces made by local artisans and find something uniquely Saba."
-              />
-              <ImageCard
-                src="/images/optimized/saba-glass-art.webp"
-                alt="Glass art and jewelry inspired by Saba"
-                heading="Glass Art Jewelry"
-                body="Molten glass is shaped into pendants, earrings, and ornaments inspired by Saba&apos;s marine life and landscapes."
-              />
+          <FeatureImage
+            src="/images/optimized/saba-lace.webp"
+            alt="Traditional Saba Lace, a delicate handcrafted island tradition"
+            centerText
+          >
+            <div>
+              <h3 className="text-lg font-semibold text-foreground">Saba Lace</h3>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                Saba Lace is one of the island&apos;s most recognizable traditions. This delicate needlework has been made by hand for generations and is still sold in local shops today. Each piece carries the patience and skill of the artisan who made it.
+              </p>
             </div>
-          </div>
+          </FeatureImage>
+
+          <FeatureImage
+            src="/images/optimized/saba-beads-jewelry.webp"
+            alt="Locally crafted jewelry inspired by Saba"
+            imageRight
+            centerText
+          >
+            <div>
+              <h3 className="text-lg font-semibold text-foreground">Jewelry Making</h3>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                Local jewelers work with volcanic stone, sea glass, and silver to create pieces inspired by Saba&apos;s colors and textures. Many designs are made entirely by hand and can only be found here.
+              </p>
+            </div>
+          </FeatureImage>
+
+          <FeatureImage
+            src="/images/optimized/saba-glass-art.webp"
+            alt="Glass artist shaping molten glass into handmade art"
+            centerText
+          >
+            <div>
+              <h3 className="text-lg font-semibold text-foreground">Glass Art</h3>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                Skilled artisans transform molten glass into unique handmade pieces right before your eyes. Visitors can watch the process and take home one-of-a-kind ornaments, jewelry, and art inspired by the island.
+              </p>
+            </div>
+          </FeatureImage>
         </div>
       </section>
 
