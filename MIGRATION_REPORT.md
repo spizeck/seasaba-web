@@ -15,9 +15,9 @@ homepage just to avoid a 404, and flagged for manual review when no suitable equ
 | Total legacy URLs crawled (Wix sitemaps) | 74 |
 | — Pages | 71 |
 | — Blog posts | 3 |
-| 301 redirects created | 66 |
-| URLs unchanged (identical slug, no redirect) | 3 |
-| URLs flagged for manual review (no auto-redirect) | 5 |
+| 301 redirects created | 68 |
+| URLs unchanged (identical slug, no redirect) | 4 |
+| URLs flagged for manual review (no auto-redirect) | 2 |
 | Redirect chains | 0 |
 | Redirect loops | 0 |
 | Multi-hop redirects | 0 (every redirect resolves in a single hop) |
@@ -37,10 +37,10 @@ homepage just to avoid a 404, and flagged for manual review when no suitable equ
   relevant redirect target for each legacy URL.
 
 ## Validation (against a production build of the new site)
-- All 66 redirects return a single `301` to the expected destination; each destination
+- All 68 redirects return a single `301` to the expected destination; each destination
   returns `200` (no chains, no loops, no multi-hop).
-- All 3 identical URLs (`/`, `/contact`, `/terms`) return `200`.
-- All 5 manual-review URLs correctly return `404` (intentionally not guessed).
+- All 4 identical URLs (`/`, `/contact`, `/terms`, `/dive-log`) return `200`.
+- Both remaining manual-review URLs correctly return `404` (intentionally not guessed).
 - Crawled the new site from the homepage: all pages `200`, no broken internal links,
   36 referenced static assets all `200`, no orphan pages, no accidental `noindex`.
 - `sitemap.xml` contains only indexable (`200`) pages; `robots.txt` allows all
@@ -52,11 +52,12 @@ without a redirect (they 404) rather than guessing an unrelated destination:
 
 | Old URL | Reason | Suggested action |
 |---|---|---|
-| `/seasaba-blog` | Blog index — the new site has no blog | Decide: 301 to a content hub, rebuild a blog, or return 410 |
-| `/post/join-sea-learn-field-projects-with-sea-saba-october-2023` | Sea & Learn event post — `/partners` route not yet in the branch | Link to `/partners` (Sea & Learn) once the Partners page merges; otherwise 410 / migrate as an evergreen article |
 | `/post/oxe-marine-technician-training` | Blog post, no equivalent | 410, or migrate as an article |
-| `/dive-log` | Near-empty Wix utility page (unclear purpose) | Confirm intent; 410 if obsolete |
 | `/howto-s` | Near-empty Wix utility page (unclear purpose) | Confirm intent; 410 if obsolete |
+
+> Resolved since the last update (now that `/partners` and `/dive-log` exist on the new site):
+> `/seasaba-blog` and the Sea & Learn post now 301 to `/partners`, and `/dive-log` is an
+> identical-slug `200` (no redirect needed).
 
 > Note: `/post/diving-into-the-future-with-fin-tonic-and-shark-bait` (blog post about the
 > new dive boats) WAS redirected to `/diving`, since the boats are covered there.
@@ -80,14 +81,12 @@ without a redirect (they 404) rather than guessing an unrelated destination:
 - No duplicate titles/descriptions across canonical routes.
 
 ## Recommendations (future enhancements, not blocking)
-1. Resolve the remaining manual-review URLs (410 vs. migrate vs. redirect). `/dive-log` and
-   `/howto-s` need an intent confirmation; the two blog posts need a keep/migrate decision.
+1. Resolve the remaining manual-review URLs (410 vs. migrate vs. redirect). `/howto-s` needs an
+   intent confirmation; `/post/oxe-marine-technician-training` needs a keep/migrate decision.
 2. Add the public DAN altitude report PDF at `/downloads/dan-saba-altitude-report.pdf` and
    wire it into the altitude/flying FAQ (a `TODO` placeholder is already in the Diving page).
-3. Build the `/partners` page and add Sea & Learn as a partner, then point
-   `/post/join-sea-learn-field-projects-with-sea-saba-october-2023` at it.
-4. Rename the logo asset to a hyphenated, descriptive filename.
-5. Replace the `/diving/first-dive` sample MDX with finalized copy if not already intended
+3. Rename the logo asset to a hyphenated, descriptive filename.
+4. Replace the `/diving/first-dive` sample MDX with finalized copy if not already intended
    as production content.
 
 ## Content & redirect refinements in this update
@@ -100,11 +99,16 @@ without a redirect (they 404) rather than guessing an unrelated destination:
 - Added **The Island of Saba (history)** (`#history`), **Experiences Beyond Diving**
   (`#experiences`), **Hiking on Saba** (`#hiking`), and **Restaurants & Dining**
   (`#restaurants`) sections to `/plan-your-trip`.
-- Re-pointed 10 legacy redirects at these dedicated sections (see mapping table); redirect
-  count is unchanged (still 66 single-hop 301s, no chains/loops).
+- Re-pointed 10 legacy redirects at these dedicated sections (see mapping table).
+- Now that `/partners` (which lists Sea & Learn) and `/dive-log` exist on the new site,
+  resolved two prior manual-review items: `/seasaba-blog` and the Sea & Learn post now 301 to
+  `/partners`, and `/dive-log` is an identical-slug `200` (no redirect). Redirect count is now
+  **68** (manual review down from 5 to 2).
+- Extracted the redirect map to `data/redirects.ts` and centralized section-anchor IDs in
+  `lib/anchors.ts`, so the redirect targets and the on-page `id`s share one source of truth.
 - Switched the redirects from Next.js `permanent: true` (which emits HTTP **308**) to
   `statusCode: 301`, so every legacy URL now returns a genuine **301** as specified. Verified
-  against a production build: all 66 return a single `301` and every destination returns `200`.
+  against a production build: all 68 return a single `301` and every destination returns `200`.
 
 ## Complete URL mapping table
 
@@ -113,7 +117,7 @@ without a redirect (they 404) rather than guessing an unrelated destination:
 | `/` | `/` | No | OK (identical) | Homepage — identical URL, no redirect needed |
 | `/about/the-sea-saba-difference` | `/about` | Yes | 301 | Our Approach / difference now on About page |
 | `/book-saba-diving-online` | `/book` | Yes | 301 | Online booking page |
-| `/certified-pure` | `/diving#nitrox` | Yes | 301 | Air/gas-quality content now covered by the Nitrox section's 'clean, reliable fills' note |
+| `/certified-pure` | `/diving#nitrox` | Yes | 301 | Air/gas-quality content now covered by the Nitrox section's 'Our Air Quality Standard' note |
 | `/childrens-scuba` | `/courses` | Yes | 301 | Try Scuba covers younger/new divers; consider a family note |
 | `/concerning-altitude` | `/diving#altitude-flying` | Yes | 301 | Now lands on the new altitude/flying FAQ item on the Diving page |
 | `/contact` | `/contact` | No | OK (identical) | Identical URL, no redirect needed |
@@ -121,7 +125,7 @@ without a redirect (they 404) rather than guessing an unrelated destination:
 | `/copy-of-fort-bay-harbor` | `/about` | Yes | 301 | Duplicate Fort Bay page; mapped directly to final destination (no chain) |
 | `/cottage-andhouse-rentals` | `/plan-your-trip#where-to-stay` | Yes | 301 | Accommodation options in Where to Stay |
 | `/dan-report` | `/diving#altitude-flying` | Yes | 301 | Altitude/flying FAQ notes a DAN report is available on request (public PDF TODO) |
-| `/dive-log` | — | No | Manual review | Near-empty Wix utility page (unclear purpose); flag for manual review |
+| `/dive-log` | `/dive-log` | No | OK (identical) | New `/dive-log` route exists (identical slug); no redirect needed |
 | `/dive-nitrox-with-sea-saba` | `/diving#nitrox` | Yes | 301 | Lands on the new Free 32% Nitrox section on the Diving page |
 | `/dive-partners` | `/about` | Yes | 301 | Partners context best fits About; consider a dedicated Partners section |
 | `/dive-shop-on-saba` | `/contact` | Yes | 301 | New site has no retail catalog; Contact shows location/visit info |
@@ -133,7 +137,7 @@ without a redirect (they 404) rather than guessing an unrelated destination:
 | `/instagram` | `https://www.instagram.com/seasaba/` | Yes | 301 | Wix social shortcut → external Instagram profile |
 | `/meet-the-crew` | `/about` | Yes | 301 | Meet the Crew section on About page |
 | `/post/diving-into-the-future-with-fin-tonic-and-shark-bait` | `/diving` | Yes | 301 | Blog post about the dive boats; Diving page covers the boats |
-| `/post/join-sea-learn-field-projects-with-sea-saba-october-2023` | — | No | Manual review | Sea & Learn event post. `/partners` route does not yet exist in the branch — link to `/partners` (Sea & Learn) once the Partners page merges |
+| `/post/join-sea-learn-field-projects-with-sea-saba-october-2023` | `/partners` | Yes | 301 | Sea & Learn event post → Partners page (Sea & Learn is listed there) |
 | `/post/oxe-marine-technician-training` | — | No | Manual review | Blog post — no equivalent; flag for manual review |
 | `/saba-1-mt-michel` | `/dive-sites#pinnacles` | Yes | 301 | Individual dive-site page → Dive Sites 'pinnacles' area section |
 | `/saba-10-coral-nursery` | `/dive-sites` | Yes | 301 | No dedicated section for the Coral Nursery site; mapped to Dive Sites index |
@@ -173,7 +177,7 @@ without a redirect (they 404) rather than guessing an unrelated destination:
 | `/sabas-best-dive-boats` | `/diving` | Yes | 301 | Boats/experience content on Diving page |
 | `/sabas-dive-sites` | `/dive-sites` | Yes | 301 | Dive sites overview |
 | `/sailing-to-saba` | `/plan-your-trip#getting-here` | Yes | 301 | Arrival options / rendezvous; consider a sailing note |
-| `/seasaba-blog` | — | No | Manual review | Blog index — no blog on new IA; flag for manual review (301 to hub or 410) |
+| `/seasaba-blog` | `/partners` | Yes | 301 | Blog index → Partners (closest content hub; revisit if a blog is restored) |
 | `/seasaba-faqs` | `/plan-your-trip#faq` | Yes | 301 | FAQ section |
 | `/snorkeling-saba` | `/plan-your-trip#experiences` | Yes | 301 | Lands on the new Experiences section (snorkeling); links out to the Diving snorkel trip |
 | `/terms` | `/terms` | No | OK (identical) | Identical URL, no redirect needed |

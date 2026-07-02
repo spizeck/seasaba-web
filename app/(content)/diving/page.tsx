@@ -3,9 +3,10 @@ import { PageHero } from "@/components/page-hero";
 import { FeatureImage } from "@/components/feature-image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Users, Award, Ship, Droplets, ShieldCheck, Gauge, Plane } from "lucide-react";
+import { Users, Award, Ship, Droplets, ShieldCheck, Wind, HelpCircle } from "lucide-react";
 import { InsuranceCTAs } from "@/components/insurance-ctas";
 import { ExperienceSelector } from "@/components/experience-selector";
+import { divingAnchors, coursesAnchors } from "@/lib/anchors";
 
 export const metadata = createMetadata({
   title: "Diving in Saba",
@@ -135,14 +136,6 @@ export default function DivingPage() {
         small groups, comfortable boats, and personalized service.
       </p>
 
-      <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-        New to Saba or diving here for the first time? See{" "}
-        <Link href="/diving/first-dive" className="font-medium text-primary hover:underline">
-          what to expect on your first dive
-        </Link>{" "}
-        before you arrive.
-      </p>
-
       {/* Trust Signals */}
       <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
         {TRUST_SIGNALS.map((signal) => (
@@ -238,44 +231,6 @@ export default function DivingPage() {
       </section>
 
       <ExperienceSelector />
-
-      {/* Free Nitrox */}
-      <section id="nitrox" className="mt-14 scroll-mt-24">
-        <div className="flex items-center gap-3">
-          <Gauge className="h-6 w-6 text-primary" />
-          <h2 className="text-xl font-semibold text-foreground">Free 32% Nitrox</h2>
-        </div>
-        <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-          Complimentary 32% Nitrox is included for certified Nitrox divers on qualifying dives —
-          just bring proof of your Nitrox certification.
-        </p>
-        <p className="mt-3 text-base leading-relaxed text-muted-foreground">
-          Nitrox suits the way most people dive Saba. Many of our signature sites are deeper
-          pinnacles and walls, and most guests dive several days in a row. Breathing 32% Nitrox
-          instead of air means less nitrogen at a given depth, which can extend your
-          no-decompression limits on deeper profiles and adds conservatism across repetitive
-          dive days. Nitrox isn&apos;t a shortcut around safe planning — every dive is still
-          planned conservatively and within recreational limits.
-        </p>
-        <div className="mt-5 grid gap-3 sm:grid-cols-2">
-          <div className="rounded-lg border border-border/40 bg-muted/20 p-4">
-            <h3 className="text-sm font-semibold text-foreground">Clean, reliable fills</h3>
-            <p className="mt-1 text-xs text-muted-foreground">
-              We blend Nitrox in-house and maintain our compressors and fill equipment to keep
-              breathing gas clean and consistent.
-            </p>
-          </div>
-          <div className="rounded-lg border border-border/40 bg-muted/20 p-4">
-            <h3 className="text-sm font-semibold text-foreground">Not certified yet?</h3>
-            <p className="mt-1 text-xs text-muted-foreground">
-              You can add the SDI Nitrox specialty during your visit.{" "}
-              <Link href="/courses#nitrox" className="font-medium text-primary hover:underline">
-                See our Nitrox course →
-              </Link>
-            </p>
-          </div>
-        </div>
-      </section>
 
       {/* Dive More Save More */}
       <section className="mt-14">
@@ -430,35 +385,75 @@ export default function DivingPage() {
         </div>
       </section>
 
-      {/* Diving & Flying to Saba */}
-      <section className="mt-16">
-        <h2 className="text-xl font-semibold text-foreground">Diving &amp; Flying to Saba</h2>
-        <div className="mt-6">
-          <div
-            id="altitude-flying"
-            className="scroll-mt-24 rounded-lg border border-border/40 bg-muted/20 p-5"
-          >
-            <div className="flex items-start gap-3">
-              <Plane className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
-              <div>
-                <h3 className="text-sm font-semibold text-foreground">
-                  What about altitude and the flight between St. Maarten and Saba?
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                  Flying to and from Saba is not the same as boarding a typical high-altitude
-                  commercial flight. The Winair hop between St. Maarten and Saba is very short and
-                  only reaches roughly 2,000 feet, and only briefly, rather than the cabin
-                  altitudes of a long-haul jet.
-                </p>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                  We still plan every dive conservatively and follow standard surface-interval
-                  guidance before flying. If you would like more detail on diving around the short
-                  flight to Saba, our team can provide a DAN report on request.
-                </p>
-                {/* TODO: link to the public DAN report PDF at /downloads/dan-saba-altitude-report.pdf once it is available */}
-              </div>
-            </div>
+      {/* Nitrox */}
+      <section id={divingAnchors.nitrox} className="mt-14 scroll-mt-24">
+        <div className="flex items-center gap-3">
+          <Wind className="h-5 w-5 text-primary" />
+          <h2 className="text-xl font-semibold text-foreground">Free Nitrox for Certified Divers</h2>
+        </div>
+        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          Sea Saba provides complimentary 32% Nitrox to all certified Nitrox divers — no extra charge, no rental fee. Please bring proof of Nitrox certification.
+        </p>
+
+        <div className="mt-6 grid gap-5 sm:grid-cols-2">
+          <div className="rounded-lg border border-border/40 bg-muted/20 p-5">
+            <h3 className="text-sm font-semibold text-foreground">Why Nitrox on Saba?</h3>
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+              Saba&apos;s dive profiles are deeper than average. Volcanic pinnacles like Third Encounter and Man O&apos; War Shoals regularly take divers to 90–120 feet. On a multi-day diving schedule with two dives per day, many divers appreciate the added no-decompression limit flexibility that Nitrox provides at these depths.
+            </p>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+              Nitrox also suits Saba&apos;s repetitive diving schedule well. When you&apos;re diving the same deep pinnacles two mornings in a row, reduced nitrogen loading between dives can be a meaningful advantage.
+            </p>
           </div>
+          <div className="rounded-lg border border-border/40 bg-muted/20 p-5">
+            <h3 className="text-sm font-semibold text-foreground">Our Air Quality Standard</h3>
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+              Sea Saba fills all tanks — air and Nitrox — using a high-pressure breathing air compressor maintained to IANTD standards. Our fill station is regularly tested to ensure clean, dry, safe breathing gas. We do not blend Nitrox by partial pressure from industrial oxygen; we use a dedicated membrane system to produce consistent 32% mixes.
+            </p>
+            <ul className="mt-3 space-y-1.5 text-sm text-muted-foreground">
+              <li className="flex items-center gap-2"><Droplets className="h-3.5 w-3.5 shrink-0 text-primary" />Free 32% Nitrox on all qualifying dives</li>
+              <li className="flex items-center gap-2"><Droplets className="h-3.5 w-3.5 shrink-0 text-primary" />Membrane system — consistent, clean mix</li>
+              <li className="flex items-center gap-2"><Droplets className="h-3.5 w-3.5 shrink-0 text-primary" />Proof of Nitrox certification required</li>
+              <li className="flex items-center gap-2"><Droplets className="h-3.5 w-3.5 shrink-0 text-primary" />SDI/TDI Nitrox courses available on Saba</li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="mt-4 rounded-lg border border-primary/20 bg-primary/5 px-5 py-4">
+          <p className="text-sm text-muted-foreground">
+            Not yet Nitrox certified?{" "}
+            <Link href={`/courses#${coursesAnchors.nitrox}`} className="font-medium text-primary hover:underline underline-offset-4">
+              View our SDI Nitrox course
+            </Link>
+            {" "}— get certified before your next dive trip and start using free Nitrox on Saba from day one.
+          </p>
+        </div>
+      </section>
+
+      {/* Altitude & Flying FAQ */}
+      <section id={divingAnchors.altitudeFlying} className="mt-14 scroll-mt-24">
+        <div className="flex items-center gap-3">
+          <HelpCircle className="h-5 w-5 text-primary" />
+          <h2 className="text-xl font-semibold text-foreground">Flying to Saba &amp; Diving the Same Day</h2>
+        </div>
+        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          A common question from divers planning a Saba trip: &ldquo;I&apos;m flying into St. Maarten and connecting to Saba the same day — can I dive that afternoon?&rdquo;
+        </p>
+        <div className="mt-5 rounded-lg border border-border/40 bg-muted/20 p-5">
+          <h3 className="text-sm font-semibold text-foreground">The Saba Flight Is Not a Standard Commercial Flight</h3>
+          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+            Standard dive planning guidelines for flying and diving are designed around commercial airline cabin altitudes, which are typically pressurized to the equivalent of 6,000–8,000 feet. The Winair Twin Otter flight from St. Maarten to Saba is a short, low-altitude island hop — the aircraft reaches approximately 2,000 feet for only a few minutes before descending. This is a fundamentally different pressure exposure than a standard commercial flight.
+          </p>
+          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+            Sea Saba follows conservative dive planning practices and has been operating these schedules since 1985. Divers who connect through St. Maarten and fly into Saba the same day regularly dive with us without issue under our standard schedule. That said, your individual dive history, nitrogen loading, and health are factors only you and your physician can fully assess.
+          </p>
+          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+            DAN (Divers Alert Network) has conducted research specifically on inter-island flying and repetitive diving in the Caribbean. We can share the relevant DAN report with guests who want more detail.
+            {/* TODO: Link the DAN report PDF once placed in /public. Expected path: /downloads/dan-saba-altitude-report.pdf */}
+          </p>
+          <p className="mt-3 text-xs text-muted-foreground/70 italic">
+            This information is provided for planning purposes only and does not constitute medical advice. If you have concerns about your specific situation, please consult your physician or contact DAN.
+          </p>
         </div>
       </section>
 

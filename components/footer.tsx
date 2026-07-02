@@ -7,11 +7,13 @@ const PLAN_LINKS = [
   { label: "When to Visit",  href: "/plan-your-trip#when-to-visit" },
   { label: "What to Bring",  href: "/plan-your-trip#what-to-bring" },
   { label: "Good to Know",   href: "/plan-your-trip#good-to-know" },
+  { label: "Recommended Partners", href: "/partners" },
 ] as const;
 
 const EXPLORE_LINKS = [
   { label: "Dive Sites",  href: "/dive-sites" },
   { label: "Diving",      href: "/diving" },
+  { label: "Dive Log",    href: "/dive-log" },
   { label: "Courses",     href: "/courses" },
   { label: "About",       href: "/about" },
   { label: "Contact",     href: "/contact" },

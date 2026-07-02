@@ -5,6 +5,7 @@ import { FeatureImage } from "@/components/feature-image";
 import { Button } from "@/components/ui/button";
 import { BookingCTA } from "@/components/booking-cta";
 import { Award, Users, CheckCircle, Ship, MapPin, Wrench, Car, ShieldCheck, Compass } from "lucide-react";
+import { coursesAnchors } from "@/lib/anchors";
 
 export const metadata = createMetadata({
   title: "Scuba Courses & Certifications",
@@ -106,7 +107,7 @@ const COURSES = [
     path: "/contact?interest=sdi-advanced-specialty",
   },
   {
-    id: "nitrox",
+    id: coursesAnchors.nitrox,
     name: "SDI Computer Nitrox Diver",
     level: "Specialty",
     duration: "1 day",
