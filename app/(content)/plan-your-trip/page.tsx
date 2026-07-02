@@ -411,7 +411,7 @@ export default function PlanYourTripPage() {
               <h3 className="text-lg font-semibold text-foreground">Accommodation</h3>
             </div>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              Saba offers boutique hotels, charming cottages, and private villas instead of large resorts. Whether you're looking for a full-service hotel or a quiet island retreat, every accommodation is just a short drive from Fort Bay Harbor.
+              Saba offers boutique hotels, charming cottages, and private villas instead of large resorts. Whether you&apos;re looking for a full-service hotel or a quiet island retreat, every accommodation is just a short drive from Fort Bay Harbor.
             </p>
             <HotelPills />
           </div>

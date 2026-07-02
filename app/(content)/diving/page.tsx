@@ -135,6 +135,14 @@ export default function DivingPage() {
         small groups, comfortable boats, and personalized service.
       </p>
 
+      <p className="mt-4 text-base leading-relaxed text-muted-foreground">
+        New to Saba or diving here for the first time? See{" "}
+        <Link href="/diving/first-dive" className="font-medium text-primary hover:underline">
+          what to expect on your first dive
+        </Link>{" "}
+        before you arrive.
+      </p>
+
       {/* Trust Signals */}
       <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
         {TRUST_SIGNALS.map((signal) => (
