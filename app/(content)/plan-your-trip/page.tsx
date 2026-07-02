@@ -230,21 +230,21 @@ export default function PlanYourTripPage() {
             </Button>
           </div>
 
-          {/* Windward Express */}
+          {/* SXM Airways */}
           <div className="flex flex-col justify-between rounded-lg border border-border/60 bg-card p-6">
             <div>
               <div className="flex items-center gap-3">
                 <div className="rounded-md bg-primary/10 p-2">
                   <PlaneTakeoff className="h-5 w-5 text-primary" />
                 </div>
-                <h3 className="text-lg font-semibold text-foreground">Windward Express</h3>
+                <h3 className="text-lg font-semibold text-foreground">SXM Airways</h3>
               </div>
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                Windward Express provides private fixed-wing charter flights for travelers seeking flexible schedules and personalized service throughout the northeastern Caribbean.
+                SXM Airways operates scheduled flights between St. Maarten and Saba aboard the iconic Britten-Norman Islander, offering a classic Caribbean island-hopper experience with reliable regional service.
               </p>
               <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
                 <span aria-hidden="true">👥</span>
-                Best for Small Groups &amp; Custom Charters
+                Best for Small Groups &amp; Charters
               </div>
               <ul className="mt-4 space-y-1.5 text-sm text-muted-foreground">
                 <li className="flex items-center gap-2">
@@ -253,21 +253,21 @@ export default function PlanYourTripPage() {
                 </li>
                 <li className="flex items-center gap-2">
                   <Check className="h-3.5 w-3.5 text-primary" />
-                  Private charter flights
+                  Scheduled flights between St. Maarten and Saba
                 </li>
                 <li className="flex items-center gap-2">
                   <Check className="h-3.5 w-3.5 text-primary" />
-                  Flexible departure times
+                  Classic island-hopper experience
                 </li>
                 <li className="flex items-center gap-2">
                   <Check className="h-3.5 w-3.5 text-primary" />
-                  Ideal for custom itineraries
+                  Reliable regional carrier
                 </li>
               </ul>
             </div>
             <Button asChild variant="outline" className="mt-6 w-full border-primary/60 text-primary hover:border-primary hover:bg-primary hover:text-white">
-              <a href="http://www.windwardexpress.com/" target="_blank" rel="noopener noreferrer" aria-label="Book Private Charter, opens in a new tab">
-                Book Private Charter ↗
+              <a href="https://fly-sxmairways.com/" target="_blank" rel="noopener noreferrer" aria-label="Book SXM Airways, opens in a new tab">
+                Book SXM Airways ↗
               </a>
             </Button>
           </div>
@@ -291,7 +291,7 @@ export default function PlanYourTripPage() {
                 "Clearest water and excellent visibility.",
                 "Humpback whales frequently seen January through April.",
                 "Christmas winds bring breezier conditions and occasionally rougher seas.",
-                "Water temperatures are coolest in February.",
+                "Saba Day is the first Friday of December.",
                 "Christmas and spring break periods book early.",
               ].map((item) => (
                 <li key={item} className="flex items-start gap-2 text-sm text-muted-foreground">
@@ -333,10 +333,10 @@ export default function PlanYourTripPage() {
             <ul className="w-full space-y-2">
               {[
                 "Late summer and fall often bring calm seas and excellent diving conditions when no tropical systems are nearby.",
-                "Warmest water temperatures.",
+                "Best weather without tropical system risks.",
+                "July features Carnival.",
                 "October features Sea & Learn.",
                 "November features Rum & Lobster Fest.",
-                "Flexible schedules and fewer visitors.",
               ].map((item) => (
                 <li key={item} className="flex items-start gap-2 text-sm text-muted-foreground">
                   <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />

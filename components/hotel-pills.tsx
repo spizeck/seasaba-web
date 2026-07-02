@@ -89,11 +89,11 @@ const HOTELS: Hotel[] = [
       { icon: "⏱", label: "15 min to Fort Bay Harbor" },
       { icon: "🛏", label: "30 rooms & suites" },
       { icon: "❄️", label: "Air conditioning" },
-      { icon: "🍽", label: "Grand Scenery Lounge" },
+      { icon: "🍽", label: "Restaurant on Site" },
       { icon: "♾️", label: "Infinity-edge pool" },
     ],
     recommendation:
-      "The best choice for travelers who want modern amenities, premium comfort, and sweeping Caribbean views — all within easy reach of hiking, dining, and Saba's world-class diving.",
+      "The best choice for travelers who want modern amenities, premium comfort, and sweeping Caribbean views, all within easy reach of hiking, dining, and Saba's world-class diving.",
   },
 ];
 
