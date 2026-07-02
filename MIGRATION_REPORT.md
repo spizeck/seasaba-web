@@ -53,7 +53,7 @@ without a redirect (they 404) rather than guessing an unrelated destination:
 | Old URL | Reason | Suggested action |
 |---|---|---|
 | `/seasaba-blog` | Blog index — the new site has no blog | Decide: 301 to a content hub, rebuild a blog, or return 410 |
-| `/post/join-sea-learn-field-projects-with-sea-saba-october-2023` | Dated event post, no equivalent | 410, or migrate as an evergreen article |
+| `/post/join-sea-learn-field-projects-with-sea-saba-october-2023` | Sea & Learn event post — `/partners` route not yet in the branch | Link to `/partners` (Sea & Learn) once the Partners page merges; otherwise 410 / migrate as an evergreen article |
 | `/post/oxe-marine-technician-training` | Blog post, no equivalent | 410, or migrate as an article |
 | `/dive-log` | Near-empty Wix utility page (unclear purpose) | Confirm intent; 410 if obsolete |
 | `/howto-s` | Near-empty Wix utility page (unclear purpose) | Confirm intent; 410 if obsolete |
@@ -80,13 +80,31 @@ without a redirect (they 404) rather than guessing an unrelated destination:
 - No duplicate titles/descriptions across canonical routes.
 
 ## Recommendations (future enhancements, not blocking)
-1. Resolve the 5 manual-review URLs above (410 vs. migrate vs. redirect).
-2. Consider dedicated content the old site had that the new IA folds into broader pages:
-   Saba history, restaurants, hiking/things-to-do, sunset cruise, air-quality ("Certified
-   Pure"), and DAN/altitude safety — currently redirected to the closest hub.
-3. Rename the logo asset to a hyphenated, descriptive filename.
-4. Replace the `/diving/first-dive` sample MDX with finalized copy if not already intended
+1. Resolve the remaining manual-review URLs (410 vs. migrate vs. redirect). `/dive-log` and
+   `/howto-s` need an intent confirmation; the two blog posts need a keep/migrate decision.
+2. Add the public DAN altitude report PDF at `/downloads/dan-saba-altitude-report.pdf` and
+   wire it into the altitude/flying FAQ (a `TODO` placeholder is already in the Diving page).
+3. Build the `/partners` page and add Sea & Learn as a partner, then point
+   `/post/join-sea-learn-field-projects-with-sea-saba-october-2023` at it.
+4. Rename the logo asset to a hyphenated, descriptive filename.
+5. Replace the `/diving/first-dive` sample MDX with finalized copy if not already intended
    as production content.
+
+## Content & redirect refinements in this update
+- Added a **Free 32% Nitrox** section (`/diving#nitrox`) — conservative benefits for Saba's
+  deeper/repetitive profiles, an air/gas-quality note, and a link to the Nitrox course.
+- Added an **altitude/flying FAQ** (`/diving#altitude-flying`) explaining the short ~2,000 ft
+  Winair hop, conservative planning, and a DAN report on request (public PDF `TODO`).
+- Added an **SDI Computer Nitrox Diver** course and stable anchor ids on `/courses`
+  (`/courses#nitrox`).
+- Added **The Island of Saba (history)** (`#history`), **Experiences Beyond Diving**
+  (`#experiences`), **Hiking on Saba** (`#hiking`), and **Restaurants & Dining**
+  (`#restaurants`) sections to `/plan-your-trip`.
+- Re-pointed 10 legacy redirects at these dedicated sections (see mapping table); redirect
+  count is unchanged (still 66 single-hop 301s, no chains/loops).
+- Switched the redirects from Next.js `permanent: true` (which emits HTTP **308**) to
+  `statusCode: 301`, so every legacy URL now returns a genuine **301** as specified. Verified
+  against a production build: all 66 return a single `301` and every destination returns `200`.
 
 ## Complete URL mapping table
 
@@ -95,27 +113,27 @@ without a redirect (they 404) rather than guessing an unrelated destination:
 | `/` | `/` | No | OK (identical) | Homepage — identical URL, no redirect needed |
 | `/about/the-sea-saba-difference` | `/about` | Yes | 301 | Our Approach / difference now on About page |
 | `/book-saba-diving-online` | `/book` | Yes | 301 | Online booking page |
-| `/certified-pure` | `/diving` | Yes | 301 | Air-quality/safety content best fits Diving; consider an air-quality note |
+| `/certified-pure` | `/diving#nitrox` | Yes | 301 | Air/gas-quality content now covered by the Nitrox section's 'clean, reliable fills' note |
 | `/childrens-scuba` | `/courses` | Yes | 301 | Try Scuba covers younger/new divers; consider a family note |
-| `/concerning-altitude` | `/diving` | Yes | 301 | Altitude/flying-after-diving safety best fits Diving; consider a safety note |
+| `/concerning-altitude` | `/diving#altitude-flying` | Yes | 301 | Now lands on the new altitude/flying FAQ item on the Diving page |
 | `/contact` | `/contact` | No | OK (identical) | Identical URL, no redirect needed |
 | `/copy-of-dive-shop` | `/about` | Yes | 301 | Duplicate Fort Bay page; mapped directly to final destination (no chain) |
 | `/copy-of-fort-bay-harbor` | `/about` | Yes | 301 | Duplicate Fort Bay page; mapped directly to final destination (no chain) |
 | `/cottage-andhouse-rentals` | `/plan-your-trip#where-to-stay` | Yes | 301 | Accommodation options in Where to Stay |
-| `/dan-report` | `/diving` | Yes | 301 | DAN/dive-safety content best fits Diving; consider a safety note |
+| `/dan-report` | `/diving#altitude-flying` | Yes | 301 | Altitude/flying FAQ notes a DAN report is available on request (public PDF TODO) |
 | `/dive-log` | — | No | Manual review | Near-empty Wix utility page (unclear purpose); flag for manual review |
-| `/dive-nitrox-with-sea-saba` | `/diving` | Yes | 301 | Free Nitrox featured on Diving page |
+| `/dive-nitrox-with-sea-saba` | `/diving#nitrox` | Yes | 301 | Lands on the new Free 32% Nitrox section on the Diving page |
 | `/dive-partners` | `/about` | Yes | 301 | Partners context best fits About; consider a dedicated Partners section |
 | `/dive-shop-on-saba` | `/contact` | Yes | 301 | New site has no retail catalog; Contact shows location/visit info |
 | `/dive-training-courses` | `/courses` | Yes | 301 | Courses & certifications page |
 | `/facebook` | `https://www.facebook.com/sea.saba/` | Yes | 301 | Wix social shortcut → external Facebook profile |
 | `/fort-bay-harbor` | `/about` | Yes | 301 | 'Our Historic Home in Fort Bay Harbor' section on About page |
-| `/hiking-on-saba` | `/plan-your-trip` | Yes | 301 | Non-diver island activities; consider a things-to-do note |
+| `/hiking-on-saba` | `/plan-your-trip#hiking` | Yes | 301 | Lands on the new Hiking on Saba section |
 | `/howto-s` | — | No | Manual review | Near-empty Wix utility page (unclear purpose); flag for manual review |
 | `/instagram` | `https://www.instagram.com/seasaba/` | Yes | 301 | Wix social shortcut → external Instagram profile |
 | `/meet-the-crew` | `/about` | Yes | 301 | Meet the Crew section on About page |
 | `/post/diving-into-the-future-with-fin-tonic-and-shark-bait` | `/diving` | Yes | 301 | Blog post about the dive boats; Diving page covers the boats |
-| `/post/join-sea-learn-field-projects-with-sea-saba-october-2023` | — | No | Manual review | Dated event blog post — no equivalent; flag for manual review |
+| `/post/join-sea-learn-field-projects-with-sea-saba-october-2023` | — | No | Manual review | Sea & Learn event post. `/partners` route does not yet exist in the branch — link to `/partners` (Sea & Learn) once the Partners page merges |
 | `/post/oxe-marine-technician-training` | — | No | Manual review | Blog post — no equivalent; flag for manual review |
 | `/saba-1-mt-michel` | `/dive-sites#pinnacles` | Yes | 301 | Individual dive-site page → Dive Sites 'pinnacles' area section |
 | `/saba-10-coral-nursery` | `/dive-sites` | Yes | 301 | No dedicated section for the Coral Nursery site; mapped to Dive Sites index |
@@ -148,18 +166,18 @@ without a redirect (they 404) rather than guessing an unrelated destination:
 | `/saba-7-man-owar-shoals` | `/dive-sites#wells-bay` | Yes | 301 | Individual dive-site page → Dive Sites 'wells-bay' area section |
 | `/saba-8-otto-limits` | `/dive-sites#wells-bay` | Yes | 301 | Individual dive-site page → Dive Sites 'wells-bay' area section |
 | `/saba-9-torrens-point` | `/dive-sites#wells-bay` | Yes | 301 | Individual dive-site page → Dive Sites 'wells-bay' area section |
-| `/saba-history` | `/plan-your-trip` | Yes | 301 | No dedicated history page; recommend a Saba history section |
+| `/saba-history` | `/plan-your-trip#history` | Yes | 301 | Lands on the new The Island of Saba (history) section |
 | `/saba-marine-park` | `/dive-sites` | Yes | 301 | Saba Marine Park overview covered on Dive Sites page |
-| `/saba-restaurants` | `/plan-your-trip#good-to-know` | Yes | 301 | Island dining; no dedicated restaurants section |
-| `/saba-sunset-cruise` | `/diving` | Yes | 301 | Sunset cruise not currently featured; recommend adding as an experience |
+| `/saba-restaurants` | `/plan-your-trip#restaurants` | Yes | 301 | Lands on the new Restaurants & Dining section |
+| `/saba-sunset-cruise` | `/plan-your-trip#experiences` | Yes | 301 | Lands on the new Experiences Beyond Diving section (sunset/coastal cruises) |
 | `/sabas-best-dive-boats` | `/diving` | Yes | 301 | Boats/experience content on Diving page |
 | `/sabas-dive-sites` | `/dive-sites` | Yes | 301 | Dive sites overview |
 | `/sailing-to-saba` | `/plan-your-trip#getting-here` | Yes | 301 | Arrival options / rendezvous; consider a sailing note |
 | `/seasaba-blog` | — | No | Manual review | Blog index — no blog on new IA; flag for manual review (301 to hub or 410) |
 | `/seasaba-faqs` | `/plan-your-trip#faq` | Yes | 301 | FAQ section |
-| `/snorkeling-saba` | `/diving` | Yes | 301 | Snorkel trip is a Diving experience option |
+| `/snorkeling-saba` | `/plan-your-trip#experiences` | Yes | 301 | Lands on the new Experiences section (snorkeling); links out to the Diving snorkel trip |
 | `/terms` | `/terms` | No | OK (identical) | Identical URL, no redirect needed |
-| `/the-island-of-saba` | `/plan-your-trip` | Yes | 301 | Destination overview |
+| `/the-island-of-saba` | `/plan-your-trip#history` | Yes | 301 | Lands on the new The Island of Saba (history) overview section |
 | `/training-beginners` | `/courses` | Yes | 301 | Beginner courses (Try Scuba / Open Water) on Courses page |
 | `/training-the-next-step` | `/courses` | Yes | 301 | Continuing-education courses on Courses page |
 | `/travelling-to-saba` | `/plan-your-trip#getting-here` | Yes | 301 | Getting to Saba |

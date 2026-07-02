@@ -3,7 +3,7 @@ import Link from "next/link";
 import { PageHero } from "@/components/page-hero";
 import { FeatureImage } from "@/components/feature-image";
 import { Button } from "@/components/ui/button";
-import { Plane, PlaneTakeoff, Ship, Helicopter, Check, Droplets, Eye, Sun, Thermometer, Home, HelpCircle, Fish, Calendar, AlertTriangle, Bus, Ban, DollarSign, MessageCircle, Plug, Wifi, Timer } from "lucide-react";
+import { Plane, PlaneTakeoff, Ship, Helicopter, Check, Droplets, Eye, Sun, Thermometer, Home, HelpCircle, Fish, Calendar, AlertTriangle, Bus, Ban, DollarSign, MessageCircle, Plug, Wifi, Timer, Utensils, Mountain, Landmark, Compass } from "lucide-react";
 import { HotelPills } from "@/components/hotel-pills";
 import { InsuranceCTAs } from "@/components/insurance-ctas";
 
@@ -98,6 +98,29 @@ export default function PlanYourTripPage() {
       <p className="text-base leading-relaxed text-muted-foreground">
         Saba is a five-square-mile volcanic island in the Caribbean Netherlands. With no cruise ships and no large resorts, Saba offers a quiet and authentic Caribbean experience that divers consistently describe as one of their favorite destinations.
       </p>
+
+      {/* The Island of Saba (history) */}
+      <section id="history" className="mt-12 scroll-mt-24">
+        <div className="flex items-center gap-3">
+          <Landmark className="h-5 w-5 text-primary" />
+          <h2 className="text-xl font-semibold text-foreground">The Island of Saba</h2>
+        </div>
+        <p className="mt-4 text-base leading-relaxed text-muted-foreground">
+          Saba is the smallest special municipality of the Netherlands — a single volcanic
+          peak rising straight out of the Caribbean Sea with no beaches and no flat land to
+          speak of. For most of its history that steep terrain kept the island isolated. Before
+          the road was built, the only way ashore was up hundreds of hand-cut stone steps from
+          the sea at Ladder Bay, and everything from pianos to provisions was carried up by hand.
+        </p>
+        <p className="mt-3 text-base leading-relaxed text-muted-foreground">
+          That isolation shaped Saba&apos;s character. Tight-knit villages like Windwardside and
+          The Bottom grew as communities of fishermen, sailors, and craftspeople, and their
+          traditional white cottages with red roofs and green shutters still define the island
+          today — small, welcoming, and fiercely protective of its natural surroundings. Sea
+          Saba&apos;s home at Fort Bay, the island&apos;s only harbor, ties that seafaring heritage
+          directly to the diving Saba is known for now.
+        </p>
+      </section>
 
       {/* Getting to Saba */}
       <section id="getting-here" className="mt-12 scroll-mt-24">
@@ -420,6 +443,91 @@ export default function PlanYourTripPage() {
         <div className="mt-4 rounded-lg border border-border/40 bg-muted/20 px-5 py-4 text-sm text-muted-foreground">
           Select a hotel above to view photos, amenities, and a quick overview. Need personalized advice? Our team is happy to recommend the perfect place to stay based on your budget, travel style, and diving plans.
         </div>
+      </section>
+
+      {/* Experiences Beyond Diving */}
+      <section id="experiences" className="mt-12 scroll-mt-24">
+        <div className="flex items-center gap-3">
+          <Compass className="h-5 w-5 text-primary" />
+          <h2 className="text-xl font-semibold text-foreground">Experiences Beyond Diving</h2>
+        </div>
+        <p className="mt-4 text-base leading-relaxed text-muted-foreground">
+          Saba rewards curiosity above the water too. Whether you are travelling with non-divers
+          or just want a lighter day, there is plenty to fill the time between dives.
+        </p>
+        <div className="mt-6 grid gap-4 sm:grid-cols-2">
+          <div className="rounded-lg border border-border/40 bg-muted/20 p-4">
+            <h3 className="text-sm font-semibold text-foreground">Sunset &amp; Coastal Cruises</h3>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Relaxed evening trips along Saba&apos;s dramatic volcanic coastline, weather and
+              scheduling permitting. Ask our team about availability during your stay.
+            </p>
+          </div>
+          <div className="rounded-lg border border-border/40 bg-muted/20 p-4">
+            <h3 className="text-sm font-semibold text-foreground">Snorkeling</h3>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Explore shallow reefs and marine life from the surface. Afternoon snorkel trips run
+              alongside our dive boats — see the{" "}
+              <Link href="/diving" className="font-medium text-primary hover:underline">
+                snorkel trip option
+              </Link>
+              .
+            </p>
+          </div>
+          <div className="rounded-lg border border-border/40 bg-muted/20 p-4">
+            <h3 className="text-sm font-semibold text-foreground">Private Charters</h3>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Book a boat for your group with a flexible schedule and a dedicated captain — great
+              for families, photographers, and mixed dive/snorkel groups.
+            </p>
+          </div>
+          <div className="rounded-lg border border-border/40 bg-muted/20 p-4">
+            <h3 className="text-sm font-semibold text-foreground">Island Activities</h3>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Hiking, birdwatching, glass blowing, art studios, tide pools, and quiet village
+              wandering round out a Saba trip for divers and non-divers alike.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Hiking */}
+      <section id="hiking" className="mt-12 scroll-mt-24">
+        <div className="flex items-center gap-3">
+          <Mountain className="h-5 w-5 text-primary" />
+          <h2 className="text-xl font-semibold text-foreground">Hiking on Saba</h2>
+        </div>
+        <p className="mt-4 text-base leading-relaxed text-muted-foreground">
+          Saba is as dramatic above the surface as it is below. Its signature hike climbs Mount
+          Scenery — at roughly 2,900 feet, the highest point in the Kingdom of the Netherlands —
+          up stone steps through lush tropical rainforest and misty cloud (elfin) forest to
+          panoramic Caribbean views on a clear day.
+        </p>
+        <p className="mt-3 text-base leading-relaxed text-muted-foreground">
+          Beyond Mount Scenery, a network of well-marked trails maintained by the Saba
+          Conservation Foundation crosses the island&apos;s volcanic terrain, from gentle coastal
+          walks to the historic Ladder and old sulphur mine trails. Routes range from short
+          strolls to strenuous climbs, and local guides are available for the longer hikes.
+        </p>
+      </section>
+
+      {/* Restaurants */}
+      <section id="restaurants" className="mt-12 scroll-mt-24">
+        <div className="flex items-center gap-3">
+          <Utensils className="h-5 w-5 text-primary" />
+          <h2 className="text-xl font-semibold text-foreground">Restaurants &amp; Dining</h2>
+        </div>
+        <p className="mt-4 text-base leading-relaxed text-muted-foreground">
+          For such a small island, Saba has a surprisingly varied food scene, from casual local
+          spots to relaxed fine dining, concentrated mainly in Windwardside and The Bottom. Menus
+          lean on fresh seafood and international influences.
+        </p>
+        <p className="mt-3 text-base leading-relaxed text-muted-foreground">
+          Because kitchens are small and hours can change — especially outside high season and on
+          quieter days — it is worth checking current opening days and making a reservation before
+          you go. Your accommodation or the Sea Saba team is always happy to share up-to-date
+          recommendations and help you book.
+        </p>
       </section>
 
       {/* Good to Know */}

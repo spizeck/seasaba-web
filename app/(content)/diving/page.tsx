@@ -3,7 +3,7 @@ import { PageHero } from "@/components/page-hero";
 import { FeatureImage } from "@/components/feature-image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Users, Award, Ship, Droplets, ShieldCheck } from "lucide-react";
+import { Users, Award, Ship, Droplets, ShieldCheck, Gauge, Plane } from "lucide-react";
 import { InsuranceCTAs } from "@/components/insurance-ctas";
 import { ExperienceSelector } from "@/components/experience-selector";
 
@@ -239,6 +239,44 @@ export default function DivingPage() {
 
       <ExperienceSelector />
 
+      {/* Free Nitrox */}
+      <section id="nitrox" className="mt-14 scroll-mt-24">
+        <div className="flex items-center gap-3">
+          <Gauge className="h-6 w-6 text-primary" />
+          <h2 className="text-xl font-semibold text-foreground">Free 32% Nitrox</h2>
+        </div>
+        <p className="mt-4 text-base leading-relaxed text-muted-foreground">
+          Complimentary 32% Nitrox is included for certified Nitrox divers on qualifying dives —
+          just bring proof of your Nitrox certification.
+        </p>
+        <p className="mt-3 text-base leading-relaxed text-muted-foreground">
+          Nitrox suits the way most people dive Saba. Many of our signature sites are deeper
+          pinnacles and walls, and most guests dive several days in a row. Breathing 32% Nitrox
+          instead of air means less nitrogen at a given depth, which can extend your
+          no-decompression limits on deeper profiles and adds conservatism across repetitive
+          dive days. Nitrox isn&apos;t a shortcut around safe planning — every dive is still
+          planned conservatively and within recreational limits.
+        </p>
+        <div className="mt-5 grid gap-3 sm:grid-cols-2">
+          <div className="rounded-lg border border-border/40 bg-muted/20 p-4">
+            <h3 className="text-sm font-semibold text-foreground">Clean, reliable fills</h3>
+            <p className="mt-1 text-xs text-muted-foreground">
+              We blend Nitrox in-house and maintain our compressors and fill equipment to keep
+              breathing gas clean and consistent.
+            </p>
+          </div>
+          <div className="rounded-lg border border-border/40 bg-muted/20 p-4">
+            <h3 className="text-sm font-semibold text-foreground">Not certified yet?</h3>
+            <p className="mt-1 text-xs text-muted-foreground">
+              You can add the SDI Nitrox specialty during your visit.{" "}
+              <Link href="/courses#nitrox" className="font-medium text-primary hover:underline">
+                See our Nitrox course →
+              </Link>
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* Dive More Save More */}
       <section className="mt-14">
         <FeatureImage
@@ -388,6 +426,38 @@ export default function DivingPage() {
                 <span>Cold drinks are available at the dive center, including local juices, sodas, water, and Deep Dive Brewing Co. beer</span>
               </li>
             </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* Diving & Flying to Saba */}
+      <section className="mt-16">
+        <h2 className="text-xl font-semibold text-foreground">Diving &amp; Flying to Saba</h2>
+        <div className="mt-6">
+          <div
+            id="altitude-flying"
+            className="scroll-mt-24 rounded-lg border border-border/40 bg-muted/20 p-5"
+          >
+            <div className="flex items-start gap-3">
+              <Plane className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+              <div>
+                <h3 className="text-sm font-semibold text-foreground">
+                  What about altitude and the flight between St. Maarten and Saba?
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  Flying to and from Saba is not the same as boarding a typical high-altitude
+                  commercial flight. The Winair hop between St. Maarten and Saba is very short and
+                  only reaches roughly 2,000 feet, and only briefly, rather than the cabin
+                  altitudes of a long-haul jet.
+                </p>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  We still plan every dive conservatively and follow standard surface-interval
+                  guidance before flying. If you would like more detail on diving around the short
+                  flight to Saba, our team can provide a DAN report on request.
+                </p>
+                {/* TODO: link to the public DAN report PDF at /downloads/dan-saba-altitude-report.pdf once it is available */}
+              </div>
+            </div>
           </div>
         </div>
       </section>
