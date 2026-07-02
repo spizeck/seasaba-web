@@ -43,7 +43,7 @@ homepage just to avoid a 404, and flagged for manual review when no suitable equ
 - All 5 manual-review URLs correctly return `404` (intentionally not guessed).
 - Crawled the new site from the homepage: all pages `200`, no broken internal links,
   36 referenced static assets all `200`, no orphan pages, no accidental `noindex`.
-- `sitemap.xml` contains only indexable (`200`, index-able) pages; `robots.txt` allows all
+- `sitemap.xml` contains only indexable (`200`) pages; `robots.txt` allows all
   and points at the sitemap.
 
 ## Items flagged for manual review (no redirect created)
