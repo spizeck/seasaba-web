@@ -31,6 +31,7 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
     "try-scuba": "Try Scuba Inquiry",
     "sdi-open-water": "SDI Open Water Diver Inquiry",
     "sdi-advanced-specialty": "SDI Advanced & Specialty Training Inquiry",
+    "sdi-nitrox": "SDI Nitrox Diver Inquiry",
     "sdi-rescue": "SDI Rescue Diver Inquiry",
     "sdi-divemaster": "SDI Divemaster Inquiry",
     "tdi-technical": "TDI Technical Diving Inquiry",

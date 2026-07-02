@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Plane, PlaneTakeoff, Ship, Helicopter, Check, Droplets, Eye, Sun, Thermometer, Home, HelpCircle, Fish, Calendar, AlertTriangle, Bus, Ban, DollarSign, MessageCircle, Plug, Wifi, Timer, Utensils, Mountain, Compass, Clock } from "lucide-react";
 import { HotelPills } from "@/components/hotel-pills";
 import { InsuranceCTAs } from "@/components/insurance-ctas";
+import { planYourTripAnchors } from "@/lib/anchors";
 
 export const metadata = createMetadata({
   title: "Plan Your Trip to Saba",
@@ -100,7 +101,7 @@ export default function PlanYourTripPage() {
       </p>
 
       {/* Getting to Saba */}
-      <section id="getting-here" className="mt-12 scroll-mt-24">
+      <section id={planYourTripAnchors.gettingHere} className="mt-12 scroll-mt-24">
         <h2 className="text-xl font-semibold text-foreground">Getting to Saba</h2>
 
         <div className="mt-6 grid gap-6 sm:grid-cols-2">
@@ -396,7 +397,7 @@ export default function PlanYourTripPage() {
       </section>
 
       {/* Where to Stay */}
-      <section id="where-to-stay" className="mt-12 scroll-mt-24">
+      <section id={planYourTripAnchors.whereToStay} className="mt-12 scroll-mt-24">
         <h2 className="text-xl font-semibold text-foreground">Where to Stay</h2>
 
         <FeatureImage
@@ -411,7 +412,7 @@ export default function PlanYourTripPage() {
               <h3 className="text-lg font-semibold text-foreground">Accommodation</h3>
             </div>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              Saba offers boutique hotels, charming cottages, and private villas instead of large resorts. Whether you're looking for a full-service hotel or a quiet island retreat, every accommodation is just a short drive from Fort Bay Harbor.
+              Saba offers boutique hotels, charming cottages, and private villas instead of large resorts. Whether you&apos;re looking for a full-service hotel or a quiet island retreat, every accommodation is just a short drive from Fort Bay Harbor.
             </p>
             <HotelPills />
           </div>
@@ -506,7 +507,7 @@ export default function PlanYourTripPage() {
       </section>
 
       {/* Restaurants */}
-      <section id="restaurants" className="mt-12 scroll-mt-24">
+      <section id={planYourTripAnchors.restaurants} className="mt-12 scroll-mt-24">
         <div className="flex items-center gap-3">
           <Utensils className="h-5 w-5 text-primary" />
           <h2 className="text-xl font-semibold text-foreground">Restaurants &amp; Cafés</h2>
@@ -535,7 +536,7 @@ export default function PlanYourTripPage() {
       </section>
 
       {/* Island History */}
-      <section id="history" className="mt-12 scroll-mt-24">
+      <section id={planYourTripAnchors.history} className="mt-12 scroll-mt-24">
         <h2 className="text-xl font-semibold text-foreground">The Island of Saba</h2>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
           Saba is a five-square-mile extinct volcanic island and a Special Municipality of the Netherlands. It rises steeply from the Caribbean Sea to nearly 3,000 feet at the summit of Mount Scenery — the highest point in the Kingdom of the Netherlands. The island has a permanent population of around 2,000 people and almost no flat land.
@@ -565,7 +566,7 @@ export default function PlanYourTripPage() {
       </section>
 
       {/* Hiking */}
-      <section id="hiking" className="mt-12 scroll-mt-24">
+      <section id={planYourTripAnchors.hiking} className="mt-12 scroll-mt-24">
         <div className="flex items-center gap-3">
           <Mountain className="h-5 w-5 text-primary" />
           <h2 className="text-xl font-semibold text-foreground">Hiking on Saba</h2>
@@ -599,7 +600,7 @@ export default function PlanYourTripPage() {
       </section>
 
       {/* Things To Do / Experiences */}
-      <section id="experiences" className="mt-12 scroll-mt-24">
+      <section id={planYourTripAnchors.experiences} className="mt-12 scroll-mt-24">
         <div className="flex items-center gap-3">
           <Compass className="h-5 w-5 text-primary" />
           <h2 className="text-xl font-semibold text-foreground">Things To Do on Saba</h2>
@@ -656,7 +657,7 @@ export default function PlanYourTripPage() {
       </section>
 
       {/* FAQ */}
-      <section id="faq" className="mt-12 scroll-mt-24">
+      <section id={planYourTripAnchors.faq} className="mt-12 scroll-mt-24">
         <h2 className="text-xl font-semibold text-foreground">Frequently Asked Questions</h2>
 
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
