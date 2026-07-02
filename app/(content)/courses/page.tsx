@@ -5,6 +5,7 @@ import { FeatureImage } from "@/components/feature-image";
 import { Button } from "@/components/ui/button";
 import { BookingCTA } from "@/components/booking-cta";
 import { Award, Users, CheckCircle, Ship, MapPin, Wrench, Car, ShieldCheck, Compass } from "lucide-react";
+import { coursesAnchors } from "@/lib/anchors";
 
 export const metadata = createMetadata({
   title: "Scuba Courses & Certifications",
@@ -73,6 +74,7 @@ const WHY_TRAIN_SABA = [
 
 const COURSES = [
   {
+    id: "try-scuba",
     name: "Try Scuba",
     level: "Beginner",
     duration: "Full day",
@@ -83,6 +85,7 @@ const COURSES = [
     path: "/contact?interest=try-scuba",
   },
   {
+    id: "open-water",
     name: "SDI Open Water Diver",
     level: "Beginner",
     duration: "3 days",
@@ -93,6 +96,7 @@ const COURSES = [
     path: "/contact?interest=sdi-open-water",
   },
   {
+    id: "advanced-adventure",
     name: "SDI Advanced Adventure Diver",
     level: "Intermediate",
     duration: "2 days",
@@ -103,6 +107,18 @@ const COURSES = [
     path: "/contact?interest=sdi-advanced-specialty",
   },
   {
+    id: coursesAnchors.nitrox,
+    name: "SDI Computer Nitrox Diver",
+    level: "Specialty",
+    duration: "1 day",
+    description:
+      "Enriched air (Nitrox) is the most popular scuba specialty, and it fits Saba perfectly. Because Sea Saba includes complimentary 32% Nitrox for certified divers, getting Nitrox certified is an easy way to get more from Saba's deeper pinnacles and multi-day dive schedules. Complete the eLearning before you arrive and finish the certification during your trip.",
+    includes: ["Complete eLearning before arrival", "Enriched air planning and analysis", "Can be combined with your dive days", "Free 32% Nitrox afterward for certified divers"],
+    cta: "Request Nitrox Course Info",
+    path: "/contact?interest=sdi-nitrox",
+  },
+  {
+    id: "rescue",
     name: "SDI Rescue Diver",
     level: "Advanced",
     duration: "2-3 days",
@@ -113,6 +129,7 @@ const COURSES = [
     path: "/contact?interest=sdi-rescue",
   },
   {
+    id: "divemaster",
     name: "SDI Divemaster",
     level: "Professional",
     duration: "4-8 weeks",
@@ -123,6 +140,7 @@ const COURSES = [
     path: "/contact?interest=sdi-divemaster",
   },
   {
+    id: "technical",
     name: "TDI Technical Courses",
     level: "Technical",
     duration: "Varies",
@@ -219,7 +237,8 @@ export default function CoursesPage() {
           {COURSES.map((course) => (
             <div
               key={course.name}
-              className="rounded-lg border border-border/60 bg-card p-6 transition-colors hover:border-primary/20"
+              id={course.id}
+              className="scroll-mt-24 rounded-lg border border-border/60 bg-card p-6 transition-colors hover:border-primary/20"
             >
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <div>

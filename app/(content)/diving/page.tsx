@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Users, Award, Ship, Droplets, ShieldCheck, Wind, HelpCircle } from "lucide-react";
 import { InsuranceCTAs } from "@/components/insurance-ctas";
 import { ExperienceSelector } from "@/components/experience-selector";
+import { divingAnchors, coursesAnchors } from "@/lib/anchors";
 
 export const metadata = createMetadata({
   title: "Diving in Saba",
@@ -385,7 +386,7 @@ export default function DivingPage() {
       </section>
 
       {/* Nitrox */}
-      <section id="nitrox" className="mt-14 scroll-mt-24">
+      <section id={divingAnchors.nitrox} className="mt-14 scroll-mt-24">
         <div className="flex items-center gap-3">
           <Wind className="h-5 w-5 text-primary" />
           <h2 className="text-xl font-semibold text-foreground">Free Nitrox for Certified Divers</h2>
@@ -421,7 +422,7 @@ export default function DivingPage() {
         <div className="mt-4 rounded-lg border border-primary/20 bg-primary/5 px-5 py-4">
           <p className="text-sm text-muted-foreground">
             Not yet Nitrox certified?{" "}
-            <Link href="/courses" className="font-medium text-primary hover:underline underline-offset-4">
+            <Link href={`/courses#${coursesAnchors.nitrox}`} className="font-medium text-primary hover:underline underline-offset-4">
               View our SDI Nitrox course
             </Link>
             {" "}— get certified before your next dive trip and start using free Nitrox on Saba from day one.
@@ -430,7 +431,7 @@ export default function DivingPage() {
       </section>
 
       {/* Altitude & Flying FAQ */}
-      <section id="altitude-flying" className="mt-14 scroll-mt-24">
+      <section id={divingAnchors.altitudeFlying} className="mt-14 scroll-mt-24">
         <div className="flex items-center gap-3">
           <HelpCircle className="h-5 w-5 text-primary" />
           <h2 className="text-xl font-semibold text-foreground">Flying to Saba &amp; Diving the Same Day</h2>

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { PageHero } from "@/components/page-hero";
 import { FeatureImage } from "@/components/feature-image";
 import { DiveAreaSites } from "@/components/dive-area-sites";
+import { diveSiteAnchors } from "@/lib/anchors";
 
 export const metadata = createMetadata({
   title: "Saba Dive Sites",
@@ -14,7 +15,7 @@ export const metadata = createMetadata({
 
 const DIVE_AREAS = [
   {
-    id: "pinnacles",
+    id: diveSiteAnchors.pinnacles,
     title: "The Pinnacles",
     description:
       "The Pinnacles are the dives that helped put Saba on the map. Formed by ancient volcanic activity, these towering seamounts rise dramatically from the deep ocean floor, nourished by nutrient-rich currents that support some of the island's healthiest marine life. Massive barrel sponges, black corals, schools of jacks, turtles, large groupers, and frequent shark encounters make this one of the Caribbean's most iconic advanced diving areas.",
@@ -24,7 +25,7 @@ const DIVE_AREAS = [
     imagePosition: "left",
   },
   {
-    id: "tent-reef",
+    id: diveSiteAnchors.tentReef,
     title: "Tent Reef",
     description:
       "Just minutes from Fort Bay Harbor, Tent Reef is one of Saba's most diverse dive areas. What begins as a shallow volcanic ledge gradually transforms into dramatic walls, coral-covered buttresses, deep sand channels, and the famous Three Sisters seamounts. Every section offers something different, making Tent Reef a favorite for both daytime exploration and unforgettable night dives.",
@@ -34,7 +35,7 @@ const DIVE_AREAS = [
     imagePosition: "right",
   },
   {
-    id: "ladder-bay",
+    id: diveSiteAnchors.ladderBay,
     title: "Ladder Bay",
     description:
       "Ladder Bay blends Saba's rich history with its volcanic origins. Named for the historic stone staircase that once served as the island's only gateway, this area features lava formations sculpted into a maze of ridges, coral-covered boulders, and warm volcanic sands. From grazing green turtles to tiny nudibranchs, Ladder Bay offers something for photographers, history buffs, and marine life enthusiasts alike.",
@@ -44,7 +45,7 @@ const DIVE_AREAS = [
     imagePosition: "left",
   },
   {
-    id: "wells-bay",
+    id: diveSiteAnchors.wellsBay,
     title: "Wells Bay",
     description:
       "Wells Bay is home to some of Saba's most picturesque dive sites, where Diamond Rock and Man O' War Shoals rise from clear Caribbean waters to create vibrant, coral-covered reefs. These shallower dives offer long bottom times, abundant marine life, and spectacular volcanic scenery both above and below the surface, making them favorites for divers of all experience levels.",
@@ -54,7 +55,7 @@ const DIVE_AREAS = [
     imagePosition: "right",
   },
   {
-    id: "windwardside",
+    id: diveSiteAnchors.windwardside,
     title: "Windwardside",
     description:
       "When the Atlantic Ocean is calm, the Windwardside reveals a completely different side of Saba diving. Here you'll find the island's only true coral reefs, built from limestone rather than volcanic rock, alongside brilliant white sand, thriving hard corals, and expansive elkhorn coral formations. The result is a colorful, high-contrast underwater landscape unlike anywhere else around the island.",
