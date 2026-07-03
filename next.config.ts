@@ -42,7 +42,7 @@ const nextConfig: NextConfig = {
               "img-src 'self' data: https:",
               "font-src 'self'",
               "connect-src 'self' seasaba.checkfront.com *.checkfront.com",
-              "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://www.google.com",
+              "frame-src 'self' seasaba.checkfront.com *.checkfront.com https://www.youtube.com https://www.youtube-nocookie.com https://www.google.com",
               "frame-ancestors 'self'",
               "base-uri 'self'",
               "form-action 'self'",
