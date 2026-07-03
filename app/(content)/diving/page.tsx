@@ -3,7 +3,7 @@ import { PageHero } from "@/components/page-hero";
 import { FeatureImage } from "@/components/feature-image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Users, Award, Ship, Droplets, ShieldCheck, Wind, HelpCircle } from "lucide-react";
+import { Users, Award, Bus, Droplets, ShieldCheck, Wind, HelpCircle, Mountain } from "lucide-react";
 import { InsuranceCTAs } from "@/components/insurance-ctas";
 import { ExperienceSelector } from "@/components/experience-selector";
 import { divingAnchors, coursesAnchors } from "@/lib/anchors";
@@ -17,7 +17,7 @@ export const metadata = createMetadata({
 
 const TRUST_SIGNALS = [
   { icon: Users, label: "Small Groups", sublabel: "Maximum 8 divers per guide" },
-  { icon: Ship, label: "Complimentary Taxi Shuttle", sublabel: "Anywhere on Saba" },
+  { icon: Bus, label: "Complimentary Taxi Shuttle", sublabel: "Anywhere on Saba" },
   { icon: Droplets, label: "Free 32% Nitrox", sublabel: "For certified divers" },
   { icon: Award, label: "Since 1985", sublabel: "Saba's only continuously operating dive center" },
 ];
@@ -430,30 +430,95 @@ export default function DivingPage() {
         </div>
       </section>
 
-      {/* Altitude & Flying FAQ */}
+      {/* Flying Back to St. Maarten After Diving */}
       <section id={divingAnchors.altitudeFlying} className="mt-14 scroll-mt-24">
         <div className="flex items-center gap-3">
           <HelpCircle className="h-5 w-5 text-primary" />
-          <h2 className="text-xl font-semibold text-foreground">Flying to Saba &amp; Diving the Same Day</h2>
+          <h2 className="text-xl font-semibold text-foreground">Flying Back to St. Maarten After Diving</h2>
         </div>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          A common question from divers planning a Saba trip: &ldquo;I&apos;m flying into St. Maarten and connecting to Saba the same day — can I dive that afternoon?&rdquo;
+          One of the most common questions we receive is whether it&apos;s safe to dive on Saba and fly back to St. Maarten the same day.
         </p>
+        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          Unlike a typical commercial airline flight, the Winair Twin Otter route between Saba and St. Maarten is a short inter-island flight. The aircraft reaches approximately 2,000 feet for only a few minutes before descending for landing.
+        </p>
+
         <div className="mt-5 rounded-lg border border-border/40 bg-muted/20 p-5">
-          <h3 className="text-sm font-semibold text-foreground">The Saba Flight Is Not a Standard Commercial Flight</h3>
+          <h3 className="text-sm font-semibold text-foreground">A Different Kind of Flight</h3>
           <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-            Standard dive planning guidelines for flying and diving are designed around commercial airline cabin altitudes, which are typically pressurized to the equivalent of 6,000–8,000 feet. The Winair Twin Otter flight from St. Maarten to Saba is a short, low-altitude island hop — the aircraft reaches approximately 2,000 feet for only a few minutes before descending. This is a fundamentally different pressure exposure than a standard commercial flight.
+            For decades, divers have routinely flown between Saba and St. Maarten as part of their dive vacations. Sea Saba has operated these schedules since 1985, and many guests fly back to St. Maarten after diving under our normal operating schedule.
           </p>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-            Sea Saba follows conservative dive planning practices and has been operating these schedules since 1985. Divers who connect through St. Maarten and fly into Saba the same day regularly dive with us without issue under our standard schedule. That said, your individual dive history, nitrogen loading, and health are factors only you and your physician can fully assess.
+            This short, low-altitude flight is fundamentally different from a typical commercial jet flight, which is pressurized to a much higher cabin altitude for a considerably longer period.
           </p>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-            DAN (Divers Alert Network) has conducted research specifically on inter-island flying and repetitive diving in the Caribbean. We can share the relevant DAN report with guests who want more detail.
-            {/* TODO: Link the DAN report PDF once placed in /public. Expected path: /downloads/dan-saba-altitude-report.pdf */}
+            As with all dive planning, every diver is ultimately responsible for making decisions based on their own health, dive profile, and the guidance of their physician or DAN if they have medical concerns.
           </p>
-          <p className="mt-3 text-xs text-muted-foreground/70 italic">
-            This information is provided for planning purposes only and does not constitute medical advice. If you have concerns about your specific situation, please consult your physician or contact DAN.
-          </p>
+        </div>
+
+        <div className="mt-5 grid gap-5 lg:grid-cols-2">
+          <div className="rounded-lg border border-border/40 bg-muted/20 p-5">
+            <h3 className="text-sm font-semibold text-foreground">Things to Keep in Mind</h3>
+            <ul className="mt-4 space-y-2.5 text-sm text-muted-foreground">
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>The Winair flight is a short, low-altitude island flight.</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Plan a conservative dive profile.</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Stay well hydrated.</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Follow your dive computer.</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>If you have medical concerns, consult DAN or your physician before diving.</span></li>
+            </ul>
+          </div>
+
+          <div className="rounded-lg border border-primary/20 bg-primary/5 p-5">
+            <div className="flex items-center gap-2">
+              <Mountain className="h-5 w-5 text-primary" />
+              <h3 className="text-sm font-semibold text-foreground">Do Not Hike Mt. Scenery After Diving</h3>
+            </div>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+              Although the flight to St. Maarten is part of many divers&apos; normal travel plans, hiking Mt. Scenery after diving is not recommended.
+            </p>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+              The trail involves significant physical exertion while climbing to Saba&apos;s highest point at approximately 2,910 feet (887 m). Combining strenuous exercise with increasing elevation after diving can increase decompression risk.
+            </p>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+              If you plan to hike Mt. Scenery during your visit, schedule it on a non-diving day.
+            </p>
+          </div>
+        </div>
+
+        <p className="mt-5 text-sm leading-relaxed text-muted-foreground">
+          DAN (Divers Alert Network) has published research regarding inter-island Caribbean flights, and Sea Saba can provide additional information to guests who would like to read the research.
+        </p>
+        <p className="mt-3 text-xs text-muted-foreground/70 italic">
+          This information is provided for planning purposes only and does not constitute medical advice. Follow your dive computer, physician, and DAN recommendations.
+        </p>
+      </section>
+
+      {/* Emergency Preparedness */}
+      <section className="mt-14 scroll-mt-24">
+        <h2 className="text-xl font-semibold text-foreground">Emergency Preparedness</h2>
+        <div className="mt-5 grid gap-5 lg:grid-cols-2">
+          <div className="rounded-lg border border-border/40 bg-muted/20 p-5">
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              Saba is well equipped to support safe recreational diving. In the unlikely event that advanced treatment is ever required, the island is home to a DAN-certified hyperbaric chamber located at the Saba Conservation Foundation facility in Fort Bay.
+            </p>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+              Sea Saba&apos;s captains and dive professionals are trained in emergency response procedures, every dive boat carries emergency oxygen and first aid equipment, and our team maintains established emergency action plans in coordination with local medical services.
+            </p>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+              While serious diving incidents are extremely rare, knowing these resources are available provides additional peace of mind for both new and experienced divers.
+            </p>
+          </div>
+          <div className="rounded-lg border border-border/40 bg-muted/20 p-5">
+            <h3 className="text-sm font-semibold text-foreground">Safety Resources</h3>
+            <ul className="mt-4 space-y-2.5 text-sm text-muted-foreground">
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>DAN-certified hyperbaric chamber</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Located at Fort Bay</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Emergency oxygen on every dive boat</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>First aid equipment onboard</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Experienced professional dive staff</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Emergency action plans for all dive operations</span></li>
+            </ul>
+          </div>
         </div>
       </section>
 

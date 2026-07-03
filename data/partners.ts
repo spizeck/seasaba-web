@@ -7,10 +7,11 @@ export type PartnerCategory =
   | "conservation";
 
 export type PartnerSubcategory =
-  | "Hotels"
   | "Restaurants"
   | "Transportation"
   | "Things to Do";
+
+export type AccommodationCategory = "hotel" | "cottage" | "villa";
 
 export interface Partner {
   name: string;
@@ -21,56 +22,207 @@ export interface Partner {
   logo?: string;
   image?: string;
   featured?: boolean;
+  phone?: string;
+  email?: string;
+  managedBy?: {
+    name: string;
+    website: string;
+  };
 }
 
-export const PARTNERS: Partner[] = [
-  // Local Partners — Hotels
+export interface Accommodation {
+  name: string;
+  category: AccommodationCategory;
+  village: string;
+  description: string;
+  website: string;
+  features: string[];
+  image?: string;
+}
+
+export const ACCOMMODATIONS: Accommodation[] = [
+  // Hotels
   {
     name: "Juliana's Hotel",
-    category: "local",
-    subcategory: "Hotels",
+    category: "hotel",
+    village: "Windwardside",
     description:
-      "A Saba favorite for over 30 years. Boutique rooms, suites, and cottages in the heart of Windwardside with Tropics Café and a pool.",
+      "A Saba favorite for over 30 years, with boutique rooms, suites, cottages, Tropics Café, and a pool in Windwardside.",
     website: "https://www.julianashotelsaba.com/",
     image: "/images/optimized/julianas-hotel.webp",
+    features: ["Boutique", "Pool", "Restaurant", "Walk to Village"],
   },
   {
     name: "Saba Arawak Hotel",
-    category: "local",
-    subcategory: "Hotels",
+    category: "hotel",
+    village: "Windwardside",
     description:
       "A centrally located hotel in Windwardside offering clean, comfortable rooms and easy access to the village.",
     website: "https://sabaarawak.com/",
     image: "/images/optimized/arawak-hotel.webp",
-  },
-  {
-    name: "El Momo Cottages",
-    category: "local",
-    subcategory: "Hotels",
-    description:
-      "Private wooden cottages perched on the slopes of Booby Hill, surrounded by tropical gardens and sweeping Caribbean views.",
-    website: "https://elmomocottages.com/",
-    image: "/images/optimized/el-momo-cottages.webp",
-  },
-  {
-    name: "Cottage Club",
-    category: "local",
-    subcategory: "Hotels",
-    description:
-      "Gingerbread-style private cottages with full kitchens and a pool set along a scenic ridge in Windwardside.",
-    website: "https://www.cottage-club.com/",
-    image: "/images/optimized/cottage-club.webp",
+    features: ["Central", "Comfortable Rooms", "Walk to Village"],
   },
   {
     name: "Scenery Hotel",
-    category: "local",
-    subcategory: "Hotels",
+    category: "hotel",
+    village: "Windwardside",
     description:
-      "One of Saba's newest hotels, offering modern rooms, an infinity-edge pool, and panoramic Caribbean Sea views in Windwardside.",
+      "One of Saba's newest hotels with modern rooms, a pool, and panoramic Caribbean Sea views in Windwardside.",
     website: "https://sceneryhotelsaba.com/",
     image: "/images/optimized/scenery-hotel.webp",
+    features: ["Modern", "Pool", "Ocean View", "Walk to Village"],
   },
 
+  // Cottages & Villas
+  {
+    name: "Althea Cottage",
+    category: "cottage",
+    village: "Windwardside",
+    description:
+      "A restored 150-year-old Saban cottage with sweeping Caribbean and mountain views, flexible layouts, and a full kitchen.",
+    website: "https://www.airbnb.com/rooms/32723308/",
+    features: ["Historic", "Ocean View", "Full Kitchen", "Sleeps 5"],
+  },
+  {
+    name: "Compass Cottage",
+    category: "cottage",
+    village: "Booby Hill",
+    description:
+      "A stylish two-bedroom cottage with tropical gardens, a private pool, and expansive sea views near Windwardside.",
+    website: "https://www.sabaislandpremierproperties.com/",
+    features: ["Pool", "Ocean View", "Two Bedrooms", "Garden"],
+  },
+  {
+    name: "Cottage Club",
+    category: "cottage",
+    village: "Windwardside",
+    description:
+      "Gingerbread-style private cottages with full kitchens, a shared pool, and a scenic ridge location in Windwardside.",
+    website: "https://www.cottage-club.com/",
+    image: "/images/optimized/cottage-club.webp",
+    features: ["Gingerbread Style", "Full Kitchen", "Pool", "Walk to Village"],
+  },
+  {
+    name: "El Momo Cottages",
+    category: "cottage",
+    village: "Booby Hill",
+    description:
+      "Private wooden cottages perched on Booby Hill slopes, surrounded by tropical gardens and sweeping Caribbean views.",
+    website: "https://elmomocottages.com/",
+    image: "/images/optimized/el-momo-cottages.webp",
+    features: ["Ocean View", "Tropical Gardens", "Private Cottages", "Booby Hill"],
+  },
+  {
+    name: "Flamboyant Cottage",
+    category: "cottage",
+    village: "Booby Hill",
+    description:
+      "A classic gingerbread-style Saban cottage with two bedrooms, a private pool, gazebo, and views toward Statia and St. Kitts.",
+    website: "https://www.airbnb.com/rooms/32723308/",
+    features: ["Gingerbread Style", "Pool", "Gazebo", "Ocean View"],
+  },
+  {
+    name: "Hidden Garden Cottage",
+    category: "cottage",
+    village: "St. John's",
+    description:
+      "One of Saba's most historic cottages, dating to 1890, with original stained glass, antique furnishings, and peaceful gardens.",
+    website: "https://www.sabaislandpremierproperties.com/",
+    features: ["Historic", "Antique Interiors", "Garden", "Walk to Village"],
+  },
+  {
+    name: "House on the Path",
+    category: "cottage",
+    village: "Windwardside",
+    description:
+      "A secluded restored Saban cottage along a footpath above Windwardside, ideal for couples seeking a private eco-friendly escape.",
+    website: "https://www.houseonthepath.com/",
+    features: ["Eco-Friendly", "Secluded", "Historic", "Two Bedrooms"],
+  },
+  {
+    name: "Hibiscus Cottage",
+    category: "cottage",
+    village: "Windwardside",
+    description:
+      "A charming classic Saban cottage with lush tropical gardens, mountain views, two ensuite bedrooms, and easy access to trails.",
+    website: "https://www.sabahibiscus.com/",
+    features: ["Tropical Gardens", "Mountain View", "Two Bedrooms", "Walk to Trails"],
+  },
+  {
+    name: "Hummingbird Villa",
+    category: "villa",
+    village: "English Quarter",
+    description:
+      "An award-winning luxury villa with tropical gardens, a freeform pool, guest cottage, gourmet kitchen, and stunning Caribbean views.",
+    website: "https://www.sabaislandpremierproperties.com/",
+    features: ["Luxury", "Pool", "Guest Cottage", "Gourmet Kitchen"],
+  },
+  {
+    name: "Iris House",
+    category: "cottage",
+    village: "Windwardside",
+    description:
+      "A finely preserved traditional Saban cottage with two bedrooms, landscaped gardens, a private pool, gazebo, and spectacular Caribbean views.",
+    website: "https://www.airbnb.com/rooms/32723308/",
+    features: ["Traditional", "Pool", "Gazebo", "Ocean View"],
+  },
+  {
+    name: "Novel Cottage",
+    category: "cottage",
+    village: "St. John's",
+    description:
+      "A renovated century-old Saban cottage with panoramic views toward Statia, St. Kitts, and Nevis, perfect for couples.",
+    website: "https://www.sabaislandpremierproperties.com/",
+    features: ["Historic", "Ocean View", "One Bedroom", "Renovated"],
+  },
+  {
+    name: "Peter Hytte by Althea",
+    category: "cottage",
+    village: "Windwardside",
+    description:
+      "A cozy modern stone cottage with views of Mt. Scenery, Windwardside, and the sea, with flexible one or two bedrooms.",
+    website: "https://www.airbnb.com/rooms/37491370/",
+    features: ["Modern Stone", "Mountain View", "Sea View", "Flexible Layout"],
+  },
+  {
+    name: "Poets and Painters Cottage",
+    category: "cottage",
+    village: "Windwardside",
+    description:
+      "A luxurious heritage cottage with antique furnishings, two bedrooms, modern amenities, and walking distance to Windwardside restaurants.",
+    website: "https://www.sabaislandpremierproperties.com/",
+    features: ["Heritage", "Antique Furnishings", "Two Bedrooms", "Walk to Village"],
+  },
+  {
+    name: "Spyglass Villa",
+    category: "villa",
+    village: "Booby Hill",
+    description:
+      "A private Booby Hill villa with expansive verandas, panoramic Caribbean views, two bedrooms, and outdoor entertaining spaces.",
+    website: "https://www.airbnb.com/rooms/2367234",
+    features: ["Private Villa", "Panoramic View", "Two Bedrooms", "Outdoor Living"],
+  },
+  {
+    name: "Troy Villa",
+    category: "villa",
+    village: "Troy Hill",
+    description:
+      "A spacious contemporary villa with cathedral ceilings, two ensuite bedrooms, expansive verandas, and breathtaking Caribbean views.",
+    website: "https://www.sabaislandpremierproperties.com/",
+    features: ["Contemporary", "Two Bedrooms", "Ensuite", "Ocean View"],
+  },
+  {
+    name: "Haiku House",
+    category: "villa",
+    village: "Troy Hill",
+    description:
+      "A luxury three-bedroom villa designed by Jan des Bouvrie, featuring a private pool, Jacuzzi, rainforest setting, and magnificent views.",
+    website: "https://sabavillas.com/",
+    features: ["Luxury", "Three Bedrooms", "Pool", "Jacuzzi"],
+  },
+];
+
+export const PARTNERS: Partner[] = [
   // Local Partners — Restaurants
   {
     name: "Tropics Café",
@@ -263,7 +415,6 @@ export const PARTNERS: Partner[] = [
 ];
 
 export const LOCAL_PARTNER_SUBCATEGORIES: PartnerSubcategory[] = [
-  "Hotels",
   "Restaurants",
   "Transportation",
   "Things to Do",

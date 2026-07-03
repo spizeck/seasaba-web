@@ -3,7 +3,8 @@ import { PageHero } from "@/components/page-hero";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { MessageCircle } from "lucide-react";
-import { PARTNERS, LOCAL_PARTNER_SUBCATEGORIES } from "@/data/partners";
+import { PARTNERS, LOCAL_PARTNER_SUBCATEGORIES, ACCOMMODATIONS } from "@/data/partners";
+import { AccommodationsSection } from "@/components/partners/accommodations-section";
 import { LocalPartnersSection } from "@/components/partners/local-partners-section";
 import { DivePartnersSection } from "@/components/partners/dive-partners-section";
 import { TrainingAgenciesSection } from "@/components/partners/training-agencies-section";
@@ -43,6 +44,7 @@ export default function PartnersPage() {
         and we are happy to help with personalized advice.
       </p>
 
+      <AccommodationsSection accommodations={ACCOMMODATIONS} />
       <LocalPartnersSection partners={localPartners} subcategories={LOCAL_PARTNER_SUBCATEGORIES} />
       <DivePartnersSection partners={divePartners} />
       <TrainingAgenciesSection partners={trainingAgencies} />

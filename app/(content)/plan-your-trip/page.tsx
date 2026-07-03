@@ -293,7 +293,6 @@ export default function PlanYourTripPage() {
                 "Humpback whales frequently seen January through April.",
                 "Christmas winds bring breezier conditions and occasionally rougher seas.",
                 "Saba Day is the first Friday of December.",
-                "Christmas and spring break periods book early.",
               ].map((item) => (
                 <li key={item} className="flex items-start gap-2 text-sm text-muted-foreground">
                   <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
@@ -334,7 +333,6 @@ export default function PlanYourTripPage() {
             <ul className="w-full space-y-2">
               {[
                 "Late summer and fall often bring calm seas and excellent diving conditions when no tropical systems are nearby.",
-                "Best weather without tropical system risks.",
                 "July features Carnival.",
                 "October features Sea & Learn.",
                 "November features Rum & Lobster Fest.",
@@ -573,7 +571,7 @@ export default function PlanYourTripPage() {
           Saba offers far more than world-class diving. Spend a day hiking through cloud forests, exploring local art galleries, snorkeling crystal-clear waters, enjoying a sunset cruise, or discovering one of the Caribbean&apos;s most unique island communities.
         </p>
 
-        <div className="mt-8 flex flex-col gap-16 lg:gap-20">
+        <div className="mt-8 flex flex-col gap-16 lg:gap-20 object-cover brightness-110 contrast-105 saturate-110">
           <FeatureImage
             src="/images/optimized/saba-sunset-cruise.webp"
             alt="Guests watching the sunset from the deck of a Sea Saba boat off Saba's coast"
@@ -583,7 +581,7 @@ export default function PlanYourTripPage() {
             <div>
               <h3 className="text-lg font-semibold text-foreground">Sunset Cruise</h3>
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                Sea Saba runs private sunset cruises along the island&apos;s rugged coastline. Watch the sun drop behind Saba, enjoy drinks on deck, and see the island from the water.
+                Sea Saba offers both shared and private sunset cruises along Saba&apos;s dramatic coastline. Relax with a drink in hand as the sun sets over the Caribbean, enjoy spectacular views from the water, and experience the island from a completely different perspective.
               </p>
               <Button asChild className="mt-4">
                 <Link href="/contact?interest=sunset-cruise">Book a Sunset Cruise &rarr;</Link>
