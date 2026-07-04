@@ -41,7 +41,7 @@ const nextConfig: NextConfig = {
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: https:",
               "font-src 'self'",
-              "connect-src 'self' seasaba.checkfront.com *.checkfront.com",
+              "connect-src 'self' seasaba.checkfront.com *.checkfront.com https://firestore.googleapis.com https://*.googleapis.com wss://*.googleapis.com",
               "frame-src 'self' seasaba.checkfront.com *.checkfront.com https://www.youtube.com https://www.youtube-nocookie.com https://www.google.com",
               "frame-ancestors 'self'",
               "base-uri 'self'",
