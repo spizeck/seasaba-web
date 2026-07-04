@@ -1,31 +1,45 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { PageHero } from "@/components/page-hero";
 import { Button } from "@/components/ui/button";
-import { MOCK_DIVES } from "@/data/dive-log-mock";
-import type { PublicDive } from "@/data/dive-log-mock";
+import {
+  fetchDiveLogData,
+  normalizeDive,
+  formatDate,
+  convertDepth,
+  convertTemperature,
+  depthUnit,
+  temperatureUnit,
+  type UnitSystem,
+  type PublicDive,
+} from "@/lib/firestore/dive-log";
 import { BookOpen, SlidersHorizontal, X, ChevronDown, ChevronUp, Download } from "lucide-react";
 
 function unique<T>(arr: T[]): T[] {
   return Array.from(new Set(arr));
 }
 
-const ALL_SITES = unique(MOCK_DIVES.map((d) => d.diveSite)).sort();
-const ALL_BOATS = unique(MOCK_DIVES.map((d) => d.boat)).sort();
-const ALL_GUIDES = unique(MOCK_DIVES.map((d) => d.diveGuide)).sort();
-const ALL_SPECIES = unique(MOCK_DIVES.flatMap((d) => d.sightings.map((s) => s.speciesName))).sort();
+function useDiveLogData() {
+  const [dives, setDives] = useState<PublicDive[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-const SLOT_LABELS: Record<string, string> = {
-  "morning-1": "Morning (Dive 1)",
-  "morning-2": "Morning (Dive 2)",
-  "afternoon": "Afternoon",
-  "night": "Night",
-};
+  useEffect(() => {
+    fetchDiveLogData()
+      .then(({ dives, sites, species, boats }) => {
+        const normalized = dives.map((d) => normalizeDive(d, sites, species, boats));
+        normalized.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        setDives(normalized);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err.message || "Failed to load dive log");
+        setLoading(false);
+      });
+  }, []);
 
-function formatDate(dateStr: string): string {
-  const d = new Date(dateStr + "T12:00:00");
-  return d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", year: "numeric" });
+  return { dives, loading, error };
 }
 
 interface Filters {
@@ -39,10 +53,12 @@ function DiveCard({
   dive,
   selected,
   onToggle,
+  unitSystem,
 }: {
   dive: PublicDive;
   selected: boolean;
   onToggle: () => void;
+  unitSystem: UnitSystem;
 }) {
   const [expanded, setExpanded] = useState(false);
 
@@ -60,7 +76,7 @@ function DiveCard({
                 {formatDate(dive.date)}
               </span>
               <span className="inline-flex items-center rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
-                {SLOT_LABELS[dive.diveSlot]}
+                {dive.diveSlot}
               </span>
               {dive.driftDive && (
                 <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
@@ -72,8 +88,17 @@ function DiveCard({
             <div className="mt-1 flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-muted-foreground">
               <span>{dive.boat}</span>
               <span>Guide: {dive.diveGuide}</span>
-              {dive.maxDepth && <span>Max depth: {dive.maxDepth} ft</span>}
-              {dive.waterTemperature && <span>Water temp: {dive.waterTemperature}°F</span>}
+              {dive.maxDepth !== undefined && (
+                <span>
+                  Max depth: {convertDepth(dive.maxDepth, unitSystem)} {depthUnit(unitSystem)}
+                </span>
+              )}
+              {dive.waterTemperature !== undefined && (
+                <span>
+                  Water temp: {convertTemperature(dive.waterTemperature, unitSystem)}
+                  {temperatureUnit(unitSystem)}
+                </span>
+              )}
             </div>
           </div>
           <button
@@ -150,26 +175,40 @@ function SelectField({
 }
 
 export function DiveLogClient() {
+  const { dives, loading, error } = useDiveLogData();
+  const [unitSystem, setUnitSystem] = useState<UnitSystem>("metric");
   const [filters, setFilters] = useState<Filters>({ site: "", boat: "", guide: "", species: "" });
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [filtersOpen, setFiltersOpen] = useState(false);
 
+  const ALL_SITES = useMemo(() => unique(dives.map((d) => d.diveSite)).sort(), [dives]);
+  const ALL_BOATS = useMemo(() => unique(dives.map((d) => d.boat)).sort(), [dives]);
+  const ALL_GUIDES = useMemo(() => unique(dives.map((d) => d.diveGuide)).sort(), [dives]);
+  const ALL_SPECIES = useMemo(
+    () => unique(dives.flatMap((d) => d.sightings.map((s) => s.speciesName))).sort(),
+    [dives]
+  );
+
   const filteredDives = useMemo(() => {
-    return MOCK_DIVES.filter((d) => {
+    return dives.filter((d) => {
       if (filters.site && d.diveSite !== filters.site) return false;
       if (filters.boat && d.boat !== filters.boat) return false;
       if (filters.guide && d.diveGuide !== filters.guide) return false;
       if (filters.species && !d.sightings.some((s) => s.speciesName === filters.species)) return false;
       return true;
     });
-  }, [filters]);
+  }, [dives, filters]);
 
-  const selectedDives = MOCK_DIVES.filter((d) => selectedIds.has(d.id));
+  const selectedDives = useMemo(() => dives.filter((d) => selectedIds.has(d.id)), [dives, selectedIds]);
 
   function toggleDive(id: string) {
     setSelectedIds((prev) => {
       const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
       return next;
     });
   }
@@ -183,8 +222,8 @@ export function DiveLogClient() {
   return (
     <>
       <PageHero
-        src="/images/optimized/divers-above-reef-saba.webp"
-        alt="Divers exploring the reef in the Saba Marine Park"
+        src="/images/optimized/two-divers-above-reef-saba.webp"
+        alt="Two divers above the reef in the Saba Marine Park"
         title="Sea Saba Dive Log"
         subtitle="Recent dives, sightings, and sites"
       />
@@ -194,28 +233,48 @@ export function DiveLogClient() {
       </p>
 
       <div className="mt-10 flex flex-col gap-8 lg:flex-row lg:items-start">
-
         {/* Left — filters + dive list */}
         <div className="min-w-0 flex-1">
-
-          {/* Filter bar header */}
-          <div className="flex items-center justify-between">
+          {/* Unit system + filter bar header */}
+          <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="text-sm font-semibold text-foreground">
-              {filteredDives.length} dive{filteredDives.length !== 1 ? "s" : ""}
-              {hasActiveFilters && " matching filters"}
+              {loading ? "Loading dives..." : `${filteredDives.length} dive${filteredDives.length !== 1 ? "s" : ""}`}
+              {hasActiveFilters && !loading && " matching filters"}
             </h2>
-            <button
-              onClick={() => setFiltersOpen((v) => !v)}
-              className="inline-flex items-center gap-1.5 rounded-md border border-border/60 px-3 py-1.5 text-xs font-medium text-muted-foreground hover:border-primary/40 hover:text-primary transition-colors"
-            >
-              <SlidersHorizontal className="h-3.5 w-3.5" />
-              {filtersOpen ? "Hide Filters" : "Filter"}
-              {hasActiveFilters && (
-                <span className="ml-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white">
-                  {Object.values(filters).filter(Boolean).length}
-                </span>
-              )}
-            </button>
+            <div className="flex items-center gap-3">
+              <div className="inline-flex items-center gap-1 rounded-md border border-border/60 p-0.5 text-xs">
+                <button
+                  onClick={() => setUnitSystem("metric")}
+                  className={`rounded px-2 py-1 transition-colors ${
+                    unitSystem === "metric" ? "bg-primary text-white" : "text-muted-foreground hover:text-foreground"
+                  }`}
+                  aria-label="Metric units"
+                >
+                  Metric
+                </button>
+                <button
+                  onClick={() => setUnitSystem("imperial")}
+                  className={`rounded px-2 py-1 transition-colors ${
+                    unitSystem === "imperial" ? "bg-primary text-white" : "text-muted-foreground hover:text-foreground"
+                  }`}
+                  aria-label="Imperial units"
+                >
+                  Imperial
+                </button>
+              </div>
+              <button
+                onClick={() => setFiltersOpen((v) => !v)}
+                className="inline-flex items-center gap-1.5 rounded-md border border-border/60 px-3 py-1.5 text-xs font-medium text-muted-foreground hover:border-primary/40 hover:text-primary transition-colors"
+              >
+                <SlidersHorizontal className="h-3.5 w-3.5" />
+                {filtersOpen ? "Hide Filters" : "Filter"}
+                {hasActiveFilters && (
+                  <span className="ml-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white">
+                    {Object.values(filters).filter(Boolean).length}
+                  </span>
+                )}
+              </button>
+            </div>
           </div>
 
           {/* Filter panel */}
@@ -241,13 +300,23 @@ export function DiveLogClient() {
 
           {/* Dive list */}
           <div className="mt-4 flex flex-col gap-3">
-            {filteredDives.length > 0 ? (
+            {loading ? (
+              <div className="rounded-lg border border-border/40 bg-muted/20 p-8 text-center">
+                <p className="text-sm font-medium text-foreground">Loading recent dives...</p>
+              </div>
+            ) : error ? (
+              <div className="rounded-lg border border-border/40 bg-muted/20 p-8 text-center">
+                <p className="text-sm font-medium text-foreground">Unable to load dive log</p>
+                <p className="mt-1 text-sm text-muted-foreground">{error}</p>
+              </div>
+            ) : filteredDives.length > 0 ? (
               filteredDives.map((dive) => (
                 <DiveCard
                   key={dive.id}
                   dive={dive}
                   selected={selectedIds.has(dive.id)}
                   onToggle={() => toggleDive(dive.id)}
+                  unitSystem={unitSystem}
                 />
               ))
             ) : (
@@ -322,7 +391,6 @@ export function DiveLogClient() {
             )}
           </div>
         </div>
-
       </div>
     </>
   );

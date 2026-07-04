@@ -81,6 +81,13 @@ const IMAGE_MAP = [
     quality: 82,
     role: "hero",
   },
+  {
+    src: "2-divers-reef.jpg",
+    out: "two-divers-above-reef-saba.webp",
+    width: 1920,
+    quality: 82,
+    role: "hero",
+  },
 
   // Section images — 1400px wide
   {
