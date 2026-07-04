@@ -74,6 +74,13 @@ const IMAGE_MAP = [
     quality: 82,
     role: "hero",
   },
+  {
+    src: "goat.jpg",
+    out: "saba-goat-hero.webp",
+    width: 1920,
+    quality: 82,
+    role: "hero",
+  },
 
   // Section images — 1400px wide
   {

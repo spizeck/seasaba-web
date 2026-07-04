@@ -1,5 +1,5 @@
 import { createMetadata } from "@/lib/metadata";
-import { UnderConstruction } from "@/components/under-construction";
+import { DiveLogClient } from "@/components/dive-log-client";
 
 export const metadata = createMetadata({
   title: "Sea Saba Dive Log",
@@ -9,10 +9,5 @@ export const metadata = createMetadata({
 });
 
 export default function DiveLogPage() {
-  return (
-    <UnderConstruction
-      title="Dive Log — Coming Soon"
-      message="We are building a new dive log experience. Check back soon to explore recent dives, sightings, and your own Saba dive history."
-    />
-  );
+  return <DiveLogClient />;
 }
