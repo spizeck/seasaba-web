@@ -4,6 +4,7 @@ import { Header } from "@/components/header";
 import { FooterWrapper } from "@/components/footer-wrapper";
 import { SITE_NAME, SITE_DESCRIPTION, SITE_URL, OG_IMAGE } from "@/lib/constants";
 import { LocalBusinessJsonLd } from "@/components/structured-data";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const openSans = Open_Sans({
@@ -81,6 +82,7 @@ export default function RootLayout({
         <main id="main-content">{children}</main>
         <FooterWrapper />
         <LocalBusinessJsonLd />
+        <Analytics />
       </body>
     </html>
   );
