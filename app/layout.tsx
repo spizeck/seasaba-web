@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
 import { Open_Sans } from "next/font/google";
+import Script from "next/script";
 import { Header } from "@/components/header";
 import { FooterWrapper } from "@/components/footer-wrapper";
 import { SITE_NAME, SITE_DESCRIPTION, SITE_URL, OG_IMAGE } from "@/lib/constants";
 import { LocalBusinessJsonLd } from "@/components/structured-data";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
+
+const GA_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 
 const openSans = Open_Sans({
   variable: "--font-open-sans",
@@ -83,6 +86,17 @@ export default function RootLayout({
         <FooterWrapper />
         <LocalBusinessJsonLd />
         <Analytics />
+        {GA_ID && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+              strategy="afterInteractive"
+            />
+            <Script id="ga-init" strategy="afterInteractive">
+              {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA_ID}');`}
+            </Script>
+          </>
+        )}
       </body>
     </html>
   );

@@ -37,11 +37,11 @@ const nextConfig: NextConfig = {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' seasaba.checkfront.com *.checkfront.com",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' seasaba.checkfront.com *.checkfront.com https://www.googletagmanager.com https://www.google-analytics.com",
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: https:",
               "font-src 'self'",
-              "connect-src 'self' seasaba.checkfront.com *.checkfront.com https://firestore.googleapis.com https://*.googleapis.com wss://*.googleapis.com",
+              "connect-src 'self' seasaba.checkfront.com *.checkfront.com https://www.google-analytics.com https://region1.google-analytics.com https://analytics.google.com https://firestore.googleapis.com https://*.googleapis.com wss://*.googleapis.com",
               "frame-src 'self' seasaba.checkfront.com *.checkfront.com https://www.youtube.com https://www.youtube-nocookie.com https://www.google.com",
               "frame-ancestors 'self'",
               "base-uri 'self'",
