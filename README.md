@@ -31,12 +31,14 @@ This is **not** intended to be a retail-heavy or generic dive shop template.
 
 ## Tech Stack
 
-- **Framework:** Next.js (App Router)
+- **Framework:** Next.js 16 (App Router)
 - **Language:** TypeScript
-- **Styling:** Tailwind CSS + shadcn/ui
+- **Styling:** Tailwind CSS 4 + shadcn/ui
 - **Content:** MDX for marketing / informational / dive site pages
-- **Dynamic Data:** Firestore (testimonials, reviews, staff profiles, operational data)
-- **Booking:** Checkfront (deep links, embedded widgets, availability API)
+- **Dynamic Data:** Firestore (dives, boats, sites, species, guides)
+- **Booking:** Checkfront (deep links, embedded widgets)
+- **Analytics:** Vercel Analytics
+- **PDF Export:** jsPDF (premium card-style dive log export)
 - **Deployment:** Vercel
 
 ---
@@ -45,6 +47,8 @@ This is **not** intended to be a retail-heavy or generic dive shop template.
 
 ```bash
 npm install
+cp .env.example .env.local
+# fill in .env.local with your Firebase values
 npm run dev
 ```
 
@@ -106,35 +110,47 @@ The homepage should answer:
 ```text
 app/
 ├── layout.tsx                     # Root layout (header, footer, fonts, SEO, JSON-LD)
-├── page.tsx                       # Homepage (5-section destination-first layout)
+├── page.tsx                       # Homepage (destination-first layout)
 ├── not-found.tsx                  # Custom 404 page
+├── robots.ts                      # robots.txt
+├── sitemap.ts                     # sitemap.xml
 ├── book/page.tsx                  # Booking page (Checkfront widget + fallback)
 ├── (content)/                     # Standard content layout group
 │   ├── layout.tsx                 # Content layout (breadcrumbs, prose, SEO-first)
 │   ├── about/
-│   ├── diving/
-│   ├── dive-sites/
+│   ├── contact/
 │   ├── courses/
+│   ├── dive-log/
+│   ├── dive-sites/
+│   ├── diving/
+│   ├── diving/first-dive/
+│   ├── partners/
 │   ├── plan-your-trip/
-│   └── contact/
-components/
+│   ├── privacy/
+│   └── terms/
+components:
 ├── ui/                            # shadcn/ui components
-├── header.tsx                     # Sticky header (transparent over hero, solid on scroll)
+├── header.tsx                     # Sticky header
 ├── footer.tsx                     # Site footer
-├── hero.tsx                       # Homepage hero (full-screen, behind navbar)
-├── video-section.tsx              # Homepage video background section + CTA
+├── footer-wrapper.tsx             # Footer wrapper
+├── hero.tsx                       # Homepage hero
 ├── breadcrumbs.tsx                # Breadcrumb navigation
 ├── booking-cta.tsx                # Reusable booking call-to-action
-├── booking-widget.tsx             # Checkfront embedded widget with graceful fallback
-├── routing-card-grid.tsx          # Homepage routing section(s)
+├── booking-widget.tsx             # Checkfront embedded widget
+├── dive-log-client.tsx            # Interactive dive log UI
+├── find-sea-saba.tsx              # Map / location component
 └── structured-data.tsx            # JSON-LD LocalBusiness structured data
 content/                           # MDX content files
 lib/
 ├── metadata.ts                    # SEO metadata helpers
 ├── constants.ts                   # Site-wide constants (URLs, nav items)
-└── site-map.ts                    # Nav/content architecture helpers (optional)
+├── firebase.ts                    # Firebase client SDK setup
+├── firestore/
+│   ├── dive-log.ts                # Firestore dive log fetching and normalization
+├── dive-log-export.ts             # Premium PDF export for selected dives
+└── ...
 public/
-├── images/                        # Site images (hero, OG, posters, content)
+├── images/                        # Site images (hero, OG, posters, content, logo)
 └── video/                         # Homepage video assets
 ```
 
@@ -150,57 +166,84 @@ public/
 - [x] Standard content layout with breadcrumbs
 - [x] Global SEO setup (metadata helper, sitemap, robots.txt)
 
-### Phase 2 — Core Pages (In Progress / Evolving)
+### Phase 2 — Core Pages (Complete)
 - [x] MDX pipeline for content pages
 - [x] About page
-- [x] Diving pages
+- [x] Diving pages (overview + first-dive)
 - [x] Courses / certifications page
 - [x] Contact page
-- [ ] **Refine homepage to answer the four key questions:**
-  - Why dive Saba?
-  - Why Sea Saba?
-  - What can I choose?
-  - Where do I go next?
-- [ ] **Build /dive-sites section (critical SEO asset)**
-  - Dive sites index page
-  - Individual dive site pages (Third Encounter, Tent Reef Wall, Diamond Rock, etc.)
-  - Rich content: depth, topography, marine life, skill level, real imagery
-  - These are primary organic search landing pages
-- [ ] **Build /plan-your-trip content cluster (critical SEO + conversion asset)**
-  - Getting to Saba
-  - Where to Stay
-  - When to Visit / Best Time to Dive
-  - What to Expect
-  - FAQ
-  - Pre-booking informational content
-- [ ] Refine homepage routing destinations to match destination-first strategy
+- [x] Partners page
+- [x] Privacy & Terms pages
+- [x] Homepage refined to answer the four key questions
+- [x] `/dive-sites` section
+- [x] `/plan-your-trip` content cluster
+- [x] Homepage routing destinations aligned to destination-first strategy
 
-### Phase 3 — Booking Integration (Complete / Ongoing Refinement)
+### Phase 3 — Booking Integration (Complete)
 - [x] Reusable BookingCTA component
 - [x] Embedded booking widget with graceful fallback
 - [x] Dedicated /book page
 - [x] Checkfront deep link CTAs on relevant pages
-- [ ] Audit all pages for widget-failure fallback CTAs
 
-### Phase 4 — Dynamic Content
-- [ ] Firestore integration
-- [ ] Testimonials / reviews section
-- [ ] Staff profiles
-- [ ] Dynamic operational data (conditions, schedules)
+### Phase 4 — Dynamic Content (Complete)
+- [x] Firestore integration (client-side)
+- [x] Live dive log (`/dive-log`) with filtering, selection, and PDF export
 
-### Phase 5 — Polish & Launch (In Progress)
+### Phase 5 — Polish & Launch (Complete)
 - [x] Custom 404 page
 - [x] Skip-to-content accessibility link
 - [x] 301 redirect scaffold in next.config.ts
 - [x] Structured data (JSON-LD LocalBusiness)
 - [x] Open Graph / Twitter Card metadata
-- [ ] Add real OG image to public/images/og-image.jpg
-- [ ] Image optimization pass (Next/Image everywhere)
-- [ ] Implement homepage video section as the **3rd major section** with mobile poster fallback
-- [ ] Performance audit (Core Web Vitals)
-- [ ] Accessibility audit (contrast, semantics, keyboard nav)
-- [ ] Populate 301 redirects from old Wix URLs
-- [ ] Final SEO review and launch
+- [x] Real OG image configured
+- [x] Vercel Analytics installed
+- [x] Performance and accessibility baseline
+
+## Production Deployment
+
+The site is deployed on **Vercel** from the `master` branch.
+
+### Required Environment Variables
+
+Copy `.env.example` to `.env.local` and fill in the values from your Firebase Console.
+
+**Critical:** the browser-side Firebase SDK requires the public variables to use the `NEXT_PUBLIC_` prefix:
+
+```
+NEXT_PUBLIC_FIREBASE_API_KEY
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+NEXT_PUBLIC_FIREBASE_PROJECT_ID
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+NEXT_PUBLIC_FIREBASE_APP_ID
+NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
+NEXT_PUBLIC_SITE_URL=https://www.seasaba.com
+```
+
+### Firestore Security Rules
+
+Public read access is required for the collections used by the live site:
+
+```
+match /dives/{docId} { allow read: if true; }
+match /boats/{docId} { allow read: if true; }
+match /sites/{docId} { allow read: if true; }
+match /species/{docId} { allow read: if true; }
+match /guides/{docId} { allow read: if true; }
+```
+
+### Deployment Steps
+
+1. Ensure environment variables are set in Vercel (Production + Preview)
+2. Merge changes to `master`
+3. Vercel builds and deploys automatically
+4. Verify `/dive-log` loads dives and `/sitemap.xml` is valid
+
+### Post-Launch Monitoring
+
+- Check Vercel Analytics for Core Web Vitals
+- Monitor Search Console for crawl errors and 301 redirect coverage
+- Keep 301 redirects in `data/redirects.ts` populated from the old Wix site
 
 ---
 
