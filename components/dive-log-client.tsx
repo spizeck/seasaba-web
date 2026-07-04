@@ -30,7 +30,8 @@ function useDiveLogData() {
   useEffect(() => {
     fetchDiveLogData()
       .then(({ dives, sites, species, boats }) => {
-        const normalized = dives.map((d) => normalizeDive(d, sites, species, boats));
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const normalized = dives.map((d: any) => normalizeDive(d, sites, species, boats));
         const grouped = groupDivesForDisplay(normalized);
         grouped.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
         setDives(grouped);
