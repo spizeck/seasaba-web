@@ -15,6 +15,7 @@ import {
   type UnitSystem,
   type PublicDive,
 } from "@/lib/firestore/dive-log";
+import { exportDiveLogToPdf } from "@/lib/dive-log-export";
 import { BookOpen, SlidersHorizontal, X, ChevronDown, ChevronUp, Download } from "lucide-react";
 
 function unique<T>(arr: T[]): T[] {
@@ -455,15 +456,13 @@ export function DiveLogClient() {
                     {selectedDives.length} dive{selectedDives.length !== 1 ? "s" : ""} selected
                   </p>
                   <Button
-                    disabled
+                    onClick={() => void exportDiveLogToPdf(selectedDives, unitSystem)}
                     size="sm"
-                    className="mt-3 w-full gap-1.5 opacity-50"
-                    title="Export coming soon"
+                    className="mt-3 w-full gap-1.5"
                   >
                     <Download className="h-3.5 w-3.5" />
                     Export My Dive Log
                   </Button>
-                  <p className="mt-1.5 text-center text-xs text-muted-foreground/60">Coming soon</p>
                   <button
                     onClick={() => setSelectedIds(new Set())}
                     className="mt-3 w-full text-center text-xs text-muted-foreground hover:text-foreground transition-colors"
