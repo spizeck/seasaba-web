@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import {
   fetchDiveLogData,
   normalizeDive,
+  groupDivesForDisplay,
   formatDate,
   convertDepth,
   convertTemperature,
@@ -29,8 +30,9 @@ function useDiveLogData() {
     fetchDiveLogData()
       .then(({ dives, sites, species, boats }) => {
         const normalized = dives.map((d) => normalizeDive(d, sites, species, boats));
-        normalized.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-        setDives(normalized);
+        const grouped = groupDivesForDisplay(normalized);
+        grouped.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        setDives(grouped);
         setLoading(false);
       })
       .catch((err) => {
@@ -42,11 +44,28 @@ function useDiveLogData() {
   return { dives, loading, error };
 }
 
+type DateRange = "14" | "30" | "90" | "all";
+
+const DATE_RANGE_LABELS: Record<DateRange, string> = {
+  "14": "Past 14 days",
+  "30": "Past 30 days",
+  "90": "Past 90 days",
+  "all": "All time",
+};
+
 interface Filters {
   site: string;
   boat: string;
   guide: string;
   species: string;
+}
+
+function isWithinDateRange(dateStr: string, days: number): boolean {
+  const diveDate = new Date(dateStr + "T12:00:00");
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - days);
+  cutoff.setHours(0, 0, 0, 0);
+  return diveDate >= cutoff;
 }
 
 function DiveCard({
@@ -177,29 +196,51 @@ function SelectField({
 export function DiveLogClient() {
   const { dives, loading, error } = useDiveLogData();
   const [unitSystem, setUnitSystem] = useState<UnitSystem>("metric");
+  const [dateRange, setDateRange] = useState<DateRange>("14");
+  const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState<Filters>({ site: "", boat: "", guide: "", species: "" });
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const PAGE_SIZE = 20;
 
   const ALL_SITES = useMemo(() => unique(dives.map((d) => d.diveSite)).sort(), [dives]);
   const ALL_BOATS = useMemo(() => unique(dives.map((d) => d.boat)).sort(), [dives]);
-  const ALL_GUIDES = useMemo(() => unique(dives.map((d) => d.diveGuide)).sort(), [dives]);
+  const ALL_GUIDES = useMemo(
+    () => unique(dives.flatMap((d) => d.diveGuides ?? [])).sort(),
+    [dives]
+  );
   const ALL_SPECIES = useMemo(
     () => unique(dives.flatMap((d) => d.sightings.map((s) => s.speciesName))).sort(),
     [dives]
   );
 
+  const dateFilteredDives = useMemo(() => {
+    if (dateRange === "all") return dives;
+    const days = parseInt(dateRange, 10);
+    return dives.filter((d) => isWithinDateRange(d.date, days));
+  }, [dives, dateRange]);
+
   const filteredDives = useMemo(() => {
-    return dives.filter((d) => {
+    return dateFilteredDives.filter((d) => {
       if (filters.site && d.diveSite !== filters.site) return false;
       if (filters.boat && d.boat !== filters.boat) return false;
-      if (filters.guide && d.diveGuide !== filters.guide) return false;
+      if (filters.guide && !(d.diveGuides ?? []).includes(filters.guide)) return false;
       if (filters.species && !d.sightings.some((s) => s.speciesName === filters.species)) return false;
       return true;
     });
-  }, [dives, filters]);
+  }, [dateFilteredDives, filters]);
+
+  const totalPages = Math.ceil(filteredDives.length / PAGE_SIZE) || 1;
+  const paginatedDives = useMemo(() => {
+    const start = (currentPage - 1) * PAGE_SIZE;
+    return filteredDives.slice(start, start + PAGE_SIZE);
+  }, [filteredDives, currentPage]);
 
   const selectedDives = useMemo(() => dives.filter((d) => selectedIds.has(d.id)), [dives, selectedIds]);
+
+  function resetPage() {
+    setCurrentPage(1);
+  }
 
   function toggleDive(id: string) {
     setSelectedIds((prev) => {
@@ -235,13 +276,13 @@ export function DiveLogClient() {
       <div className="mt-10 flex flex-col gap-8 lg:flex-row lg:items-start">
         {/* Left — filters + dive list */}
         <div className="min-w-0 flex-1">
-          {/* Unit system + filter bar header */}
+          {/* Unit system + date range + filter bar header */}
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="text-sm font-semibold text-foreground">
               {loading ? "Loading dives..." : `${filteredDives.length} dive${filteredDives.length !== 1 ? "s" : ""}`}
               {hasActiveFilters && !loading && " matching filters"}
             </h2>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
               <div className="inline-flex items-center gap-1 rounded-md border border-border/60 p-0.5 text-xs">
                 <button
                   onClick={() => setUnitSystem("metric")}
@@ -262,6 +303,26 @@ export function DiveLogClient() {
                   Imperial
                 </button>
               </div>
+              <div className="flex items-center gap-1.5">
+                <label htmlFor="date-range" className="text-xs text-muted-foreground">
+                  Date range
+                </label>
+                <select
+                  id="date-range"
+                  value={dateRange}
+                  onChange={(e) => {
+                    setDateRange(e.target.value as DateRange);
+                    resetPage();
+                  }}
+                  className="rounded-md border border-border/60 bg-background px-2 py-1.5 text-xs text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30"
+                >
+                  {(Object.keys(DATE_RANGE_LABELS) as DateRange[]).map((key) => (
+                    <option key={key} value={key}>
+                      {DATE_RANGE_LABELS[key]}
+                    </option>
+                  ))}
+                </select>
+              </div>
               <button
                 onClick={() => setFiltersOpen((v) => !v)}
                 className="inline-flex items-center gap-1.5 rounded-md border border-border/60 px-3 py-1.5 text-xs font-medium text-muted-foreground hover:border-primary/40 hover:text-primary transition-colors"
@@ -281,14 +342,14 @@ export function DiveLogClient() {
           {filtersOpen && (
             <div className="mt-3 rounded-lg border border-border/40 bg-muted/20 p-4">
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                <SelectField label="Dive Site" value={filters.site} options={ALL_SITES} onChange={(v) => setFilters((f) => ({ ...f, site: v }))} />
-                <SelectField label="Boat" value={filters.boat} options={ALL_BOATS} onChange={(v) => setFilters((f) => ({ ...f, boat: v }))} />
-                <SelectField label="Guide" value={filters.guide} options={ALL_GUIDES} onChange={(v) => setFilters((f) => ({ ...f, guide: v }))} />
-                <SelectField label="Species Sighted" value={filters.species} options={ALL_SPECIES} onChange={(v) => setFilters((f) => ({ ...f, species: v }))} />
+                <SelectField label="Dive Site" value={filters.site} options={ALL_SITES} onChange={(v) => { setFilters((f) => ({ ...f, site: v })); resetPage(); }} />
+                <SelectField label="Boat" value={filters.boat} options={ALL_BOATS} onChange={(v) => { setFilters((f) => ({ ...f, boat: v })); resetPage(); }} />
+                <SelectField label="Guide" value={filters.guide} options={ALL_GUIDES} onChange={(v) => { setFilters((f) => ({ ...f, guide: v })); resetPage(); }} />
+                <SelectField label="Species Sighted" value={filters.species} options={ALL_SPECIES} onChange={(v) => { setFilters((f) => ({ ...f, species: v })); resetPage(); }} />
               </div>
               {hasActiveFilters && (
                 <button
-                  onClick={clearFilters}
+                  onClick={() => { clearFilters(); resetPage(); }}
                   className="mt-4 flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <X className="h-3.5 w-3.5" />
@@ -309,8 +370,8 @@ export function DiveLogClient() {
                 <p className="text-sm font-medium text-foreground">Unable to load dive log</p>
                 <p className="mt-1 text-sm text-muted-foreground">{error}</p>
               </div>
-            ) : filteredDives.length > 0 ? (
-              filteredDives.map((dive) => (
+            ) : paginatedDives.length > 0 ? (
+              paginatedDives.map((dive) => (
                 <DiveCard
                   key={dive.id}
                   dive={dive}
@@ -322,16 +383,39 @@ export function DiveLogClient() {
             ) : (
               <div className="rounded-lg border border-border/40 bg-muted/20 p-8 text-center">
                 <p className="text-sm font-medium text-foreground">No dives match your filters.</p>
-                <p className="mt-1 text-sm text-muted-foreground">Try adjusting or clearing your filters to see more results.</p>
+                <p className="mt-1 text-sm text-muted-foreground">Try adjusting the date range or clearing your filters to see more results.</p>
                 <button
-                  onClick={clearFilters}
+                  onClick={() => { clearFilters(); setDateRange("all"); resetPage(); }}
                   className="mt-4 text-sm font-medium text-primary hover:underline"
                 >
-                  Clear filters
+                  Clear filters and show all time
                 </button>
               </div>
             )}
           </div>
+
+          {/* Pagination */}
+          {!loading && !error && filteredDives.length > PAGE_SIZE && (
+            <div className="mt-4 flex items-center justify-between gap-3">
+              <button
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="rounded-md border border-border/60 px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary disabled:opacity-40 disabled:hover:border-border/60 disabled:hover:text-muted-foreground"
+              >
+                Previous
+              </button>
+              <span className="text-xs text-muted-foreground">
+                Page {currentPage} of {totalPages}
+              </span>
+              <button
+                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                className="rounded-md border border-border/60 px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary disabled:opacity-40 disabled:hover:border-border/60 disabled:hover:text-muted-foreground"
+              >
+                Next
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Right — selected dives summary */}
