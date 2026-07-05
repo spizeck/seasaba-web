@@ -1,5 +1,11 @@
 # Analytics & SEO Implementation Report
 
+## Dependency Audit Cleanup
+
+- Removed unused `firebase-admin` dependency, which eliminated 8 moderate severity `uuid` vulnerabilities (via transitive `gaxios`, `google-gax`, and `teeny-request` packages).
+- Kept `firebase` client SDK because the dive-log feature uses `lib/firebase.ts` and `lib/firestore/dive-log.ts`.
+- `npm audit` now reports **0 vulnerabilities**.
+
 ## Implemented Tools
 
 - **Vercel Analytics** — `@vercel/analytics/next` in `app/layout.tsx` (existing).
