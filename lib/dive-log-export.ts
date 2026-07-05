@@ -35,7 +35,7 @@ interface DiveLogStats {
   averageDepth: string;
   deepestDepth: string;
   averageTemperature: string;
-  mostVisitedSite: string;
+  mostVisitedSite: string | null;
 }
 
 function formatPdfDate(dateStr: string): string {
@@ -46,6 +46,19 @@ function formatPdfDate(dateStr: string): string {
     day: "numeric",
     year: "numeric",
   });
+}
+
+function formatDiveSlot(slot: string): string {
+  const match = slot.match(/^(\d{1,2})(?::(\d{2}))?\s*(am|pm)$/i);
+  if (!match) return slot;
+  let hours = parseInt(match[1], 10);
+  const minutes = parseInt(match[2] || "0", 10);
+  const meridian = match[3].toUpperCase();
+  if (meridian === "PM" && hours !== 12) hours += 12;
+  if (meridian === "AM" && hours === 12) hours = 0;
+  const formattedHours = hours === 0 || hours === 12 ? 12 : hours % 12;
+  const formattedMinutes = minutes.toString().padStart(2, "0");
+  return `${formattedHours}:${formattedMinutes} ${meridian}`;
 }
 
 class DiveLogPdfBuilder {
@@ -94,26 +107,12 @@ class DiveLogPdfBuilder {
 
     const titleBlockX = MARGIN;
     const titleBlockY = this.currentY;
-    const titleLogo = logoDimensions(110);
+    const titleLogo = logoDimensions(130);
     const logoX = PAGE_WIDTH - MARGIN - titleLogo.width;
 
     if (this.logoData) {
       this.doc.addImage(this.logoData, "PNG", logoX, titleBlockY, titleLogo.width, titleLogo.height);
     }
-
-    this.doc.setFontSize(26);
-    this.doc.setTextColor(...SEA_SABA_BLUE);
-    this.doc.setFont("helvetica", "bold");
-    this.doc.text("Sea Saba Dive Log", titleBlockX, titleBlockY + 22);
-
-    this.currentY = titleBlockY + 48;
-
-    this.doc.setFontSize(12);
-    this.doc.setTextColor(...MUTED_TEXT);
-    this.doc.setFont("helvetica", "normal");
-    this.doc.text("Personal Dive Log", titleBlockX, this.currentY);
-
-    this.currentY += 32;
 
     const today = new Date();
     const exportDate = today.toLocaleDateString("en-US", {
@@ -122,32 +121,40 @@ class DiveLogPdfBuilder {
       day: "numeric",
     });
 
-    this.doc.setFontSize(10);
+    this.doc.setFontSize(14);
     this.doc.setTextColor(...DARK_TEXT);
+    this.doc.setFont("helvetica", "bold");
+    this.doc.text("Personal Dive Log", titleBlockX, titleBlockY + 18);
+
+    this.currentY = titleBlockY + 38;
+
+    this.doc.setFontSize(10);
+    this.doc.setTextColor(...MUTED_TEXT);
+    this.doc.setFont("helvetica", "normal");
     this.doc.text(`Export Date: ${exportDate}`, titleBlockX, this.currentY);
-    this.currentY += 16;
+    this.currentY += 15;
     this.doc.text(`Number of dives: ${this.dives.length}`, titleBlockX, this.currentY);
-    this.currentY += 16;
+    this.currentY += 15;
     this.doc.text(
       `Units: ${this.unitSystem === "metric" ? "Metric" : "Imperial"}`,
       titleBlockX,
       this.currentY
     );
 
-    this.currentY += 28;
+    this.currentY = Math.max(this.currentY + 24, titleBlockY + titleLogo.height + 10);
 
     this.doc.setDrawColor(...SEA_SABA_BLUE);
     this.doc.setLineWidth(1);
     this.doc.line(MARGIN, this.currentY, PAGE_WIDTH - MARGIN, this.currentY);
 
-    this.currentY += 28;
+    this.currentY += 22;
   }
 
   private addSummaryBox(): void {
     if (this.dives.length === 0) return;
 
     const stats = this.calculateStats();
-    const boxHeight = 96;
+    const boxHeight = 88;
 
     this.checkPageBreak(boxHeight);
     this.drawRoundedRect(MARGIN, this.currentY, PAGE_WIDTH - 2 * MARGIN, boxHeight, 8, LIGHT_GRAY);
@@ -155,7 +162,7 @@ class DiveLogPdfBuilder {
     this.doc.setFontSize(14);
     this.doc.setTextColor(...SEA_SABA_BLUE);
     this.doc.setFont("helvetica", "bold");
-    this.doc.text("Summary", MARGIN + 16, this.currentY + 22);
+    this.doc.text("Summary", MARGIN + 14, this.currentY + 20);
 
     this.doc.setFontSize(9);
     this.doc.setTextColor(...DARK_TEXT);
@@ -166,22 +173,22 @@ class DiveLogPdfBuilder {
       `Average depth: ${stats.averageDepth}`,
       `Deepest dive: ${stats.deepestDepth}`,
     ];
-    const rightColumn = [
-      `Average water temperature: ${stats.averageTemperature}`,
-      `Most visited site: ${stats.mostVisitedSite}`,
-    ];
-
-    let y = this.currentY + 44;
-    for (const line of leftColumn) {
-      this.doc.text(line, MARGIN + 16, y);
-      y += 15;
+    const rightColumn = [`Average water temperature: ${stats.averageTemperature}`];
+    if (stats.mostVisitedSite) {
+      rightColumn.push(`Most visited site: ${stats.mostVisitedSite}`);
     }
 
-    y = this.currentY + 44;
+    let y = this.currentY + 40;
+    for (const line of leftColumn) {
+      this.doc.text(line, MARGIN + 14, y);
+      y += 14;
+    }
+
+    y = this.currentY + 40;
     const rightX = MARGIN + (PAGE_WIDTH - 2 * MARGIN) / 2 + 8;
     for (const line of rightColumn) {
       this.doc.text(line, rightX, y);
-      y += 15;
+      y += 14;
     }
 
     this.currentY += boxHeight + CARD_GAP;
@@ -198,23 +205,32 @@ class DiveLogPdfBuilder {
     const cardHeight = this.calculateCardHeight(dive);
 
     this.checkPageBreak(cardHeight);
-    this.drawRoundedRect(MARGIN, this.currentY, cardWidth, cardHeight, 8, LIGHT_GRAY);
+    this.drawRoundedRect(
+      MARGIN,
+      this.currentY,
+      cardWidth,
+      cardHeight,
+      8,
+      LIGHT_GRAY,
+      SEA_SABA_BLUE,
+      2.5
+    );
 
-    this.doc.setDrawColor(...SEA_SABA_BLUE);
-    this.doc.setLineWidth(2);
-    this.doc.line(MARGIN + 2, this.currentY + 2, MARGIN + cardWidth - 2, this.currentY + 2);
-
-    let y = this.currentY + 22;
+    let y = this.currentY + 24;
 
     this.doc.setFontSize(10);
     this.doc.setTextColor(...MUTED_TEXT);
     this.doc.setFont("helvetica", "normal");
-    this.doc.text(`${formatPdfDate(dive.date)}  •  ${dive.diveSlot || "—"}`, MARGIN + 16, y);
+    this.doc.text(
+      `${formatPdfDate(dive.date)}  •  ${dive.diveSlot ? formatDiveSlot(dive.diveSlot) : "—"}`,
+      MARGIN + 16,
+      y
+    );
 
-    y += 18;
+    y += 20;
 
-    this.doc.setFontSize(16);
-    this.doc.setTextColor(...SEA_SABA_BLUE);
+    this.doc.setFontSize(19);
+    this.doc.setTextColor(...DARK_TEXT);
     this.doc.setFont("helvetica", "bold");
     this.doc.text(dive.diveSite || "—", MARGIN + 16, y);
 
@@ -303,7 +319,7 @@ class DiveLogPdfBuilder {
   }
 
   private calculateCardHeight(dive: PublicDive): number {
-    const baseHeight = 118;
+    const baseHeight = 132;
     const sortedSightings = [...dive.sightings].sort((a, b) =>
       a.speciesName.localeCompare(b.speciesName)
     );
@@ -387,8 +403,13 @@ class DiveLogPdfBuilder {
       siteCounts.set(d.diveSite, (siteCounts.get(d.diveSite) ?? 0) + 1);
     }
 
+    const sortedSites = Array.from(siteCounts.entries()).sort((a, b) => b[1] - a[1]);
     const mostVisitedSite =
-      Array.from(siteCounts.entries()).sort((a, b) => b[1] - a[1])[0]?.[0] ?? "—";
+      sortedSites.length >= 2 && sortedSites[0][1] > sortedSites[1][1]
+        ? sortedSites[0][0]
+        : sortedSites.length === 1
+          ? sortedSites[0][0]
+          : null;
 
     return { averageDepth, deepestDepth, averageTemperature, mostVisitedSite };
   }
@@ -399,11 +420,13 @@ class DiveLogPdfBuilder {
     w: number,
     h: number,
     r: number,
-    fillColor: [number, number, number]
+    fillColor: [number, number, number],
+    borderColor: [number, number, number] = BORDER_GRAY,
+    lineWidth: number = 0.5
   ): void {
     this.doc.setFillColor(...fillColor);
-    this.doc.setDrawColor(...BORDER_GRAY);
-    this.doc.setLineWidth(0.5);
+    this.doc.setDrawColor(...borderColor);
+    this.doc.setLineWidth(lineWidth);
     this.doc.roundedRect(x, y, w, h, r, r, "FD");
   }
 }
