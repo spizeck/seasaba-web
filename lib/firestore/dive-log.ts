@@ -175,6 +175,11 @@ export function normalizeDive(
   boats: Map<string, FirestoreBoat>
 ): PublicDive {
   const guides = extractGuideNames(dive);
+  const siteName = sites.get(dive.diveSiteId)?.name ?? dive.diveSiteId;
+  const isDrift =
+    dive.diveSlot?.toLowerCase().includes("drift") ||
+    siteName?.toLowerCase().includes("drift") ||
+    false;
   return {
     id: dive.id,
     date: toDateString(dive.date),
@@ -182,10 +187,10 @@ export function normalizeDive(
     boat: boats.get(dive.boatId)?.name ?? dive.boatId,
     diveGuide: guides.join(", ") || "Unknown",
     diveGuides: guides,
-    diveSite: sites.get(dive.diveSiteId)?.name ?? dive.diveSiteId,
+    diveSite: siteName,
     maxDepth: dive.maxDepth,
     waterTemperature: dive.waterTemperature,
-    driftDive: dive.diveSlot?.toLowerCase().includes("drift") || false,
+    driftDive: isDrift,
     sightings: dive.sightings.map((s) => ({
       speciesId: s.speciesId,
       speciesName: species.get(s.speciesId)?.name ?? s.speciesId,

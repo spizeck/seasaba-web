@@ -22,6 +22,17 @@ function unique<T>(arr: T[]): T[] {
   return Array.from(new Set(arr));
 }
 
+function parseDiveSlotMinutes(slot: string): number {
+  const match = slot.match(/^(\d{1,2})(?::(\d{2}))?\s*(am|pm)$/i);
+  if (!match) return 0;
+  let hours = parseInt(match[1], 10);
+  const minutes = parseInt(match[2] || "0", 10);
+  const meridian = match[3].toLowerCase();
+  if (meridian === "pm" && hours !== 12) hours += 12;
+  if (meridian === "am" && hours === 12) hours = 0;
+  return hours * 60 + minutes;
+}
+
 function useDiveLogData() {
   const [dives, setDives] = useState<PublicDive[]>([]);
   const [loading, setLoading] = useState(true);
@@ -33,7 +44,11 @@ function useDiveLogData() {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const normalized = dives.map((d: any) => normalizeDive(d, sites, species, boats));
         const grouped = groupDivesForDisplay(normalized);
-        grouped.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        grouped.sort((a, b) => {
+          const dateDiff = new Date(b.date).getTime() - new Date(a.date).getTime();
+          if (dateDiff !== 0) return dateDiff;
+          return parseDiveSlotMinutes(b.diveSlot) - parseDiveSlotMinutes(a.diveSlot);
+        });
         setDives(grouped);
         setLoading(false);
       })
