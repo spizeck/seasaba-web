@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import { trackLinkClick } from "@/lib/analytics";
 
 const MAPS_URL = "https://www.google.com/maps/place/Sea+Saba+Dive+Center/@17.6163,-63.2317,17z";
 const APPLE_MAPS_URL = "https://maps.apple.com/?q=Sea+Saba+Dive+Center&ll=17.6163,-63.2317";
@@ -13,13 +13,12 @@ const HERO_IMAGE = {
   alt: "Sea Saba diving operation at Fort Bay Harbor, Saba",
 } as const;
 
-function openMaps() {
+function openMaps(provider: string) {
+  trackLinkClick("directions_click", MAPS_URL, `Open in ${provider}`);
   window.open(MAPS_URL, "_blank", "noopener,noreferrer");
 }
 
 export function FindSeaSaba() {
-  const [tooltipOpen, setTooltipOpen] = useState(false);
-
   return (
     <div className="flex h-full flex-col rounded-xl ring-1 ring-border/60 ring-inset bg-card overflow-hidden">
       {/* Hero image with title overlay, pin, and buttons */}
@@ -41,11 +40,7 @@ export function FindSeaSaba() {
         >
           {/* Tooltip */}
           <div
-            className={`absolute bottom-full left-1/2 mb-3 -translate-x-1/2 transition-all duration-200 ${
-              tooltipOpen
-                ? "opacity-100 scale-100 pointer-events-auto"
-                : "opacity-0 scale-95 pointer-events-none"
-            } group-hover:opacity-100 group-hover:scale-100 group-hover:pointer-events-auto`}
+            className="absolute bottom-full left-1/2 mb-3 -translate-x-1/2 opacity-0 scale-95 pointer-events-none transition-all duration-200 group-hover:opacity-100 group-hover:scale-100 group-hover:pointer-events-auto"
           >
             <a
               href={MAPS_URL}
@@ -67,8 +62,7 @@ export function FindSeaSaba() {
           <button
             type="button"
             aria-label="Open Sea Saba Dive Center in Google Maps, opens in a new tab"
-            aria-expanded={tooltipOpen}
-            onClick={(e) => { e.stopPropagation(); openMaps(); }}
+            onClick={(e) => { e.stopPropagation(); openMaps("Google Maps"); }}
             className="relative flex items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-1"
           >
             <span
@@ -120,6 +114,7 @@ export function FindSeaSaba() {
             href={MAPS_URL}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackLinkClick("directions_click", MAPS_URL, "Open in Google Maps")}
             aria-label="Open Sea Saba in Google Maps, opens in a new tab"
             className="no-underline"
           >
@@ -135,6 +130,7 @@ export function FindSeaSaba() {
             href={APPLE_MAPS_URL}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackLinkClick("directions_click", APPLE_MAPS_URL, "Open in Apple Maps")}
             aria-label="Open Sea Saba in Apple Maps, opens in a new tab"
             className="no-underline"
           >

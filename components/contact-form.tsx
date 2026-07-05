@@ -3,6 +3,7 @@
 import { useState, useCallback, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Mail, MessageCircle } from "lucide-react";
+import { trackEvent } from "@/lib/analytics";
 
 interface InquiryType {
   value: string;
@@ -122,6 +123,8 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
 
     const subject = selectedInquiry ? selectedInquiry.subject : "Contact Inquiry";
     const body = buildEmailBody();
+    trackEvent("contact_form_submit", { method: "email", inquiry_type: selectedInquiry?.label || "General" });
+    trackEvent("email_click", { link_destination: `mailto:${EMAIL_TO}?subject=${subject}`, button_text: "Email Sea Saba" });
     window.location.href = `mailto:${EMAIL_TO}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   }, [validate, selectedInquiry, buildEmailBody]);
 
@@ -132,8 +135,11 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
     if (Object.keys(validationErrors).length > 0) return;
 
     const text = buildWhatsAppMessage();
-    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
-  }, [validate, buildWhatsAppMessage]);
+    const whatsappHref = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
+    trackEvent("contact_form_submit", { method: "whatsapp", inquiry_type: selectedInquiry?.label || "General" });
+    trackEvent("whatsapp_click", { link_destination: whatsappHref, button_text: "WhatsApp Sea Saba" });
+    window.open(whatsappHref, "_blank", "noopener,noreferrer");
+  }, [validate, selectedInquiry, buildWhatsAppMessage]);
 
   return (
     <form className="space-y-5" onSubmit={(e) => e.preventDefault()} noValidate>

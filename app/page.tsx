@@ -4,6 +4,7 @@ import { Hero } from "@/components/hero";
 import { Button } from "@/components/ui/button";
 import { ImageCard } from "@/components/image-card";
 import { FeatureImage } from "@/components/feature-image";
+import { TrackedInternalButton } from "@/components/tracked-internal-button";
 import { createMetadata } from "@/lib/metadata";
 
 const WHY_SABA_FEATURED = [
@@ -338,9 +339,15 @@ export default function Home() {
             diving that keeps people coming back year after year.
           </p>
           <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-            <Button asChild size="lg" className="bg-white text-primary hover:bg-white/90 text-base font-semibold">
-              <Link href="/book">Book Diving</Link>
-            </Button>
+            <TrackedInternalButton
+              size="lg"
+              className="bg-white text-primary hover:bg-white/90 text-base font-semibold"
+              href="/book"
+              eventName="book_now_click"
+              buttonText="Book Diving"
+            >
+              Book Diving
+            </TrackedInternalButton>
             <Button asChild variant="outline" size="lg" className="border-white/40 bg-transparent text-white hover:bg-white/10 text-base font-semibold">
               <Link href="/plan-your-trip">Plan Your Trip</Link>
             </Button>

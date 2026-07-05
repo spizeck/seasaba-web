@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { PageHero } from "@/components/page-hero";
 import { FeatureImage } from "@/components/feature-image";
 import { DiveAreaSites } from "@/components/dive-area-sites";
+import { TrackedInternalButton } from "@/components/tracked-internal-button";
 import { diveSiteAnchors } from "@/lib/anchors";
 
 export const metadata = createMetadata({
@@ -138,9 +139,16 @@ export default function DiveSitesPage() {
           <Button asChild size="lg" className="text-base font-semibold">
             <Link href="/diving">View Diving Options</Link>
           </Button>
-          <Button asChild variant="outline" size="lg" className="text-base font-semibold">
-            <Link href="/book">Book Your Dive</Link>
-          </Button>
+          <TrackedInternalButton
+            variant="outline"
+            size="lg"
+            className="text-base font-semibold"
+            href="/book"
+            eventName="book_now_click"
+            buttonText="Book Your Dive"
+          >
+            Book Your Dive
+          </TrackedInternalButton>
         </div>
       </section>
     </>

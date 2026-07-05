@@ -16,6 +16,7 @@ import {
   type PublicDive,
 } from "@/lib/firestore/dive-log";
 import { exportDiveLogToPdf } from "@/lib/dive-log-export";
+import { trackEvent } from "@/lib/analytics";
 import { BookOpen, SlidersHorizontal, X, ChevronDown, ChevronUp, Download } from "lucide-react";
 
 function unique<T>(arr: T[]): T[] {
@@ -472,7 +473,13 @@ export function DiveLogClient() {
                     {selectedDives.length} dive{selectedDives.length !== 1 ? "s" : ""} selected
                   </p>
                   <Button
-                    onClick={() => void exportDiveLogToPdf(selectedDives, unitSystem)}
+                    onClick={() => {
+                      trackEvent("pdf_download", {
+                        dive_count: selectedDives.length.toString(),
+                        unit_system: unitSystem,
+                      });
+                      void exportDiveLogToPdf(selectedDives, unitSystem);
+                    }}
                     size="sm"
                     className="mt-3 w-full gap-1.5"
                   >

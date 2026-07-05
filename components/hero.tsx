@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { trackEvent, trackLinkClick } from "@/lib/analytics";
 
 // A/B test toggle: "A" = Sea Saba red CTA, "B" = white CTA with red text
 const HERO_CTA_VARIANT: "A" | "B" = "A";
@@ -70,7 +73,13 @@ export function Hero() {
         </p>
         <div className="mt-6 flex flex-col items-center gap-3 sm:mt-10 sm:flex-row sm:justify-center sm:gap-4">
           {/* Primary CTA — A/B tested */}
-          <Link href="/book" style={{ ...btnBase, ...primaryCTAStyle }}>
+          <Link
+            href="/book"
+            style={{ ...btnBase, ...primaryCTAStyle }}
+            onClick={() =>
+              trackEvent("book_now_click", { button_text: "Book Diving", link_destination: "/book" })
+            }
+          >
             Book Diving
           </Link>
           {/* Secondary CTAs — glassmorphism */}
@@ -111,6 +120,7 @@ export function Hero() {
                   href={item.href}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => item.href && trackLinkClick("social_click", item.href, "Google Reviews")}
                   className="text-center transition-opacity hover:opacity-80"
                 >
                   {inner}

@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { createMetadata } from "@/lib/metadata";
-import Link from "next/link";
 import { ContactForm } from "@/components/contact-form";
 import { FindSeaSaba } from "@/components/find-sea-saba";
-import { Button } from "@/components/ui/button";
+import { TrackedInternalButton } from "@/components/tracked-internal-button";
+import { TrackedContactLink } from "@/components/tracked-contact-link";
 import { CONTACT } from "@/lib/constants";
 import { MapPin, Phone, MessageCircle, Mail, Luggage, ChevronRight } from "lucide-react";
 
@@ -78,8 +78,10 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
             <div className="space-y-3.5 pt-2">
               <div className="h-px bg-border/60" />
 
-              <a
+              <TrackedContactLink
                 href={CONTACT.phoneHref}
+                eventName="phone_click"
+                buttonText="Phone"
                 className="group flex items-center gap-3 no-underline"
               >
                 <Phone className="h-4 w-4 shrink-0 text-primary" />
@@ -90,12 +92,13 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
                   </span>
                 </div>
                 <ChevronRight className="ml-auto h-4 w-4 shrink-0 text-muted-foreground transition-colors group-hover:text-primary" />
-              </a>
+              </TrackedContactLink>
 
-              <a
+              <TrackedContactLink
                 href={CONTACT.whatsappHref}
-                target="_blank"
-                rel="noopener noreferrer"
+                eventName="whatsapp_click"
+                buttonText="WhatsApp"
+                external
                 className="group flex items-center gap-3 no-underline"
               >
                 <MessageCircle className="h-4 w-4 shrink-0 text-primary" />
@@ -106,10 +109,12 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
                   </span>
                 </div>
                 <ChevronRight className="ml-auto h-4 w-4 shrink-0 text-muted-foreground transition-colors group-hover:text-primary" />
-              </a>
+              </TrackedContactLink>
 
-              <a
+              <TrackedContactLink
                 href={`mailto:${CONTACT.email}`}
+                eventName="email_click"
+                buttonText="Email"
                 className="group flex items-center gap-3 no-underline"
               >
                 <Mail className="h-4 w-4 shrink-0 text-primary" />
@@ -120,7 +125,7 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
                   </span>
                 </div>
                 <ChevronRight className="ml-auto h-4 w-4 shrink-0 text-muted-foreground transition-colors group-hover:text-primary" />
-              </a>
+              </TrackedContactLink>
             </div>
           </div>
         </div>
@@ -145,9 +150,15 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
             </div>
           </div>
           <div className="shrink-0">
-            <Button asChild variant="destructive" className="font-semibold no-underline">
-              <Link href="/plan-your-trip">Plan Your Trip →</Link>
-            </Button>
+            <TrackedInternalButton
+              variant="destructive"
+              className="font-semibold no-underline"
+              href="/plan-your-trip"
+              eventName="book_now_click"
+              buttonText="Plan Your Trip"
+            >
+              Plan Your Trip →
+            </TrackedInternalButton>
           </div>
         </div>
       </div>

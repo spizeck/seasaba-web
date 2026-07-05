@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { X, ExternalLink, Star } from "lucide-react";
+import { trackLinkClick } from "@/lib/analytics";
 
 export interface HotelSpec {
   icon: string;
@@ -131,6 +132,7 @@ export function HotelModal({ hotel, onClose }: HotelModalProps) {
               href={hotel.website}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => trackLinkClick("social_click", hotel.website, `Visit ${hotel.name}`)}
               className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-md bg-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary/90"
             >
               Visit Hotel Website

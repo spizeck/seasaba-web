@@ -37,7 +37,7 @@ This is **not** intended to be a retail-heavy or generic dive shop template.
 - **Content:** MDX for marketing / informational / dive site pages
 - **Dynamic Data:** Firestore (dives, boats, sites, species, guides)
 - **Booking:** Checkfront (deep links, embedded widgets)
-- **Analytics:** Vercel Analytics
+- **Analytics:** Vercel Analytics, Google Analytics 4 (optional), Google Tag Manager (optional)
 - **PDF Export:** jsPDF (premium card-style dive log export)
 - **Deployment:** Vercel
 
@@ -244,6 +244,36 @@ match /guides/{docId} { allow read: if true; }
 - Check Vercel Analytics for Core Web Vitals
 - Monitor Search Console for crawl errors and 301 redirect coverage
 - Keep 301 redirects in `data/redirects.ts` populated from the old Wix site
+- Verify GA4 / GTM events fire in Google Tag Assistant or browser DevTools Network tab
+
+---
+
+## Analytics & Conversion Tracking
+
+The site loads analytics in `app/layout.tsx` via the `AnalyticsLoader` component.
+
+- **Vercel Analytics:** enabled automatically via `@vercel/analytics/next`.
+- **Google Analytics 4:** loaded when `NEXT_PUBLIC_GA_MEASUREMENT_ID` is set.
+- **Google Tag Manager:** loaded when `NEXT_PUBLIC_GTM_ID` is set (preferred for future Google Ads / Meta Pixel / conversion tags). If GTM is set, GA4 is not loaded separately to avoid double counting; configure GA4 inside GTM instead.
+
+Tracked events are sent through the shared `trackEvent` / `trackLinkClick` helpers in `lib/analytics.ts`. Events are dispatched to:
+
+- Vercel Analytics (`va.track`)
+- GA4 (`gtag('event', ...)`)
+- GTM dataLayer (`dataLayer.push`)
+
+Tracked events include:
+
+- `book_now_click` — primary "Book" CTAs across the site
+- `checkfront_click` — Checkfront fallback / direct booking links
+- `contact_form_submit` — contact form submission (email or WhatsApp)
+- `email_click`, `phone_click`, `whatsapp_click` — contact link clicks
+- `directions_click` — Google / Apple Maps directions links
+- `ferry_link_click` — Makana Ferry and other ferry partner links
+- `social_click` — social media, partner, and outbound resource links
+- `pdf_download` — dive log PDF export
+
+Events carry parameters: `page_path`, `page_title`, `link_destination`, `button_text`, and `referrer` where applicable.
 
 ---
 

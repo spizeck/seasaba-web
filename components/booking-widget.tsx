@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { trackEvent } from "@/lib/analytics";
 
 const CF_SCRIPT_SRC = "//seasaba.checkfront.com/lib/interface--0.js";
 const CF_SCRIPT_ID = "checkfront-interface-script";
@@ -31,6 +32,10 @@ const ALL_ITEM_IDS = "245,244,243,246,247,248,253,249,254";
 const POLL_INTERVAL_MS = 100;
 const POLL_TIMEOUT_MS = 12000;
 const DIRECT_BOOKING_URL = "https://seasaba.checkfront.com/reserve/";
+
+function trackCheckfrontClick(buttonText: string) {
+  trackEvent("checkfront_click", { button_text: buttonText, link_destination: DIRECT_BOOKING_URL });
+}
 
 function getPreselectedItemId(): string | null {
   if (typeof window === "undefined") return null;
@@ -152,6 +157,7 @@ export function BookingWidget() {
               href={DIRECT_BOOKING_URL}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => trackCheckfrontClick("Continue to Secure Booking System")}
               className="inline-flex items-center rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
             >
               Continue to Secure Booking System
@@ -198,6 +204,7 @@ export function BookingWidget() {
             href={DIRECT_BOOKING_URL}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackCheckfrontClick("Continue to Secure Booking System")}
             className="underline underline-offset-2 hover:text-foreground"
           >
             Continue to Secure Booking System
@@ -220,6 +227,7 @@ export function BookingWidget() {
           href={DIRECT_BOOKING_URL}
           target="_blank"
           rel="noopener noreferrer"
+          onClick={() => trackCheckfrontClick("Book directly")}
           className="underline underline-offset-2 hover:text-foreground"
         >
           book directly

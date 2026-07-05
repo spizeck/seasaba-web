@@ -5,6 +5,7 @@ import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { ExternalLink, MapPin, Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { trackLinkClick } from "@/lib/analytics";
 import type { Accommodation, AccommodationType } from "@/data/partners";
 
 interface AccommodationsSectionProps {
@@ -329,6 +330,7 @@ function AccommodationCard({ accommodation }: { accommodation: Accommodation }) 
             href={accommodation.website}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackLinkClick("social_click", accommodation.website, `Visit ${accommodation.name}`)}
             aria-label={`Visit ${accommodation.name} website, opens in a new tab`}
             className="inline-flex items-center gap-1.5 text-sm font-medium text-primary transition-colors hover:text-primary/80"
           >

@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
+import { trackLinkClick } from "@/lib/analytics";
 import type { Partner } from "@/data/partners";
 
 interface TrainingAgenciesSectionProps {
@@ -28,6 +31,7 @@ export function TrainingAgenciesSection({ partners }: TrainingAgenciesSectionPro
                   href={partner.website}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => trackLinkClick("social_click", partner.website, `Visit ${partner.name}`)}
                   aria-label={`Visit ${partner.name} website, opens in a new tab`}
                   className="inline-flex items-center gap-1.5 text-sm font-medium text-primary transition-colors hover:text-primary/80"
                 >

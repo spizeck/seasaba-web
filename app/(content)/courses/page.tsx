@@ -1,9 +1,8 @@
 import { createMetadata } from "@/lib/metadata";
-import Link from "next/link";
 import { PageHero } from "@/components/page-hero";
 import { FeatureImage } from "@/components/feature-image";
-import { Button } from "@/components/ui/button";
 import { BookingCTA } from "@/components/booking-cta";
+import { TrackedInternalButton } from "@/components/tracked-internal-button";
 import { Award, Users, CheckCircle, Ship, MapPin, Wrench, Car, ShieldCheck, Compass } from "lucide-react";
 import { coursesAnchors } from "@/lib/anchors";
 
@@ -247,9 +246,15 @@ export default function CoursesPage() {
                     {course.level} • {course.duration}
                   </p>
                 </div>
-                <Button asChild variant="outline" size="sm">
-                  <Link href={course.path}>{course.cta}</Link>
-                </Button>
+                <TrackedInternalButton
+                  variant="outline"
+                  size="sm"
+                  href={course.path}
+                  eventName="book_now_click"
+                  buttonText={course.cta}
+                >
+                  {course.cta}
+                </TrackedInternalButton>
               </div>
               <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
                 {course.description}
@@ -278,9 +283,14 @@ export default function CoursesPage() {
           and course requirements. Contact Sea Saba if you are planning training during your visit.
         </p>
         <div className="mt-4">
-          <Button asChild variant="outline">
-            <Link href="/contact">Contact Sea Saba</Link>
-          </Button>
+          <TrackedInternalButton
+            variant="outline"
+            href="/contact"
+            eventName="book_now_click"
+            buttonText="Contact Sea Saba"
+          >
+            Contact Sea Saba
+          </TrackedInternalButton>
         </div>
       </section>
 

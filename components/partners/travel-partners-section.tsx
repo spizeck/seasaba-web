@@ -1,6 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import { MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { trackEvent } from "@/lib/analytics";
 import type { Partner } from "@/data/partners";
 
 interface TravelPartnersSectionProps {
@@ -25,7 +28,18 @@ export function TravelPartnersSection({ partners }: TravelPartnersSectionProps) 
             >
               <h3 className="text-base font-semibold text-foreground">{partner.name}</h3>
               <p className="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground">{partner.description}</p>
-              <Button asChild variant="outline" className="mt-4 w-full sm:w-auto">
+              <Button
+                asChild
+                variant="outline"
+                className="mt-4 w-full sm:w-auto"
+                onClick={() =>
+                  trackEvent(isInternal ? "book_now_click" : "social_click", {
+                    button_text: isInternal ? "Contact Us" : "Visit Website",
+                    link_destination: partner.website,
+                    partner_name: partner.name,
+                  })
+                }
+              >
                 <Link
                   href={partner.website}
                   target={isInternal ? undefined : "_blank"}

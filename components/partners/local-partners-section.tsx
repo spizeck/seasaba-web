@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import { ExternalLink, MapPin, Plane, Ship, Helicopter } from "lucide-react";
+import { trackLinkClick } from "@/lib/analytics";
 import type { Partner, PartnerSubcategory } from "@/data/partners";
 
 interface LocalPartnersSectionProps {
@@ -69,6 +72,7 @@ function RestaurantCard({ partner }: { partner: Partner }) {
               href={partner.website}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => trackLinkClick("social_click", partner.website, `${linkLabel} for ${partner.name}`)}
               aria-label={`${linkLabel} for ${partner.name}, opens in a new tab`}
               className="inline-flex items-center gap-1.5 text-sm font-medium text-primary transition-colors hover:text-primary/80"
             >
@@ -104,6 +108,13 @@ function TransportationCard({ partner }: { partner: Partner }) {
               href={partner.website}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() =>
+                trackLinkClick(
+                  type === "ferry" ? "ferry_link_click" : "social_click",
+                  partner.website,
+                  `Visit ${partner.name}`
+                )
+              }
               aria-label={`Visit ${partner.name} website, opens in a new tab`}
               className="inline-flex items-center gap-1.5 text-sm font-medium text-primary transition-colors hover:text-primary/80"
             >

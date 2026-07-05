@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { NAV_ITEMS } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
+import { trackEvent } from "@/lib/analytics";
 
 export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -58,7 +59,14 @@ export function Header() {
               {item.label}
             </Link>
           ))}
-          <Button asChild size="sm" className="bg-[#9D2235] text-white hover:bg-[#8a1e2e]">
+          <Button
+            asChild
+            size="sm"
+            className="bg-[#9D2235] text-white hover:bg-[#8a1e2e]"
+            onClick={() =>
+              trackEvent("book_now_click", { button_text: "Book Now", link_destination: "/book" })
+            }
+          >
             <Link href="/book">Book Now</Link>
           </Button>
         </nav>
@@ -101,7 +109,14 @@ export function Header() {
               {item.label}
             </Link>
           ))}
-          <Button asChild size="sm" className="mt-2 w-full bg-[#9D2235] text-white hover:bg-[#8a1e2e]">
+          <Button
+            asChild
+            size="sm"
+            className="mt-2 w-full bg-[#9D2235] text-white hover:bg-[#8a1e2e]"
+            onClick={() =>
+              trackEvent("book_now_click", { button_text: "Book Now", link_destination: "/book" })
+            }
+          >
             <Link href="/book" onClick={() => setMobileOpen(false)}>Book Now</Link>
           </Button>
         </div>

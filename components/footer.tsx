@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import { CONTACT, SOCIAL_LINKS } from "@/lib/constants";
+import { trackLinkClick } from "@/lib/analytics";
 
 const PLAN_LINKS = [
   { label: "Where to Stay",  href: "/plan-your-trip#where-to-stay" },
@@ -77,19 +80,28 @@ export function Footer() {
               {CONTACT.address.displayLines.map((line) => (
                 <span key={line}>{line}</span>
               ))}
-              <a href={CONTACT.phoneHref} className="mt-2 transition-colors hover:text-foreground">
+              <a
+                href={CONTACT.phoneHref}
+                onClick={() => trackLinkClick("phone_click", CONTACT.phoneHref, "Phone")}
+                className="mt-2 transition-colors hover:text-foreground"
+              >
                 Phone: {CONTACT.phone}
               </a>
               <a
                 href={CONTACT.whatsappHref}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => trackLinkClick("whatsapp_click", CONTACT.whatsappHref, "WhatsApp")}
                 aria-label="Contact Sea Saba on WhatsApp, opens in a new tab"
                 className="transition-colors hover:text-foreground"
               >
                 WhatsApp: {CONTACT.whatsapp}
               </a>
-              <a href={`mailto:${CONTACT.email}`} className="transition-colors hover:text-foreground">
+              <a
+                href={`mailto:${CONTACT.email}`}
+                onClick={() => trackLinkClick("email_click", `mailto:${CONTACT.email}`, "Email")}
+                className="transition-colors hover:text-foreground"
+              >
                 {CONTACT.email}
               </a>
             </address>
@@ -106,6 +118,7 @@ export function Footer() {
                     href={l.href}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() => trackLinkClick("social_click", l.href, l.label)}
                     aria-label={l.ariaLabel}
                     className={linkCls}
                   >
@@ -135,6 +148,7 @@ export function Footer() {
                   href={link.href}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => trackLinkClick("social_click", link.href, link.label)}
                   className="text-xs text-muted-foreground/60 transition-colors hover:text-muted-foreground"
                   aria-label={link.label}
                 >

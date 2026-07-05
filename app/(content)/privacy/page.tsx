@@ -1,4 +1,5 @@
 import { createMetadata } from "@/lib/metadata";
+import { TrackedContactLink } from "@/components/tracked-contact-link";
 
 export const metadata = createMetadata({
   title: "Privacy Policy",
@@ -158,12 +159,14 @@ export default function PrivacyPage() {
             <p className="mt-3">Phone / WhatsApp: +599 416 2246</p>
             <p>
               Email:{" "}
-              <a
+              <TrackedContactLink
                 href="mailto:info@seasaba.com"
+                eventName="email_click"
+                buttonText="Email"
                 className="text-primary transition-colors hover:text-primary/80"
               >
                 info@seasaba.com
-              </a>
+              </TrackedContactLink>
             </p>
           </div>
         </section>

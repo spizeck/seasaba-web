@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Plane, PlaneTakeoff, Ship, Helicopter, Check, Droplets, Eye, Sun, Thermometer, Home, HelpCircle, Fish, Calendar, AlertTriangle, Bus, Ban, DollarSign, MessageCircle, Plug, Wifi, Timer, Utensils, Compass, Clock } from "lucide-react";
 import { HotelPills } from "@/components/hotel-pills";
 import { InsuranceCTAs } from "@/components/insurance-ctas";
+import { TrackedOutboundButton } from "@/components/tracked-outbound-button";
 import { planYourTripAnchors } from "@/lib/anchors";
 
 export const metadata = createMetadata({
@@ -140,11 +141,16 @@ export default function PlanYourTripPage() {
                 </li>
               </ul>
             </div>
-            <Button asChild variant="outline" className="mt-6 w-full border-primary/60 text-primary hover:border-primary hover:bg-primary hover:text-white">
-              <a href="https://www.winair.sx/" target="_blank" rel="noopener noreferrer" aria-label="Check Winair Flight Schedule, opens in a new tab">
-                Check Flight Schedule ↗
-              </a>
-            </Button>
+            <TrackedOutboundButton
+              variant="outline"
+              className="mt-6 w-full border-primary/60 text-primary hover:border-primary hover:bg-primary hover:text-white"
+              href="https://www.winair.sx/"
+              eventName="social_click"
+              buttonText="Check Flight Schedule"
+              aria-label="Check Winair Flight Schedule, opens in a new tab"
+            >
+              Check Flight Schedule ↗
+            </TrackedOutboundButton>
           </div>
 
           {/* Makana Ferry */}
@@ -182,11 +188,16 @@ export default function PlanYourTripPage() {
                 </li>
               </ul>
             </div>
-            <Button asChild variant="outline" className="mt-6 w-full border-primary/60 text-primary hover:border-primary hover:bg-primary hover:text-white">
-              <a href="https://makanaferryservice.com/" target="_blank" rel="noopener noreferrer" aria-label="View Makana Ferry Schedule, opens in a new tab">
-                View Ferry Schedule ↗
-              </a>
-            </Button>
+            <TrackedOutboundButton
+              variant="outline"
+              className="mt-6 w-full border-primary/60 text-primary hover:border-primary hover:bg-primary hover:text-white"
+              href="https://makanaferryservice.com/"
+              eventName="ferry_link_click"
+              buttonText="View Ferry Schedule"
+              aria-label="View Makana Ferry Schedule, opens in a new tab"
+            >
+              View Ferry Schedule ↗
+            </TrackedOutboundButton>
           </div>
 
           {/* West Indies Helicopters */}
@@ -224,11 +235,16 @@ export default function PlanYourTripPage() {
                 </li>
               </ul>
             </div>
-            <Button asChild variant="outline" className="mt-6 w-full border-primary/60 text-primary hover:border-primary hover:bg-primary hover:text-white">
-              <a href="https://westindieshelicopters.com/" target="_blank" rel="noopener noreferrer" aria-label="Request Helicopter Charter, opens in a new tab">
-                Request Helicopter Charter ↗
-              </a>
-            </Button>
+            <TrackedOutboundButton
+              variant="outline"
+              className="mt-6 w-full border-primary/60 text-primary hover:border-primary hover:bg-primary hover:text-white"
+              href="https://westindieshelicopters.com/"
+              eventName="social_click"
+              buttonText="Request Helicopter Charter"
+              aria-label="Request Helicopter Charter, opens in a new tab"
+            >
+              Request Helicopter Charter ↗
+            </TrackedOutboundButton>
           </div>
 
           {/* SXM Airways */}
@@ -266,11 +282,16 @@ export default function PlanYourTripPage() {
                 </li>
               </ul>
             </div>
-            <Button asChild variant="outline" className="mt-6 w-full border-primary/60 text-primary hover:border-primary hover:bg-primary hover:text-white">
-              <a href="https://fly-sxmairways.com/" target="_blank" rel="noopener noreferrer" aria-label="Book SXM Airways, opens in a new tab">
-                Book SXM Airways ↗
-              </a>
-            </Button>
+            <TrackedOutboundButton
+              variant="outline"
+              className="mt-6 w-full border-primary/60 text-primary hover:border-primary hover:bg-primary hover:text-white"
+              href="https://fly-sxmairways.com/"
+              eventName="social_click"
+              buttonText="Book SXM Airways"
+              aria-label="Book SXM Airways, opens in a new tab"
+            >
+              Book SXM Airways ↗
+            </TrackedOutboundButton>
           </div>
         </div>
       </section>

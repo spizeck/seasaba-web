@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Users, Award, Bus, Droplets, ShieldCheck, Wind, HelpCircle, Mountain } from "lucide-react";
 import { InsuranceCTAs } from "@/components/insurance-ctas";
 import { ExperienceSelector } from "@/components/experience-selector";
+import { TrackedInternalButton } from "@/components/tracked-internal-button";
 import { divingAnchors, coursesAnchors } from "@/lib/anchors";
 
 export const metadata = createMetadata({
@@ -221,9 +222,15 @@ export default function DivingPage() {
                 ))}
               </div>
               <div className="mt-auto pt-6">
-                <Button asChild variant={option.featured ? "default" : "outline"} className="w-full">
-                  <Link href={option.href}>{option.cta}</Link>
-                </Button>
+                <TrackedInternalButton
+                  variant={option.featured ? "default" : "outline"}
+                  className="w-full"
+                  href={option.href}
+                  eventName="book_now_click"
+                  buttonText={option.cta}
+                >
+                  {option.cta}
+                </TrackedInternalButton>
               </div>
             </div>
           ))}
@@ -297,9 +304,15 @@ export default function DivingPage() {
           </div>
         </div>
         <div className="mt-5 flex justify-center">
-          <Button asChild variant="outline" size="sm">
-            <Link href="/book">View Packages &amp; Pricing</Link>
-          </Button>
+          <TrackedInternalButton
+            variant="outline"
+            size="sm"
+            href="/book"
+            eventName="book_now_click"
+            buttonText="View Packages & Pricing"
+          >
+            View Packages &amp; Pricing
+          </TrackedInternalButton>
         </div>
       </section>
 
@@ -548,9 +561,15 @@ export default function DivingPage() {
           Join us for world-famous pinnacles, walls, reefs, and unforgettable marine life.
         </p>
         <div className="mt-6 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-          <Button asChild size="lg" className="text-base font-semibold">
-            <Link href="/book">Book Diving</Link>
-          </Button>
+          <TrackedInternalButton
+            size="lg"
+            className="text-base font-semibold"
+            href="/book"
+            eventName="book_now_click"
+            buttonText="Book Diving"
+          >
+            Book Diving
+          </TrackedInternalButton>
           <Button asChild variant="outline" size="lg" className="text-base font-semibold">
             <Link href="/dive-sites">Explore Dive Sites</Link>
           </Button>

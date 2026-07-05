@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { trackEvent } from "@/lib/analytics";
 
 interface BookingCTAProps {
   heading?: string;
@@ -21,7 +24,14 @@ export function BookingCTA({
       <h2 className="text-xl font-semibold text-foreground">{heading}</h2>
       <p className="mt-2 text-sm text-muted-foreground">{description}</p>
       <div className="mt-6">
-        <Button asChild size="lg" className="text-base font-semibold">
+        <Button
+          asChild
+          size="lg"
+          className="text-base font-semibold"
+          onClick={() =>
+            trackEvent("book_now_click", { button_text: buttonText, link_destination: "/book" })
+          }
+        >
           <Link href="/book">{buttonText}</Link>
         </Button>
       </div>

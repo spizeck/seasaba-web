@@ -5,6 +5,8 @@ import { InlineImage } from "@/components/inline-image";
 import { Button } from "@/components/ui/button";
 import { Anchor, Users, Shield, Ship, Bus, MapPin } from "lucide-react";
 import { TeamCarousel, OwnerFeature } from "@/components/about-page-client";
+import { TrackedInternalButton } from "@/components/tracked-internal-button";
+import { TrackedOutboundLink } from "@/components/tracked-outbound-link";
 
 export const metadata = createMetadata({
   title: "About Us",
@@ -49,7 +51,15 @@ export default function AboutPage() {
             </>
           );
           return fact.href ? (
-            <a key={fact.label} href={fact.href} target="_blank" rel="noopener noreferrer" className={`${cls} block transition-opacity hover:opacity-80`}>{inner}</a>
+            <TrackedOutboundLink
+              key={fact.label}
+              href={fact.href}
+              eventName="social_click"
+              buttonText="Google Reviews"
+              className={`${cls} block transition-opacity hover:opacity-80`}
+            >
+              {inner}
+            </TrackedOutboundLink>
           ) : (
             <div key={fact.label} className={cls}>{inner}</div>
           );
@@ -222,9 +232,15 @@ export default function AboutPage() {
           Saba&apos;s waters since 1985.
         </p>
         <div className="mt-6 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-          <Button asChild size="lg" className="text-base font-semibold">
-            <Link href="/book">Book Diving</Link>
-          </Button>
+          <TrackedInternalButton
+            size="lg"
+            className="text-base font-semibold"
+            href="/book"
+            eventName="book_now_click"
+            buttonText="Book Diving"
+          >
+            Book Diving
+          </TrackedInternalButton>
           <Button asChild variant="outline" size="lg" className="text-base font-semibold">
             <Link href="/diving">View Diving Options</Link>
           </Button>

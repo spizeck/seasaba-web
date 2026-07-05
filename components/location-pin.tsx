@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { trackLinkClick } from "@/lib/analytics";
 
 const MAPS_URL =
   "https://www.google.com/maps/place/Sea+Saba+Dive+Center/@17.6163,-63.2317,17z";
@@ -83,6 +84,7 @@ function Pin({
           href={MAPS_URL}
           target="_blank"
           rel="noopener noreferrer"
+          onClick={() => trackLinkClick("directions_click", MAPS_URL, "Get Directions")}
           aria-label="Get directions to Sea Saba Dive Center on Google Maps, opens in a new tab"
           className="flex flex-col items-center whitespace-nowrap rounded-xl px-3.5 py-2.5 text-center shadow-xl backdrop-blur-sm"
           style={{ background: "rgba(11,15,59,0.85)", minWidth: "9rem" }}
