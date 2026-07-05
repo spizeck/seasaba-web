@@ -12,6 +12,7 @@ const SEA_SABA_BLUE: [number, number, number] = [23, 28, 143];
 const LIGHT_GRAY: [number, number, number] = [247, 248, 250];
 const DARK_TEXT: [number, number, number] = [33, 37, 41];
 const MUTED_TEXT: [number, number, number] = [108, 117, 125];
+const CARD_BORDER_GRAY: [number, number, number] = [209, 213, 219];
 const BORDER_GRAY: [number, number, number] = [220, 220, 225];
 
 const PAGE_WIDTH = 612;
@@ -210,29 +211,32 @@ class DiveLogPdfBuilder {
       this.currentY,
       cardWidth,
       cardHeight,
-      8,
-      LIGHT_GRAY,
-      SEA_SABA_BLUE,
-      2.5
+      11,
+      [255, 255, 255],
+      CARD_BORDER_GRAY,
+      1.2
     );
 
-    let y = this.currentY + 24;
+    this.doc.setFillColor(...SEA_SABA_BLUE);
+    this.doc.roundedRect(MARGIN + 1, this.currentY + 1, cardWidth - 2, 5, 4, 4, "F");
 
-    this.doc.setFontSize(10);
+    let y = this.currentY + 30;
+
+    this.doc.setFontSize(9);
     this.doc.setTextColor(...MUTED_TEXT);
     this.doc.setFont("helvetica", "normal");
     this.doc.text(
       `${formatPdfDate(dive.date)}  •  ${dive.diveSlot ? formatDiveSlot(dive.diveSlot) : "—"}`,
-      MARGIN + 16,
+      MARGIN + 18,
       y
     );
 
-    y += 20;
+    y += 18;
 
     this.doc.setFontSize(19);
-    this.doc.setTextColor(...DARK_TEXT);
+    this.doc.setTextColor(...SEA_SABA_BLUE);
     this.doc.setFont("helvetica", "bold");
-    this.doc.text(dive.diveSite || "—", MARGIN + 16, y);
+    this.doc.text(dive.diveSite || "—", MARGIN + 18, y);
 
     y += 24;
 
@@ -261,8 +265,8 @@ class DiveLogPdfBuilder {
       },
     ];
 
-    const col1X = MARGIN + 16;
-    const col2X = MARGIN + 16 + cardWidth / 2;
+    const col1X = MARGIN + 18;
+    const col2X = MARGIN + 18 + cardWidth / 2;
     const labelOffset = 60;
     for (let i = 0; i < metadata.length; i += 2) {
       const rowItems = metadata.slice(i, i + 2);
@@ -319,7 +323,7 @@ class DiveLogPdfBuilder {
   }
 
   private calculateCardHeight(dive: PublicDive): number {
-    const baseHeight = 132;
+    const baseHeight = 130;
     const sortedSightings = [...dive.sightings].sort((a, b) =>
       a.speciesName.localeCompare(b.speciesName)
     );
@@ -340,14 +344,34 @@ class DiveLogPdfBuilder {
   }
 
   private addPageHeader(): void {
+    const headerLogo = logoDimensions(70);
     if (this.logoData) {
-      const headerLogo = logoDimensions(60);
-      this.doc.addImage(this.logoData, "PNG", MARGIN, MARGIN - 36, headerLogo.width, headerLogo.height);
+      this.doc.addImage(this.logoData, "PNG", MARGIN, MARGIN - 32, headerLogo.width, headerLogo.height);
     }
-    this.doc.setFontSize(10);
+
+    const today = new Date();
+    const exportDate = today.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+
+    const rightX = PAGE_WIDTH - MARGIN;
+    const baseY = MARGIN - 32;
+
+    this.doc.setFontSize(11);
+    this.doc.setTextColor(...SEA_SABA_BLUE);
+    this.doc.setFont("helvetica", "bold");
+    this.doc.text("Dive Log Summary", rightX, baseY + 12, { align: "right" });
+
+    this.doc.setFontSize(9);
     this.doc.setTextColor(...MUTED_TEXT);
     this.doc.setFont("helvetica", "normal");
-    this.doc.text("Sea Saba Dive Log", MARGIN + (this.logoData ? 70 : 0), MARGIN - 12);
+    this.doc.text(`Export Date: ${exportDate}`, rightX, baseY + 26, { align: "right" });
+
+    this.doc.setDrawColor(...SEA_SABA_BLUE);
+    this.doc.setLineWidth(0.75);
+    this.doc.line(MARGIN, MARGIN + 2, PAGE_WIDTH - MARGIN, MARGIN + 2);
   }
 
   private addFooters(): void {
@@ -357,7 +381,6 @@ class DiveLogPdfBuilder {
       this.doc.setFontSize(9);
       this.doc.setTextColor(150, 150, 150);
       this.doc.setFont("helvetica", "normal");
-      this.doc.text("Sea Saba Dive Log", MARGIN, PAGE_HEIGHT - 24);
       this.doc.text(`Page ${i} of ${totalPages}`, PAGE_WIDTH - MARGIN, PAGE_HEIGHT - 24, {
         align: "right",
       });
