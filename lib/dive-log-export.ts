@@ -17,7 +17,7 @@ const BORDER_GRAY: [number, number, number] = [220, 220, 225];
 const PAGE_WIDTH = 612;
 const PAGE_HEIGHT = 792;
 const MARGIN = 54;
-const CARD_GAP = 24;
+const CARD_GAP = 14;
 const FOOTER_HEIGHT = 40;
 const HEADER_HEIGHT = 64;
 const LOGO_URL = "/images/Full%20color%20SEA%20SABA%20logo%20transparent.png";
@@ -36,7 +36,6 @@ interface DiveLogStats {
   deepestDepth: string;
   averageTemperature: string;
   mostVisitedSite: string;
-  favoriteBoat: string;
 }
 
 function formatPdfDate(dateStr: string): string {
@@ -148,17 +147,17 @@ class DiveLogPdfBuilder {
     if (this.dives.length === 0) return;
 
     const stats = this.calculateStats();
-    const boxHeight = 132;
+    const boxHeight = 96;
 
     this.checkPageBreak(boxHeight);
-    this.drawRoundedRect(MARGIN, this.currentY, PAGE_WIDTH - 2 * MARGIN, boxHeight, 10, LIGHT_GRAY);
+    this.drawRoundedRect(MARGIN, this.currentY, PAGE_WIDTH - 2 * MARGIN, boxHeight, 8, LIGHT_GRAY);
 
-    this.doc.setFontSize(15);
+    this.doc.setFontSize(14);
     this.doc.setTextColor(...SEA_SABA_BLUE);
     this.doc.setFont("helvetica", "bold");
-    this.doc.text("Summary", MARGIN + 20, this.currentY + 26);
+    this.doc.text("Summary", MARGIN + 16, this.currentY + 22);
 
-    this.doc.setFontSize(10);
+    this.doc.setFontSize(9);
     this.doc.setTextColor(...DARK_TEXT);
     this.doc.setFont("helvetica", "normal");
 
@@ -170,20 +169,19 @@ class DiveLogPdfBuilder {
     const rightColumn = [
       `Average water temperature: ${stats.averageTemperature}`,
       `Most visited site: ${stats.mostVisitedSite}`,
-      `Favorite boat: ${stats.favoriteBoat}`,
     ];
 
-    let y = this.currentY + 52;
+    let y = this.currentY + 44;
     for (const line of leftColumn) {
-      this.doc.text(line, MARGIN + 20, y);
-      y += 18;
+      this.doc.text(line, MARGIN + 16, y);
+      y += 15;
     }
 
-    y = this.currentY + 52;
-    const rightX = MARGIN + (PAGE_WIDTH - 2 * MARGIN) / 2 + 10;
+    y = this.currentY + 44;
+    const rightX = MARGIN + (PAGE_WIDTH - 2 * MARGIN) / 2 + 8;
     for (const line of rightColumn) {
       this.doc.text(line, rightX, y);
-      y += 18;
+      y += 15;
     }
 
     this.currentY += boxHeight + CARD_GAP;
@@ -200,29 +198,29 @@ class DiveLogPdfBuilder {
     const cardHeight = this.calculateCardHeight(dive);
 
     this.checkPageBreak(cardHeight);
-    this.drawRoundedRect(MARGIN, this.currentY, cardWidth, cardHeight, 10, LIGHT_GRAY);
+    this.drawRoundedRect(MARGIN, this.currentY, cardWidth, cardHeight, 8, LIGHT_GRAY);
 
     this.doc.setDrawColor(...SEA_SABA_BLUE);
-    this.doc.setLineWidth(2.5);
+    this.doc.setLineWidth(2);
     this.doc.line(MARGIN + 2, this.currentY + 2, MARGIN + cardWidth - 2, this.currentY + 2);
 
-    let y = this.currentY + 28;
-
-    this.doc.setFontSize(11);
-    this.doc.setTextColor(...MUTED_TEXT);
-    this.doc.setFont("helvetica", "normal");
-    this.doc.text(`${formatPdfDate(dive.date)}  •  ${dive.diveSlot || "—"}`, MARGIN + 20, y);
-
-    y += 22;
-
-    this.doc.setFontSize(18);
-    this.doc.setTextColor(...SEA_SABA_BLUE);
-    this.doc.setFont("helvetica", "bold");
-    this.doc.text(dive.diveSite || "—", MARGIN + 20, y);
-
-    y += 32;
+    let y = this.currentY + 22;
 
     this.doc.setFontSize(10);
+    this.doc.setTextColor(...MUTED_TEXT);
+    this.doc.setFont("helvetica", "normal");
+    this.doc.text(`${formatPdfDate(dive.date)}  •  ${dive.diveSlot || "—"}`, MARGIN + 16, y);
+
+    y += 18;
+
+    this.doc.setFontSize(16);
+    this.doc.setTextColor(...SEA_SABA_BLUE);
+    this.doc.setFont("helvetica", "bold");
+    this.doc.text(dive.diveSite || "—", MARGIN + 16, y);
+
+    y += 24;
+
+    this.doc.setFontSize(9);
     this.doc.setTextColor(...MUTED_TEXT);
     this.doc.setFont("helvetica", "normal");
 
@@ -230,62 +228,74 @@ class DiveLogPdfBuilder {
       { label: "Boat", value: dive.boat || "Not recorded" },
       { label: "Guide(s)", value: dive.diveGuide || "Not recorded" },
       {
-        label: "Maximum Depth",
+        label: "Max Depth",
         value:
           dive.maxDepth !== undefined
             ? `${convertDepth(dive.maxDepth, this.unitSystem)} ${depthUnit(this.unitSystem)}`
-            : "Not recorded",
+            : "—",
       },
       {
-        label: "Water Temperature",
+        label: "Water Temp",
         value:
           dive.waterTemperature !== undefined
             ? `${convertTemperature(dive.waterTemperature, this.unitSystem)}${temperatureUnit(
                 this.unitSystem
               )}`
-            : "Not recorded",
+            : "—",
       },
     ];
 
-    const labelX = MARGIN + 20;
-    const valueX = MARGIN + 140;
-    for (const item of metadata) {
-      this.doc.text(`${item.label}:`, labelX, y);
-      this.doc.setTextColor(...DARK_TEXT);
-      this.doc.setFont("helvetica", "bold");
-      this.doc.text(item.value, valueX, y);
-      this.doc.setTextColor(...MUTED_TEXT);
-      this.doc.setFont("helvetica", "normal");
-      y += 18;
+    const col1X = MARGIN + 16;
+    const col2X = MARGIN + 16 + cardWidth / 2;
+    const labelOffset = 60;
+    for (let i = 0; i < metadata.length; i += 2) {
+      const rowItems = metadata.slice(i, i + 2);
+      for (let j = 0; j < rowItems.length; j++) {
+        const item = rowItems[j];
+        const x = j === 0 ? col1X : col2X;
+        this.doc.text(`${item.label}:`, x, y);
+        this.doc.setTextColor(...DARK_TEXT);
+        this.doc.setFont("helvetica", "bold");
+        this.doc.text(item.value, x + labelOffset, y);
+        this.doc.setTextColor(...MUTED_TEXT);
+        this.doc.setFont("helvetica", "normal");
+      }
+      y += 15;
     }
 
-    y += 14;
+    y += 10;
 
-    this.doc.setFontSize(12);
+    this.doc.setFontSize(11);
     this.doc.setTextColor(...SEA_SABA_BLUE);
     this.doc.setFont("helvetica", "bold");
-    this.doc.text("Sightings", labelX, y);
+    this.doc.text("Sightings", col1X, y);
 
-    y += 18;
+    y += 15;
 
     const sortedSightings = [...dive.sightings].sort((a, b) =>
       a.speciesName.localeCompare(b.speciesName)
     );
 
     if (sortedSightings.length === 0) {
-      this.doc.setFontSize(10);
+      this.doc.setFontSize(9);
       this.doc.setTextColor(...MUTED_TEXT);
       this.doc.setFont("helvetica", "italic");
-      this.doc.text("No sightings recorded.", labelX, y);
+      this.doc.text("No sightings recorded.", col1X, y);
     } else {
-      this.doc.setFontSize(10);
+      this.doc.setFontSize(9);
       this.doc.setTextColor(...DARK_TEXT);
       this.doc.setFont("helvetica", "normal");
 
-      for (const s of sortedSightings) {
+      const useTwoColumns = sortedSightings.length > 5;
+      const itemWidth = useTwoColumns ? (cardWidth - 32) / 2 : cardWidth - 32;
+      for (let i = 0; i < sortedSightings.length; i++) {
+        const s = sortedSightings[i];
         const countText = s.count === undefined || s.count === null ? "seen" : `×${s.count}`;
-        this.doc.text(`• ${s.speciesName} ${countText}`, labelX, y);
-        y += 16;
+        const row = useTwoColumns ? Math.floor(i / 2) : i;
+        const col = useTwoColumns ? i % 2 : 0;
+        const itemX = col1X + col * (itemWidth + 16);
+        const itemY = y + row * 12;
+        this.doc.text(`• ${s.speciesName} ${countText}`, itemX, itemY);
       }
     }
 
@@ -293,8 +303,15 @@ class DiveLogPdfBuilder {
   }
 
   private calculateCardHeight(dive: PublicDive): number {
-    const baseHeight = 166;
-    const sightingsHeight = Math.max(dive.sightings.length, 1) * 16 + 34;
+    const baseHeight = 118;
+    const sortedSightings = [...dive.sightings].sort((a, b) =>
+      a.speciesName.localeCompare(b.speciesName)
+    );
+    const useTwoColumns = sortedSightings.length > 5;
+    const rows = useTwoColumns
+      ? Math.ceil(Math.max(sortedSightings.length, 1) / 2)
+      : Math.max(sortedSightings.length, 1);
+    const sightingsHeight = rows * 12 + 28;
     return baseHeight + sightingsHeight;
   }
 
@@ -366,18 +383,14 @@ class DiveLogPdfBuilder {
       : "—";
 
     const siteCounts = new Map<string, number>();
-    const boatCounts = new Map<string, number>();
     for (const d of this.dives) {
       siteCounts.set(d.diveSite, (siteCounts.get(d.diveSite) ?? 0) + 1);
-      boatCounts.set(d.boat, (boatCounts.get(d.boat) ?? 0) + 1);
     }
 
     const mostVisitedSite =
       Array.from(siteCounts.entries()).sort((a, b) => b[1] - a[1])[0]?.[0] ?? "—";
-    const favoriteBoat =
-      Array.from(boatCounts.entries()).sort((a, b) => b[1] - a[1])[0]?.[0] ?? "—";
 
-    return { averageDepth, deepestDepth, averageTemperature, mostVisitedSite, favoriteBoat };
+    return { averageDepth, deepestDepth, averageTemperature, mostVisitedSite };
   }
 
   private drawRoundedRect(
