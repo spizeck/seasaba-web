@@ -217,10 +217,7 @@ class DiveLogPdfBuilder {
       1.2
     );
 
-    this.doc.setFillColor(...SEA_SABA_BLUE);
-    this.doc.roundedRect(MARGIN + 1, this.currentY + 1, cardWidth - 2, 5, 4, 4, "F");
-
-    let y = this.currentY + 30;
+    let y = this.currentY + 24;
 
     this.doc.setFontSize(9);
     this.doc.setTextColor(...MUTED_TEXT);
@@ -323,7 +320,7 @@ class DiveLogPdfBuilder {
   }
 
   private calculateCardHeight(dive: PublicDive): number {
-    const baseHeight = 130;
+    const baseHeight = 124;
     const sortedSightings = [...dive.sightings].sort((a, b) =>
       a.speciesName.localeCompare(b.speciesName)
     );
