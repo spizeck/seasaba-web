@@ -88,13 +88,39 @@ export function trackLinkClick(
 function getLinkText(href: string): string {
   if (href.startsWith("mailto:")) return "Email";
   if (href.startsWith("tel:")) return "Phone";
-  if (href.includes("checkfront")) return "Checkfront";
-  if (href.includes("facebook")) return "Facebook";
-  if (href.includes("instagram")) return "Instagram";
-  if (href.includes("linkedin")) return "LinkedIn";
-  if (href.includes("twitter.com") || href.includes("x.com")) return "Twitter/X";
-  if (href.includes("youtube")) return "YouTube";
-  if (href.includes("whatsapp")) return "WhatsApp";
-  if (href.includes("google.com/maps") || href.includes("goo.gl/maps")) return "Directions";
+
+  try {
+    const parsed = new URL(href, isBrowser() ? window.location.origin : "http://localhost");
+    const host = parsed.hostname.toLowerCase();
+
+    if (host === "checkfront.com" || host.endsWith(".checkfront.com")) return "Checkfront";
+    if (host === "facebook.com" || host.endsWith(".facebook.com")) return "Facebook";
+    if (host === "instagram.com" || host.endsWith(".instagram.com")) return "Instagram";
+    if (host === "linkedin.com" || host.endsWith(".linkedin.com")) return "LinkedIn";
+    if (
+      host === "twitter.com" ||
+      host.endsWith(".twitter.com") ||
+      host === "x.com" ||
+      host.endsWith(".x.com")
+    ) {
+      return "Twitter/X";
+    }
+    if (host === "youtube.com" || host.endsWith(".youtube.com") || host === "youtu.be") return "YouTube";
+    if (host === "whatsapp.com" || host.endsWith(".whatsapp.com") || host === "wa.me") return "WhatsApp";
+    if (host === "google.com" || host.endsWith(".google.com") || host === "goo.gl") {
+      if (parsed.pathname.startsWith("/maps")) return "Directions";
+    }
+  } catch {
+    // Fallback for malformed/non-URL strings
+    if (href.includes("checkfront")) return "Checkfront";
+    if (href.includes("facebook")) return "Facebook";
+    if (href.includes("instagram")) return "Instagram";
+    if (href.includes("linkedin")) return "LinkedIn";
+    if (href.includes("twitter.com") || href.includes("x.com")) return "Twitter/X";
+    if (href.includes("youtube")) return "YouTube";
+    if (href.includes("whatsapp")) return "WhatsApp";
+    if (href.includes("google.com/maps") || href.includes("goo.gl/maps")) return "Directions";
+  }
+
   return "Link";
 }
