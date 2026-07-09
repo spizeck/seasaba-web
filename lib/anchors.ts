@@ -18,6 +18,7 @@ export const diveSiteAnchors = {
 export const divingAnchors = {
   nitrox: "nitrox",
   altitudeFlying: "altitude-flying",
+  technicalDiving: "technical-diving",
 } as const;
 
 export const planYourTripAnchors = {

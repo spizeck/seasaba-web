@@ -55,7 +55,7 @@ const DIVE_EXPERIENCES = [
     imageAlt: "Diver above a coral-covered volcanic pinnacle in the Saba Marine Park.",
     objectPosition: "center",
     body: "Towering volcanic seamounts rise from the deep blue, attracting sharks, turtles, schooling fish, and unforgettable pelagic encounters that define Saba diving.",
-    sites: ["Third Encounter", "The Needle", "Twilight Zone", "Outer Limits", "Mt. Michel", "Shark Shoals"],
+    sites: ["Third Encounter", "Twilight Zone", "Outer Limits", "Mt. Michel", "Shark Shoals"],
   },
   {
     id: "tent-reef",

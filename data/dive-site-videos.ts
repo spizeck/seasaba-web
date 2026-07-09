@@ -27,13 +27,6 @@ export const DIVE_SITES: DiveSite[] = [
     techSuitable: true,
   },
   {
-    name: "The Needle",
-    area: "The Pinnacles",
-    description:
-      "A slender volcanic spire that rises from depth, encrusted with black coral and sponges. Open-ocean exposure brings blue-water visibility and the chance of large pelagic encounters.",
-    videoId: "GcIUiaNwoCE",
-  },
-  {
     name: "Twilight Zone",
     area: "The Pinnacles",
     description:
@@ -55,6 +48,7 @@ export const DIVE_SITES: DiveSite[] = [
     description:
       "A broad volcanic plateau with gorgonian fans and large barrel sponges. Multiple summit features create a dive full of variety within a single site.",
     videoId: undefined,
+    techSuitable: true,
   },
   {
     name: "Shark Shoals",
@@ -62,6 +56,7 @@ export const DIVE_SITES: DiveSite[] = [
     description:
       "Consistently one of Saba's best sites for shark activity. Nurse sharks rest on sandy ledges while reef sharks and the occasional Caribbean reef shark patrol the blue water above.",
     videoId: "VgVEBsEDYP8",
+    techSuitable: true,
   },
 
   // ── Tent Reef ──────────────────────────────────────────────────────────────
@@ -139,7 +134,6 @@ export const DIVE_SITES: DiveSite[] = [
     description:
       "Volcanic vents bubble through mustard-colored sand at depth, warming the water noticeably as you approach. A truly unique geological experience found nowhere else in the Caribbean.",
     videoId: "P_80oh1COI0",
-    techSuitable: true,
   },
   {
     name: "50/50",
@@ -161,6 +155,7 @@ export const DIVE_SITES: DiveSite[] = [
     description:
       "Named for Saba's historic customs house visible on the clifftop above. Below the surface, giant coral-covered boulders and historic anchors reward careful exploration.",
     videoId: "__ZxcZOiYEE",
+    techSuitable: true,
   },
   {
     name: "Babylon",
@@ -198,7 +193,6 @@ export const DIVE_SITES: DiveSite[] = [
     description:
       "An offshore shoal with exceptional reef health and blue-water visibility. Rays, turtles, and reef sharks patrol the area regularly, making every dive feel remote and wild.",
     videoId: "jdJqrdG-BlA",
-    techSuitable: true,
   },
 
   // ── Windwardside ───────────────────────────────────────────────────────────
@@ -222,6 +216,7 @@ export const DIVE_SITES: DiveSite[] = [
     description:
       "A sheltered gut site with healthy biological reef systems and calm conditions. Extensive coral formations and diverse reef fish make this an excellent photography site.",
     videoId: "yyBZJqI-9Lg",
+    techSuitable: true,
   },
   {
     name: "Cove Bay",
@@ -236,6 +231,7 @@ export const DIVE_SITES: DiveSite[] = [
     description:
       "A distinctive site featuring a natural hole in the reef structure. Unusual topography, good coral health, and the chance of encounter with larger reef species.",
     videoId: undefined,
+    techSuitable: true,
   },
   {
     name: "Hole in the Corner",
@@ -257,7 +253,6 @@ export const DIVE_SITES: DiveSite[] = [
     description:
       "A dramatic drop-off site along the Windwardside coast with impressive vertical topography, sponge life, and open-water views. A rewarding dive when conditions allow access to this side of the island.",
     videoId: "0P1ZiO6HJiY",
-    techSuitable: true,
   },
 ];
 

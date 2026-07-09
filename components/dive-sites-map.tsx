@@ -20,7 +20,7 @@ const DIVE_REGIONS: DiveRegion[] = [
     name: "The Pinnacles",
     x: 50,
     y: 76,
-    description: "Saba's most iconic dive sites. Third Encounter, Eye of the Needle, and dramatic submerged pinnacles.",
+    description: "Saba's most iconic dive sites. Third Encounter, dramatic submerged pinnacles, and unforgettable blue-water encounters.",
     thumbnail: "/images/optimized/divers-above-pinnacle-saba.webp",
     targetSectionId: "pinnacles",
   },

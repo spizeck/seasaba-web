@@ -20,8 +20,8 @@ const DIVE_AREAS = [
     title: "The Pinnacles",
     description:
       "The Pinnacles are the dives that helped put Saba on the map. Formed by ancient volcanic activity, these towering seamounts rise dramatically from the deep ocean floor, nourished by nutrient-rich currents that support some of the island's healthiest marine life. Massive barrel sponges, black corals, schools of jacks, turtles, large groupers, and frequent shark encounters make this one of the Caribbean's most iconic advanced diving areas.",
-    sites: ["Third Encounter", "The Needle", "Twilight Zone", "Outer Limits", "Mt. Michel", "Shark Shoals"],
-    knownFor: ["Towering volcanic seamounts rising from the deep blue", "Giant barrel sponges, black corals, and vibrant reef life", "Reef sharks, nurse sharks, jacks, turtles, and large groupers", "The famous Eye of the Needle swim-through", "Saba's signature advanced diving experience"],
+    sites: ["Third Encounter", "Twilight Zone", "Outer Limits", "Mt. Michel", "Shark Shoals"],
+    knownFor: ["Towering volcanic seamounts rising from the deep blue", "Giant barrel sponges, black corals, and vibrant reef life", "Reef sharks, nurse sharks, jacks, turtles, and large groupers", "The famous Third Encounter pinnacle", "Saba's signature advanced diving experience"],
     image: "/images/optimized/divers-above-pinnacle-saba.webp",
     imagePosition: "left",
   },
