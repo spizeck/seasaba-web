@@ -5,6 +5,7 @@ import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { ExternalLink, MapPin, Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Pill } from "@/components/ui/pill";
 import { trackLinkClick } from "@/lib/analytics";
 import type { Accommodation, AccommodationType } from "@/data/partners";
 
@@ -293,18 +294,13 @@ function FilterGroup({
       <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{title}</h3>
       <div className="mt-2 flex flex-wrap gap-2">
         {options.map((key) => (
-          <button
+          <Pill
             key={key}
+            active={activeFilters.has(key)}
             onClick={() => onToggle(key)}
-            className={cn(
-              "rounded-full border px-3 py-1 text-xs font-medium transition-colors",
-              activeFilters.has(key)
-                ? "border-primary bg-primary text-primary-foreground"
-                : "border-border/60 bg-background text-muted-foreground hover:border-primary/30 hover:text-foreground"
-            )}
           >
             {filterLabel(key)}
-          </button>
+          </Pill>
         ))}
       </div>
     </div>

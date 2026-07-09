@@ -105,18 +105,22 @@ export default function PlanYourTripPage() {
       {/* On This Page */}
       <PageSectionNav
         className="mt-8"
+        offset={0}
         items={[
           { id: planYourTripAnchors.gettingHere, label: "Getting Here" },
           { id: planYourTripAnchors.whenToVisit, label: "When to Visit" },
           { id: planYourTripAnchors.whereToStay, label: "Where to Stay" },
-          { id: planYourTripAnchors.recommendedPartners, label: "Recommended Partners" },
           { id: planYourTripAnchors.goodToKnow, label: "Good to Know" },
           { id: planYourTripAnchors.whatToBring, label: "What to Bring" },
+          { id: planYourTripAnchors.restaurants, label: "Restaurants" },
+          { id: planYourTripAnchors.experiences, label: "Things to Do" },
+          { id: planYourTripAnchors.history, label: "The Island of Saba" },
+          { id: planYourTripAnchors.faq, label: "FAQ" },
         ]}
       />
 
       {/* Getting to Saba */}
-      <section id={planYourTripAnchors.gettingHere} className="mt-12 scroll-mt-24">
+      <section id={planYourTripAnchors.gettingHere} className="mt-12 scroll-mt-40">
         <h2 className="text-xl font-semibold text-foreground">Getting to Saba</h2>
 
         <div className="mt-6 grid gap-6 sm:grid-cols-2">
@@ -311,7 +315,7 @@ export default function PlanYourTripPage() {
       </section>
 
       {/* When to Visit */}
-      <section id={planYourTripAnchors.whenToVisit} className="mt-12 scroll-mt-24">
+      <section id={planYourTripAnchors.whenToVisit} className="mt-12 scroll-mt-40">
         <h2 className="text-xl font-semibold text-foreground">When to Visit</h2>
 
         {/* Season cards */}
@@ -430,7 +434,7 @@ export default function PlanYourTripPage() {
       </section>
 
       {/* Where to Stay */}
-      <section id={planYourTripAnchors.whereToStay} className="mt-12 scroll-mt-24">
+      <section id={planYourTripAnchors.whereToStay} className="mt-12 scroll-mt-40">
         <h2 className="text-xl font-semibold text-foreground">Where to Stay</h2>
 
         <FeatureImage
@@ -457,7 +461,7 @@ export default function PlanYourTripPage() {
       </section>
 
       {/* Good to Know */}
-      <section id={planYourTripAnchors.goodToKnow} className="mt-12 scroll-mt-24">
+      <section id={planYourTripAnchors.goodToKnow} className="mt-12 scroll-mt-40">
         <h2 className="text-xl font-semibold text-foreground">Good to Know</h2>
 
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -472,7 +476,7 @@ export default function PlanYourTripPage() {
       </section>
 
       {/* What to Bring */}
-      <section id={planYourTripAnchors.whatToBring} className="mt-12 scroll-mt-24">
+      <section id={planYourTripAnchors.whatToBring} className="mt-12 scroll-mt-40">
         <h2 className="text-xl font-semibold text-foreground">What to Bring</h2>
 
         <div className="mt-6 grid gap-6 sm:grid-cols-2">
@@ -539,7 +543,7 @@ export default function PlanYourTripPage() {
       </section>
 
       {/* Restaurants */}
-      <section id={planYourTripAnchors.restaurants} className="mt-12 scroll-mt-24">
+      <section id={planYourTripAnchors.restaurants} className="mt-12 scroll-mt-40">
         <div className="flex items-center gap-3">
           <Utensils className="h-5 w-5 text-primary" />
           <h2 className="text-xl font-semibold text-foreground">Restaurants &amp; Cafés</h2>
@@ -598,7 +602,7 @@ export default function PlanYourTripPage() {
       </section>
 
       {/* Things to Do on Saba */}
-      <section id={planYourTripAnchors.experiences} className="mt-12 scroll-mt-24">
+      <section id={planYourTripAnchors.experiences} className="mt-12 scroll-mt-40">
         <div className="flex items-center gap-3">
           <Compass className="h-5 w-5 text-primary" />
           <h2 className="text-xl font-semibold text-foreground">Things to Do on Saba</h2>
@@ -722,7 +726,7 @@ export default function PlanYourTripPage() {
       </section>
 
       {/* Island History */}
-      <section id={planYourTripAnchors.history} className="mt-12 scroll-mt-24">
+      <section id={planYourTripAnchors.history} className="mt-12 scroll-mt-40">
         <h2 className="text-xl font-semibold text-foreground">The Island of Saba</h2>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
           Saba is a five-square-mile volcanic island and Special Municipality of the Netherlands, rising dramatically from the Caribbean Sea to the 887-meter (2,910-foot) summit of Mount Scenery. Home to around 2,000 residents and almost no flat land, the island&apos;s dramatic landscape has shaped its history, culture, and way of life.
@@ -789,7 +793,7 @@ export default function PlanYourTripPage() {
       </section>
 
       {/* FAQ */}
-      <section id={planYourTripAnchors.faq} className="mt-12 scroll-mt-24">
+      <section id={planYourTripAnchors.faq} className="mt-12 scroll-mt-40">
         <h2 className="text-xl font-semibold text-foreground">Frequently Asked Questions</h2>
 
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
