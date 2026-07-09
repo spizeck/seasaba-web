@@ -3,7 +3,7 @@ import { PageHero } from "@/components/page-hero";
 import { FeatureImage } from "@/components/feature-image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Users, Award, Bus, Droplets, ShieldCheck, Wind, HelpCircle, Mountain } from "lucide-react";
+import { Users, Award, Bus, Droplets, ShieldCheck, Wind, HelpCircle, Mountain, Gauge } from "lucide-react";
 import { InsuranceCTAs } from "@/components/insurance-ctas";
 import { ExperienceSelector } from "@/components/experience-selector";
 import { TrackedInternalButton } from "@/components/tracked-internal-button";
@@ -504,6 +504,112 @@ export default function DivingPage() {
         <p className="mt-3 text-xs text-muted-foreground/70 italic">
           This information is provided for planning purposes only and does not constitute medical advice. Follow your dive computer, physician, and DAN recommendations.
         </p>
+      </section>
+
+      {/* Technical Diving */}
+      <section id={divingAnchors.technicalDiving} className="mt-14 scroll-mt-24">
+        <div className="flex items-center gap-3">
+          <Gauge className="h-5 w-5 text-primary" />
+          <h2 className="text-xl font-semibold text-foreground">Technical Diving</h2>
+        </div>
+        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          Saba&apos;s dramatic underwater landscape offers exceptional opportunities for experienced technical divers. Deep volcanic pinnacles, sheer walls, and pristine reefs extend well beyond recreational depths, making the island one of the Caribbean&apos;s most unique technical diving destinations.
+        </p>
+        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          Technical diving is available for appropriately certified divers and should be arranged in advance.
+        </p>
+
+        <div className="mt-6 grid gap-5 sm:grid-cols-2">
+          <div className="rounded-lg border border-border/40 bg-muted/20 p-5">
+            <h3 className="text-sm font-semibold text-foreground">Deep Volcanic Pinnacles</h3>
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+              Saba&apos;s deep pinnacles and walls are well suited to experienced decompression divers. Sites such as Third Encounter, Outer Limits, and Tent Wall offer dramatic vertical profiles, excellent visibility, and the kind of volcanic topography that draws technical divers from across the Caribbean.
+            </p>
+            <ul className="mt-4 space-y-2.5 text-sm text-muted-foreground">
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Deep pinnacles rising from the abyss</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Dramatic wall dives</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Excellent visibility</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Unique volcanic topography</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Ideal for experienced decompression divers</span></li>
+            </ul>
+          </div>
+
+          <div className="rounded-lg border border-border/40 bg-muted/20 p-5">
+            <h3 className="text-sm font-semibold text-foreground">Technical Equipment Support</h3>
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+              Sea Saba provides cylinder and gas support for technical diving, including backmount doubles, sidemount cylinders, stage and decompression cylinders, and pure oxygen fills. Rebreather divers will also find small oxygen cylinders and a booster pump capable of filling oxygen to 3000 psi.
+            </p>
+            <ul className="mt-4 space-y-2.5 text-sm text-muted-foreground">
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Four backmount doubles</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Aluminum sidemount cylinders</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Aluminum 40 cu ft stage/decompression cylinders</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Oxygen fills up to 100% for decompression cylinders</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Four small oxygen cylinders suitable for rebreathers</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Oxygen booster capable of boosting oxygen to 3000 psi</span></li>
+            </ul>
+            <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+              Divers should bring their own BCD, harness, regulators, computers, and other personal technical diving equipment.
+            </p>
+          </div>
+
+          <div className="rounded-lg border border-border/40 bg-muted/20 p-5">
+            <h3 className="text-sm font-semibold text-foreground">Dive Planning</h3>
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+              Technical dives on Saba are conducted in small groups with personalized planning. Experienced local knowledge helps match each dive to conditions, experience level, and the profiles you want to explore.
+            </p>
+            <ul className="mt-4 space-y-2.5 text-sm text-muted-foreground">
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Small groups</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Personalized dive planning</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Flexible scheduling when practical</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Experienced local knowledge</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Advance coordination for gas and equipment requirements</span></li>
+            </ul>
+          </div>
+
+          <div className="rounded-lg border border-border/40 bg-muted/20 p-5">
+            <h3 className="text-sm font-semibold text-foreground">Advance Planning Required</h3>
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+              Technical dives should be coordinated before arrival so the team can prepare the proper cylinders and support equipment. Contact Sea Saba in advance to discuss certifications, experience level, planned dive profiles, equipment requirements, cylinder configuration, and oxygen needs.
+            </p>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+              Sea Saba uses{" "}
+              <Link href="https://www.hhssoftware.com/multideco/" target="_blank" rel="noopener noreferrer" className="font-medium text-primary hover:underline underline-offset-4">
+                Multideco
+              </Link>{" "}
+              for technical dive planning.
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-5 rounded-lg border border-border/40 bg-muted/20 p-5">
+          <h3 className="text-sm font-semibold text-foreground">Technical Diving Requirements</h3>
+          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+            Technical diving is available only to appropriately certified divers. Sea Saba does not provide technical training or rental technical BCDs and harness systems.
+          </p>
+          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+            Divers are expected to bring their own life-support equipment, including:
+          </p>
+          <ul className="mt-4 space-y-2.5 text-sm text-muted-foreground">
+            <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Technical BCD or wing system</span></li>
+            <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Regulators</span></li>
+            <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Dive computers</span></li>
+            <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Exposure protection</span></li>
+            <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Personal accessories</span></li>
+          </ul>
+          <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+            Sea Saba provides cylinders and oxygen support as described above.
+          </p>
+        </div>
+
+        <div className="mt-5 rounded-lg border border-primary/20 bg-primary/5 p-5">
+          <h3 className="text-sm font-semibold text-foreground">Planning a Technical Diving Expedition?</h3>
+          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+            Whether you&apos;re planning deep volcanic pinnacle dives, decompression dives, or CCR exploration in the Caribbean, we&apos;d be happy to discuss logistics and help determine whether Saba is the right destination for your next adventure.
+          </p>
+          <Button asChild variant="outline" className="mt-4">
+            <Link href="/contact?interest=technical-diving">Contact Us About Technical Diving</Link>
+          </Button>
+        </div>
       </section>
 
       {/* Emergency Preparedness */}
