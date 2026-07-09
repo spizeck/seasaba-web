@@ -29,9 +29,9 @@ const DIVE_AREAS = [
     id: diveSiteAnchors.tentReef,
     title: "Tent Reef",
     description:
-      "Just minutes from Fort Bay Harbor, Tent Reef is one of Saba's most diverse dive areas. What begins as a shallow volcanic ledge gradually transforms into dramatic walls, coral-covered buttresses, deep sand channels, and the famous Three Sisters seamounts. Every section offers something different, making Tent Reef a favorite for both daytime exploration and unforgettable night dives.",
-    sites: ["Tent Shallow", "Tent Deep", "Tent Reef", "Tent Boulders", "Tent Wall", "The Three Sisters", "Tedran Wall"],
-    knownFor: ["Mini walls, canyons, and swim-throughs", "Healthy coral gardens and giant barrel sponges", "The Three Sisters seamounts", "Octopus, turtles, lobster, and colorful reef life", "A different experience on every dive"],
+      "Just minutes from Fort Bay Harbor, Tent Reef is one of Saba's most diverse dive areas. What begins as a shallow volcanic ledge gradually transforms into dramatic walls, coral-covered buttresses, and deep sand channels. Every section offers something different, making Tent Reef a favorite for both daytime exploration and unforgettable night dives.",
+    sites: ["Tent Shallow", "Tent Deep", "Tent Reef", "Tent Boulders", "Tent Wall", "Tedran Wall"],
+    knownFor: ["Mini walls, canyons, and swim-throughs", "Healthy coral gardens and giant barrel sponges", "The famous Three Sisters seamounts on Tent Wall", "Octopus, turtles, lobster, and colorful reef life", "A different experience on every dive"],
     image: "/images/optimized/green-turtle-tent-reef.webp",
     imagePosition: "right",
   },

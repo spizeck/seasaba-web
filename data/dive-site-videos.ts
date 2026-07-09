@@ -98,13 +98,6 @@ export const DIVE_SITES: DiveSite[] = [
     techSuitable: true,
   },
   {
-    name: "The Three Sisters",
-    area: "Tent Reef",
-    description:
-      "Three seamount pinnacles rising off the deep wall — covered in black coral, tube sponges, and surrounded by schooling fish. A memorable advanced dive off the Tent Reef wall.",
-    videoId: undefined,
-  },
-  {
     name: "Tedran Wall",
     area: "Tent Reef",
     description:
