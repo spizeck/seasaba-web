@@ -325,7 +325,7 @@ function AccommodationCard({ accommodation }: { accommodation: Accommodation }) 
           {accommodation.village}
         </span>
 
-        <div className="mt-auto pt-4">
+        <div className="mt-auto flex flex-col gap-2 pt-4">
           <Link
             href={accommodation.website}
             target="_blank"
@@ -337,6 +337,19 @@ function AccommodationCard({ accommodation }: { accommodation: Accommodation }) 
             Visit Website
             <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
           </Link>
+          {accommodation.bookingUrl && (
+            <Link
+              href={accommodation.bookingUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => accommodation.bookingUrl && trackLinkClick("book_now_click", accommodation.bookingUrl, `Book ${accommodation.name}`)}
+              aria-label={`Book ${accommodation.name} directly, opens in a new tab`}
+              className="inline-flex w-fit items-center gap-1.5 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+            >
+              Book Directly
+              <ExternalLink className="h-3 w-3" aria-hidden="true" />
+            </Link>
+          )}
         </div>
       </div>
     </div>

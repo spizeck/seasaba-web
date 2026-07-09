@@ -58,7 +58,7 @@ const WHY_TRAIN_SABA = [
       "Complimentary 32% Nitrox for certified nitrox divers when appropriate.",
   },
   {
-    icon: Car, 
+    icon: Car,
     title: "Complimentary Taxi Transport",
     description:
       "Free transportation for scheduled training dives so you can focus on learning.",
@@ -71,7 +71,21 @@ const WHY_TRAIN_SABA = [
   },
 ];
 
-const COURSES = [
+interface Course {
+  id: string;
+  name: string;
+  level: string;
+  duration: string;
+  description: string;
+  includes: string[];
+  cta: string;
+  path: string;
+  options?: string[];
+  note?: string;
+  subcourses?: { name: string; level: string; duration: string }[];
+}
+
+const COURSES: Course[] = [
   {
     id: "try-scuba",
     name: "Try Scuba",
@@ -101,9 +115,10 @@ const COURSES = [
     duration: "2 days",
     description:
       "Build confidence, sharpen your skills, and explore new areas of diving through adventure and specialty training conducted on Saba's diverse reef systems. Complete eLearning in advance and spend your time in the water.",
-    includes: ["Five boat dives","Complete eLearning before arrival", "Deep Diver and Navigation mandatory","Flexible course options", "3:1 instructor-to-student ratio max", "Equipment included"],
+    includes: ["Five boat dives", "Complete eLearning before arrival", "Deep Diver and Navigation mandatory", "Flexible course options", "3:1 instructor-to-student ratio max", "Equipment included"],
     cta: "Request Advanced Training Info",
     path: "/contact?interest=sdi-advanced-specialty",
+    options: ["Navigation*", "Deep Diver*", "Drift Diving", "Boat Diving", "Computer Diving", "Marine Ecosystems Awareness", "Underwater Photography", "Advanced Buoyancy"],
   },
   {
     id: coursesAnchors.nitrox,
@@ -137,6 +152,7 @@ const COURSES = [
     includes: ["Leadership development", "Practical experience with daily operations", "Theory and watermanship evaluations", "Guided dive experience"],
     cta: "Request Divemaster Info",
     path: "/contact?interest=sdi-divemaster",
+    note: "Internship opportunities may be available for candidates who can spend an extended period on Saba. Contact us to discuss a custom internship plan.",
   },
   {
     id: "technical",
@@ -148,8 +164,14 @@ const COURSES = [
     includes: ["Complete eLearning before arrival", "Advanced dive planning", "Technical procedures and gas management", "Equipment configuration and streamlining"],
     cta: "Request Technical Diving Info",
     path: "/contact?interest=tdi-technical",
+    subcourses: [
+      { name: "Intro to Tech", level: "Introductory", duration: "2-3 days" },
+      { name: "Advanced Nitrox", level: "Technical", duration: "2-3 days" },
+      { name: "Decompression Procedures", level: "Technical", duration: "3 days" },
+      { name: "Advanced Nitrox & Deco Combo", level: "Technical", duration: "4-5 days" },
+    ],
   },
-] as const;
+];
 
 export default function CoursesPage() {
   return (
@@ -270,6 +292,43 @@ export default function CoursesPage() {
                   </span>
                 ))}
               </div>
+
+              {course.options && course.options.length > 0 && (
+                <div className="mt-4">
+                  <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Optional Adventure Dives</h4>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {course.options.map((option) => (
+                      <span
+                        key={option}
+                        className="rounded-full border border-border/50 bg-background px-2.5 py-1 text-xs font-medium text-foreground/80"
+                      >
+                        {option}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {course.note && (
+                <p className="mt-4 text-xs italic leading-relaxed text-muted-foreground">{course.note}</p>
+              )}
+
+              {course.subcourses && course.subcourses.length > 0 && (
+                <div className="mt-4">
+                  <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Available Technical Courses</h4>
+                  <div className="mt-2 grid gap-2 sm:grid-cols-2">
+                    {course.subcourses.map((sub) => (
+                      <div
+                        key={sub.name}
+                        className="rounded-md border border-border/50 bg-muted/30 px-3 py-2 text-sm"
+                      >
+                        <span className="font-medium text-foreground">{sub.name}</span>
+                        <span className="block text-xs text-muted-foreground">{sub.level} • {sub.duration}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           ))}
         </div>

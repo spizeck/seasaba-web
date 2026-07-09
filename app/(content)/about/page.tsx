@@ -19,7 +19,7 @@ const TRUST_FACTS: { number: string; label: string; href?: string }[] = [
   { number: "1985", label: "Operating continuously since 1985" },
   { number: "8:1", label: "Maximum guide ratio" },
   { number: "30+", label: "Dive sites" },
-  { number: "4.8★", label: "Google & TripAdvisor", href: "https://share.google/WnkPS93TFHU4rCFl9" },
+  { number: "4.8★", label: "Google & TripAdvisor", href: "https://www.google.com/maps/search/?api=1&query=Sea+Saba+Dive+Center+Fort+Bay+Saba&query_place_id=ChIJX0c19WkgDowRn2l3bKbFrRU" },
 ];
 
 

@@ -620,6 +620,14 @@ export default function PlanYourTripPage() {
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
                 Saba&apos;s award-winning trail network winds through dry coastal hillsides, lush rainforest, and misty cloud forests near the summit of Mount Scenery. Free trail maps are available.
               </p>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                Highlights include the climb up Mt. Scenery, the rugged Sandy Cruz Trail, and coastal walks with views of Statia, St. Kitts, and Nevis. Trails range from easy coastal strolls to strenuous rainforest hikes.
+              </p>
+              <Button asChild variant="outline" className="mt-4">
+                <Link href="https://www.sabatourism.com/hiking" target="_blank" rel="noopener noreferrer">
+                  Explore Saba Hiking Trails &rarr;
+                </Link>
+              </Button>
             </div>
           </FeatureImage>
 
@@ -634,6 +642,9 @@ export default function PlanYourTripPage() {
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
                 Saba&apos;s shallow reefs are excellent for snorkeling. The afternoon snorkel trip runs alongside the dive boats, so snorkelers stay at the surface while divers go deeper. No certification required.
               </p>
+              <Button asChild className="mt-4">
+                <Link href="/book?item=snorkel">Book a Snorkel Trip &rarr;</Link>
+              </Button>
             </div>
           </FeatureImage>
 
@@ -654,6 +665,9 @@ export default function PlanYourTripPage() {
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
                 Saba Lace is one of the island&apos;s most recognizable traditions. This delicate needlework has been made by hand for generations and is still sold in local shops today. Each piece carries the patience and skill of the artisan who made it.
               </p>
+              <Button asChild variant="outline" className="mt-4">
+                <Link href="/contact?interest=saba-lace">Ask Us About Saba Lace &rarr;</Link>
+              </Button>
             </div>
           </FeatureImage>
 
@@ -668,6 +682,9 @@ export default function PlanYourTripPage() {
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
                 Local jewelers work with volcanic stone, sea glass, and silver to create pieces inspired by Saba&apos;s colors and textures. Many designs are made entirely by hand and can only be found here.
               </p>
+              <Button asChild variant="outline" className="mt-4">
+                <Link href="/contact?interest=jewelry-making">Ask Us About Local Jewelry &rarr;</Link>
+              </Button>
             </div>
           </FeatureImage>
 
@@ -681,6 +698,9 @@ export default function PlanYourTripPage() {
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
                 Skilled artisans transform molten glass into unique handmade pieces right before your eyes. Visitors can watch the process and take home one-of-a-kind ornaments, jewelry, and art inspired by the island.
               </p>
+              <Button asChild variant="outline" className="mt-4">
+                <Link href="/contact?interest=glass-art">Ask Us About Glass Art &rarr;</Link>
+              </Button>
             </div>
           </FeatureImage>
         </div>

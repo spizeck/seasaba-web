@@ -3,6 +3,9 @@
 import { useState, useMemo, useEffect } from "react";
 import { PageHero } from "@/components/page-hero";
 import { Button } from "@/components/ui/button";
+import { SpeciesModal } from "@/components/species-modal";
+import { findSpeciesInfo } from "@/data/species";
+import type { SpeciesInfo } from "@/data/species";
 import {
   fetchDiveLogData,
   normalizeDive,
@@ -98,6 +101,12 @@ function DiveCard({
   unitSystem: UnitSystem;
 }) {
   const [expanded, setExpanded] = useState(false);
+  const [activeSpecies, setActiveSpecies] = useState<SpeciesInfo | null>(null);
+
+  const openSpecies = (name: string) => {
+    const info = findSpeciesInfo(name);
+    if (info) setActiveSpecies(info);
+  };
 
   return (
     <div
@@ -163,19 +172,39 @@ function DiveCard({
       {expanded && (
         <div className="border-t border-border/40 px-4 py-3">
           <div className="flex flex-wrap gap-2">
-            {dive.sightings.map((s) => (
-              <span
-                key={s.speciesName}
-                className="inline-flex items-center rounded-md bg-muted/60 px-2 py-1 text-xs text-muted-foreground"
-              >
-                {s.speciesName}
-                {s.count && s.count > 1 && (
-                  <span className="ml-1 font-semibold text-foreground">×{s.count}</span>
-                )}
-              </span>
-            ))}
+            {dive.sightings.map((s) => {
+              const hasInfo = Boolean(findSpeciesInfo(s.speciesName));
+              const chip = (
+                <>
+                  {s.speciesName}
+                  {s.count && s.count > 1 && (
+                    <span className="ml-1 font-semibold text-foreground">×{s.count}</span>
+                  )}
+                </>
+              );
+              return hasInfo ? (
+                <button
+                  key={s.speciesName}
+                  onClick={() => openSpecies(s.speciesName)}
+                  className="inline-flex items-center rounded-md bg-muted/60 px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary"
+                >
+                  {chip}
+                </button>
+              ) : (
+                <span
+                  key={s.speciesName}
+                  className="inline-flex items-center rounded-md bg-muted/60 px-2 py-1 text-xs text-muted-foreground"
+                >
+                  {chip}
+                </span>
+              );
+            })}
           </div>
         </div>
+      )}
+
+      {activeSpecies && (
+        <SpeciesModal species={activeSpecies} onClose={() => setActiveSpecies(null)} />
       )}
     </div>
   );

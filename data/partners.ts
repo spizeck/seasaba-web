@@ -28,7 +28,7 @@ export interface Partner {
   village?: string;
   island?: string;
   transportationType?: "airplane" | "ferry" | "helicopter";
-  linkType?: "website" | "facebook" | "google";
+  linkType?: "website" | "facebook" | "google" | "instagram" | "tripadvisor";
 }
 
 export interface Accommodation {
@@ -37,6 +37,7 @@ export interface Accommodation {
   village: string;
   description: string;
   website: string;
+  bookingUrl?: string; // direct booking link, when available
   filters: string[]; // filterable tags (e.g., "pool", "ocean-view", "full-kitchen")
   amenities: string[]; // display-only tags on cards
   image?: string;
@@ -51,6 +52,7 @@ export const ACCOMMODATIONS: Accommodation[] = [
     description:
       "Gingerbread-style private cottages with full kitchens, a shared pool, and a scenic ridge location in Windwardside.",
     website: "https://www.cottage-club.com/",
+    bookingUrl: "https://www.cottage-club.com/",
     image: "/images/optimized/cottage-club.webp",
     filters: ["full-kitchen", "pool", "walk-to-village"],
     amenities: ["Gingerbread Style"],
@@ -61,7 +63,8 @@ export const ACCOMMODATIONS: Accommodation[] = [
     village: "Booby Hill",
     description:
       "Private wooden cottages perched on Booby Hill slopes, surrounded by tropical gardens and sweeping Caribbean views.",
-    website: "https://elmomocottages.com/",
+    website: "http://elmomocottages.com/",
+    bookingUrl: "http://elmomocottages.com/",
     image: "/images/optimized/el-momo-cottages.webp",
     filters: ["ocean-view"],
     amenities: ["Tropical Gardens", "Private Cottages"],
@@ -73,6 +76,7 @@ export const ACCOMMODATIONS: Accommodation[] = [
     description:
       "A Saba favorite for over 30 years, with boutique rooms, suites, cottages, Tropics Café, and a pool in Windwardside.",
     website: "https://www.julianashotelsaba.com/",
+    bookingUrl: "https://www.julianashotelsaba.com/",
     image: "/images/optimized/julianas-hotel.webp",
     filters: ["pool", "walk-to-village"],
     amenities: ["Boutique", "Restaurant"],
@@ -84,6 +88,7 @@ export const ACCOMMODATIONS: Accommodation[] = [
     description:
       "A centrally located hotel in Windwardside offering clean, comfortable rooms and easy access to the village.",
     website: "https://sabaarawak.com/",
+    bookingUrl: "https://sabaarawak.com/",
     image: "/images/optimized/arawak-hotel.webp",
     filters: ["walk-to-village"],
     amenities: ["Central", "Comfortable Rooms"],
@@ -95,6 +100,7 @@ export const ACCOMMODATIONS: Accommodation[] = [
     description:
       "One of Saba's newest hotels with modern rooms, a pool, and panoramic Caribbean Sea views in Windwardside.",
     website: "https://sceneryhotelsaba.com/",
+    bookingUrl: "https://sceneryhotelsaba.com/",
     image: "/images/optimized/scenery-hotel.webp",
     filters: ["pool", "ocean-view", "walk-to-village"],
     amenities: ["Modern"],
@@ -117,7 +123,7 @@ export const ACCOMMODATIONS: Accommodation[] = [
     village: "Booby Hill",
     description:
       "A stylish two-bedroom cottage with tropical gardens, a private pool, and expansive sea views near Windwardside.",
-    website: "https://www.sabaislandpremierproperties.com/",
+    website: "https://www.sabaislandpremierproperties.com/property/compass-cottage-rental",
     filters: ["pool", "ocean-view"],
     amenities: ["Two Bedrooms", "Garden"],
   },
@@ -127,7 +133,7 @@ export const ACCOMMODATIONS: Accommodation[] = [
     village: "Booby Hill",
     description:
       "A classic gingerbread-style Saban cottage with two bedrooms, a private pool, gazebo, and views toward Statia and St. Kitts.",
-    website: "https://www.airbnb.com/rooms/32723308/",
+    website: "https://flamboyantcottage.com/",
     filters: ["pool", "ocean-view"],
     amenities: ["Gingerbread Style", "Gazebo"],
   },
@@ -138,6 +144,7 @@ export const ACCOMMODATIONS: Accommodation[] = [
     description:
       "A luxury three-bedroom villa designed by Jan des Bouvrie, featuring a private pool, Jacuzzi, rainforest setting, and magnificent views.",
     website: "https://sabavillas.com/",
+    bookingUrl: "https://sabavillas.com/",
     filters: ["luxury", "pool"],
     amenities: ["Three Bedrooms", "Jacuzzi"],
   },
@@ -147,7 +154,7 @@ export const ACCOMMODATIONS: Accommodation[] = [
     village: "St. John's",
     description:
       "One of Saba's most historic cottages, dating to 1890, with original stained glass, antique furnishings, and peaceful gardens.",
-    website: "https://www.sabaislandpremierproperties.com/",
+    website: "https://www.sabaislandpremierproperties.com/property/hidden-garden-48e1c",
     filters: ["historic", "walk-to-village"],
     amenities: ["Antique Interiors", "Garden"],
   },
@@ -167,7 +174,7 @@ export const ACCOMMODATIONS: Accommodation[] = [
     village: "Windwardside",
     description:
       "A secluded restored Saban cottage along a footpath above Windwardside, ideal for couples seeking a private eco-friendly escape.",
-    website: "https://www.houseonthepath.com/",
+    website: "https://www.sabatourism.com/lodging/cottages/house-on-the-path/",
     filters: ["historic"],
     amenities: ["Eco-Friendly", "Secluded", "Two Bedrooms"],
   },
@@ -177,7 +184,8 @@ export const ACCOMMODATIONS: Accommodation[] = [
     village: "English Quarter",
     description:
       "An award-winning luxury villa with tropical gardens, a freeform pool, guest cottage, gourmet kitchen, and stunning Caribbean views.",
-    website: "https://www.sabaislandpremierproperties.com/",
+    website: "https://www.hummingbirdvillasaba.com/",
+    bookingUrl: "https://www.hummingbirdvillasaba.com/",
     filters: ["luxury", "pool"],
     amenities: ["Guest Cottage", "Gourmet Kitchen"],
   },
@@ -187,7 +195,7 @@ export const ACCOMMODATIONS: Accommodation[] = [
     village: "Windwardside",
     description:
       "A finely preserved traditional Saban cottage with two bedrooms, landscaped gardens, a private pool, gazebo, and spectacular Caribbean views.",
-    website: "https://www.airbnb.com/rooms/32723308/",
+    website: "https://www.sabatourism.com/lodging/cottages/iris-house/",
     filters: ["pool", "ocean-view"],
     amenities: ["Traditional", "Gazebo"],
   },
@@ -197,7 +205,7 @@ export const ACCOMMODATIONS: Accommodation[] = [
     village: "St. John's",
     description:
       "A renovated century-old Saban cottage with panoramic views toward Statia, St. Kitts, and Nevis, perfect for couples.",
-    website: "https://www.sabaislandpremierproperties.com/",
+    website: "https://www.sabaislandpremierproperties.com/property/novel-cottage-villa-rental",
     filters: ["historic", "ocean-view"],
     amenities: ["One Bedroom", "Renovated"],
   },
@@ -217,7 +225,7 @@ export const ACCOMMODATIONS: Accommodation[] = [
     village: "Windwardside",
     description:
       "A luxurious heritage cottage with antique furnishings, two bedrooms, modern amenities, and walking distance to Windwardside restaurants.",
-    website: "https://www.sabaislandpremierproperties.com/",
+    website: "https://www.sabaislandpremierproperties.com/property/poets-and-painters-cottage",
     filters: ["walk-to-village"],
     amenities: ["Heritage", "Antique Furnishings", "Two Bedrooms"],
   },
@@ -237,7 +245,7 @@ export const ACCOMMODATIONS: Accommodation[] = [
     village: "Troy Hill",
     description:
       "A spacious contemporary villa with cathedral ceilings, two ensuite bedrooms, expansive verandas, and breathtaking Caribbean views.",
-    website: "https://www.sabaislandpremierproperties.com/",
+    website: "http://www.sabaislandpremierproperties.com/villa-rental/troy-villa",
     filters: ["ocean-view"],
     amenities: ["Contemporary", "Two Bedrooms", "Ensuite"],
   },
@@ -282,7 +290,7 @@ export const PARTNERS: Partner[] = [
     category: "local",
     subcategory: "Restaurants",
     village: "Windwardside",
-    website: "",
+    website: "https://www.sabatourism.com/restaurants/saba-chinese-restaurant/",
   },
   {
     name: "Colibri Cafe",
@@ -329,7 +337,7 @@ export const PARTNERS: Partner[] = [
     category: "local",
     subcategory: "Restaurants",
     village: "The Bottom",
-    website: "",
+    website: "https://www.sabatourism.com/restaurants/maribels-restaurant/",
   },
   {
     name: "Pop's Place",
@@ -352,28 +360,30 @@ export const PARTNERS: Partner[] = [
     category: "local",
     subcategory: "Restaurants",
     village: "The Bottom",
-    website: "",
+    website: "https://www.instagram.com/sabasnack/",
+    linkType: "instagram",
   },
   {
     name: "Swinging Doors",
     category: "local",
     subcategory: "Restaurants",
     village: "Windwardside",
-    website: "",
+    website: "https://www.tripadvisor.com/Restaurant_Review-g147337-d3571790-Reviews-Swinging_Doors-Windwardside_Saba.html",
+    linkType: "tripadvisor",
   },
   {
     name: "Tank'd",
     category: "local",
     subcategory: "Restaurants",
     village: "Fort Bay",
-    website: "",
+    website: "https://www.sabatourism.com/tour-item/tankd/",
   },
   {
     name: "The Dive Bar",
     category: "local",
     subcategory: "Restaurants",
     village: "Windwardside",
-    website: "",
+    website: "https://www.sabatourism.com/tour-item/the-dive-bar/",
   },
   {
     name: "The Hideaway",
@@ -388,8 +398,7 @@ export const PARTNERS: Partner[] = [
     category: "local",
     subcategory: "Restaurants",
     village: "Windwardside",
-    website: "https://www.facebook.com/TropicsCafeSaba",
-    linkType: "facebook",
+    website: "https://www.sabatropicscafe.com/",
   },
   // Local Partners — Transportation
   {
@@ -426,13 +435,13 @@ export const PARTNERS: Partner[] = [
     name: "Dive St. Maarten",
     category: "dive",
     island: "St. Maarten",
-    website: "https://www.divestmaarten.com/",
+    website: "https://stmaartendiving.com/",
   },
   {
     name: "Scuba Shop (St. Maarten)",
     category: "dive",
     island: "St. Maarten",
-    website: "https://www.scubashopsxm.com/",
+    website: "https://thescubashopsxm.com/",
   },
   {
     name: "Serial Divers",

@@ -13,6 +13,7 @@ export type DiveSite = {
   area: string;
   description: string;
   videoId?: string; // undefined = "coming soon" state
+  techSuitable?: boolean; // true if the site supports technical diving profiles
 };
 
 export const DIVE_SITES: DiveSite[] = [
@@ -23,6 +24,7 @@ export const DIVE_SITES: DiveSite[] = [
     description:
       "One of Saba's most celebrated dives — a deep volcanic seamount rising from the ocean floor with dramatic topography, large barrel sponges, and frequent pelagic visitors including sharks and schooling jacks.",
     videoId: "GcIUiaNwoCE",
+    techSuitable: true,
   },
   {
     name: "The Needle",
@@ -37,6 +39,7 @@ export const DIVE_SITES: DiveSite[] = [
     description:
       "A deep plateau site at the edge of the open ocean, named for the eerie blue twilight that filters down at depth. Best suited for experienced divers comfortable with open-water conditions.",
     videoId: "-OBgucAKms0",
+    techSuitable: true,
   },
   {
     name: "Outer Limits",
@@ -44,6 +47,7 @@ export const DIVE_SITES: DiveSite[] = [
     description:
       "Saba's most remote dive — a deep offshore seamount for advanced and technical divers. Exceptional sponge life and frequent shark sightings reward the journey.",
     videoId: "6UOwt2FjgoE",
+    techSuitable: true,
   },
   {
     name: "Mt. Michel",
@@ -74,6 +78,7 @@ export const DIVE_SITES: DiveSite[] = [
     description:
       "Drops away from the shallow reef into dramatic wall diving. Large sponges, black coral, and occasional shark sightings reward divers who venture deeper.",
     videoId: "h29mG2ZT6cU",
+    techSuitable: true,
   },
   {
     name: "Tent Reef",
@@ -95,6 +100,7 @@ export const DIVE_SITES: DiveSite[] = [
     description:
       "A dramatic vertical wall dropping into the blue. Gorgonian fans, large sponges, and open-water views make this one of Tent Reef's most visually striking sites.",
     videoId: "TxK4Hhw-7Ts",
+    techSuitable: true,
   },
   {
     name: "The Three Sisters",
@@ -109,6 +115,7 @@ export const DIVE_SITES: DiveSite[] = [
     description:
       "A vertical wall dive with rich sponge encrustation and a wide variety of reef life. Good visibility and varied topography across a broad depth range.",
     videoId: "3t5xmIr-9HE",
+    techSuitable: true,
   },
 
   // ── Ladder Bay ─────────────────────────────────────────────────────────────
@@ -132,6 +139,7 @@ export const DIVE_SITES: DiveSite[] = [
     description:
       "Volcanic vents bubble through mustard-colored sand at depth, warming the water noticeably as you approach. A truly unique geological experience found nowhere else in the Caribbean.",
     videoId: "P_80oh1COI0",
+    techSuitable: true,
   },
   {
     name: "50/50",
@@ -190,6 +198,7 @@ export const DIVE_SITES: DiveSite[] = [
     description:
       "An offshore shoal with exceptional reef health and blue-water visibility. Rays, turtles, and reef sharks patrol the area regularly, making every dive feel remote and wild.",
     videoId: "jdJqrdG-BlA",
+    techSuitable: true,
   },
 
   // ── Windwardside ───────────────────────────────────────────────────────────
@@ -248,6 +257,7 @@ export const DIVE_SITES: DiveSite[] = [
     description:
       "A dramatic drop-off site along the Windwardside coast with impressive vertical topography, sponge life, and open-water views. A rewarding dive when conditions allow access to this side of the island.",
     videoId: "0P1ZiO6HJiY",
+    techSuitable: true,
   },
 ];
 

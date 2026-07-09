@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useCallback } from "react";
-import { X, ChevronLeft, ChevronRight } from "lucide-react";
+import { X, ChevronLeft, ChevronRight, Gauge } from "lucide-react";
 import type { DiveSite } from "@/data/dive-site-videos";
 
 type Props = {
@@ -113,7 +113,7 @@ export function DiveSiteModal({ site, allSites, onClose, onNavigate }: Props) {
               loading="lazy"
             />
           ) : (
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-white/60">
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 px-6 text-center text-white/60">
               <svg
                 className="h-12 w-12 opacity-30"
                 fill="currentColor"
@@ -122,6 +122,9 @@ export function DiveSiteModal({ site, allSites, onClose, onNavigate }: Props) {
                 <path d="M8 5v14l11-7z" />
               </svg>
               <p className="text-sm font-medium">Video coming soon</p>
+              <p className="max-w-xs text-xs text-white/40">
+                Our team is filming this site on the next calm-weather dive day. Check back for a new YouTube video.
+              </p>
             </div>
           )}
         </div>
@@ -136,6 +139,12 @@ export function DiveSiteModal({ site, allSites, onClose, onNavigate }: Props) {
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
               {site.description}
             </p>
+            {site.techSuitable && (
+              <div className="mt-4 inline-flex items-center gap-2 rounded-md border border-primary/20 bg-primary/5 px-3 py-2 text-xs text-primary">
+                <Gauge className="h-3.5 w-3.5" aria-hidden="true" />
+                <span className="font-medium">Suitable for technical diving</span>
+              </div>
+            )}
           </div>
 
           {/* Navigation */}

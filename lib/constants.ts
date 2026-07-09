@@ -44,5 +44,5 @@ export const SOCIAL_LINKS = [
     label: "TripAdvisor",
     href: "https://www.tripadvisor.com/Attraction_Review-g147337-d1206831-Reviews-Sea_Saba_Dive_Center-Windwardside_Saba.html",
   },
-  { label: "Google Reviews", href: "https://share.google/WnkPS93TFHU4rCFl9" },
+  { label: "Google Reviews", href: "https://www.google.com/maps/search/?api=1&query=Sea+Saba+Dive+Center+Fort+Bay+Saba&query_place_id=ChIJX0c19WkgDowRn2l3bKbFrRU" },
 ] as const;

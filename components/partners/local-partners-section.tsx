@@ -52,7 +52,11 @@ function RestaurantCard({ partner }: { partner: Partner }) {
       ? "Visit Facebook"
       : partner.linkType === "google"
         ? "Visit Google"
-        : "Visit Website";
+        : partner.linkType === "instagram"
+          ? "Visit Instagram"
+          : partner.linkType === "tripadvisor"
+            ? "View TripAdvisor"
+            : "Visit Website";
 
   return (
     <div className="group flex flex-col rounded-xl border border-border/50 bg-background p-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-sm">

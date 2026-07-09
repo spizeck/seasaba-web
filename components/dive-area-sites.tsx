@@ -9,9 +9,11 @@ type Props = {
   sites: readonly string[];
   /** Use dark pill styles when rendered on a dark background */
   dark?: boolean;
+  /** Whether the pills open the dive site modal. Defaults to true. */
+  interactive?: boolean;
 };
 
-export function DiveAreaSites({ sites, dark = false }: Props) {
+export function DiveAreaSites({ sites, dark = false, interactive = true }: Props) {
   const [activeSite, setActiveSite] = useState<DiveSite | null>(null);
 
   // Only sites that exist in the data file are clickable with a modal
@@ -37,6 +39,16 @@ export function DiveAreaSites({ sites, dark = false }: Props) {
       <div className="mt-2 flex flex-wrap gap-2">
         {sites.map((site) => {
           const hasData = Boolean(DIVE_SITE_MAP[site]);
+          if (!interactive) {
+            return (
+              <span
+                key={site}
+                className={`${pillBase} ${pillInactive}`}
+              >
+                {site}
+              </span>
+            );
+          }
           return (
             <button
               key={site}
@@ -50,7 +62,7 @@ export function DiveAreaSites({ sites, dark = false }: Props) {
         })}
       </div>
 
-      {activeSite && (
+      {interactive && activeSite && (
         <DiveSiteModal
           site={activeSite}
           allSites={DIVE_SITES}

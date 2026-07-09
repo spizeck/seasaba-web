@@ -4,7 +4,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { trackLinkClick } from "@/lib/analytics";
 
-const MAPS_URL = "https://www.google.com/maps/place/Sea+Saba+Dive+Center/@17.6163,-63.2317,17z";
+const MAPS_URL = "https://www.google.com/maps/search/?api=1&query=Sea+Saba+Dive+Center+Fort+Bay+Saba&query_place_id=ChIJX0c19WkgDowRn2l3bKbFrRU";
 const APPLE_MAPS_URL = "https://maps.apple.com/?q=Sea+Saba+Dive+Center&ll=17.6163,-63.2317";
 
 const PIN = { left: "35%", top: "74%", size: 22 } as const;

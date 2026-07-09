@@ -201,13 +201,12 @@ export default function Home() {
                   </p>
                   <div className="mt-5 flex flex-wrap gap-2">
                     {exp.sites.map((site) => (
-                      <Link
+                      <span
                         key={site}
-                        href={`/dive-sites#${exp.id}`}
-                        className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/60 transition-colors hover:border-white/20 hover:bg-white/10 hover:text-white"
+                        className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/60"
                       >
                         {site}
-                      </Link>
+                      </span>
                     ))}
                   </div>
                 </div>
