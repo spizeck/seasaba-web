@@ -10,6 +10,8 @@ interface FeatureImageProps {
   centerText?: boolean;
   /** When true, text is stacked above the image on mobile instead of below it. */
   mobileTextFirst?: boolean;
+  /** Optional section anchor id */
+  id?: string;
   children: React.ReactNode;
 }
 
@@ -26,10 +28,12 @@ export function FeatureImage({
   imageRight = false,
   centerText = false,
   mobileTextFirst = false,
+  id,
   children,
 }: FeatureImageProps) {
   return (
     <div
+      id={id}
       className={`not-prose grid gap-6 lg:items-stretch lg:gap-14 ${
         imageRight ? "lg:grid-cols-[1fr_2fr]" : "lg:grid-cols-[2fr_1fr]"
       }`}

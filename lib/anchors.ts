@@ -23,6 +23,10 @@ export const divingAnchors = {
 export const planYourTripAnchors = {
   gettingHere: "getting-here",
   whereToStay: "where-to-stay",
+  whenToVisit: "when-to-visit",
+  whatToBring: "what-to-bring",
+  goodToKnow: "good-to-know",
+  recommendedPartners: "recommended-partners",
   restaurants: "restaurants",
   history: "history",
   hiking: "hiking",

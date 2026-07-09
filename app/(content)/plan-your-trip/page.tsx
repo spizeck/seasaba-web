@@ -7,6 +7,7 @@ import { Plane, PlaneTakeoff, Ship, Helicopter, Check, Droplets, Eye, Sun, Therm
 import { HotelPills } from "@/components/hotel-pills";
 import { InsuranceCTAs } from "@/components/insurance-ctas";
 import { TrackedOutboundButton } from "@/components/tracked-outbound-button";
+import { PageSectionNav } from "@/components/navigation/PageSectionNav";
 import { planYourTripAnchors } from "@/lib/anchors";
 
 export const metadata = createMetadata({
@@ -100,6 +101,19 @@ export default function PlanYourTripPage() {
       <p className="text-base leading-relaxed text-muted-foreground">
         Saba is a five-square-mile volcanic island in the Caribbean Netherlands. With no cruise ships and no large resorts, Saba offers a quiet and authentic Caribbean experience that divers consistently describe as one of their favorite destinations.
       </p>
+
+      {/* On This Page */}
+      <PageSectionNav
+        className="mt-8"
+        items={[
+          { id: planYourTripAnchors.gettingHere, label: "Getting Here" },
+          { id: planYourTripAnchors.whenToVisit, label: "When to Visit" },
+          { id: planYourTripAnchors.whereToStay, label: "Where to Stay" },
+          { id: planYourTripAnchors.recommendedPartners, label: "Recommended Partners" },
+          { id: planYourTripAnchors.goodToKnow, label: "Good to Know" },
+          { id: planYourTripAnchors.whatToBring, label: "What to Bring" },
+        ]}
+      />
 
       {/* Getting to Saba */}
       <section id={planYourTripAnchors.gettingHere} className="mt-12 scroll-mt-24">
@@ -297,7 +311,7 @@ export default function PlanYourTripPage() {
       </section>
 
       {/* When to Visit */}
-      <section id="when-to-visit" className="mt-12 scroll-mt-24">
+      <section id={planYourTripAnchors.whenToVisit} className="mt-12 scroll-mt-24">
         <h2 className="text-xl font-semibold text-foreground">When to Visit</h2>
 
         {/* Season cards */}
@@ -443,7 +457,7 @@ export default function PlanYourTripPage() {
       </section>
 
       {/* Good to Know */}
-      <section id="good-to-know" className="mt-12 scroll-mt-24">
+      <section id={planYourTripAnchors.goodToKnow} className="mt-12 scroll-mt-24">
         <h2 className="text-xl font-semibold text-foreground">Good to Know</h2>
 
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -458,7 +472,7 @@ export default function PlanYourTripPage() {
       </section>
 
       {/* What to Bring */}
-      <section id="what-to-bring" className="mt-12 scroll-mt-24">
+      <section id={planYourTripAnchors.whatToBring} className="mt-12 scroll-mt-24">
         <h2 className="text-xl font-semibold text-foreground">What to Bring</h2>
 
         <div className="mt-6 grid gap-6 sm:grid-cols-2">
@@ -561,6 +575,7 @@ export default function PlanYourTripPage() {
             </div>
           </FeatureImage>
           <FeatureImage
+            id={planYourTripAnchors.recommendedPartners}
             src="/images/optimized/island-paradise-cafe-saba.webp"
             alt="Island Paradise Cafe on Saba with Caribbean views"
             objectPosition="center 30%"
