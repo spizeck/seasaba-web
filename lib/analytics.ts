@@ -111,15 +111,8 @@ function getLinkText(href: string): string {
       if (parsed.pathname.startsWith("/maps")) return "Directions";
     }
   } catch {
-    // Fallback for malformed/non-URL strings
-    if (href.includes("checkfront")) return "Checkfront";
-    if (href.includes("facebook")) return "Facebook";
-    if (href.includes("instagram")) return "Instagram";
-    if (href.includes("linkedin")) return "LinkedIn";
-    if (href.includes("twitter.com") || href.includes("x.com")) return "Twitter/X";
-    if (href.includes("youtube")) return "YouTube";
-    if (href.includes("whatsapp")) return "WhatsApp";
-    if (href.includes("google.com/maps") || href.includes("goo.gl/maps")) return "Directions";
+    // Fallback for malformed/non-URL strings.
+    // Avoid substring-based domain matching here; only parsed URL host checks are trusted.
   }
 
   return "Link";
