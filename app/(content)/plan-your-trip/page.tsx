@@ -3,10 +3,11 @@ import Link from "next/link";
 import { PageHero } from "@/components/page-hero";
 import { FeatureImage } from "@/components/feature-image";
 import { Button } from "@/components/ui/button";
-import { Plane, PlaneTakeoff, Ship, Helicopter, Check, Droplets, Eye, Sun, Thermometer, Home, HelpCircle, Fish, Calendar, AlertTriangle, Bus, Ban, DollarSign, MessageCircle, Plug, Wifi, Timer, Utensils, Compass, Clock } from "lucide-react";
+import { Plane, PlaneTakeoff, Ship, Helicopter, Anchor, Check, Droplets, Eye, Sun, Thermometer, Home, HelpCircle, Fish, Calendar, AlertTriangle, Bus, Ban, DollarSign, MessageCircle, Plug, Wifi, Timer, Utensils, Compass, Clock } from "lucide-react";
 import { HotelPills } from "@/components/hotel-pills";
 import { InsuranceCTAs } from "@/components/insurance-ctas";
 import { TrackedOutboundButton } from "@/components/tracked-outbound-button";
+import { TrackedInternalButton } from "@/components/tracked-internal-button";
 import { PageSectionNav } from "@/components/navigation/PageSectionNav";
 import { planYourTripAnchors } from "@/lib/anchors";
 
@@ -310,6 +311,118 @@ export default function PlanYourTripPage() {
             >
               Book SXM Airways ↗
             </TrackedOutboundButton>
+          </div>
+
+          {/* Private Yacht */}
+          <div className="rounded-lg border border-border/60 bg-card p-6 sm:col-span-2">
+            <div className="flex items-center gap-3">
+              <div className="rounded-md bg-primary/10 p-2">
+                <Anchor className="h-5 w-5 text-primary" />
+              </div>
+              <h3 className="text-lg font-semibold text-foreground">Arriving by Private Yacht</h3>
+            </div>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+              Whether you&apos;re cruising the Caribbean aboard your own sailboat, catamaran, or motor yacht, or arriving aboard a professionally crewed superyacht, Sea Saba offers flexible yacht diving and private yacht diving options in Saba to suit your vessel, schedule, and level of service.
+            </p>
+
+            <div className="mt-6 grid gap-6 md:grid-cols-2">
+              {/* Cruising Yachts & Sailboats */}
+              <div className="flex flex-col rounded-lg border border-border/60 bg-muted/20 p-6 transition-colors hover:border-primary/30">
+                <div className="flex items-center gap-3">
+                  <div className="rounded-md bg-primary/10 p-2">
+                    <Anchor className="h-5 w-5 text-primary" />
+                  </div>
+                  <h4 className="text-lg font-semibold text-foreground">Cruising Yachts &amp; Sailboats</h4>
+                </div>
+                <p className="mt-2 text-sm text-muted-foreground">Perfect for cruising sailors and private yacht owners.</p>
+                <ul className="mt-4 space-y-1.5 text-sm text-muted-foreground">
+                  <li className="flex items-start gap-2">
+                    <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+                    Join scheduled dive trips
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+                    Private Saba dive charters
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+                    Guided diving from your tender or support boat
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+                    Equipment rental and Nitrox
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+                    Customs, immigration, and mooring information
+                  </li>
+                </ul>
+                <div className="mt-auto pt-6">
+                  <TrackedInternalButton
+                    variant="outline"
+                    className="w-full border-primary/60 text-primary hover:border-primary hover:bg-primary hover:text-white"
+                    href="/plan-your-trip/yacht-diving"
+                    eventName="book_now_click"
+                    buttonText="Plan Your Visit"
+                  >
+                    Plan Your Visit &rarr;
+                  </TrackedInternalButton>
+                </div>
+              </div>
+
+              {/* Superyacht Services */}
+              <div className="flex flex-col rounded-lg border border-border/60 bg-muted/20 p-6 transition-colors hover:border-primary/30">
+                <div className="flex items-center gap-3">
+                  <div className="rounded-md bg-primary/10 p-2">
+                    <Ship className="h-5 w-5 text-primary" />
+                  </div>
+                  <h4 className="text-lg font-semibold text-foreground">Superyacht Services</h4>
+                </div>
+                <p className="mt-2 text-sm text-muted-foreground">Tailored diving support for professionally crewed yachts and luxury Caribbean yacht charters.</p>
+                <ul className="mt-4 space-y-1.5 text-sm text-muted-foreground">
+                  <li className="flex items-start gap-2">
+                    <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+                    Private dive charters on your schedule
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+                    Rendezvous with your vessel (conditions permitting)
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+                    Equipment rental and Nitrox
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+                    Private dive guides
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+                    Concierge planning for guests and crew
+                  </li>
+                </ul>
+                <div className="mt-auto pt-6">
+                  <TrackedInternalButton
+                    variant="outline"
+                    className="w-full border-primary/60 text-primary hover:border-primary hover:bg-primary hover:text-white"
+                    href="/contact?interest=private-charter"
+                    eventName="book_now_click"
+                    buttonText="Contact Sea Saba"
+                  >
+                    Contact Sea Saba &rarr;
+                  </TrackedInternalButton>
+                </div>
+              </div>
+            </div>
+
+            <TrackedInternalButton
+              className="mt-6 w-full"
+              href="/plan-your-trip/yacht-diving"
+              eventName="book_now_click"
+              buttonText="Explore Yacht Diving Services"
+            >
+              Explore Yacht Diving Services &rarr;
+            </TrackedInternalButton>
           </div>
         </div>
       </section>

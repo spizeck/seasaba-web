@@ -152,6 +152,17 @@ export default function TermsPage() {
         </section>
 
         <section>
+          <h2 className="text-xl font-semibold text-foreground">Rendezvous Diving &amp; Support Boat Operations</h2>
+          <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-relaxed text-muted-foreground">
+            <li>Sea Saba may provide professional dive guides for rendezvous diving or diving from a visiting yacht&apos;s tender or support boat, subject to operational suitability and safety review.</li>
+            <li>The yacht, tender, or support boat must meet all requirements communicated by Sea Saba, including but not limited to size limits, boarding ladders, VHF radio, Alpha flag, a competent operator remaining aboard, and emergency oxygen.</li>
+            <li>The Sea Saba captain has sole and final discretion to determine whether a vessel, sea conditions, weather, equipment, or other operational factors are suitable for rendezvous diving or support boat operations.</li>
+            <li>Sea Saba reserves the right to decline, modify, postpone, or cancel any rendezvous or support boat activity whenever necessary for the safety of guests, crew, or the vessel, without liability for resulting costs or inconvenience.</li>
+            <li>All guests participating in rendezvous diving or diving from a support boat remain subject to these Terms &amp; Conditions, including liability waivers, fitness-to-dive requirements, and captain&apos;s authority.</li>
+          </ul>
+        </section>
+
+        <section>
           <h2 className="text-xl font-semibold text-foreground">Refunds</h2>
           <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-relaxed text-muted-foreground">
             <li>Approved refunds will be issued to the original payment method whenever possible.</li>

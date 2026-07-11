@@ -35,6 +35,14 @@ export const planYourTripAnchors = {
   faq: "faq",
 } as const;
 
+export const yachtDivingAnchors = {
+  divingRegulations: "diving-regulations",
+  waysToDive: "ways-to-dive",
+  arrivingInSaba: "arriving-in-saba",
+  moorings: "moorings",
+  faq: "faq",
+} as const;
+
 export const coursesAnchors = {
   nitrox: "nitrox",
 } as const;

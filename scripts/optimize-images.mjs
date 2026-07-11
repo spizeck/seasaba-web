@@ -59,6 +59,15 @@ const IMAGE_MAP = [
     role: "hero",
   },
 
+  // Private yacht page hero
+  {
+    src: "sailboat.jpg",
+    out: "sailboat-saba.webp",
+    width: 1920,
+    quality: 82,
+    role: "hero",
+  },
+
   // Homepage hero — 1920px wide
   {
     src: "heroimage.jpg",
@@ -280,6 +289,7 @@ const IMAGE_MAP = [
   { src: "IMG20260425131559.jpg",   out: "chad-and-katy-nuttall.webp", width: 1400, quality: 82, role: "section" },
   { src: "FortBay2Boats.jpg",       out: "fort-bay-two-boats.webp",    width: 1400, quality: 82, role: "section" },
   { src: "Saba-186.jpg",            out: "saba-volcanic-scenery.webp", width: 1400, quality: 82, role: "section" },
+  { src: "turtle-divers.jpg",       out: "turtle-divers-saba.webp",    width: 1400, quality: 82, role: "section" },
 
   // Course page images — section size
   { src: "diver-in-trim.jpg",       out: "diver-in-trim.webp",         width: 1400, quality: 82, role: "section" },
