@@ -37,8 +37,8 @@ const nextConfig: NextConfig = {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' seasaba.checkfront.com *.checkfront.com https://www.googletagmanager.com https://www.google-analytics.com",
-              "script-src-elem 'self' 'unsafe-inline' 'unsafe-eval' seasaba.checkfront.com *.checkfront.com https://www.googletagmanager.com https://www.google-analytics.com",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' seasaba.checkfront.com *.checkfront.com https://www.googletagmanager.com https://www.google-analytics.com https://vercel.live",
+              "script-src-elem 'self' 'unsafe-inline' 'unsafe-eval' seasaba.checkfront.com *.checkfront.com https://www.googletagmanager.com https://www.google-analytics.com https://vercel.live",
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: https:",
               "font-src 'self'",
