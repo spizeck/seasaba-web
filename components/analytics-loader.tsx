@@ -1,15 +1,15 @@
 import Script from "next/script";
 
-const GA_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
-const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID;
-
 export function AnalyticsLoader(): React.ReactNode {
-  if (GTM_ID) {
+  const gtmId = process.env.NEXT_PUBLIC_GTM_ID;
+  const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+
+  if (gtmId) {
     return (
       <>
         <Script
           id="gtm-script"
-          src={`https://www.googletagmanager.com/gtm.js?id=${GTM_ID}`}
+          src={`https://www.googletagmanager.com/gtm.js?id=${gtmId}`}
           strategy="afterInteractive"
         />
         <Script id="gtm-init" strategy="afterInteractive">
@@ -20,7 +20,7 @@ export function AnalyticsLoader(): React.ReactNode {
         </Script>
         <noscript>
           <iframe
-            src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
+            src={`https://www.googletagmanager.com/ns.html?id=${gtmId}`}
             height="0"
             width="0"
             style={{ display: "none", visibility: "hidden" }}
@@ -31,11 +31,11 @@ export function AnalyticsLoader(): React.ReactNode {
     );
   }
 
-  if (GA_ID) {
+  if (gaId) {
     return (
       <>
         <Script
-          src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+          src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
           strategy="afterInteractive"
         />
         <Script id="ga-init" strategy="afterInteractive">
@@ -44,7 +44,7 @@ export function AnalyticsLoader(): React.ReactNode {
             function gtag(){dataLayer.push(arguments);}
             window.gtag = gtag;
             gtag('js', new Date());
-            gtag('config', '${GA_ID}');
+            gtag('config', '${gaId}');
           `}
         </Script>
       </>
