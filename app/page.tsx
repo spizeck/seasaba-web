@@ -344,6 +344,7 @@ export default function Home() {
               href="/book"
               eventName="book_now_click"
               buttonText="Book Diving"
+              buttonLocation="homepage_final_cta"
             >
               Book Diving
             </TrackedInternalButton>

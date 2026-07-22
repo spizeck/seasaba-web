@@ -3,7 +3,7 @@
 import { useState, useCallback, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Mail, MessageCircle } from "lucide-react";
-import { trackEvent } from "@/lib/analytics";
+import { trackEvent, trackLinkClick } from "@/lib/analytics";
 
 interface InquiryType {
   value: string;
@@ -123,9 +123,11 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
 
     const subject = selectedInquiry ? selectedInquiry.subject : "Contact Inquiry";
     const body = buildEmailBody();
-    trackEvent("contact_form_submit", { method: "email", inquiry_type: selectedInquiry?.label || "General" });
-    trackEvent("email_click", { link_destination: `mailto:${EMAIL_TO}?subject=${subject}`, button_text: "Email Sea Saba" });
-    window.location.href = `mailto:${EMAIL_TO}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    const emailHref = `mailto:${EMAIL_TO}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    const eventParams = { method: "email", inquiry_type: selectedInquiry?.label || "General", button_location: "contact_form" };
+    trackEvent("contact_form_submit", eventParams);
+    trackLinkClick("email_click", emailHref, "Email Sea Saba", eventParams);
+    window.location.href = emailHref;
   }, [validate, selectedInquiry, buildEmailBody]);
 
   const handleWhatsApp = useCallback(() => {
@@ -136,8 +138,9 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
 
     const text = buildWhatsAppMessage();
     const whatsappHref = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
-    trackEvent("contact_form_submit", { method: "whatsapp", inquiry_type: selectedInquiry?.label || "General" });
-    trackEvent("whatsapp_click", { link_destination: whatsappHref, button_text: "WhatsApp Sea Saba" });
+    const eventParams = { method: "whatsapp", inquiry_type: selectedInquiry?.label || "General", button_location: "contact_form" };
+    trackEvent("contact_form_submit", eventParams);
+    trackLinkClick("whatsapp_click", whatsappHref, "WhatsApp Sea Saba", eventParams);
     window.open(whatsappHref, "_blank", "noopener,noreferrer");
   }, [validate, selectedInquiry, buildWhatsAppMessage]);
 

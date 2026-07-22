@@ -222,15 +222,23 @@ export default function DivingPage() {
                 ))}
               </div>
               <div className="mt-auto pt-6">
-                <TrackedInternalButton
-                  variant={option.featured ? "default" : "outline"}
-                  className="w-full"
-                  href={option.href}
-                  eventName="book_now_click"
-                  buttonText={option.cta}
-                >
-                  {option.cta}
-                </TrackedInternalButton>
+                {"itemId" in option ? (
+                  <TrackedInternalButton
+                    variant={option.featured ? "default" : "outline"}
+                    className="w-full"
+                    href={option.href}
+                    eventName="book_now_click"
+                    buttonText={option.cta}
+                    buttonLocation="diving_option_card"
+                    bookingItem={option.itemId}
+                  >
+                    {option.cta}
+                  </TrackedInternalButton>
+                ) : (
+                  <Button asChild variant="outline" className="w-full">
+                    <Link href={option.href}>{option.cta}</Link>
+                  </Button>
+                )}
               </div>
             </div>
           ))}
@@ -310,6 +318,7 @@ export default function DivingPage() {
             href="/book"
             eventName="book_now_click"
             buttonText="View Packages & Pricing"
+            buttonLocation="diving_packages"
           >
             View Packages &amp; Pricing
           </TrackedInternalButton>
@@ -673,6 +682,7 @@ export default function DivingPage() {
             href="/book"
             eventName="book_now_click"
             buttonText="Book Diving"
+            buttonLocation="diving_footer_cta"
           >
             Book Diving
           </TrackedInternalButton>

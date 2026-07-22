@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { trackEvent } from "@/lib/analytics";
+import { trackLinkClick } from "@/lib/analytics";
 import type { Partner } from "@/data/partners";
 
 interface TravelPartnersSectionProps {
@@ -33,11 +33,12 @@ export function TravelPartnersSection({ partners }: TravelPartnersSectionProps) 
                 variant="outline"
                 className="mt-4 w-full sm:w-auto"
                 onClick={() =>
-                  trackEvent(isInternal ? "book_now_click" : "social_click", {
-                    button_text: isInternal ? "Contact Us" : "Visit Website",
-                    link_destination: partner.website,
-                    partner_name: partner.name,
-                  })
+                  trackLinkClick(
+                    isInternal ? "contact_click" : "social_click",
+                    partner.website,
+                    isInternal ? "Contact Us" : "Visit Website",
+                    { button_location: "travel_partner_card", partner_name: partner.name }
+                  )
                 }
               >
                 <Link

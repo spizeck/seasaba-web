@@ -8,32 +8,32 @@
 
 ## Implemented Tools
 
-- **Vercel Analytics** — `@vercel/analytics/next` in `app/layout.tsx` (existing).
-- **Google Analytics 4** — loaded via `AnalyticsLoader` when `NEXT_PUBLIC_GA_MEASUREMENT_ID` is set.
-- **Google Tag Manager** — loaded via `AnalyticsLoader` when `NEXT_PUBLIC_GTM_ID` is set; includes `<noscript>` iframe fallback. If GTM is configured, GA4 is not loaded separately to avoid double counting (configure GA4 inside GTM).
-- **Unified event utility** — `lib/analytics.ts` dispatches `book_now_click`, `checkfront_click`, `contact_form_submit`, `email_click`, `phone_click`, `whatsapp_click`, `directions_click`, `ferry_link_click`, `social_click`, and `pdf_download` to Vercel, GA4, and the GTM dataLayer.
+- **Vercel Analytics** — `@vercel/analytics/next` in `app/layout.tsx`, operating independently.
+- **Google Tag Manager** — loaded via `AnalyticsLoader` only when `NEXT_PUBLIC_GTM_ID` is set; includes the `<noscript>` iframe fallback.
+- **Google Analytics 4** — configured and loaded exclusively inside GTM. The application does not load GA4 or call `window.gtag()` directly.
+- **Unified event utility** — `lib/analytics.ts` pushes each business event once to the GTM data layer and separately sends it to Vercel Analytics.
 - **Reusable tracking components** — `TrackedInternalButton`, `TrackedOutboundButton`, `TrackedOutboundLink`, and `TrackedContactLink` simplify future instrumentation.
 
 ## Tracked Events
 
 | Event | Where it's fired | Parameters |
 |-------|------------------|------------|
-| `book_now_click` | Header, BookingCTA, homepage Hero, homepage final CTA, diving page CTAs, courses page CTAs, dive-sites CTA, contact "Plan Your Trip" button | `button_text`, `link_destination`, `page_path`, `page_title`, `referrer` |
-| `checkfront_click` | BookingWidget fallback links, sample MDX (fallback) | `link_destination`, `button_text`, `page_path`, `page_title`, `referrer` |
-| `contact_form_submit` | ContactForm email/WhatsApp submit handlers | `method`, `inquiry_type`, `page_path`, `page_title`, `referrer` |
-| `email_click` | Footer, contact page, privacy page | `link_destination`, `button_text`, `page_path`, `page_title`, `referrer` |
-| `phone_click` | Footer, contact page | `link_destination`, `button_text`, `page_path`, `page_title`, `referrer` |
-| `whatsapp_click` | Footer, contact page | `link_destination`, `button_text`, `page_path`, `page_title`, `referrer` |
-| `directions_click` | FindSeaSaba map card, LocationPin | `link_destination`, `button_text`, `page_path`, `page_title`, `referrer` |
-| `ferry_link_click` | Plan-your-trip ferry links, local partners (Makana Ferry) | `link_destination`, `button_text`, `page_path`, `page_title`, `referrer` |
-| `social_click` | Footer social links, partner website links, Google Reviews link | `link_destination`, `button_text`, `partner_name` (where applicable), `page_path`, `page_title`, `referrer` |
-| `pdf_download` | Dive-log PDF export | `page_path`, `page_title`, `referrer` |
+| `book_now_click` | Actual Sea Saba booking CTAs | Page parameters, link parameters, `button_name`, `button_location`, `booking_item`, and legacy aliases |
+| `checkfront_click` | BookingWidget fallback/direct links | Page parameters, link parameters, `button_name`, `button_location`, `booking_item`, and legacy aliases |
+| `contact_click` | Internal course and partner contact CTAs | Page parameters, link parameters, `button_location`, and legacy aliases |
+| `contact_form_submit` | ContactForm email/WhatsApp handlers | Page parameters, `method`, `inquiry_type`, `button_location` |
+| `email_click` | Footer, contact form/page, privacy page | Page parameters, link parameters, and legacy aliases |
+| `phone_click` | Footer and contact page | Page parameters, link parameters, and legacy aliases |
+| `whatsapp_click` | Footer and contact form/page | Page parameters, sanitized link parameters, and legacy aliases |
+| `directions_click` | FindSeaSaba map card/tooltip and LocationPin | Page parameters, link parameters, and legacy aliases |
+| `ferry_link_click` | Plan-your-trip and local partner ferry links | Page parameters, link parameters, and legacy aliases |
+| `social_click` | Social, partner, accommodation, and outbound resource links | Page parameters, link parameters, `partner_name` where applicable, and legacy aliases |
+| `pdf_download` | Dive-log PDF export | Page parameters, `dive_count`, `unit_system` |
 
 ## Required Environment Variables
 
 ```env
-NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX  # optional; loads GA4
-NEXT_PUBLIC_GTM_ID=GTM-XXXXXXX                # optional; loads GTM (preferred for Google Ads)
+NEXT_PUBLIC_GTM_ID=GTM-XXXXXXX
 NEXT_PUBLIC_SITE_URL=https://www.seasaba.com
 ```
 
@@ -81,13 +81,8 @@ There are no admin/private pages in the current site to exclude.
 
 ## Google Ads Follow-up Items
 
-1. **Create a GTM container** and add `NEXT_PUBLIC_GTM_ID` to Vercel.
-2. **Configure GA4 inside GTM** (rather than loading GA4 separately) so conversion tags can be layered on top of the same dataLayer events.
-3. **Map the existing events to Google Ads conversions** in GTM:
-   - `book_now_click` → "Book Diving" lead click conversion.
-   - `checkfront_click` → "Booking Initiated" conversion (closest proxy for checkout start).
-   - `contact_form_submit` → "Contact Lead" conversion.
-   - `phone_click`, `whatsapp_click`, `email_click` → "Contact Lead" conversion.
-4. **Add Google Ads conversion tag** in GTM after the Ads account is created and the conversion IDs are known.
-5. **Enable enhanced conversion** (if collecting email/phone on the site) for better attribution.
-6. **Verify events in GTM Preview / Tag Assistant** before launching paid campaigns.
+1. **Map the existing events to GA4 inside GTM:** preserve each custom event and map `checkfront_click` to an additional `begin_checkout` event and `contact_form_submit` to an additional `generate_lead` event.
+2. **Mark primary GA4 Key Events:** use `begin_checkout` and `generate_lead`; do not also import their source custom events as primary conversions.
+3. **Mark secondary GA4 Key Events:** `book_now_click`, `phone_click`, `whatsapp_click`, and `email_click`.
+4. **Configure Checkfront's native Google Ads integration** before launching ads; completed purchase tracking remains a separate project.
+5. **Verify event counts and parameters** in GTM Preview / Tag Assistant and GA4 DebugView before launching paid campaigns.

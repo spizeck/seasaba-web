@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { trackEvent, trackLinkClick } from "@/lib/analytics";
+import { trackBookingClick, trackLinkClick } from "@/lib/analytics";
 
 // A/B test toggle: "A" = Sea Saba red CTA, "B" = white CTA with red text
 const HERO_CTA_VARIANT: "A" | "B" = "A";
@@ -76,9 +76,7 @@ export function Hero() {
           <Link
             href="/book"
             style={{ ...btnBase, ...primaryCTAStyle }}
-            onClick={() =>
-              trackEvent("book_now_click", { button_text: "Book Diving", link_destination: "/book" })
-            }
+            onClick={() => trackBookingClick("/book", "Book Diving", "homepage_hero")}
           >
             Book Diving
           </Link>

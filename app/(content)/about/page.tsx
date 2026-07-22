@@ -238,6 +238,7 @@ export default function AboutPage() {
             href="/book"
             eventName="book_now_click"
             buttonText="Book Diving"
+            buttonLocation="about_footer_cta"
           >
             Book Diving
           </TrackedInternalButton>

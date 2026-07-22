@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
-import { trackEvent } from "@/lib/analytics";
+import { trackLinkClick } from "@/lib/analytics";
 
 const CF_SCRIPT_SRC = "//seasaba.checkfront.com/lib/interface--0.js";
 const CF_SCRIPT_ID = "checkfront-interface-script";
@@ -33,8 +33,12 @@ const POLL_INTERVAL_MS = 100;
 const POLL_TIMEOUT_MS = 12000;
 const DIRECT_BOOKING_URL = "https://seasaba.checkfront.com/reserve/";
 
-function trackCheckfrontClick(buttonText: string) {
-  trackEvent("checkfront_click", { button_text: buttonText, link_destination: DIRECT_BOOKING_URL });
+function trackCheckfrontClick(buttonText: string, buttonLocation: string) {
+  trackLinkClick("checkfront_click", DIRECT_BOOKING_URL, buttonText, {
+    button_name: buttonText,
+    button_location: buttonLocation,
+    booking_item: getPreselectedItemId() || "general",
+  });
 }
 
 function getPreselectedItemId(): string | null {
@@ -157,7 +161,7 @@ export function BookingWidget() {
               href={DIRECT_BOOKING_URL}
               target="_blank"
               rel="noopener noreferrer"
-              onClick={() => trackCheckfrontClick("Continue to Secure Booking System")}
+              onClick={() => trackCheckfrontClick("Continue to Secure Booking System", "booking_widget_error")}
               className="inline-flex items-center rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
             >
               Continue to Secure Booking System
@@ -204,7 +208,7 @@ export function BookingWidget() {
             href={DIRECT_BOOKING_URL}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={() => trackCheckfrontClick("Continue to Secure Booking System")}
+            onClick={() => trackCheckfrontClick("Continue to Secure Booking System", "booking_widget_noscript")}
             className="underline underline-offset-2 hover:text-foreground"
           >
             Continue to Secure Booking System
@@ -227,7 +231,7 @@ export function BookingWidget() {
           href={DIRECT_BOOKING_URL}
           target="_blank"
           rel="noopener noreferrer"
-          onClick={() => trackCheckfrontClick("Book directly")}
+          onClick={() => trackCheckfrontClick("Book directly", "booking_widget_footer")}
           className="underline underline-offset-2 hover:text-foreground"
         >
           book directly

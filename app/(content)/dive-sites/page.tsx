@@ -146,6 +146,7 @@ export default function DiveSitesPage() {
             href="/book"
             eventName="book_now_click"
             buttonText="Book Your Dive"
+            buttonLocation="dive_sites_footer_cta"
           >
             Book Your Dive
           </TrackedInternalButton>

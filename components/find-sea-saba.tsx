@@ -46,6 +46,7 @@ export function FindSeaSaba() {
               href={MAPS_URL}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => trackLinkClick("directions_click", MAPS_URL, "Get Directions")}
               aria-label="Get directions to Sea Saba Dive Center, opens Google Maps in a new tab"
               className="flex min-w-[10rem] flex-col items-start rounded-xl bg-white px-4 py-3 shadow-xl no-underline"
             >

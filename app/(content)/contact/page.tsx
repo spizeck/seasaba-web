@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { createMetadata } from "@/lib/metadata";
 import { ContactForm } from "@/components/contact-form";
 import { FindSeaSaba } from "@/components/find-sea-saba";
-import { TrackedInternalButton } from "@/components/tracked-internal-button";
+import { Button } from "@/components/ui/button";
 import { TrackedContactLink } from "@/components/tracked-contact-link";
 import { CONTACT } from "@/lib/constants";
 import { MapPin, Phone, MessageCircle, Mail, Luggage, ChevronRight } from "lucide-react";
@@ -150,15 +151,9 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
             </div>
           </div>
           <div className="shrink-0">
-            <TrackedInternalButton
-              variant="destructive"
-              className="font-semibold no-underline"
-              href="/plan-your-trip"
-              eventName="book_now_click"
-              buttonText="Plan Your Trip"
-            >
-              Plan Your Trip →
-            </TrackedInternalButton>
+            <Button asChild variant="destructive" className="font-semibold no-underline">
+              <Link href="/plan-your-trip">Plan Your Trip →</Link>
+            </Button>
           </div>
         </div>
       </div>

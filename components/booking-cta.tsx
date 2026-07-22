@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { trackEvent } from "@/lib/analytics";
+import { trackBookingClick } from "@/lib/analytics";
 
 interface BookingCTAProps {
   heading?: string;
   description?: string;
   buttonText?: string;
   className?: string;
+  buttonLocation?: string;
 }
 
 export function BookingCTA({
@@ -16,6 +17,7 @@ export function BookingCTA({
   description = "Book your Saba diving experience with Sea Saba.",
   buttonText = "Book Diving",
   className = "",
+  buttonLocation = "booking_cta",
 }: BookingCTAProps) {
   return (
     <div
@@ -28,9 +30,7 @@ export function BookingCTA({
           asChild
           size="lg"
           className="text-base font-semibold"
-          onClick={() =>
-            trackEvent("book_now_click", { button_text: buttonText, link_destination: "/book" })
-          }
+          onClick={() => trackBookingClick("/book", buttonText, buttonLocation)}
         >
           <Link href="/book">{buttonText}</Link>
         </Button>

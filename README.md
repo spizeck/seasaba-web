@@ -250,30 +250,27 @@ match /guides/{docId} { allow read: if true; }
 
 ## Analytics & Conversion Tracking
 
-The site loads analytics in `app/layout.tsx` via the `AnalyticsLoader` component.
+The site loads Google Tag Manager in `app/layout.tsx` via the `AnalyticsLoader` component.
 
-- **Vercel Analytics:** enabled automatically via `@vercel/analytics/next`.
-- **Google Analytics 4:** loaded when `NEXT_PUBLIC_GA_MEASUREMENT_ID` is set.
-- **Google Tag Manager:** loaded when `NEXT_PUBLIC_GTM_ID` is set (preferred for future Google Ads / Meta Pixel / conversion tags). If GTM is set, GA4 is not loaded separately to avoid double counting; configure GA4 inside GTM instead.
+- **Vercel Analytics:** enabled independently through `@vercel/analytics/next`.
+- **Google Tag Manager:** loaded only when `NEXT_PUBLIC_GTM_ID` is set.
+- **Google Analytics 4 and marketing tags:** configured and loaded inside GTM. The application does not load GA4 or call `window.gtag()` directly.
 
-Tracked events are sent through the shared `trackEvent` / `trackLinkClick` helpers in `lib/analytics.ts`. Events are dispatched to:
-
-- Vercel Analytics (`va.track`)
-- GA4 (`gtag('event', ...)`)
-- GTM dataLayer (`dataLayer.push`)
+Tracked events are sent through the shared `trackEvent`, `trackLinkClick`, and `trackBookingClick` helpers in `lib/analytics.ts`. Each business event is pushed once to the GTM data layer and is also sent independently to Vercel Analytics.
 
 Tracked events include:
 
-- `book_now_click` — primary "Book" CTAs across the site
-- `checkfront_click` — Checkfront fallback / direct booking links
-- `contact_form_submit` — contact form submission (email or WhatsApp)
+- `book_now_click` — Sea Saba booking CTAs
+- `checkfront_click` — Checkfront fallback and direct booking links
+- `contact_click` — internal contact CTAs
+- `contact_form_submit` — contact form handoff to email or WhatsApp
 - `email_click`, `phone_click`, `whatsapp_click` — contact link clicks
-- `directions_click` — Google / Apple Maps directions links
+- `directions_click` — Google and Apple Maps directions links
 - `ferry_link_click` — Makana Ferry and other ferry partner links
 - `social_click` — social media, partner, and outbound resource links
 - `pdf_download` — dive log PDF export
 
-Events carry parameters: `page_path`, `page_title`, `link_destination`, `button_text`, and `referrer` where applicable.
+All events include `page_location`, `page_path`, `page_title`, and `page_referrer`. Link events also include `link_url`, `link_text`, `link_domain`, and `outbound`. Booking events include `button_name`, `button_location`, and `booking_item`. Legacy parameters such as `link_destination`, `button_text`, and `referrer` remain available for historical compatibility. Sensitive URL query strings are removed before link data is sent.
 
 ---
 

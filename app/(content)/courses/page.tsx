@@ -272,8 +272,9 @@ export default function CoursesPage() {
                   variant="outline"
                   size="sm"
                   href={course.path}
-                  eventName="book_now_click"
+                  eventName="contact_click"
                   buttonText={course.cta}
+                  buttonLocation="course_card"
                 >
                   {course.cta}
                 </TrackedInternalButton>
@@ -345,8 +346,9 @@ export default function CoursesPage() {
           <TrackedInternalButton
             variant="outline"
             href="/contact"
-            eventName="book_now_click"
+            eventName="contact_click"
             buttonText="Contact Sea Saba"
+            buttonLocation="course_availability"
           >
             Contact Sea Saba
           </TrackedInternalButton>
@@ -357,6 +359,7 @@ export default function CoursesPage() {
         heading="Start your training"
         description="Reserve your course or request more information about SDI and TDI training in Saba."
         className="mt-12"
+        buttonLocation="courses_footer_cta"
       />
     </>
   );

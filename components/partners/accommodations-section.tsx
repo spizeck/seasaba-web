@@ -4,7 +4,6 @@ import { useState, useMemo, useEffect, useRef } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { ExternalLink, MapPin, Search, X } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { Pill } from "@/components/ui/pill";
 import { trackLinkClick } from "@/lib/analytics";
 import type { Accommodation, AccommodationType } from "@/data/partners";
@@ -338,7 +337,7 @@ function AccommodationCard({ accommodation }: { accommodation: Accommodation }) 
               href={accommodation.bookingUrl}
               target="_blank"
               rel="noopener noreferrer"
-              onClick={() => accommodation.bookingUrl && trackLinkClick("book_now_click", accommodation.bookingUrl, `Book ${accommodation.name}`)}
+              onClick={() => accommodation.bookingUrl && trackLinkClick("social_click", accommodation.bookingUrl, `Book ${accommodation.name}`, { content_type: "accommodation_booking", partner_name: accommodation.name })}
               aria-label={`Book ${accommodation.name} directly, opens in a new tab`}
               className="inline-flex w-fit items-center gap-1.5 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
             >
