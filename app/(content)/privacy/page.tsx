@@ -1,5 +1,6 @@
 import { createMetadata } from "@/lib/metadata";
 import { TrackedContactLink } from "@/components/tracked-contact-link";
+import Link from "next/link";
 
 export const metadata = createMetadata({
   title: "Privacy Policy",
@@ -93,6 +94,14 @@ export default function PrivacyPage() {
           </ul>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
             This information is used only for analytics and website improvements.
+          </p>
+          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+            For a full list of cookies used on this site, the categories they belong to, and how
+            to change your consent preferences, see our{" "}
+            <Link href="/cookie-policy" className="underline hover:text-foreground">
+              Cookie Policy
+            </Link>
+            .
           </p>
         </section>
 

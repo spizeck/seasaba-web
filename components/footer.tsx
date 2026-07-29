@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { CONTACT, SOCIAL_LINKS } from "@/lib/constants";
 import { trackLinkClick } from "@/lib/analytics";
+import { CookieSettingsButton } from "@/components/cookie-settings-button";
 
 const PLAN_LINKS = [
   { label: "Where to Stay",  href: "/plan-your-trip#where-to-stay" },
@@ -38,6 +39,7 @@ const RESOURCE_LINKS: { label: string; href: string; external?: boolean; ariaLab
   { label: "FAQ",                href: "/plan-your-trip#faq" },
   { label: "Terms & Conditions", href: "/terms" },
   { label: "Privacy Policy",     href: "/privacy" },
+  { label: "Cookie Policy",      href: "/cookie-policy" },
 ];
 
 const linkCls = "text-sm text-muted-foreground transition-colors hover:text-foreground";
@@ -141,7 +143,8 @@ export function Footer() {
             <p className="text-xs text-muted-foreground/60 text-center sm:text-left">
               &copy; 1985&ndash;2026 Sea Saba, NV &bull; The Bottom, Saba, Caribbean Netherlands
             </p>
-            <div className="flex flex-wrap justify-center gap-5 sm:justify-end">
+            <div className="flex flex-wrap items-center justify-center gap-5 sm:justify-end">
+              <CookieSettingsButton className="text-xs text-muted-foreground/60 transition-colors hover:text-muted-foreground" />
               {SOCIAL_LINKS.map((link) => (
                 <a
                   key={link.label}
