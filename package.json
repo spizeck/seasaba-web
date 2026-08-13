@@ -21,7 +21,7 @@
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.8",
     "lucide-react": "^0.563.0",
-    "next": "^16.2.12",
+    "next": "^16.3.1",
     "radix-ui": "^1.4.3",
     "react": "19.2.3",
     "react-dom": "19.2.3",
@@ -40,7 +40,7 @@
     "typescript": "^5"
   },
   "overrides": {
-    "postcss": "^8.5.10"
+    "postcss": "^8.5.26"
   },
   "allowScripts": {
     "msw@2.12.9": true,
