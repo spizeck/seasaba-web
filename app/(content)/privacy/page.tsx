@@ -21,7 +21,7 @@ export default function PrivacyPage() {
       </p>
 
       <p className="mt-2 text-sm text-muted-foreground">
-        Last updated: June 2026
+        Last updated: August 2026
       </p>
 
       <div className="mt-10 space-y-10">
@@ -33,12 +33,14 @@ export default function PrivacyPage() {
           <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-relaxed text-muted-foreground">
             <li>Name</li>
             <li>Email address</li>
-            <li>Phone number</li>
-            <li>WhatsApp number</li>
+            <li>Phone and WhatsApp number</li>
             <li>Travel dates and booking details</li>
             <li>Certification level and dive experience</li>
-            <li>Messages and inquiries submitted through forms</li>
-            <li>Information required to process reservations</li>
+            <li>Information submitted through reservation forms</li>
+            <li>Information submitted through liability waivers or medical questionnaires, when applicable</li>
+            <li>Messages and inquiries</li>
+            <li>Payment and transaction information necessary to process reservations</li>
+            <li>Website and device information collected through cookies, analytics, and similar technologies</li>
           </ul>
         </section>
 
@@ -49,52 +51,69 @@ export default function PrivacyPage() {
           </p>
           <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-relaxed text-muted-foreground">
             <li>Respond to inquiries</li>
-            <li>Process bookings and reservations</li>
-            <li>Communicate regarding dive trips, courses, and charters</li>
-            <li>Provide customer support</li>
-            <li>Improve our website and services</li>
-            <li>Meet legal and safety requirements</li>
+            <li>Create and manage reservations</li>
+            <li>Process payments</li>
+            <li>Communicate about trips, courses, charters, schedule changes, and reservations</li>
+            <li>Provide customer service</li>
+            <li>Meet safety, certification, waiver, and operational requirements</li>
+            <li>Meet legal and accounting obligations</li>
+            <li>Improve our website</li>
+            <li>Perform analytics</li>
+            <li>Measure and attribute advertising, subject to cookie consent where applicable</li>
           </ul>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-            We do not sell your personal information.
+            Sea Saba does not sell your personal information.
           </p>
         </section>
 
         <section>
           <h2 className="text-xl font-semibold text-foreground">Booking Systems and Third Parties</h2>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-            Sea Saba uses trusted third-party services including:
+            Sea Saba uses third-party service providers to help operate the business. Depending on
+            how you interact with us, these may include:
           </p>
           <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-relaxed text-muted-foreground">
-            <li>Checkfront (reservations)</li>
-            <li>Respond.io (WhatsApp communication)</li>
+            <li>Rezdy (reservations and booking management)</li>
+            <li>Payment processors used in connection with reservations</li>
+            <li>Respond.io (customer and WhatsApp communication)</li>
             <li>Email providers</li>
-            <li>Google Analytics (website performance and traffic statistics)</li>
-            <li>Social media platforms such as Facebook and Instagram</li>
+            <li>Analytics providers</li>
+            <li>Advertising and measurement platforms</li>
+            <li>Cookie and consent-management providers</li>
+            <li>Social media platforms</li>
           </ul>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-            These services may collect information according to their own privacy policies.
+            Information necessary to complete and manage a booking may be processed by Rezdy and
+            applicable payment providers under their own privacy policies and legal obligations.
+            These and other third-party services may collect information according to their own
+            privacy policies.
           </p>
         </section>
 
         <section>
           <h2 className="text-xl font-semibold text-foreground">Cookies and Analytics</h2>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-            Our website may use cookies and analytics tools to understand website traffic and improve the visitor experience.
+            Depending on the consent choices you make, our website may use cookies and similar
+            technologies to:
           </p>
+          <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-relaxed text-muted-foreground">
+            <li>Operate the website</li>
+            <li>Measure traffic and usage</li>
+            <li>Improve the website</li>
+            <li>Measure advertising effectiveness</li>
+            <li>Attribute visits, inquiries, and bookings to advertising campaigns</li>
+          </ul>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-            These tools may collect:
+            Depending on the technology and your consent choices, information collected may include:
           </p>
           <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-relaxed text-muted-foreground">
             <li>Pages visited</li>
-            <li>Device information</li>
-            <li>Browser type</li>
+            <li>Device and browser information</li>
             <li>Approximate location</li>
             <li>Referring websites</li>
+            <li>Website interactions</li>
+            <li>Advertising and campaign attribution information</li>
           </ul>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-            This information is used only for analytics and website improvements.
-          </p>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
             For a full list of cookies used on this site, the categories they belong to, and how
             to change your consent preferences, see our{" "}
@@ -146,15 +165,27 @@ export default function PrivacyPage() {
         <section>
           <h2 className="text-xl font-semibold text-foreground">Your Rights</h2>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-            You may request to:
+            Subject to applicable law, you may request:
           </p>
           <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-relaxed text-muted-foreground">
-            <li>Access the information we have about you</li>
-            <li>Correct inaccurate information</li>
-            <li>Request deletion of personal information where legally permitted</li>
+            <li>Access to your personal information</li>
+            <li>Correction of inaccurate information</li>
+            <li>Deletion of personal information where legally permitted</li>
+            <li>Restriction of, or objection to, certain processing where applicable</li>
+            <li>Withdrawal of marketing consent</li>
+            <li>Information about how your personal data is used</li>
           </ul>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-            Requests may be made by contacting us directly.
+            Requests may be made by contacting us directly at{" "}
+            <TrackedContactLink
+              href="mailto:info@seasaba.com"
+              eventName="email_click"
+              buttonText="Email"
+              className="text-primary transition-colors hover:text-primary/80"
+            >
+              info@seasaba.com
+            </TrackedContactLink>
+            .
           </p>
         </section>
 
