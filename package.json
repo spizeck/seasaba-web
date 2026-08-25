@@ -11,31 +11,31 @@
   "dependencies": {
     "@mdx-js/loader": "^3.1.1",
     "@mdx-js/react": "^3.1.1",
-    "@next/mdx": "^16.3.0",
+    "@next/mdx": "^16.3.3",
     "@tailwindcss/typography": "^0.5.20",
-    "@types/mdx": "^2.0.13",
+    "@types/mdx": "^2.0.14",
     "@vercel/analytics": "^2.0.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "firebase": "^12.17.1",
+    "firebase": "^12.18.0",
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.8",
-    "lucide-react": "^1.31.0",
+    "lucide-react": "^1.34.0",
     "next": "^16.3.1",
-    "radix-ui": "^1.4.3",
+    "radix-ui": "^1.6.7",
     "react": "19.2.8",
     "react-dom": "19.2.8",
-    "tailwind-merge": "^3.4.0"
+    "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4",
+    "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.5",
     "eslint": "^9",
-    "eslint-config-next": "16.3.1",
-    "shadcn": "^4.18.0",
-    "tailwindcss": "^4",
+    "eslint-config-next": "^16.3.3",
+    "shadcn": "^4.19.0",
+    "tailwindcss": "^4.3.3",
     "tw-animate-css": "^1.4.0",
     "typescript": "^5"
   },
@@ -45,6 +45,6 @@
   "allowScripts": {
     "msw@2.12.9": true,
     "sharp@0.34.5": true,
-    "unrs-resolver@1.11.1": true
+    "unrs-resolver@1.12.2": true
   }
 }
