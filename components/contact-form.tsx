@@ -163,11 +163,9 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
             className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
             placeholder="Your full name"
           />
-          {touched.name && errors.name && (
-            <p id="name-error" className="text-xs text-destructive">
-              {errors.name}
-            </p>
-          )}
+          <p id="name-error" className={`min-h-5 text-xs text-destructive${touched.name && errors.name ? "" : " invisible"}`}>
+            {touched.name && errors.name ? errors.name : "\u00A0"}
+          </p>
         </div>
 
         <div className="space-y-2">
@@ -186,11 +184,9 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
             className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
             placeholder="you@example.com"
           />
-          {touched.email && errors.email && (
-            <p id="email-error" className="text-xs text-destructive">
-              {errors.email}
-            </p>
-          )}
+          <p id="email-error" className={`min-h-5 text-xs text-destructive${touched.email && errors.email ? "" : " invisible"}`}>
+            {touched.email && errors.email ? errors.email : "\u00A0"}
+          </p>
         </div>
       </div>
 
@@ -305,11 +301,9 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
             ))}
           </optgroup>
         </select>
-        {touched.inquiryType && errors.inquiryType && (
-          <p id="inquiry-type-error" className="text-xs text-destructive">
-            {errors.inquiryType}
-          </p>
-        )}
+        <p id="inquiry-type-error" className={`min-h-5 text-xs text-destructive${touched.inquiryType && errors.inquiryType ? "" : " invisible"}`}>
+          {touched.inquiryType && errors.inquiryType ? errors.inquiryType : "\u00A0"}
+        </p>
       </div>
 
       <div className="space-y-2">
@@ -356,11 +350,9 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
           className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
           placeholder="Tell us about your plans, questions, or anything we should know."
         />
-        {touched.message && errors.message && (
-          <p id="message-error" className="text-xs text-destructive">
-            {errors.message}
-          </p>
-        )}
+        <p id="message-error" className={`min-h-5 text-xs text-destructive${touched.message && errors.message ? "" : " invisible"}`}>
+          {touched.message && errors.message ? errors.message : "\u00A0"}
+        </p>
       </div>
 
       <div className="flex flex-col gap-3 pt-2 sm:flex-row">

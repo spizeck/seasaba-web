@@ -84,6 +84,7 @@ The complete `npm run test:ci` command passed locally: 65 browser checks passed 
 
 - Connected dive-log filter labels to unique select IDs, improving screen-reader labeling and user-focused test queries.
 - Restored the hiking section anchor so `/hiking-on-saba` lands on the existing hiking content.
+- Stabilized contact-form validation layout: error messages reserve space with `min-h-5` and `invisible` instead of being conditionally removed from the DOM, preventing the submit button from shifting when blur clears a validation error during a mouse click.
 
 ## Remaining gaps and gate before yacht development
 
@@ -95,7 +96,7 @@ The complete `npm run test:ci` command passed locally: 65 browser checks passed 
 6. Add a seeded Firestore emulator-backed browser dive-log flow when rules are available. Current data and UI integration tests cover the flow in-process; browser smoke proves the route renders but does not prove live data availability.
 7. Before implementing yachts, specify their visitor journeys and data ownership. Add acceptance scenarios for the proposed behavior while keeping these current flows green. Add authentication/session/API tests only if those capabilities are actually introduced.
 
-Contact recovery currently clears error text on blur, which can shift the submit button during a mouse click after correcting an invalid address. The browser recovery test tabs out of the field before submitting; direct mouse correction deserves a follow-up UX regression fix.
+Contact recovery reserves space for validation errors (`min-h-5` with `invisible`) so correcting an invalid address does not shift the submit button during a mouse click. The browser recovery tests cover both tabbed submission and direct mouse correction without Tab or artificial waits, verifying exactly one handoff fires across all three browser projects.
 
 Future regression fixes should add a failing behavior test at the lowest useful layer first. Keep full customer journeys in Playwright and boundary/error combinations in Vitest. Do not substitute broad snapshots for behavior assertions.
 

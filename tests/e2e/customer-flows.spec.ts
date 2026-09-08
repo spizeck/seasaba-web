@@ -36,6 +36,45 @@ test("course inquiry validates then prepares a WhatsApp handoff", async ({ page 
   expect(new URL(href).searchParams.get("text")).toContain("Test Guest");
   expect(new URL(href).searchParams.get("text")).toContain("Try Scuba");
 });
+test("correcting an invalid email and clicking submit without Tab produces exactly one handoff", async ({ page }) => {
+  // Track every window.open call to verify exactly one handoff fires.
+  await page.addInitScript(() => {
+    const calls: string[] = [];
+    window.open = (url) => { calls.push(String(url)); return null; };
+    (window as unknown as { handoffCalls: string[] }).handoffCalls = calls;
+  });
+  await page.goto("/contact?interest=try-scuba");
+
+  // Fill all required fields except email.
+  await page.getByRole("textbox", { name: /^Name/ }).fill("Blur Test Guest");
+  await page.getByRole("textbox", { name: /^Email/ }).fill("not-an-email");
+  // Inquiry is pre-filled by ?interest=try-scuba; message is pre-filled by the component.
+
+  // Submit to trigger validation -- should fail on invalid email.
+  await page.getByRole("button", { name: "Send inquiry by WhatsApp" }).click();
+  await expect(page.getByText("Please enter a valid email address.")).toBeVisible();
+
+  // Correct the email directly, then click submit WITHOUT pressing Tab first.
+  // Before the fix, clearing the error on blur could shift the button and cause
+  // the click to miss or fire twice.
+  await page.getByRole("textbox", { name: /^Email/ }).fill("guest@example.test");
+  await page.getByRole("button", { name: "Send inquiry by WhatsApp" }).click();
+
+  // Wait for the handoff to complete.
+  await expect.poll(() => page.evaluate(() =>
+    (window as unknown as { handoffCalls: string[] }).handoffCalls.length
+  )).toBeGreaterThan(0);
+
+  // Verify exactly one handoff occurred and it contains the corrected data.
+  const calls = await page.evaluate(() =>
+    (window as unknown as { handoffCalls: string[] }).handoffCalls
+  );
+  expect(calls).toHaveLength(1);
+  const url = new URL(calls[0]);
+  expect(url.origin + url.pathname).toBe("https://wa.me/5994162246");
+  expect(url.searchParams.get("text")).toContain("Blur Test Guest");
+  expect(url.searchParams.get("text")).toContain("Try Scuba");
+});
 test("mobile menu opens, navigates, and closes", async ({ page, isMobile }) => {
   test.skip(!isMobile, "mobile navigation only");
   await page.goto("/");
