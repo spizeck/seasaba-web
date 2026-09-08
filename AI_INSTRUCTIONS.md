@@ -60,7 +60,7 @@ Emphasize:
 - TypeScript
 - Tailwind CSS
 - shadcn/ui
-- MDX for core marketing/content pages
+- TSX pages for core marketing/content (MDX was removed; use ordinary React components)
 - Firestore for dynamic or data-driven content only
 - Vercel for deployment
 
@@ -345,18 +345,19 @@ Do not create overly deep navigation trees.
 ---
 
 ## Data & Content Sources
-- MDX:
+- TSX pages:
   - Core marketing pages
   - Diving pages
   - Dive site pages
   - Informational / trip planning pages
+  - All content uses ordinary React/TSX components (MDX support was removed)
 - Firestore:
   - Testimonials
   - Reviews
   - Staff profiles
   - Dynamic operational data
 
-Do not overcomplicate content that belongs in static MDX.
+Do not overcomplicate content that belongs in static TSX pages.
 
 ---
 

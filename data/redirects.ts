@@ -80,6 +80,9 @@ export const legacyRedirects: LegacyRedirect[] = [
   { source: "/saba-30-cove-bay", destination: diveSites(diveSiteAnchors.windwardside), statusCode: 301 },
   { source: "/saba-31-green-island", destination: diveSites(diveSiteAnchors.windwardside), statusCode: 301 },
 
+  // Removed page (MDX cleanup)
+  { source: "/diving/first-dive", destination: diving(), statusCode: 301 },
+
   // Diving — experiences / operations / safety
   { source: "/sabas-best-dive-boats", destination: diving(), statusCode: 301 },
   { source: "/dive-nitrox-with-sea-saba", destination: diving(divingAnchors.nitrox), statusCode: 301 },

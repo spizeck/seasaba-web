@@ -38,7 +38,7 @@ This is **not** intended to be a retail-heavy or generic dive shop template.
 - **Framework:** Next.js 16 (App Router)
 - **Language:** TypeScript
 - **Styling:** Tailwind CSS 4 + shadcn/ui
-- **Content:** MDX for marketing / informational / dive site pages
+- **Content:** TSX pages for marketing / informational / dive site content
 - **Dynamic Data:** Firestore (dives, boats, sites, species, guides)
 - **Booking:** Checkfront (deep links, embedded widgets)
 - **Analytics:** Vercel Analytics, Google Analytics 4 (optional), Google Tag Manager (optional)
@@ -127,7 +127,6 @@ app/
 │   ├── dive-log/
 │   ├── dive-sites/
 │   ├── diving/
-│   ├── diving/first-dive/
 │   ├── partners/
 │   ├── plan-your-trip/
 │   ├── privacy/
@@ -144,7 +143,6 @@ components:
 ├── dive-log-client.tsx            # Interactive dive log UI
 ├── find-sea-saba.tsx              # Map / location component
 └── structured-data.tsx            # JSON-LD LocalBusiness structured data
-content/                           # MDX content files
 lib/
 ├── metadata.ts                    # SEO metadata helpers
 ├── constants.ts                   # Site-wide constants (URLs, nav items)
@@ -171,9 +169,8 @@ public/
 - [x] Global SEO setup (metadata helper, sitemap, robots.txt)
 
 ### Phase 2 — Core Pages (Complete)
-- [x] MDX pipeline for content pages
 - [x] About page
-- [x] Diving pages (overview + first-dive)
+- [x] Diving overview page
 - [x] Courses / certifications page
 - [x] Contact page
 - [x] Partners page
@@ -303,7 +300,7 @@ All events include `page_location`, `page_path`, `page_title`, and `page_referre
 
 ## Content Rules
 
-### MDX is preferred for:
+### TSX pages are used for:
 - Core marketing pages
 - Diving overview pages
 - Dive site pages

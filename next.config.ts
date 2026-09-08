@@ -1,9 +1,7 @@
 import type { NextConfig } from "next";
-import createMDX from "@next/mdx";
 import { legacyRedirects } from "./data/redirects";
 
 const nextConfig: NextConfig = {
-  pageExtensions: ["ts", "tsx", "md", "mdx"],
   async redirects() {
     return legacyRedirects;
   },
@@ -55,8 +53,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-const withMDX = createMDX({
-  extension: /\.mdx?$/,
-});
-
-export default withMDX(nextConfig);
+export default nextConfig;

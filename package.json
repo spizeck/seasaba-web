@@ -19,11 +19,7 @@
     "test:ci": "npm run lint && npm run typecheck && npm run test:coverage && npm run build:test && npm run test:e2e"
   },
   "dependencies": {
-    "@mdx-js/loader": "^3.1.1",
-    "@mdx-js/react": "^3.1.1",
-    "@next/mdx": "^16.3.3",
     "@tailwindcss/typography": "^0.5.20",
-    "@types/mdx": "^2.0.14",
     "@vercel/analytics": "^2.0.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
