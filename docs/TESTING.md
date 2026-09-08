@@ -51,7 +51,7 @@ npm run test:e2e
 npm run test:smoke
 ```
 
-`test:e2e` and `test:smoke` start and stop the production server on port 3100; run `build:test` first, and rebuild after application changes. They refuse to reuse another running server. `npm run test:ci` runs lint, type checks, coverage, the test build and all browser projects in order. Install browsers beforehand; Linux CI uses `npx playwright install --with-deps chromium webkit`.
+`test:e2e` and `test:smoke` start and stop the production server on port 3100; run `build:test` first, and rebuild after application changes. They refuse to reuse another running server. `npm run test:ci` runs lint, type checks, coverage, the test build and all browser projects in order. Install browsers locally with `npx playwright install chromium webkit` beforehand. CI uses the official Playwright Docker container, which has browsers and system dependencies pre-installed.
 
 `build:test` writes a normal `.next` build with an explicit **demo Firebase project** and empty analytics IDs. Do not deploy that test build. Use the normal deployment build with the deployment environment for releases. No production credentials or service accounts are needed for automated tests. The existing Google font build requires network access.
 
@@ -76,7 +76,7 @@ The complete `npm run test:ci` command passed locally: 62 browser checks passed 
 
 ## CI and merge gate
 
-`.github/workflows/tests.yml` runs on every PR, pushes to `master`, and manual dispatch. It uses read-only repository permissions, Node 24, reproducible `npm ci`, coverage thresholds, production build and all browser projects. A failure stops the job; there are no optional critical-test steps. Reports are uploaded even after failure and retained for 14 days.
+`.github/workflows/tests.yml` runs on every PR, pushes to `master`, and manual dispatch. The job runs inside the official Playwright Docker container (`mcr.microsoft.com/playwright:v1.63.0-noble`), which ships with Chromium, WebKit, and all system dependencies pre-installed. This eliminates the slow `npx playwright install --with-deps` step that previously downloaded browsers and ran `apt-get` on every run. The container image tag must match the Playwright version in `package-lock.json`; bump both together. The workflow uses read-only repository permissions, Node 24, reproducible `npm ci`, coverage thresholds, production build and all browser projects. A failure stops the job; there are no optional critical-test steps. Reports are uploaded even after failure and retained for 14 days.
 
 **Required GitHub setting:** add the status check **`Critical website tests`** to the ruleset/branch protection for `master`, require PRs and require branches to be up to date. Retain existing repository protections. A workflow file alone cannot enforce merge blocking; this setting must be enabled in GitHub after the check first runs. No branch-protection change is claimed by this patch.
 
