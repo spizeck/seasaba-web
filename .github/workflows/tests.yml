@@ -1,0 +1,42 @@
+name: Website tests
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: website-tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  critical-tests:
+    name: Critical website tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run test:coverage
+      - run: npx playwright install --with-deps chromium webkit
+      - run: npm run build:test
+      - run: npm run test:e2e
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: website-test-results
+          path: |
+            coverage/
+            playwright-report/
+            test-results/
+          retention-days: 14

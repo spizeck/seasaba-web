@@ -2,6 +2,10 @@
 
 A fast, SEO-first, destination-led marketing website for Sea Saba, a professional scuba diving operation on the island of Saba in the Dutch Caribbean.
 
+## Automated tests
+
+See [the testing guide](docs/TESTING.md) for the audit, coverage, fixtures, CI and required merge check. With Node 24, run `npm ci`, `npx playwright install chromium webkit`, then `npm run test:ci`. For fast feedback, use `npm test` or `npm run test:watch`.
+
 This project is a migration from Wix to a custom Next.js stack.
 
 The website is intentionally designed as a **premium, destination-first marketing site**, not a generic dive shop catalog.  
