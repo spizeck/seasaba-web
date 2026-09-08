@@ -635,7 +635,7 @@ export default function PlanYourTripPage() {
             centerText
           >
             <div>
-              <h3 className="text-lg font-semibold text-foreground">Hiking on Saba</h3>
+              <h3 id={planYourTripAnchors.hiking} className="scroll-mt-40 text-lg font-semibold text-foreground">Hiking on Saba</h3>
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
                 Saba&apos;s award-winning trail network winds through dry coastal hillsides, lush rainforest, and misty cloud forests near the summit of Mount Scenery. Free trail maps are available.
               </p>
