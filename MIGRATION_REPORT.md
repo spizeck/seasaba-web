@@ -24,7 +24,7 @@ homepage just to avoid a 404, and flagged for manual review when no suitable equ
 | New-site pages crawled | 12 |
 | Broken internal links | 0 |
 | Broken referenced assets (images/PDF) | 0 |
-| Orphan pages (in sitemap, unlinked) | 0 (was 1: `/diving/first-dive`, now linked from `/diving`) |
+| Orphan pages (in sitemap, unlinked) | 0 (`/diving/first-dive` removed; 301 redirects to `/diving`) |
 | Production pages accidentally `noindex` | 0 |
 
 ## How the inventory was built
@@ -71,7 +71,7 @@ without a redirect (they 404) rather than guessing an unrelated destination:
 
 ## Metadata / SEO status of the new site (audit)
 - Every page has exactly one `<h1>` (hero title on content pages; explicit on `/book`,
-  `/contact`; MDX heading on `/diving/first-dive`).
+  `/contact`).
 - Per-page titles, meta descriptions, canonical URLs, and Open Graph / Twitter cards are
   generated via `lib/metadata.ts` `createMetadata()`; the root layout sets a title template
   and default OG/Twitter.
@@ -86,8 +86,7 @@ without a redirect (they 404) rather than guessing an unrelated destination:
 2. Add the public DAN altitude report PDF at `/downloads/dan-saba-altitude-report.pdf` and
    wire it into the altitude/flying FAQ (a `TODO` placeholder is already in the Diving page).
 3. Rename the logo asset to a hyphenated, descriptive filename.
-4. Replace the `/diving/first-dive` sample MDX with finalized copy if not already intended
-   as production content.
+4. ~~Replace the `/diving/first-dive` sample MDX~~ — removed; the page and MDX pipeline have been deleted and the URL 301-redirects to `/diving`.
 
 ## Content & redirect refinements in this update
 - Added a **Free 32% Nitrox** section (`/diving#nitrox`) — conservative benefits for Saba's

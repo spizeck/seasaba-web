@@ -1,7 +1,7 @@
 import { test, expect } from "./fixtures";
 import { legacyRedirects } from "../../data/redirects";
 
-const routes = ["/", "/diving", "/diving/first-dive", "/dive-sites", "/courses", "/plan-your-trip", "/about", "/contact", "/book", "/dive-log", "/partners", "/terms", "/privacy", "/cookie-policy"];
+const routes = ["/", "/diving", "/dive-sites", "/courses", "/plan-your-trip", "/about", "/contact", "/book", "/dive-log", "/partners", "/terms", "/privacy", "/cookie-policy"];
 for (const path of routes) {
   test(`@smoke public page ${path} renders without authentication`, async ({ page }) => {
     const response = await page.goto(path);
@@ -23,7 +23,9 @@ test("@smoke server headers, sitemap and robots are present", async ({ request }
   expect(response.headers()["content-security-policy"]).toContain("frame-ancestors 'self'");
   const sitemap = await request.get("/sitemap.xml");
   expect(sitemap.status()).toBe(200);
-  expect(await sitemap.text()).toContain("https://www.seasaba.com/book");
+  const sitemapBody = await sitemap.text();
+  expect(sitemapBody).toContain("https://www.seasaba.com/book");
+  expect(sitemapBody).not.toContain("/diving/first-dive");
   expect(await (await request.get("/robots.txt")).text()).toContain("Sitemap: https://www.seasaba.com/sitemap.xml");
 });
 test("legacy URLs resolve with 301s and their destination anchors exist", async ({ request }) => {

@@ -6,7 +6,7 @@ Target: **seasaba.com**, repository `spizeck/seasaba-web`, audited from `359e884
 
 | Area | Verified implementation / baseline |
 | --- | --- |
-| Framework | Next.js 16 App Router, React 19, TypeScript, Tailwind 4, MDX support, npm lockfile; Vercel-oriented deployment |
+| Framework | Next.js 16 App Router, React 19, TypeScript, Tailwind 4, npm lockfile; Vercel-oriented deployment |
 | Scripts | Previously only dev, build, start, lint; no automated unit/integration/browser runner |
 | CI | Dependabot configuration existed; no test workflow |
 | Authentication | No login/logout, session store, protected routes, middleware, roles or permission checks implemented in this website |
@@ -28,7 +28,7 @@ Prefer focused unit cases for business rules, component/data integration cases f
 | --- | --- | --- |
 | Unit | Vitest, `tests/unit` | Measurement/date conversion; reference normalization and legacy guide formats; grouping identities, maximum sighting counts and input immutability; analytics URL sanitization/domain classification; metadata, sitemap and redirect contracts |
 | Integration | Vitest + React Testing Library, `tests/integration` | Real component interactions; required fields, invalid-email recovery, course prefill, encoded email/WhatsApp handoffs; Checkfront inventory mapping/success/script error/timeout/render failure; Firestore join, empty data, permission-denied and service failures; dive filters, ordering, pagination, selection and export; real jsPDF generation with download boundary replaced |
-| Browser | Playwright, `tests/e2e` | Production build, anonymous access to 14 pages, headings/title/description/canonical, 404, security headers, sitemap/robots, every legacy redirect and destination anchor, booking success/fallback, no-JavaScript booking fallback, course inquiry validation and WhatsApp handoff, mobile menu navigation |
+| Browser | Playwright, `tests/e2e` | Production build, anonymous access to 13 pages, headings/title/description/canonical, 404, security headers, sitemap/robots (including `/diving/first-dive` exclusion), every legacy redirect and destination anchor (including the `/diving/first-dive` permanent redirect), booking success/fallback, no-JavaScript booking fallback, course inquiry validation and WhatsApp handoff, mobile menu navigation |
 
 The browser scenarios run in desktop Chromium, Pixel 7 Chromium and iPhone 13 WebKit. These are emulations, not physical-device certification. The desktop profile intentionally skips the mobile-only menu case. Retries are disabled so failures remain visible.
 
@@ -72,7 +72,7 @@ The coverage denominator explicitly includes seven critical implementation modul
 
 Validation on Windows/Node 24: 72 unit/integration tests passed; selected-module coverage was 95.42% lines, 93.73% statements, 91.23% functions and 84.50% branches. Production build, TypeScript and ESLint passed. Compatible `fast-uri` and `qs` transitive patches removed the two install-time audit findings (zero reported vulnerabilities after update).
 
-The complete `npm run test:ci` command passed locally: 65 browser checks passed across the three profiles, with one intentional desktop skip for the mobile-only menu scenario. GitHub-hosted Linux execution remains to be confirmed when the workflow runs there.
+The complete `npm run test:ci` command passed locally: 62 browser checks passed across the three profiles, with one intentional desktop skip for the mobile-only menu scenario. GitHub-hosted Linux execution remains to be confirmed when the workflow runs there.
 
 ## CI and merge gate
 

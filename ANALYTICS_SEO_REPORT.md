@@ -45,7 +45,6 @@ See `.env.example` for the full list (Firebase, site URL, etc.).
 
 - `/`
 - `/diving`
-- `/diving/first-dive`
 - `/dive-sites`
 - `/plan-your-trip`
 - `/courses`
@@ -76,7 +75,7 @@ There are no admin/private pages in the current site to exclude.
 | `find-sea-saba.tsx` had unused `setTooltipOpen` state | Fixed | Removed the unused state and simplified tooltip behavior to CSS hover. |
 | Unused `Link`/`Button` imports on contact/courses pages | Fixed | Removed after replacing those CTAs with tracked components. |
 | Parameterized pages (`/book?item=...`, `/contact?interest=...`) are noindexed | By design | Prevents duplicate canonical content from search params. If you want those deep links indexed, adjust `createMetadata()` to only noindex when `noIndex: true`. |
-| `content/sample.mdx` contains an untracked Checkfront link | Noted | This is placeholder MDX; convert it to a real content page and replace the raw `<a>` with a tracked component or add the link to MDX components. |
+| `content/sample.mdx` removed | Resolved | The placeholder MDX page and MDX pipeline have been deleted; `/diving/first-dive` 301-redirects to `/diving`. |
 | No newsletter signup form found | Noted | `newsletter_signup` event is defined in `AnalyticsEvent` but not wired; add it if a newsletter signup is introduced later. |
 
 ## Google Ads Follow-up Items

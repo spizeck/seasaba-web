@@ -6,7 +6,7 @@ This document defines the recommended information architecture, homepage routing
 It exists to make implementation decisions consistent across:
 - homepage design
 - navigation
-- MDX content structure
+- page content structure
 - SEO planning
 - future Windsurf implementation prompts
 
@@ -316,9 +316,9 @@ Rules:
 
 ---
 
-## MDX vs Component-Driven Content
+## Static vs Dynamic Content
 
-### Use MDX for:
+### Use TSX pages for:
 - about pages
 - diving overview pages
 - dive site pages
