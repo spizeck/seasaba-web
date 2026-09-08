@@ -48,7 +48,7 @@
     "@types/react-dom": "^19.2.5",
     "@vitest/coverage-v8": "^4.1.11",
     "eslint": "^9",
-    "eslint-config-next": "^16.3.3",
+    "eslint-config-next": "^16.3.4",
     "jsdom": "^30.0.1",
     "shadcn": "^4.19.0",
     "tailwindcss": "^4.3.3",
