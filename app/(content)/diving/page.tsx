@@ -616,7 +616,7 @@ export default function DivingPage() {
             Whether you&apos;re planning deep volcanic pinnacle dives, decompression dives, or CCR exploration in the Caribbean, we&apos;d be happy to discuss logistics and help determine whether Saba is the right destination for your next adventure.
           </p>
           <Button asChild variant="outline" className="mt-4">
-            <Link href="/contact?interest=technical-diving">Contact Us About Technical Diving</Link>
+            <Link href="/contact?interest=tdi-technical">Contact Us About Technical Diving</Link>
           </Button>
         </div>
       </section>

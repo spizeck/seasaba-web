@@ -42,6 +42,14 @@ export function SpeciesModal({ species, onClose }: Props) {
     [onClose]
   );
 
+  // Remember the element that opened the modal so focus can return to it.
+  // Runs before the focus effect below; must stay declared first.
+  const triggerRef = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    triggerRef.current = document.activeElement as HTMLElement | null;
+    return () => triggerRef.current?.focus();
+  }, []);
+
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);
     document.body.style.overflow = "hidden";

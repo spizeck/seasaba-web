@@ -37,12 +37,21 @@ function parseDiveSlotMinutes(slot: string): number {
   return hours * 60 + minutes;
 }
 
+// Firestore retries internally when the backend is unreachable, so a failed
+// fetch can hang without ever rejecting. Cap the wait so visitors see the
+// error state instead of a loading skeleton that never resolves.
+const LOAD_TIMEOUT_MS = 15_000;
+
 function useDiveLogData() {
   const [dives, setDives] = useState<PublicDive[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    const timeout = setTimeout(() => {
+      setError("This is taking longer than expected. Please check your connection and try again.");
+      setLoading(false);
+    }, LOAD_TIMEOUT_MS);
     fetchDiveLogData()
       .then(({ dives, sites, species, boats }) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -54,12 +63,14 @@ function useDiveLogData() {
           return parseDiveSlotMinutes(b.diveSlot) - parseDiveSlotMinutes(a.diveSlot);
         });
         setDives(grouped);
+        setError(null);
         setLoading(false);
       })
       .catch((err) => {
         setError(err.message || "Failed to load dive log");
         setLoading(false);
-      });
+      })
+      .finally(() => clearTimeout(timeout));
   }, []);
 
   return { dives, loading, error };
