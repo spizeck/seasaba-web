@@ -54,17 +54,36 @@ export const test = base.extend<{ monitor: Monitor }>({
     };
     await provide(monitor);
   },
-  page: async ({ page, monitor }, providePage) => {
+  page: async ({ page, monitor, browserName, baseURL }, providePage) => {
     const pageErrors: string[] = [];
     const consoleErrors: string[] = [];
     const requestFailures: string[] = [];
 
-    page.on("pageerror", (error) => pageErrors.push(error.message));
+    // WebKit rejects an in-flight Next.js router prefetch cancelled by page
+    // navigation with "Fetch API cannot load <url>?_rsc=… due to access control
+    // checks" — its phrasing for an aborted fetch, surfacing as an unhandled
+    // rejection from inside Next's router chunk (verified via CI trace:
+    // request headers rsc:1 + next-router-prefetch:1 on the same origin).
+    // Scoped to WebKit + this exact test origin + the router's _rsc marker, so
+    // it cannot mask a real failure: app requests never carry ?_rsc=, and real
+    // first-party errors still fail via pageerror/response/requestfailed.
+    const host = baseURL ? new URL(baseURL).host.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") : null;
+    const abortedRscPrefetch = host
+      ? new RegExp(`${host}/\\S*\\?_rsc=\\S+ due to access control checks\\.?$`)
+      : null;
+    const isAbortedRscPrefetch = (text: string) =>
+      browserName === "webkit" && !!abortedRscPrefetch && abortedRscPrefetch.test(text);
+
+    page.on("pageerror", (error) => {
+      if (isAbortedRscPrefetch(error.message)) return;
+      pageErrors.push(error.message);
+    });
     page.on("console", (message) => {
       if (message.type() !== "error") return;
       const location = message.location()?.url ?? "";
       if (BENIGN_CONSOLE_ERROR.some((pattern) => pattern.test(message.text()) || pattern.test(location))) return;
       if (monitor.allowedConsole.some((pattern) => pattern.test(message.text()) || pattern.test(location))) return;
+      if (isAbortedRscPrefetch(message.text())) return;
       consoleErrors.push(`${message.text()} (${location || "no source"})`);
     });
     page.on("response", (response) => {
