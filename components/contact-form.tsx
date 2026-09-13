@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Mail, MessageCircle } from "lucide-react";
 import { trackEvent, trackLinkClick } from "@/lib/analytics";
@@ -15,6 +15,7 @@ const COURSE_INQUIRIES: InquiryType[] = [
   { value: "try-scuba", label: "Try Scuba", subject: "Try Scuba Inquiry" },
   { value: "sdi-open-water", label: "SDI Open Water Diver", subject: "SDI Open Water Diver Inquiry" },
   { value: "sdi-advanced-specialty", label: "SDI Advanced & Specialty Training", subject: "SDI Advanced & Specialty Training Inquiry" },
+  { value: "sdi-nitrox", label: "SDI Nitrox Diver", subject: "SDI Nitrox Diver Inquiry" },
   { value: "sdi-rescue", label: "SDI Rescue Diver", subject: "SDI Rescue Diver Inquiry" },
   { value: "sdi-divemaster", label: "SDI Divemaster", subject: "SDI Divemaster Inquiry" },
   { value: "tdi-technical", label: "TDI Technical Diving", subject: "TDI Technical Diving Inquiry" },
@@ -52,6 +53,10 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
   const [message, setMessage] = useState(() => buildInitialMessage(initialInterest));
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
+  // Guards against a rapid second click opening duplicate handoffs (e.g. two
+  // WhatsApp tabs). Tracked per method so switching between email and WhatsApp
+  // is unaffected; the window is short so deliberate resubmission still works.
+  const lastHandoffAt = useRef<Record<"email" | "whatsapp", number>>({ email: 0, whatsapp: 0 });
 
   const selectedInquiry = useMemo(
     () => ALL_INQUIRIES.find((i) => i.value === inquiryType),
@@ -120,6 +125,8 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
     setErrors(validationErrors);
     setTouched({ name: true, email: true, inquiryType: true, message: true });
     if (Object.keys(validationErrors).length > 0) return;
+    if (Date.now() - lastHandoffAt.current.email < 1000) return;
+    lastHandoffAt.current.email = Date.now();
 
     const subject = selectedInquiry ? selectedInquiry.subject : "Contact Inquiry";
     const body = buildEmailBody();
@@ -135,6 +142,8 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
     setErrors(validationErrors);
     setTouched({ name: true, email: true, inquiryType: true, message: true });
     if (Object.keys(validationErrors).length > 0) return;
+    if (Date.now() - lastHandoffAt.current.whatsapp < 1000) return;
+    lastHandoffAt.current.whatsapp = Date.now();
 
     const text = buildWhatsAppMessage();
     const whatsappHref = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;

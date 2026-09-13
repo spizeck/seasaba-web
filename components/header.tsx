@@ -21,6 +21,15 @@ export function Header() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMobileOpen(false);
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [mobileOpen]);
+
   const transparent = isHome && !scrolled && !mobileOpen;
 
   return (
@@ -45,7 +54,7 @@ export function Header() {
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden items-center gap-8 md:flex">
+        <nav aria-label="Primary" className="hidden items-center gap-8 md:flex">
           {NAV_ITEMS.map((item) => (
             <Link
               key={item.href}
@@ -76,6 +85,8 @@ export function Header() {
           }`}
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label={mobileOpen ? "Close menu" : "Open menu"}
+          aria-expanded={mobileOpen}
+          aria-controls="mobile-navigation"
         >
           <Menu
             className={`absolute h-5 w-5 transition-all duration-300 ${
@@ -92,6 +103,9 @@ export function Header() {
 
       {/* Mobile nav — always mounted, animated in/out */}
       <nav
+        id="mobile-navigation"
+        aria-label="Mobile"
+        inert={!mobileOpen}
         className={`overflow-hidden border-t border-border/40 bg-background transition-all duration-500 ease-in-out md:hidden ${
           mobileOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
         }`}

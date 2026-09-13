@@ -29,9 +29,12 @@ export function HotelModal({ hotel, onClose }: HotelModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
 
-  // Focus close button on open
+  // Focus close button on open; restore focus to the trigger on close.
+  const triggerRef = useRef<HTMLElement | null>(null);
   useEffect(() => {
+    triggerRef.current = document.activeElement as HTMLElement | null;
     closeRef.current?.focus();
+    return () => triggerRef.current?.focus();
   }, []);
 
   // ESC to close + focus trap

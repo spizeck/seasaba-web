@@ -13,7 +13,10 @@ for (const path of routes) {
     await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", `https://www.seasaba.com${path === "/" ? "" : path}`);
   });
 }
-test("@smoke unknown routes return a genuine 404", async ({ page }) => {
+test("@smoke unknown routes return a genuine 404", async ({ page, monitor }) => {
+  // The 404 response and its console error are the expected outcome here.
+  monitor.allowRequestFailure(/this-page-does-not-exist/);
+  monitor.allowConsoleError(/this-page-does-not-exist/);
   expect((await page.goto("/this-page-does-not-exist"))?.status()).toBe(404);
   await expect(page.getByRole("link", { name: /home/i }).first()).toBeVisible();
 });
