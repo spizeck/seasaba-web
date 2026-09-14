@@ -1,0 +1,18 @@
+{
+  "comment": "Performance budgets enforced by scripts/perf-baseline.mjs against the local test build (mobile, simulated throttling, third-party vendors blocked). Calibrated 2026-09-14 from the baseline in docs/TESTING.md: LCP 2.7-3.6s, FCP ~0.95s, CLS 0, TBT 30-535ms (noisy), TTFB <20ms, JS 189-345KB, images 21-249KB, total 303-583KB per route. Error = must not regress meaningfully; warn = investigate. Tighten deliberately; never loosen to silence a real regression.",
+  "*": {
+    "score": { "warn": 0.75 },
+    "fcpMs": { "warn": 2000, "error": 3000 },
+    "lcpMs": { "warn": 3600, "error": 4500 },
+    "cls": { "warn": 0.05, "error": 0.1 },
+    "tbtMs": { "warn": 700 },
+    "ttfbMs": { "warn": 600 },
+    "jsBytes": { "warn": 266240, "error": 409600 },
+    "imageBytes": { "warn": 327680, "error": 512000 },
+    "totalBytes": { "warn": 716800, "error": 1126400 },
+    "thirdPartyBytes": { "warn": 51200 }
+  },
+  "/dive-log": {
+    "jsBytes": { "warn": 409600, "error": 614400 }
+  }
+}

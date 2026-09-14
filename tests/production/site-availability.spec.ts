@@ -74,6 +74,19 @@ test("critical static assets load", async ({ page, request }) => {
   // fixture's request monitor — no per-asset list needed.
 });
 
+test("production TTFB stays within a generous deployment-health bound", async ({ request }) => {
+  // Not a Lighthouse budget — just a catastrophic-regression tripwire on the
+  // live edge. Generous bound tolerates cold misses; anything slower means the
+  // deployment or host config needs eyes, not tuning. Real budgets live in
+  // scripts/perf-baseline.mjs (lab) and field data (RUM).
+  const start = Date.now();
+  const response = await request.get("/");
+  const elapsed = Date.now() - start;
+  expect(response.status()).toBe(200);
+  console.log(`GET / TTFB-ish (client wall clock): ${elapsed}ms`);
+  expect(elapsed).toBeLessThan(3000);
+});
+
 test("security headers, robots.txt and sitemap.xml are production-sane", async ({ request }) => {
   const home = await request.get("/");
   expect(home.status()).toBe(200);

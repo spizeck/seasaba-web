@@ -16,6 +16,8 @@
 /playwright-report-production/
 /test-results/
 /test-results-production/
+/perf-report/
+/.lighthouseci/
 
 # next.js
 /.next/

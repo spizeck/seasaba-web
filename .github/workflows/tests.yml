@@ -44,3 +44,29 @@ jobs:
             playwright-report/
             test-results/
           retention-days: 14
+
+  performance-budgets:
+    name: Performance budgets
+    runs-on: ubuntu-latest
+    # Same Playwright container: the perf script drives its bundled Chromium.
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-noble
+      options: --user 1001
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run build:test
+      # Lab budgets vs the test build: analytics IDs empty + vendors blocked
+      # inside the run, so no third-party uptime can flake the gate.
+      - run: node scripts/perf-baseline.mjs
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: performance-report
+          path: perf-report/
+          retention-days: 14
