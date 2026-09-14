@@ -18,7 +18,6 @@ import {
   type UnitSystem,
   type PublicDive,
 } from "@/lib/firestore/dive-log";
-import { exportDiveLogToPdf } from "@/lib/dive-log-export";
 import { trackEvent } from "@/lib/analytics";
 import { BookOpen, SlidersHorizontal, X, ChevronDown, ChevronUp, Download } from "lucide-react";
 
@@ -520,7 +519,10 @@ export function DiveLogClient() {
                         dive_count: selectedDives.length.toString(),
                         unit_system: unitSystem,
                       });
-                      void exportDiveLogToPdf(selectedDives, unitSystem);
+                      // jsPDF is ~300KB — loaded only when a visitor actually exports.
+                      void import("@/lib/dive-log-export").then((m) =>
+                        m.exportDiveLogToPdf(selectedDives, unitSystem)
+                      );
                     }}
                     size="sm"
                     className="mt-3 w-full gap-1.5"

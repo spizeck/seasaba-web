@@ -30,6 +30,7 @@ Prefer focused unit cases for business rules, component/data integration cases f
 | Integration | Vitest + React Testing Library, `tests/integration` | Real component interactions; required fields, invalid-email recovery, course prefill, encoded email/WhatsApp handoffs; Checkfront inventory mapping/success/script error/timeout/render failure; Firestore join, empty data, permission-denied and service failures; dive filters, ordering, pagination, selection and export; real jsPDF generation with download boundary replaced |
 | Browser | Playwright, `tests/e2e` | Production build, anonymous access to 13 pages, headings/title/description/canonical, 404, security headers, sitemap/robots (including `/diving/first-dive` exclusion), every legacy redirect and destination anchor (including the `/diving/first-dive` permanent redirect), booking success/fallback, no-JavaScript booking fallback, course inquiry validation and WhatsApp handoff, mobile menu navigation |
 | Post-deploy smoke | Playwright, `tests/production` | The deployed `https://www.seasaba.com` after a production deployment: critical-route availability and page identity, key navigation paths, booking/contact boundaries, security headers, canonical host redirects, first-party error monitoring. Read-only; see "Production smoke testing" below |
+| Performance budgets | Lighthouse, `scripts/perf-baseline.mjs` + `perf/budgets.json` | Lab budgets on the local test build: LCP/CLS/FCP/TBT/TTFB, JS/image/total bytes per route. Vendors blocked so the gate measures only what we ship. See "Performance measurement and budgets" below |
 
 The browser scenarios run in desktop Chromium, Pixel 7 Chromium and iPhone 13 WebKit. These are emulations, not physical-device certification. The desktop profile intentionally skips the mobile-only menu case. Retries are disabled so failures remain visible.
 
@@ -50,9 +51,10 @@ npm run typecheck
 npm run build:test
 npm run test:e2e
 npm run test:smoke
+npm run test:perf
 ```
 
-`test:e2e` and `test:smoke` start and stop the production server on port 3100; run `build:test` first, and rebuild after application changes. They refuse to reuse another running server. `npm run test:ci` runs lint, type checks, coverage, the test build and all browser projects in order. Install browsers locally with `npx playwright install chromium webkit` beforehand. CI uses the official Playwright Docker container, which has browsers and system dependencies pre-installed.
+`test:e2e` and `test:smoke` start and stop the production server on port 3100; run `build:test` first, and rebuild after application changes. `test:perf` starts its own server on port 3101 and needs `build:test` first too. They refuse to reuse another running server. `npm run test:ci` runs lint, type checks, coverage, the test build and all browser projects in order. Install browsers locally with `npx playwright install chromium webkit` beforehand. CI uses the official Playwright Docker container, which has browsers and system dependencies pre-installed.
 
 `build:test` writes a normal `.next` build with an explicit **demo Firebase project** and empty analytics IDs. Do not deploy that test build. Use the normal deployment build with the deployment environment for releases. No production credentials or service accounts are needed for automated tests. The existing Google font build requires network access.
 
@@ -148,6 +150,24 @@ Reports land in `playwright-report-production/`; failure screenshots/traces in `
 ### Failure-path validation
 
 Validated by running the suite with a deliberately wrong expected h1: the run failed on `critical route / renders its expected page` showing the expected vs. received heading. Assertion failures name the route and invariant; monitor failures name the URL and error.
+
+## Performance measurement and budgets
+
+`npm run test:perf` runs `scripts/perf-baseline.mjs`: it starts a local `next start` server on port 3101, launches Lighthouse (mobile, simulated throttling) against six representative routes — `/`, `/diving`, `/dive-sites`, `/plan-your-trip`, `/book`, `/dive-log` — takes the median of 3 runs per route, and asserts `perf/budgets.json`. Reports (JSON + HTML) land in `perf-report/<out>/`; `summary.json` holds the medians. This is a **lab** metric — reproducible, deterministic, not real-user data. Field data comes from Vercel Speed Insights / Web Analytics already loaded in production (they report field CWV in the Vercel dashboard; treat those dashboards, not Lighthouse, as ground truth for real visitors).
+
+Key flags: `--target=https://www.seasaba.com` measures the live site with all vendors loaded (real third-party cost — this is how the Checkfront/GTM numbers below were produced); `--profile=desktop` switches to the Lighthouse desktop preset; `--runs=N` changes repetition; `--no-assert` collects without judging.
+
+**Third-party policy for budgets:** against local targets the runner blocks analytics/tag vendors, Cookiebot, Vercel insights, Checkfront and Firestore, so the CI gate measures only first-party code we control — a vendor outage or a heavier GTM container can't flake the gate. Blocking is per-request, scoped to the local measurement only; production and user traffic are unaffected. Run with `--target=` to see the true end-to-end cost including vendors.
+
+**Baseline (lab, mobile, simulated throttling, test build, vendors blocked — post-optimization):** LCP 2.8–3.6s, FCP ~0.95s, CLS 0, TBT 25–535ms (highly variable), TTFB <20ms; per-route JS 189–345KB, images 21–249KB, total 303–583KB. Desktop profile: scores 98–100. Same pages on **production with vendors** (lab, mobile): LCP up to 18.4s on `/book`, TBT 1.0–4.8s, JS up to ~1.9MB — the gap between these two rows is almost entirely third-party cost, dominated by the Checkfront droplet (which loads its own GTM + gtag inside the widget) on `/book` and GTM/Firestore main-thread work elsewhere.
+
+**Budgets** (`perf/budgets.json`): `error` entries fail the run and gate the `Performance budgets` job in CI; `warn` entries print a warning without failing — treat warnings as "investigate", errors as "must fix". Errors sit ~25–60% above the observed baseline (LCP error 4.5s ≈ the CWV "poor" boundary; JS error 400KB ≈ 2× observed). TBT is warn-only — it swings 10× run-to-run under simulated throttling on shared CPUs. Route overrides exist where a dependency legitimately costs more (`/dive-log`: Firebase SDK → 400KB warn / 600KB error JS).
+
+**CI:** the `Performance budgets` job in `tests.yml` builds the test build and runs the budget check in the Playwright container (bundled Chromium, `--no-sandbox` via the CI env). Artifacts (`perf-report/`) upload for 14 days. The production smoke suite additionally asserts a generous <3s TTFB on `/` — a catastrophic-regression tripwire, not a lab budget.
+
+**Responding to a regression:** a budget failure means the diff added weight or latency. Read the named route/metric, open `perf-report/.../summary.json` for before/after medians, and check the offending route's `lhr.json` (LCP phase breakdown, network-request detail, third-party entity table). Fix by removing weight/latency — not by widening budgets; only raise a budget when a deliberate, documented change makes the old one wrong (e.g. a required new dependency).
+
+**Known limitations:** lab numbers are simulated-throttling estimates — absolute ms vary across machines, relative deltas and byte counts are stable. INP cannot be measured in lab; TBT is its proxy. Field INP/LCP/CLS require real traffic (Vercel Speed Insights). `/book` and `/contact` are dynamic routes — TTFB on them varies with render work.
 
 ## Fixes found while testing
 
