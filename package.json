@@ -16,6 +16,7 @@
     "build:test": "node scripts/build-test.mjs",
     "test:e2e": "playwright test",
     "test:smoke": "playwright test --grep @smoke",
+    "test:smoke:prod": "playwright test --config playwright.production.config.ts",
     "test:ci": "npm run lint && npm run typecheck && npm run test:coverage && npm run build:test && npm run test:e2e"
   },
   "dependencies": {
