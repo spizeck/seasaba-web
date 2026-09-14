@@ -16,7 +16,7 @@ interface FeatureImageProps {
 }
 
 /**
- * FeatureImage (MediaRow) — alternating image + text per sea-saba-image-standard.md §3.3.
+ * FeatureImage (MediaRow) — alternating image + text per docs/design/IMAGE_STANDARD.md §3.3.
  * Desktop: 2fr image / 1fr text, 56px gap, items centered.
  * Image: aspect-ratio 4/3, object-fit cover, rounded-2xl.
  * Mobile: single column, image full-width first, text below.

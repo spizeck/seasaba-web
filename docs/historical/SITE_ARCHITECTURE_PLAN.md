@@ -1,5 +1,14 @@
 # Sea Saba Site Architecture Plan
 
+> **Status: Historical planning document** — written before implementation.
+> The shipped IA is flatter than proposed here: recommended child pages were
+> implemented as anchored sections instead (e.g. FAQ lives at
+> `/plan-your-trip#faq`, not `/faq`; dive-site detail lives in modal dialogs
+> on `/dive-sites`, not `/dive-sites/[slug]`). For the current structure see
+> `README.md` and `lib/constants.ts`; for current design rules see
+> `docs/design/THEME_UX_GUIDE.md` and `AI_INSTRUCTIONS.md`. Retained for the
+> routing strategy rationale.
+
 ## Purpose
 This document defines the recommended information architecture, homepage routing strategy, and page priorities for the modern Sea Saba website.
 

@@ -1,6 +1,20 @@
 # Sea Saba — Professional Scuba Diving Website
 
-A fast, SEO-first, destination-led marketing website for Sea Saba, a professional scuba diving operation on the island of Saba in the Dutch Caribbean.
+A fast, SEO-first, destination-led marketing website for Sea Saba, a professional scuba diving operation on the island of Saba in the Dutch Caribbean. Production site: https://www.seasaba.com (deployed on Vercel from `master`).
+
+## Documentation index
+
+| Doc | Contents |
+|---|---|
+| [docs/TESTING.md](docs/TESTING.md) | Test pyramid, commands, CI gates, accessibility and production smoke suites, performance budgets |
+| [docs/ANALYTICS_SEO.md](docs/ANALYTICS_SEO.md) | Analytics/GTM/consent architecture, tracked events, sitemap and indexing rules |
+| [docs/COOKIEBOT_CONSENT_SETUP.md](docs/COOKIEBOT_CONSENT_SETUP.md) | Cookiebot CMP + GTM consent-mode runbook |
+| [docs/design/THEME_UX_GUIDE.md](docs/design/THEME_UX_GUIDE.md) | Brand colors, typography, spacing, imagery and UX rules |
+| [docs/design/IMAGE_STANDARD.md](docs/design/IMAGE_STANDARD.md) | Image categories, ratios, naming and the `PageHero`/`FeatureImage` components |
+| [docs/design/Sea_Saba_Logo_Spec_DEC_21.pdf](docs/design/Sea_Saba_Logo_Spec_DEC_21.pdf) | Official logo specification (brand asset) |
+| [docs/historical/](docs/historical/) | Completed-work records: Wix migration report, original IA plan, early homepage spec, unimplemented reviews setup |
+| [AI_INSTRUCTIONS.md](AI_INSTRUCTIONS.md) | Guardrails for AI coding agents |
+| [SECURITY.md](SECURITY.md) | Security policy and vulnerability reporting |
 
 ## Automated tests
 
@@ -39,7 +53,7 @@ This is **not** intended to be a retail-heavy or generic dive shop template.
 - **Language:** TypeScript
 - **Styling:** Tailwind CSS 4 + shadcn/ui
 - **Content:** TSX pages for marketing / informational / dive site content
-- **Dynamic Data:** Firestore (dives, boats, sites, species, guides)
+- **Dynamic Data:** Firestore (dives, boats, sites, species — public read-only)
 - **Booking:** Checkfront (deep links, embedded widgets)
 - **Analytics:** Vercel Analytics, Google Analytics 4 (optional), Google Tag Manager (optional)
 - **PDF Export:** jsPDF (premium card-style dive log export)
@@ -48,6 +62,8 @@ This is **not** intended to be a retail-heavy or generic dive shop template.
 ---
 
 ## Getting Started
+
+Requires **Node 24** (see `.nvmrc`) and npm.
 
 ```bash
 npm install
@@ -66,10 +82,10 @@ There are exactly **two** layouts in this project:
 
 ### 1. Homepage Layout
 - Static hero image at top
-- One homepage video background section (3rd major section)
 - Minimal copy
 - Destination positioning + routing
 - Strong but restrained CTA hierarchy
+- No video backgrounds (the former video section was removed for performance in September 2026; see `docs/design/THEME_UX_GUIDE.md` if video is ever reintroduced)
 
 ### 2. Standard Content Layout
 - Used for all non-home pages
@@ -84,12 +100,12 @@ Do not introduce additional layouts unless explicitly requested.
 
 ## Homepage Rules (Critical)
 
-The homepage must follow this high-level structure:
+The homepage (`app/page.tsx`) currently follows this structure:
 
 1. **Hero (Static Image)**
-2. **Supporting Static Section**
-3. **Single Video Section + CTA**
-4. **Static Routing Sections**
+2. **Why Saba** — supporting static destination section
+3. **The Dives That Made Saba Famous** — dive-area showcase with CTAs
+4. **Plan Your Trip** — static routing sections
 5. **Final CTA**
 
 ### Homepage Intent
@@ -105,7 +121,6 @@ The homepage should answer:
 - The homepage is **not** the primary SEO text page for every topic
 - Detailed content belongs on inner pages
 - Motion is minimal and only used on the homepage
-- Mobile video must degrade to a poster image
 
 ---
 
@@ -123,6 +138,7 @@ app/
 │   ├── layout.tsx                 # Content layout (breadcrumbs, prose, SEO-first)
 │   ├── about/
 │   ├── contact/
+│   ├── cookie-policy/
 │   ├── courses/
 │   ├── dive-log/
 │   ├── dive-sites/
@@ -146,59 +162,27 @@ components:
 lib/
 ├── metadata.ts                    # SEO metadata helpers
 ├── constants.ts                   # Site-wide constants (URLs, nav items)
+├── analytics.ts                   # Shared event tracking (GTM data layer + Vercel Analytics)
 ├── firebase.ts                    # Firebase client SDK setup
 ├── firestore/
-│   ├── dive-log.ts                # Firestore dive log fetching and normalization
+│   └── dive-log.ts                # Firestore dive log fetching and normalization
 ├── dive-log-export.ts             # Premium PDF export for selected dives
 └── ...
 public/
-├── images/                        # Site images (hero, OG, posters, content, logo)
-└── video/                         # Homepage video assets
+└── images/                        # Site images; optimized assets live in images/optimized/
 ```
+
+Tests live under `tests/` (unit, integration, e2e, production smoke) — see `docs/TESTING.md`.
 
 ---
 
-## Roadmap
+## Status
 
-### Phase 1 — Foundation (Complete)
-- [x] Project scaffolding (Next.js, Tailwind, TypeScript)
-- [x] shadcn/ui setup and design system
-- [x] Root layout with Header and Footer
-- [x] Homepage layout with hero section (hero image may extend under navbar; no full-image color filter overlay by default)
-- [x] Standard content layout with breadcrumbs
-- [x] Global SEO setup (metadata helper, sitemap, robots.txt)
-
-### Phase 2 — Core Pages (Complete)
-- [x] About page
-- [x] Diving overview page
-- [x] Courses / certifications page
-- [x] Contact page
-- [x] Partners page
-- [x] Privacy & Terms pages
-- [x] Homepage refined to answer the four key questions
-- [x] `/dive-sites` section
-- [x] `/plan-your-trip` content cluster
-- [x] Homepage routing destinations aligned to destination-first strategy
-
-### Phase 3 — Booking Integration (Complete)
-- [x] Reusable BookingCTA component
-- [x] Embedded booking widget with graceful fallback
-- [x] Dedicated /book page
-- [x] Checkfront deep link CTAs on relevant pages
-
-### Phase 4 — Dynamic Content (Complete)
-- [x] Firestore integration (client-side)
-- [x] Live dive log (`/dive-log`) with filtering, selection, and PDF export
-
-### Phase 5 — Polish & Launch (Complete)
-- [x] Custom 404 page
-- [x] Skip-to-content accessibility link
-- [x] 301 redirect scaffold in next.config.ts
-- [x] Structured data (JSON-LD LocalBusiness)
-- [x] Open Graph / Twitter Card metadata
-- [x] Real OG image configured
-- [x] Vercel Analytics installed
-- [x] Performance and accessibility baseline
+The site is launched: all core pages, Checkfront booking integration, the
+Firestore dive log, the legacy Wix redirect map, SEO metadata, analytics and
+consent plumbing are live, with a full test/CI gate and post-deployment
+production smoke suite (`docs/TESTING.md`). For the migration record see
+`docs/historical/MIGRATION_REPORT.md`.
 
 ## Production Deployment
 
@@ -230,8 +214,10 @@ match /dives/{docId} { allow read: if true; }
 match /boats/{docId} { allow read: if true; }
 match /sites/{docId} { allow read: if true; }
 match /species/{docId} { allow read: if true; }
-match /guides/{docId} { allow read: if true; }
 ```
+
+These rules are managed in the Firebase Console — they are not versioned in
+this repository.
 
 ### Deployment Steps
 
@@ -251,27 +237,15 @@ match /guides/{docId} { allow read: if true; }
 
 ## Analytics & Conversion Tracking
 
-The site loads Google Tag Manager in `app/layout.tsx` via the `AnalyticsLoader` component.
-
 - **Vercel Analytics:** enabled independently through `@vercel/analytics/next`.
-- **Google Tag Manager:** loaded only when `NEXT_PUBLIC_GTM_ID` is set.
-- **Google Analytics 4 and marketing tags:** configured and loaded inside GTM. The application does not load GA4 or call `window.gtag()` directly.
+- **Google Tag Manager:** loaded via `AnalyticsLoader` only when `NEXT_PUBLIC_GTM_ID` is set; GA4 and marketing tags live inside GTM, not in the app.
+- **Consent:** Cookiebot CMP is deployed through GTM; see `docs/COOKIEBOT_CONSENT_SETUP.md`.
 
-Tracked events are sent through the shared `trackEvent`, `trackLinkClick`, and `trackBookingClick` helpers in `lib/analytics.ts`. Each business event is pushed once to the GTM data layer and is also sent independently to Vercel Analytics.
-
-Tracked events include:
-
-- `book_now_click` — Sea Saba booking CTAs
-- `checkfront_click` — Checkfront fallback and direct booking links
-- `contact_click` — internal contact CTAs
-- `contact_form_submit` — contact form handoff to email or WhatsApp
-- `email_click`, `phone_click`, `whatsapp_click` — contact link clicks
-- `directions_click` — Google and Apple Maps directions links
-- `ferry_link_click` — Makana Ferry and other ferry partner links
-- `social_click` — social media, partner, and outbound resource links
-- `pdf_download` — dive log PDF export
-
-All events include `page_location`, `page_path`, `page_title`, and `page_referrer`. Link events also include `link_url`, `link_text`, `link_domain`, and `outbound`. Booking events include `button_name`, `button_location`, and `booking_item`. Legacy parameters such as `link_destination`, `button_text`, and `referrer` remain available for historical compatibility. Sensitive URL query strings are removed before link data is sent.
+Business events go through the `trackEvent`/`trackLinkClick`/`trackBookingClick`
+helpers in `lib/analytics.ts` (booking clicks, contact handoffs, directions,
+social/partner links, PDF export). The canonical event list, parameter
+contract, and indexing rules are documented in
+[docs/ANALYTICS_SEO.md](docs/ANALYTICS_SEO.md).
 
 ---
 
@@ -324,7 +298,6 @@ All events include `page_location`, `page_path`, `page_title`, and `page_referre
   - typography
   - subtle local gradient behind text only
   - light text-shadow
-- Homepage may have **one** video background section only
 - Inner pages should remain calm, stable, and text-first
 
 ---

@@ -1,5 +1,11 @@
 # Wix → Next.js SEO Migration Report
 
+> **Status: Historical record** — this documents the completed Wix → Next.js
+> migration (2026). The redirect map it describes now lives in
+> `data/redirects.ts`, and legacy-redirect behavior is covered by the
+> regression suite (see `docs/TESTING.md`). Retained for audit context and
+> the per-URL mapping table below.
+
 Migration of legacy Wix URLs (https://www.seasaba.com) onto the new Next.js site,
 preserving the new information architecture and URL slugs while protecting existing
 search rankings with single-hop 301 redirects.

@@ -1,6 +1,12 @@
-# Analytics & SEO Implementation Report
+# Analytics & SEO Reference
 
-## Dependency Audit Cleanup
+> **Status: Canonical reference** for the analytics/consent architecture and
+> SEO mechanics — validated against the codebase on 2026-09-14. The
+> "Dependency Audit Cleanup" and "SEO Issues Found & Fixes" sections are a
+> completed-work log retained for history; the "Google Ads Follow-up Items"
+> are open dashboard tasks, not code work.
+
+## Dependency Audit Cleanup (historical)
 
 - Removed unused `firebase-admin` dependency, which eliminated 8 moderate severity `uuid` vulnerabilities (via transitive `gaxios`, `google-gax`, and `teeny-request` packages).
 - Kept `firebase` client SDK because the dive-log feature uses `lib/firebase.ts` and `lib/firestore/dive-log.ts`.
@@ -56,6 +62,11 @@ See `.env.example` for the full list (Firebase, site URL, etc.).
 - `/terms`
 - `/privacy`
 
+`/cookie-policy` (added later, for the Cookiebot consent work) is indexable
+but not currently listed in `app/sitemap.ts`; it is reachable via the footer
+and `/privacy`. Add it to the sitemap if it should be a crawlable landing
+page.
+
 ## Indexing Exclusions
 
 - `robots.ts` allows all crawlers and references `/sitemap.xml`.
@@ -65,7 +76,7 @@ See `.env.example` for the full list (Firebase, site URL, etc.).
 
 There are no admin/private pages in the current site to exclude.
 
-## SEO Issues Found & Fixes
+## SEO Issues Found & Fixes (historical log)
 
 | Issue | Status | Notes |
 |-------|--------|-------|

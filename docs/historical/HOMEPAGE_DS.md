@@ -1,5 +1,13 @@
 # Sea Saba — Homepage Product Specification (Revised)
 
+> **Status: Historical design spec** — early homepage proposal. The
+> implemented homepage (`app/page.tsx`) is a simplified version: hero,
+> "Why Saba", dive-area showcase, "Plan Your Trip" routing, and a final
+> CTA. Reviews, group-travel, and FAQ homepage sections were not built, and
+> the video section was later removed for performance. Current homepage
+> rules live in `README.md` and `AI_INSTRUCTIONS.md`. Retained for
+> positioning rationale and content-pillar thinking.
+
 ## Core Philosophy
 
 Sea Saba is not simply selling dive trips.

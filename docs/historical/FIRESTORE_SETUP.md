@@ -1,5 +1,13 @@
 # Firestore Reviews Setup Guide
 
+> **Status: Historical — never implemented.** This guide describes a planned
+> Firestore-backed `reviews` collection and a TripAdvisor live widget.
+> Neither exists in the codebase: there is no `lib/firestore/reviews.ts`, no
+> `reviews` collection is read, and TripAdvisor appears only as outbound
+> links. The only live Firestore feature is the dive log (`dives`, `sites`,
+> `species`, `boats` collections — see `lib/firestore/dive-log.ts` and
+> `README.md`). Retained in case a curated-reviews feature is revisited.
+
 This guide explains how to set up Firestore to manage curated reviews on your site.
 
 ## Current Implementation
