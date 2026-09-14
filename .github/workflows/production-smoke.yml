@@ -43,6 +43,8 @@ jobs:
       SMOKE_BASE_URL: ${{ inputs.base_url || 'https://www.seasaba.com' }}
     steps:
       - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@v5
         with:
           node-version: 24
