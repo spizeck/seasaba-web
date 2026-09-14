@@ -49,6 +49,8 @@ export function Header() {
           <img
             src={transparent ? "/images/White SEA SABA logo transparent.png" : "/images/Full color SEA SABA logo transparent.png"}
             alt="Sea Saba logo"
+            width={180}
+            height={40}
             className="h-10 w-auto"
           />
         </Link>

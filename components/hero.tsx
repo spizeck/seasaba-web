@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { trackBookingClick, trackLinkClick } from "@/lib/analytics";
 
@@ -51,10 +52,16 @@ const btnBase: React.CSSProperties = {
 export function Hero() {
   return (
     <section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden -mt-16 pt-16">
-      {/* Background image */}
-      <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: "url('/images/optimized/divers-above-reef-saba.webp')" }}
+      {/* Background image — next/image so the LCP resource is preloaded,
+          fetch-prioritised, and served responsively instead of as a
+          full-resolution CSS background. */}
+      <Image
+        src="/images/optimized/divers-above-reef-saba.webp"
+        alt=""
+        fill
+        priority
+        sizes="100vw"
+        className="object-cover"
       />
 
       {/* Uniform contrast overlay — subtle, not dramatic */}
