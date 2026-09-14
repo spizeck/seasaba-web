@@ -135,7 +135,7 @@ export function ExperienceSelector() {
             })}
           </div>
         </div>
-        <p className="mt-4 text-xs italic text-muted-foreground/70">
+        <p className="mt-4 text-xs italic text-muted-foreground">
           Times are approximate and may vary depending on conditions.
         </p>
       </div>

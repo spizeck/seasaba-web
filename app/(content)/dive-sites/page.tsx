@@ -102,7 +102,7 @@ export default function DiveSitesPage() {
 
                 {/* Known For */}
                 <div className="mt-4">
-                  <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Known For</h4>
+                  <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Known For</h3>
                   <div className="mt-2 flex flex-wrap gap-2">
                     {area.knownFor.map((item) => (
                       <span
@@ -117,7 +117,7 @@ export default function DiveSitesPage() {
 
                 {/* Site Chips — interactive, open video modal */}
                 <div className="mt-4">
-                  <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Dive Sites</h4>
+                  <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Dive Sites</h3>
                   <DiveAreaSites sites={area.sites} />
                 </div>
 

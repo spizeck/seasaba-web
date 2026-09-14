@@ -64,6 +64,22 @@ npm run test:smoke
 - Contact tests capture generated URLs. They do not send email/WhatsApp messages. The jsdom email case emits its expected “navigation to another Document” diagnostic because jsdom cannot launch a mail client; the test checks the generated recipient, subject and body.
 - Tests do not create reservations, charge cards, write Firestore data, or invoke the live Firestore diagnostic.
 
+## Accessibility regression testing
+
+`tests/e2e/accessibility.spec.ts` runs automated axe-core scans (via `@axe-core/playwright`, full default ruleset — WCAG 2.x A/AA + best practices) plus behavioral keyboard and reduced-motion checks. It runs inside the normal `npm run test:e2e` suite — no separate command — and a new axe violation fails the `Critical website tests` CI gate.
+
+**Pages scanned (desktop Chromium):** homepage, `/diving`, `/courses`, `/plan-your-trip`, `/contact`, `/book`, `/book?item=classic` (item-banner state), `/dive-sites`, `/about`, `/dive-log`. Representative mobile-viewport scans (`/`, `/contact`, `/book`, mobile nav open) run on mobile Chromium.
+
+**Interactive states scanned:** mobile navigation open (after the open transition completes), contact form with validation errors displayed, dive-site dialog open, and the booking "unavailable" fallback.
+
+**Keyboard coverage:** skip-to-content first tab stop and reading-position handoff; desktop primary-nav traversal with visible-focus assertions; mobile menu open/close/Escape plus proof that closed-menu links are unreachable (inert); dive-site dialog focus trap, Escape close, and focus restoration to the trigger; contact form completed and submitted by keyboard alone.
+
+**Reduced motion:** the `/about` team carousel must not autoplay under `prefers-reduced-motion: reduce` emulation, and must still advance without it (fake clock, no sleeps).
+
+**Browser strategy:** axe checks DOM and computed styles, so findings depend on viewport rather than engine — full scans on desktop Chromium, mobile-layout scans on mobile Chromium, no mobile-WebKit duplication. WebKit does differ on Tab behavior (Safari's default skips links); the mobile-menu keyboard test handles that explicitly.
+
+**Exceptions:** no axe rules are disabled globally. If a rule is ever a false positive, scope `.exclude()`/`.withRules()` to the exact selector and document why inline — never weaken the whole scan. A new violation means a real regression or a new defect: fix the markup/styles rather than excluding it. Automated axe does not prove full WCAG conformance; manual checks still apply.
+
 ## Coverage and results
 
 Coverage reports: `coverage/index.html`, `coverage/lcov.info`, `coverage/coverage-summary.json`. Browser reports: `playwright-report/index.html`; failures retain screenshots and traces under `test-results/`.

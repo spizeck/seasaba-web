@@ -140,11 +140,11 @@ export function Footer() {
         {/* Bottom bar */}
         <div className="mt-12 border-t border-border/30 pt-8">
           <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
-            <p className="text-xs text-muted-foreground/60 text-center sm:text-left">
+            <p className="text-xs text-muted-foreground text-center sm:text-left">
               &copy; 1985&ndash;2026 Sea Saba, NV &bull; The Bottom, Saba, Caribbean Netherlands
             </p>
             <div className="flex flex-wrap items-center justify-center gap-5 sm:justify-end">
-              <CookieSettingsButton className="text-xs text-muted-foreground/60 transition-colors hover:text-muted-foreground" />
+              <CookieSettingsButton className="text-xs text-muted-foreground transition-colors hover:text-foreground" />
               {SOCIAL_LINKS.map((link) => (
                 <a
                   key={link.label}
@@ -152,7 +152,7 @@ export function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => trackLinkClick("social_click", link.href, link.label)}
-                  className="text-xs text-muted-foreground/60 transition-colors hover:text-muted-foreground"
+                  className="text-xs text-muted-foreground transition-colors hover:text-foreground"
                   aria-label={link.label}
                 >
                   {link.label}
