@@ -83,10 +83,24 @@ function candidateChromePaths() {
     }
   } else {
     candidates.push("/usr/bin/google-chrome", "/usr/bin/chromium", "/usr/bin/chromium-browser");
-    const pw = "/ms-playwright";
-    if (existsSync(pw)) {
-      for (const dir of readdirSync(pw).filter((d) => d.startsWith("chromium")).sort().reverse()) {
-        candidates.push(path.join(pw, dir, "chrome-linux", "chrome"));
+    // Playwright's browser cache: env override first (CI images set it), then
+    // the container path and the user cache. 1.63+ uses the Chrome-for-Testing
+    // layout (chrome-linux64); chrome-linux covers older installs.
+    const roots = [process.env.PLAYWRIGHT_BROWSERS_PATH, "/ms-playwright", path.join(os.homedir(), ".cache", "ms-playwright")];
+    for (const pw of roots) {
+      if (!pw || !existsSync(pw)) continue;
+      const dirs = readdirSync(pw).filter((d) => d.startsWith("chromium")).sort().reverse();
+      for (const dir of dirs.filter((d) => /^chromium-\d/.test(d))) {
+        candidates.push(
+          path.join(pw, dir, "chrome-linux64", "chrome"),
+          path.join(pw, dir, "chrome-linux", "chrome")
+        );
+      }
+      for (const dir of dirs.filter((d) => d.startsWith("chromium_headless_shell"))) {
+        candidates.push(
+          path.join(pw, dir, "chrome-headless-shell-linux64", "chrome-headless-shell"),
+          path.join(pw, dir, "chrome-linux", "headless_shell")
+        );
       }
     }
   }
