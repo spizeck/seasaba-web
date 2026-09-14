@@ -1,0 +1,67 @@
+name: Production smoke
+
+# Post-deployment verification of the live site. Vercel's Git integration
+# creates a GitHub Deployment for every build and posts a deployment_status
+# event when it finishes; the job below runs only on a successful Production
+# deployment. workflow_dispatch allows on-demand verification against a chosen
+# base URL, and the daily schedule is a safety net that also catches DNS/TLS,
+# host-level and content regressions unrelated to a deployment.
+on:
+  deployment_status:
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: "Base URL to smoke test (https only)"
+        required: false
+        default: "https://www.seasaba.com"
+  schedule:
+    - cron: "15 12 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-smoke
+  # Do not cancel: every production deployment should get its own verdict.
+  cancel-in-progress: false
+
+jobs:
+  smoke:
+    name: Production smoke tests
+    runs-on: ubuntu-latest
+    if: >-
+      github.event_name != 'deployment_status' ||
+      (github.event.deployment_status.state == 'success' &&
+       github.event.deployment.environment == 'Production')
+    # Official Playwright container: browsers + system deps pre-installed.
+    # Keep the tag in sync with package-lock.json (same image as tests.yml).
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-noble
+      options: --user 1001
+    timeout-minutes: 10
+    env:
+      SMOKE_BASE_URL: ${{ inputs.base_url || 'https://www.seasaba.com' }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+      - name: Record deployment context
+        run: |
+          echo "event: ${{ github.event_name }}"
+          echo "deployment sha: ${{ github.event.deployment.sha || github.sha }}"
+          echo "deployment url: ${{ github.event.deployment_status.target_url || 'n/a' }}"
+          echo "smoke target: $SMOKE_BASE_URL"
+      - run: npm ci
+      - run: npm run test:smoke:prod
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: production-smoke-results
+          path: |
+            playwright-report-production/
+            test-results-production/
+          retention-days: 14

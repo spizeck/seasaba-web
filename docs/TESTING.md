@@ -29,6 +29,7 @@ Prefer focused unit cases for business rules, component/data integration cases f
 | Unit | Vitest, `tests/unit` | Measurement/date conversion; reference normalization and legacy guide formats; grouping identities, maximum sighting counts and input immutability; analytics URL sanitization/domain classification; metadata, sitemap and redirect contracts |
 | Integration | Vitest + React Testing Library, `tests/integration` | Real component interactions; required fields, invalid-email recovery, course prefill, encoded email/WhatsApp handoffs; Checkfront inventory mapping/success/script error/timeout/render failure; Firestore join, empty data, permission-denied and service failures; dive filters, ordering, pagination, selection and export; real jsPDF generation with download boundary replaced |
 | Browser | Playwright, `tests/e2e` | Production build, anonymous access to 13 pages, headings/title/description/canonical, 404, security headers, sitemap/robots (including `/diving/first-dive` exclusion), every legacy redirect and destination anchor (including the `/diving/first-dive` permanent redirect), booking success/fallback, no-JavaScript booking fallback, course inquiry validation and WhatsApp handoff, mobile menu navigation |
+| Post-deploy smoke | Playwright, `tests/production` | The deployed `https://www.seasaba.com` after a production deployment: critical-route availability and page identity, key navigation paths, booking/contact boundaries, security headers, canonical host redirects, first-party error monitoring. Read-only; see "Production smoke testing" below |
 
 The browser scenarios run in desktop Chromium, Pixel 7 Chromium and iPhone 13 WebKit. These are emulations, not physical-device certification. The desktop profile intentionally skips the mobile-only menu case. Retries are disabled so failures remain visible.
 
@@ -95,6 +96,58 @@ The complete `npm run test:ci` command passed locally: 62 browser checks passed 
 `.github/workflows/tests.yml` runs on every PR, pushes to `master`, and manual dispatch. The job runs inside the official Playwright Docker container (`mcr.microsoft.com/playwright:v1.63.0-noble`), which ships with Chromium, WebKit, and all system dependencies pre-installed. This eliminates the slow `npx playwright install --with-deps` step that previously downloaded browsers and ran `apt-get` on every run. The container image tag must match the Playwright version in `package-lock.json`; bump both together. The workflow uses read-only repository permissions, Node 24, reproducible `npm ci`, coverage thresholds, production build and all browser projects. A failure stops the job; there are no optional critical-test steps. Reports are uploaded even after failure and retained for 14 days.
 
 **Required GitHub setting:** add the status check **`Critical website tests`** to the ruleset/branch protection for `master`, require PRs and require branches to be up to date. Retain existing repository protections. A workflow file alone cannot enforce merge blocking; this setting must be enabled in GitHub after the check first runs. No branch-protection change is claimed by this patch.
+
+## Production smoke testing (post-deployment)
+
+`tests/production/` (config `playwright.production.config.ts`, command `npm run test:smoke:prod`) verifies the **deployed** website — "did the site we actually shipped remain usable for customers?" It complements the hermetic pre-merge suite rather than duplicating it: intentionally small, fast (~15s), read-only and Chromium-only. The two suites are strictly separated — the local suite's `baseURL` is hardcoded to `127.0.0.1:3100` and refuses to reuse a running server, and the production suite contains only read-only tests, so neither can be misused against the other environment.
+
+### What it verifies
+
+- **Critical routes** `/`, `/diving`, `/courses`, `/plan-your-trip`, `/contact`, `/book`, `/dive-sites`: HTTP 200, exactly one visible `main h1` carrying the expected page-identity text, title, meta description, canonical URL, visible primary navigation, and no Next.js/server error surface. The h1 strings are deliberate deployment invariants (they prove the right page deployed), not copy policing.
+- **Critical navigation:** home → Diving via primary nav, header Book Now → `/book`, courses → try-scuba contact inquiry. Internal links only; no external handoff is followed.
+- **Booking boundary:** `/book` renders and exposes the guaranteed fallback link to `https://seasaba.checkfront.com/reserve/`. The vendor widget script is blocked (see Analytics below), so this is deterministic and emits no Checkfront tracking. Checkfront availability itself is vendor-owned and out of scope — the invariant that protects customers is that the booking page always offers a working direct path.
+- **Contact boundary:** the form renders and every control is usable; submitting the empty form exercises client-side validation while a `window.open` stub in the test browser proves nothing was opened or sent.
+- **Deployment metadata:** required security headers, `robots.txt`, `sitemap.xml`, apex→www and http→https canonical redirects, a representative legacy Wix 301, and a genuine 404.
+- **First-party health:** every page run fails on any uncaught exception, console error, or failed/≥400 first-party request. Exemptions are limited to the tracker hosts this fixture blocks itself (`ERR_BLOCKED_BY_CLIENT`) and the `/_vercel/` analytics endpoint it aborts. Unlike the local suite, real Firestore reads are allowed — a Firestore failure in production is signal, not noise.
+
+### What it deliberately does not do
+
+- Never creates a booking, sends a contact inquiry, opens a WhatsApp/email handoff, writes to Firestore, or mutates any production service.
+- Never asserts on third-party availability beyond Firestore content reads (and Checkfront is blocked entirely, not consulted).
+- No browser/device matrix — that coverage belongs to the local suite.
+- Does not follow external links or measure performance/marketing copy.
+
+### Triggers
+
+`.github/workflows/production-smoke.yml` runs on:
+
+- **`deployment_status`** where `state == success` and `deployment.environment == "Production"` — Vercel's Git integration creates a GitHub Deployment per build and posts this event after a production deployment is ready, making this true post-deployment verification. Preview deployments and non-success statuses are ignored.
+- **`workflow_dispatch`** with an optional `base_url` input for on-demand verification.
+- **Daily cron** (`15 12 * * *`) as a safety net for host-level, TLS, DNS or content regressions unrelated to deployments.
+
+The target is `https://www.seasaba.com` — the canonical customer host — not the immutable `*.vercel.app` deployment URL, so each run also validates domain aliasing and TLS. Note the check verifies "what is live now"; a pathological propagation race could in theory test the previous deployment, which the daily schedule and any subsequent deployment's run would still catch.
+
+### Manual/local execution
+
+```sh
+npm run test:smoke:prod                                              # against https://www.seasaba.com
+SMOKE_BASE_URL=https://example.com npm run test:smoke:prod           # POSIX shells
+$env:SMOKE_BASE_URL="https://example.com"; npm run test:smoke:prod   # PowerShell
+```
+
+The config refuses plain-HTTP targets except `localhost`/`127.0.0.1`, which exists for failure-path validation against a locally built server (`npm run build:test` + `next start --port 3100`). Caveat for local runs: `build:test` uses a demo Firebase project, so Firestore-backed pages log real SDK console errors there — expected locally; use a normal build with real env to fully validate locally.
+
+### Analytics and third-party policy
+
+Smoke traffic emits **zero** analytics, consent or conversion events: the fixture aborts tag loaders and trackers (GTM — which also carries Cookiebot, GA4, Google Ads, Clarity and Meta — plus the first-party `/_vercel/` Vercel Analytics endpoints and the Checkfront widget script) before any request leaves the browser. This requires no application opt-out code and changes nothing for real visitors. Firestore reads still occur, equivalent to any anonymous page view.
+
+### Artifacts and failure response
+
+Reports land in `playwright-report-production/`; failure screenshots/traces in `test-results-production/`; CI uploads both for 14 days. A failure means the live site regressed (or a genuinely external dependency like Firestore is down). Response: read the run log for the named route/assertion, download artifacts, verify manually in a browser, roll back in the Vercel dashboard if the deploy is bad, then re-run via `workflow_dispatch`. There is no automatic rollback.
+
+### Failure-path validation
+
+Validated by running the suite with a deliberately wrong expected h1: the run failed on `critical route / renders its expected page` showing the expected vs. received heading. Assertion failures name the route and invariant; monitor failures name the URL and error.
 
 ## Fixes found while testing
 
