@@ -1,4 +1,5 @@
 import { test as base, expect, type Page } from "@playwright/test";
+import { AxeBuilder } from "@axe-core/playwright";
 
 // Browser tests exercise real pages/hydration, but never contact vendor services.
 // The catch-all route below aborts every non-localhost request (Checkfront,
@@ -168,6 +169,21 @@ export async function stubWindowOpen(page: Page, key = "handoffCalls") {
 
 export function windowOpenCalls(page: Page, key = "handoffCalls"): Promise<string[]> {
   return page.evaluate((k) => (window as unknown as Record<string, string[]>)[k] ?? [], key);
+}
+
+// Runs the full default axe ruleset (WCAG 2.x A/AA + best practices) against the
+// current page state and fails with every violation's id, impact, and targets.
+// No rules are disabled: justified exceptions belong in the spec as narrowly
+// scoped .exclude()/withRules() calls with an adjacent comment, never globally.
+export async function expectNoAxeViolations(page: Page) {
+  const results = await new AxeBuilder({ page }).analyze();
+  const violations = results.violations.map(
+    (v) =>
+      `[${v.impact}] ${v.id}: ${v.help}\n` +
+      v.nodes.slice(0, 5).map((n) => `    ${n.target.join(" ")}`).join("\n") +
+      (v.nodes.length > 5 ? `\n    …and ${v.nodes.length - 5} more` : "")
+  );
+  expect(violations, "axe-core violations").toEqual([]);
 }
 
 // Narrowly mocks the Checkfront loader script so widget tests never touch the

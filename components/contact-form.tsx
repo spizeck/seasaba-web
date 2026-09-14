@@ -381,8 +381,8 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
           onClick={handleWhatsApp}
           className={
             preferredContact === "whatsapp"
-              ? "w-full border-green-600 bg-green-600 text-white hover:bg-green-700 hover:text-white sm:w-auto"
-              : "w-full border-green-600 text-green-600 hover:bg-green-50 hover:text-green-700 sm:w-auto"
+              ? "w-full border-green-700 bg-green-700 text-white hover:bg-green-800 hover:text-white sm:w-auto"
+              : "w-full border-green-700 text-green-700 hover:bg-green-50 hover:text-green-800 sm:w-auto"
           }
           aria-label="Send inquiry by WhatsApp"
         >

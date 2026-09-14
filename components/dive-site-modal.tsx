@@ -130,7 +130,7 @@ export function DiveSiteModal({ site, allSites, onClose, onNavigate }: Props) {
                 <path d="M8 5v14l11-7z" />
               </svg>
               <p className="text-sm font-medium">Video coming soon</p>
-              <p className="max-w-xs text-xs text-white/40">
+              <p className="max-w-xs text-xs text-white/60">
                 Our team is filming this site on the next calm-weather dive day. Check back for a new YouTube video.
               </p>
             </div>
@@ -171,7 +171,7 @@ export function DiveSiteModal({ site, allSites, onClose, onNavigate }: Props) {
               )}
             </button>
 
-            <span className="text-xs text-muted-foreground/60">
+            <span className="text-xs text-muted-foreground">
               {currentIndex + 1} / {allSites.length}
             </span>
 

@@ -271,42 +271,42 @@ export default function DivingPage() {
           <div className="flex items-start gap-3 rounded-lg border border-border/40 bg-muted/20 p-3">
             <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">✓</span>
             <div>
-              <h4 className="text-sm font-medium text-foreground">Better Daily Rates</h4>
+              <h3 className="text-sm font-medium text-foreground">Better Daily Rates</h3>
               <p className="text-xs text-muted-foreground">Multi-day packages lower your daily cost.</p>
             </div>
           </div>
           <div className="flex items-start gap-3 rounded-lg border border-border/40 bg-muted/20 p-3">
             <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">✓</span>
             <div>
-              <h4 className="text-sm font-medium text-foreground">Free 32% Nitrox</h4>
+              <h3 className="text-sm font-medium text-foreground">Free 32% Nitrox</h3>
               <p className="text-xs text-muted-foreground">Included on qualifying dives for certified divers.</p>
             </div>
           </div>
           <div className="flex items-start gap-3 rounded-lg border border-border/40 bg-muted/20 p-3">
             <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">✓</span>
             <div>
-              <h4 className="text-sm font-medium text-foreground">Flexible Schedule</h4>
+              <h3 className="text-sm font-medium text-foreground">Flexible Schedule</h3>
               <p className="text-xs text-muted-foreground">One rest day is allowed without resetting package pricing.</p>
             </div>
           </div>
           <div className="flex items-start gap-3 rounded-lg border border-border/40 bg-muted/20 p-3">
             <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">✓</span>
             <div>
-              <h4 className="text-sm font-medium text-foreground">Build Your Own Package</h4>
+              <h3 className="text-sm font-medium text-foreground">Build Your Own Package</h3>
               <p className="text-xs text-muted-foreground">Add afternoon and night dives to customize your stay.</p>
             </div>
           </div>
           <div className="flex items-start gap-3 rounded-lg border border-border/40 bg-muted/20 p-3">
             <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">✓</span>
             <div>
-              <h4 className="text-sm font-medium text-foreground">Rental Equipment Available</h4>
+              <h3 className="text-sm font-medium text-foreground">Rental Equipment Available</h3>
               <p className="text-xs text-muted-foreground">Full rental packages are available if needed.</p>
             </div>
           </div>
           <div className="flex items-start gap-3 rounded-lg border border-border/40 bg-muted/20 p-3">
             <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">✓</span>
             <div>
-              <h4 className="text-sm font-medium text-foreground">Full-Service Convenience</h4>
+              <h3 className="text-sm font-medium text-foreground">Full-Service Convenience</h3>
               <p className="text-xs text-muted-foreground">Equipment rinsed and delivered back to your accommodation.</p>
             </div>
           </div>
@@ -510,7 +510,7 @@ export default function DivingPage() {
         <p className="mt-5 text-sm leading-relaxed text-muted-foreground">
           DAN (Divers Alert Network) has published research regarding inter-island Caribbean flights, and Sea Saba can provide additional information to guests who would like to read the research.
         </p>
-        <p className="mt-3 text-xs text-muted-foreground/70 italic">
+        <p className="mt-3 text-xs text-muted-foreground italic">
           This information is provided for planning purposes only and does not constitute medical advice. Follow your dive computer, physician, and DAN recommendations.
         </p>
       </section>

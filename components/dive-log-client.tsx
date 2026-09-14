@@ -502,7 +502,7 @@ export function DiveLogClient() {
                       <button
                         onClick={() => toggleDive(d.id)}
                         aria-label={`Remove ${d.diveSite}`}
-                        className="mt-0.5 shrink-0 text-muted-foreground/50 hover:text-muted-foreground transition-colors"
+                        className="mt-0.5 shrink-0 text-muted-foreground hover:text-foreground transition-colors"
                       >
                         <X className="h-3.5 w-3.5" />
                       </button>

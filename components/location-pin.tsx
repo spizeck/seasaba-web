@@ -91,7 +91,7 @@ function Pin({
         >
           <span className="text-xs font-semibold text-white">Sea Saba Dive Center</span>
           <span className="mt-0.5 text-[10px] text-white/70">Fort Bay Harbor</span>
-          <span className="mt-2 text-[10px] font-medium tracking-wide text-white/50 uppercase">
+          <span className="mt-2 text-[10px] font-medium tracking-wide text-white/70 uppercase">
             Get Directions ↗
           </span>
         </a>

@@ -92,7 +92,9 @@
   --secondary: #E8E0D5;
   --secondary-foreground: #1A1A2E;
   --muted: #F5F6FA;
-  --muted-foreground: #6B7280;
+  /* Darkened from #6B7280: that gray measured 4.47:1 on --background (#F5F6FA),
+     just under the WCAG AA 4.5:1 minimum for normal text. #5F6673 ≈ 5.4:1. */
+  --muted-foreground: #5F6673;
   --accent: #2C3E50;
   --accent-foreground: #FFFFFF;
   --destructive: #9D2235;
