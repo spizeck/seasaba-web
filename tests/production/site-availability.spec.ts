@@ -96,7 +96,12 @@ test("security headers, robots.txt and sitemap.xml are production-sane", async (
   expect(headers["x-frame-options"]).toBe("SAMEORIGIN");
   expect(headers["referrer-policy"]).toBe("strict-origin-when-cross-origin");
   expect(headers["permissions-policy"]).toContain("camera=()");
-  expect(headers["content-security-policy"]).toContain("frame-ancestors 'self'");
+  const csp = headers["content-security-policy"];
+  expect(csp).toContain("frame-ancestors 'self'");
+  expect(csp).toContain("object-src 'none'");
+  expect(csp).toContain("https://consentcdn.cookiebot.com");
+  expect(csp).not.toContain("'unsafe-eval'");
+  expect(headers["cross-origin-opener-policy"]).toBe("same-origin-allow-popups");
 
   const robots = await request.get("/robots.txt");
   expect(robots.status()).toBe(200);
