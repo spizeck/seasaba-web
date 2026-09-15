@@ -20,7 +20,7 @@ interface PageHeroProps {
 }
 
 /**
- * PageHero — interior page hero per sea-saba-image-standard.md §3.2.
+ * PageHero — interior page hero per docs/design/IMAGE_STANDARD.md §3.2.
  * Sizing: aspect-ratio 4/3 mobile (min 320px, max 480px)
  *         aspect-ratio 2.4/1 desktop (min 420px, max 640px).
  * Uses CSS aspect-ratio — not vh — to prevent mobile CLS.

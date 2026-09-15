@@ -1,5 +1,14 @@
 # Windsurf AI Project Instructions
 
+> Canonical docs: `README.md` (setup/deploy/architecture summary),
+> `docs/TESTING.md` (test commands and CI gates — always run the relevant
+> checks), `docs/ANALYTICS_SEO.md` (tracking/indexing rules),
+> `docs/COOKIEBOT_CONSENT_SETUP.md` (consent architecture),
+> `docs/design/` (brand, UX and image standards), `docs/historical/`
+> (superseded plans — do not implement from these).
+> The rules below are agent-specific guardrails; the linked docs own the
+> operational detail.
+
 ## Project Purpose
 Build a fast, SEO-first, **destination-led marketing website** for Sea Saba, a professional scuba diving operation on the island of Saba in the Dutch Caribbean.
 
@@ -73,10 +82,10 @@ There are exactly **two** page layouts:
 
 1. **Homepage Layout**
    - Static hero image at top
-   - One scroll-based or cinematic video background section
    - Minimal copy
    - Homepage acts as a **positioning + routing page**
    - Homepage should inspire confidence, explain the destination briefly, and route users into deeper pages
+   - No video backgrounds: the former video section was removed for performance (Sept 2026); do not reintroduce one without an explicit request
 
 2. **Standard Content Layout**
    - Used for all other pages
@@ -125,7 +134,8 @@ The homepage should be concise but still provide enough semantic content for sea
 ---
 
 ## Homepage Section Order (Strict)
-The homepage must follow this high-level order of major sections:
+The implemented homepage (`app/page.tsx`) follows this order of major
+sections — keep changes consistent with it:
 
 1. **Hero (Static Image)**
    - No color filter overlay on the hero image by default
@@ -133,25 +143,20 @@ The homepage must follow this high-level order of major sections:
    - Primary headline + short subline + primary CTA
    - Should immediately communicate premium destination diving
 
-2. **Supporting Section (Static)**
-   - One concise value section
-   - Prefer “Why Dive Saba” or “Why Sea Saba”
+2. **Why Saba (Static)**
+   - Concise destination value section (photo cards + supporting points)
    - Keep copy restrained and high-impact
    - No video backgrounds
 
-3. **Video Section + CTA (Single Video Background)**
-   - One looping/cinematic video background (no audio)
-   - One clear CTA (e.g., “Explore Dive Sites” or “Plan Your Dive Trip”)
-   - Keep copy minimal (1–2 short lines)
-   - This is the only video section on the homepage
+3. **Signature Dive Areas (Static)**
+   - "The Dives That Made Saba Famous" — alternating media rows for the five
+     dive areas, routing to `/dive-sites`
 
 4. **Routing Sections (Static)**
-   - Brief cards/links to deeper sections such as:
+   - "Plan Your Trip" — brief cards/links to deeper sections such as:
      - Diving
      - Dive Sites
      - Courses / Learn
-     - Technical Diving
-     - Private Charters
      - Plan Your Trip
    - These should be selective and intentional, not a giant sitemap
 
@@ -160,8 +165,7 @@ The homepage must follow this high-level order of major sections:
    - Clear next step, not cluttered
 
 Notes:
-- Do not add additional video sections.
-- On mobile, the video section must degrade to a static poster image.
+- Do not add video sections (the former one was removed for performance).
 - Homepage copy should remain concise and not become an SEO content wall.
 
 ---
@@ -170,7 +174,6 @@ Notes:
 Motion is allowed **only on the homepage**.
 
 Allowed:
-- One video background section used as the **3rd homepage section**
 - Subtle fade-in transitions
 - Very restrained reveal animations
 - Very subtle image hover treatments
@@ -183,7 +186,8 @@ Not allowed:
 - Complex animated hero systems
 - Multiple animated background sections
 
-Mobile must degrade gracefully to static imagery (poster image).
+If motion or video is ever reintroduced, mobile must degrade gracefully to
+static imagery (poster image).
 
 Motion must reinforce calm professionalism, not spectacle.
 
@@ -288,6 +292,12 @@ Avoid:
 
 ## Site Architecture Rules (Preferred)
 Use a clean, scalable information architecture that supports both SEO and conversion.
+
+The implemented navigation lives in `lib/constants.ts` (`NAV_ITEMS`) plus a
+Book CTA in the header. The recommendations below describe the intended IA
+direction; some deeper pages were shipped as anchored sections instead —
+prefer extending the existing flat structure unless a split is clearly
+justified.
 
 Recommended primary navigation:
 - Diving

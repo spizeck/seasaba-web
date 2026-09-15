@@ -1,5 +1,12 @@
 # Sea Saba Website — Image Standard & Implementation Spec
 
+> **Status: Current reference — implemented.** The original task spec below
+> has been carried out: `PageHero` (`components/page-hero.tsx`) and
+> `FeatureImage`/`MediaRow` (`components/feature-image.tsx`) exist, and site
+> imagery is served as WebP from `public/images/optimized/`. Treat this as
+> the canonical image standard for new work; the implementation-task framing
+> is retained for context.
+
 ## Task for AI coding agent (Devin / Claude Code / etc.)
 
 Implement the image standard and layout components described below across the
@@ -12,7 +19,7 @@ stretched or badly-cropped photo is worse than a flagged gap.
 
 This spec assumes Next.js (App Router or Pages Router — adapt accordingly),
 `next/image`, and the existing brand tokens already defined in
-`THEME_UX_GUIDE.md` (colors, type scale, spacing scale). Don't introduce a new
+`./THEME_UX_GUIDE.md` (colors, type scale, spacing scale). Don't introduce a new
 styling system; match whatever the codebase already uses (CSS Modules,
 Tailwind, styled-components) when implementing the snippets below.
 
@@ -65,7 +72,7 @@ photographing a person, not a horizon, so a vertical crop is correct there.
 
 ### 3.1 Homepage Hero
 - No change from current implementation. Full-bleed, landscape (~16:9 to 2:1),
-  navbar overlay (translucent + blur, per `THEME_UX_GUIDE.md`).
+  navbar overlay (translucent + blur, per `./THEME_UX_GUIDE.md`).
 
 ### 3.2 Interior Page Hero
 - `aspect-ratio: 2.4 / 1` desktop, `min-height: 420px`, `max-height: 640px`.
@@ -110,7 +117,7 @@ harbor, gear, training photos).
   same rule as hero overlays.
 
 ### 3.6 Card Grid Thumbnail (future — Marine Life grid)
-- Not yet built (called for in `THEME_UX_GUIDE.md` homepage section order #4).
+- Not yet built (called for in `./THEME_UX_GUIDE.md` homepage section order #4).
 - When built: `aspect-ratio: 1 / 1` tiles, species-centered framing, calm/
   uncluttered backgrounds so the grid reads as a coherent set.
 

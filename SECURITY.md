@@ -1,21 +1,37 @@
 # Security Policy
 
-## Supported Versions
+## Scope
 
-Use this section to tell people about which versions of your project are
-currently being supported with security updates.
-
-| Version | Supported          |
-| ------- | ------------------ |
-| 5.1.x   | :white_check_mark: |
-| 5.0.x   | :x:                |
-| 4.0.x   | :white_check_mark: |
-| < 4.0   | :x:                |
+This repository contains the public Sea Saba marketing website
+(`https://www.seasaba.com`) — a Next.js static/server-rendered site with no
+user accounts, authentication, or stored personal data. The only live data
+is anonymous read-only access to public Firestore collections (dive log).
+Booking and payments are handled entirely by Checkfront, a separate vendor
+system.
 
 ## Reporting a Vulnerability
 
-Use this section to tell people how to report a vulnerability.
+Please report suspected vulnerabilities privately rather than in a public
+issue:
 
-Tell them where to go, how often they can expect to get an update on a
-reported vulnerability, what to expect if the vulnerability is accepted or
-declined, etc.
+- Use GitHub's **"Report a vulnerability"** flow on this repository's
+  Security tab, if enabled; otherwise
+- Email **info@seasaba.com** with the subject "Security — seasaba-web".
+
+Include steps to reproduce and the affected route or configuration. We will
+acknowledge reports as soon as practical and follow up once resolved or
+declined.
+
+## Security-relevant implementation
+
+- HTTP security headers (CSP, HSTS, `X-Frame-Options`, `X-Content-Type-Options`,
+  `Referrer-Policy`, `Permissions-Policy`) are set in `next.config.ts` and
+  verified by the test suites (see `docs/TESTING.md`).
+- Third-party scripts are limited to the hosts allow-listed in the CSP
+  (Checkfront, GTM/GA, Microsoft Clarity, Cookiebot, Vercel).
+- Dependencies are updated via Dependabot (weekly, grouped minor/patch) and
+  `npm audit`. GitHub code scanning (CodeQL default setup, configured in
+  repository settings — not a committed workflow) analyzes PRs and the
+  default branch weekly.
+- Cookie/consent management is documented in
+  `docs/COOKIEBOT_CONSENT_SETUP.md`.

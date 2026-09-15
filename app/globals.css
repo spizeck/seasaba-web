@@ -12,7 +12,7 @@
   --font-heading: "Century Gothic", "CenturyGothic", "AppleGothic", "Poppins", sans-serif;
   --font-mono: ui-monospace, "SFMono-Regular", monospace;
   
-  /* Typography Scale - THEME_UX_GUIDE.md */
+  /* Typography Scale - docs/design/THEME_UX_GUIDE.md */
   --font-size-h1-mobile: 2.25rem; /* 36px */
   --font-size-h1-desktop: 3.5rem; /* 56px */
   --font-size-h2: 2rem; /* 32px */
@@ -20,11 +20,11 @@
   --font-size-body: 1.125rem; /* 18px */
   --font-size-small: 0.875rem; /* 14px */
   
-  /* Line Heights - THEME_UX_GUIDE.md */
+  /* Line Heights - docs/design/THEME_UX_GUIDE.md */
   --leading-body: 1.5;
   --leading-heading: 1.25;
   
-  /* Spacing Scale - THEME_UX_GUIDE.md (8px-based) */
+  /* Spacing Scale - docs/design/THEME_UX_GUIDE.md (8px-based) */
   --spacing-1: 0.25rem; /* 4px */
   --spacing-2: 0.5rem; /* 8px */
   --spacing-4: 1rem; /* 16px */
@@ -74,7 +74,7 @@
 :root {
   --radius: 0.625rem;
   /*
-   * Brand palette from THEME_UX_GUIDE.md
+   * Brand palette from docs/design/THEME_UX_GUIDE.md
    * Sea Saba Blue: #171C8F  |  Sea Saba Red: #9D2235
    * Abyss Navy:   #0B0F3B  |  Volcanic Slate: #2C3E50
    * Drift White:  #F5F6FA  |  Sand: #E8E0D5

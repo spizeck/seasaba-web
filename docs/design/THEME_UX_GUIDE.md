@@ -1,5 +1,14 @@
 # Theme & UX Guide
 
+> **Status: Canonical design reference** — brand colors, typography, spacing,
+> imagery, and interaction rules. Two notes where this guide diverges from
+> the shipped site: the 12-part homepage section order below was the design
+> spec; the implemented homepage is simpler (see `app/page.tsx` and
+> `README.md`), and the homepage video section was removed for performance
+> in September 2026 (video rules apply only if video is reintroduced).
+> Performance targets are now enforced mechanically by `perf/budgets.json`
+> (see `docs/TESTING.md`).
+
 ## Brand Personality
 - Professional
 - Calm
