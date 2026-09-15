@@ -47,6 +47,22 @@ const EXAMPLE_ALLOWLIST = new Set([]);
 const CODE_EXTENSIONS = /\.(ts|tsx|mts|mjs|js|jsx)$/;
 const WORKFLOW_EXTENSIONS = /\.(yml|yaml)$/;
 
+// Explicit scan scope: directories and root config files that legitimately
+// consume environment variables. New source roots must be added here.
+const SCAN_DIR_RE = /^(app|components|lib|tests|scripts|perf|data|public)\//;
+const ROOT_CONFIG_RE = /^[^/]+\.config\.[cm]?[jt]s$|^middleware\.[jt]s$/;
+
+// The check-*.mjs scripts are repo meta-checks, not env consumers. They
+// legitimately contain `process.env.NAME` in explanatory comments (like the
+// header above) — scanning them makes the checker flag its own
+// documentation, which is what broke CI on #71.
+const META_CHECK_RE = /^scripts\/check-.*\.mjs$/;
+
+function inScanScope(file) {
+  if (META_CHECK_RE.test(file)) return false;
+  return SCAN_DIR_RE.test(file) || ROOT_CONFIG_RE.test(file);
+}
+
 const ENV_READ_RE =
   /process\.env\.([A-Z_][A-Z0-9_]*)|process\.env\[["']([A-Z_][A-Z0-9_]*)["']\]/g;
 const ENV_KEY_RE = /^([A-Z_][A-Z0-9_]*)\s*=/;
@@ -76,7 +92,9 @@ for (const line of exampleText.split("\n")) {
 
 const referenced = new Set();
 const referencedBy = new Map();
-const codeFiles = trackedFiles.filter((f) => CODE_EXTENSIONS.test(f));
+const codeFiles = trackedFiles.filter(
+  (f) => CODE_EXTENSIONS.test(f) && inScanScope(f)
+);
 const workflowFiles = trackedFiles.filter(
   (f) => f.startsWith(".github/") && WORKFLOW_EXTENSIONS.test(f)
 );
@@ -97,6 +115,30 @@ const workflowText = workflowFiles
   .join("\n");
 for (const name of exampleNames) {
   if (new RegExp(`\\b${name}\\b`).test(workflowText)) referenced.add(name);
+}
+
+// --- Regression guards --------------------------------------------------------
+//
+// #71 follow-up: on CI this checker flagged `process.env.NAME` inside its own
+// header comment, because the scanned set included the check scripts. Guard
+// against scope regressions permanently, and prove the read pattern still
+// detects an ordinary consumer reference.
+
+if (codeFiles.some((f) => META_CHECK_RE.test(f))) {
+  failures.push(
+    "env scan scope includes scripts/check-*.mjs — meta-checks document env semantics and must stay out of scope (see META_CHECK_RE)"
+  );
+}
+
+const SELF_TEST_FIXTURE = "const v = process.env.SELF_TEST_ENV_VAR;";
+if (
+  ![...SELF_TEST_FIXTURE.matchAll(ENV_READ_RE)].some(
+    (m) => m[1] === "SELF_TEST_ENV_VAR"
+  )
+) {
+  failures.push(
+    "ENV_READ_RE no longer detects a plain process.env.NAME read — fix the pattern before trusting this check"
+  );
 }
 
 // --- Drift, both directions ---------------------------------------------------
