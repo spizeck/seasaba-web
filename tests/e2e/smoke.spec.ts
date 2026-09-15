@@ -23,7 +23,12 @@ test("@smoke unknown routes return a genuine 404", async ({ page, monitor }) => 
 test("@smoke server headers, sitemap and robots are present", async ({ request }) => {
   const response = await request.get("/");
   expect(response.headers()["x-content-type-options"]).toBe("nosniff");
-  expect(response.headers()["content-security-policy"]).toContain("frame-ancestors 'self'");
+  const csp = response.headers()["content-security-policy"];
+  expect(csp).toContain("frame-ancestors 'self'");
+  expect(csp).toContain("object-src 'none'");
+  expect(csp).toContain("https://consentcdn.cookiebot.com");
+  // build:test serves the production header set, which must not eval.
+  expect(csp).not.toContain("'unsafe-eval'");
   const sitemap = await request.get("/sitemap.xml");
   expect(sitemap.status()).toBe(200);
   const sitemapBody = await sitemap.text();
