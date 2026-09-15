@@ -5,6 +5,7 @@ import { BookingCTA } from "@/components/booking-cta";
 import { TrackedInternalButton } from "@/components/tracked-internal-button";
 import { Award, Users, CheckCircle, Ship, MapPin, Wrench, Car, ShieldCheck, Compass } from "lucide-react";
 import { coursesAnchors } from "@/lib/anchors";
+import { OPERATIONS } from "@/data/operations";
 
 export const metadata = createMetadata({
   title: "Scuba Courses & Certifications",
@@ -29,7 +30,7 @@ const WHY_TRAIN_SABA = [
     icon: Compass, // or Anchor
     title: "40+ Years of Experience",
     description:
-      "Since 1985, Sea Saba has introduced thousands of divers to the underwater world and the reefs of Saba.",
+      `Since ${OPERATIONS.establishedYear}, Sea Saba has introduced thousands of divers to the underwater world and the reefs of Saba.`,
   },
 
   {
@@ -42,7 +43,7 @@ const WHY_TRAIN_SABA = [
     icon: Ship,
     title: "From Harbor to Reef",
     description:
-      "Start in the calm waters of Fort Bay Harbor to perfect buoyancy and weighting before completing open water dives on Saba's spectacular reef sites.",
+      `Start in the calm waters of ${OPERATIONS.harbor} to perfect buoyancy and weighting before completing open water dives on Saba's spectacular reef sites.`,
   },
   {
     icon: Wrench,
@@ -53,9 +54,9 @@ const WHY_TRAIN_SABA = [
 
   {
     icon: CheckCircle,
-    title: "Free 32% Nitrox",
+    title: `Free ${OPERATIONS.nitroxBlend} Nitrox`,
     description:
-      "Complimentary 32% Nitrox for certified nitrox divers when appropriate.",
+      `Complimentary ${OPERATIONS.nitroxBlend} Nitrox for certified nitrox divers when appropriate.`,
   },
   {
     icon: Car,
@@ -126,8 +127,8 @@ const COURSES: Course[] = [
     level: "Specialty",
     duration: "1 day",
     description:
-      "Enriched air (Nitrox) is the most popular scuba specialty, and it fits Saba perfectly. Because Sea Saba includes complimentary 32% Nitrox for certified divers, getting Nitrox certified is an easy way to get more from Saba's deeper pinnacles and multi-day dive schedules. Complete the eLearning before you arrive and finish the certification during your trip.",
-    includes: ["Complete eLearning before arrival", "Enriched air planning and analysis", "Can be combined with your dive days", "Free 32% Nitrox afterward for certified divers"],
+      `Enriched air (Nitrox) is the most popular scuba specialty, and it fits Saba perfectly. Because Sea Saba includes complimentary ${OPERATIONS.nitroxBlend} Nitrox for certified divers, getting Nitrox certified is an easy way to get more from Saba's deeper pinnacles and multi-day dive schedules. Complete the eLearning before you arrive and finish the certification during your trip.`,
+    includes: ["Complete eLearning before arrival", "Enriched air planning and analysis", "Can be combined with your dive days", `Free ${OPERATIONS.nitroxBlend} Nitrox afterward for certified divers`],
     cta: "Request Nitrox Course Info",
     path: "/contact?interest=sdi-nitrox",
   },
@@ -222,7 +223,7 @@ export default function CoursesPage() {
               experience.
             </p>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              Small groups aren&apos;t a new trend for us. They&apos;ve been our philosophy since 1985.
+              Small groups aren&apos;t a new trend for us. They&apos;ve been our philosophy since {OPERATIONS.establishedYear}.
             </p>
           </div>
         </FeatureImage>

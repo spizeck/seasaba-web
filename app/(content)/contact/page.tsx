@@ -6,6 +6,7 @@ import { FindSeaSaba } from "@/components/find-sea-saba";
 import { Button } from "@/components/ui/button";
 import { TrackedContactLink } from "@/components/tracked-contact-link";
 import { CONTACT } from "@/lib/constants";
+import { inquiryFor } from "@/data/operations";
 import { MapPin, Phone, MessageCircle, Mail, Luggage, ChevronRight } from "lucide-react";
 
 interface ContactPageProps {
@@ -28,19 +29,9 @@ export async function generateMetadata({
 export default async function ContactPage({ searchParams }: ContactPageProps) {
   const { interest } = await searchParams;
 
-  const inquiryLabels: Record<string, string> = {
-    "try-scuba": "Try Scuba Inquiry",
-    "sdi-open-water": "SDI Open Water Diver Inquiry",
-    "sdi-advanced-specialty": "SDI Advanced & Specialty Training Inquiry",
-    "sdi-nitrox": "SDI Nitrox Diver Inquiry",
-    "sdi-rescue": "SDI Rescue Diver Inquiry",
-    "sdi-divemaster": "SDI Divemaster Inquiry",
-    "tdi-technical": "TDI Technical Diving Inquiry",
-  };
-
-  const isCourseInquiry = interest && inquiryLabels[interest];
-  const headline = isCourseInquiry ? inquiryLabels[interest] : "Contact Us";
-  const subtitle = isCourseInquiry
+  const inquiry = interest ? inquiryFor(interest) : undefined;
+  const headline = inquiry ? inquiry.subject : "Contact Us";
+  const subtitle = inquiry?.group === "courses"
     ? "Tell us a little about your plans and our team will help you choose the best schedule."
     : "Have questions about diving in Saba, course availability, or anything else? We are happy to help.";
 

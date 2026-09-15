@@ -116,6 +116,7 @@ const REQUIRED_PATHS = [
   "docs/TESTING.md",
   "docs/ANALYTICS_SEO.md",
   "docs/COOKIEBOT_CONSENT_SETUP.md",
+  "docs/OPERATIONS.md",
   "docs/design/THEME_UX_GUIDE.md",
   "docs/design/IMAGE_STANDARD.md",
   // Source/test roots

@@ -2,36 +2,33 @@
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { trackLinkClick } from "@/lib/analytics";
+import { BOOKING_URL } from "@/lib/constants";
+import { CHECKFRONT_EXTRA_ITEMS, DIVE_PRODUCTS, type DiveProduct } from "@/data/operations";
 
 const CF_SCRIPT_SRC = "//seasaba.checkfront.com/lib/interface--0.js";
 const CF_SCRIPT_ID = "checkfront-interface-script";
 
-// Simplified slug to Checkfront item ID mapping
-const SLUG_TO_ITEM_ID: Record<string, string> = {
-  "classic": "244",
-  "advanced": "243",
-  "afternoon": "245",
-  "snorkel": "246",
-  "private": "254",
-};
+// Slug and display-name lookups derive from the canonical product registry in
+// data/operations.ts so /book?item= deep links can't drift from the catalog.
+const SLUG_TO_ITEM_ID: Record<string, string> = Object.fromEntries(
+  Object.values(DIVE_PRODUCTS).map((p) => [p.slug, p.checkfrontItemId])
+);
 
-// Item ID to display name mapping
 const ITEM_NAMES: Record<string, string> = {
-  "244": "Classic 2-Tank Dive",
-  "243": "Advanced 2-Tank Dive",
-  "245": "Afternoon 1-Tank Dive",
-  "246": "Afternoon Snorkel Trip",
-  "254": "Private Charter",
-  "248": "Shore Diving (Tent Reef)",
-  "253": "Nitrox Upgrade",
-  "249": "Dive Packages",
+  ...Object.fromEntries(
+    Object.values(DIVE_PRODUCTS).map((p) => [p.checkfrontItemId, p.name])
+  ),
+  ...CHECKFRONT_EXTRA_ITEMS,
 };
 
+// Full inventory list shown when no item is preselected. Checkfront owns this
+// set — update it here when items are added or removed there.
 const ALL_ITEM_IDS = "245,244,243,246,247,248,253,249,254";
 
 const POLL_INTERVAL_MS = 100;
 const POLL_TIMEOUT_MS = 12000;
-const DIRECT_BOOKING_URL = "https://seasaba.checkfront.com/reserve/";
+const DIRECT_BOOKING_URL = BOOKING_URL;
+const CHECKFRONT_HOST = new URL(BOOKING_URL).host;
 
 function trackCheckfrontClick(buttonText: string, buttonLocation: string) {
   trackLinkClick("checkfront_click", DIRECT_BOOKING_URL, buttonText, {
@@ -90,14 +87,15 @@ export function BookingWidget() {
       suppressScroll();
 
       // Build widget config based on preselected item
-      const isPrivate = itemId === "254";
+      const product: DiveProduct | undefined = Object.values(DIVE_PRODUCTS).find((p) => p.checkfrontItemId === itemId);
+      const categoryId = product?.checkfrontCategoryId;
       const widgetConfig = {
-        host: "seasaba.checkfront.com",
+        host: CHECKFRONT_HOST,
         target: "CHECKFRONT_WIDGET_01",
-        item_id: isPrivate ? undefined : (itemId || ALL_ITEM_IDS),
-        category_id: isPrivate ? "49" : (itemId ? undefined : "4,51,49"),
+        item_id: categoryId ? undefined : (itemId || ALL_ITEM_IDS),
+        category_id: categoryId ?? (itemId ? undefined : "4,51,49"),
         tid: "seasaba-website",
-        options: itemId && !isPrivate ? undefined : "category_select",
+        options: itemId && !categoryId ? undefined : "category_select",
         style: "font-family: Inter",
         provider: "droplet",
       };

@@ -9,6 +9,7 @@ import { InsuranceCTAs } from "@/components/insurance-ctas";
 import { TrackedOutboundButton } from "@/components/tracked-outbound-button";
 import { PageSectionNav } from "@/components/navigation/PageSectionNav";
 import { planYourTripAnchors } from "@/lib/anchors";
+import { OPERATIONS } from "@/data/operations";
 
 export const metadata = createMetadata({
   title: "Plan Your Trip to Saba",
@@ -71,7 +72,7 @@ const FAQS = [
   },
   {
     question: "Is Nitrox included?",
-    answer: "Complimentary 32% Nitrox is included for certified Nitrox divers. Please bring proof of Nitrox certification.",
+    answer: `Complimentary ${OPERATIONS.nitroxBlend} Nitrox is included for certified Nitrox divers. Please bring proof of Nitrox certification.`,
   },
   {
     question: "Do I need a rental car?",

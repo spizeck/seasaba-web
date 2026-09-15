@@ -8,6 +8,7 @@ import { InsuranceCTAs } from "@/components/insurance-ctas";
 import { ExperienceSelector } from "@/components/experience-selector";
 import { TrackedInternalButton } from "@/components/tracked-internal-button";
 import { divingAnchors, coursesAnchors } from "@/lib/anchors";
+import { DIVE_PRODUCTS, OPERATIONS, bookingHref } from "@/data/operations";
 
 export const metadata = createMetadata({
   title: "Diving in Saba",
@@ -17,95 +18,95 @@ export const metadata = createMetadata({
 });
 
 const TRUST_SIGNALS = [
-  { icon: Users, label: "Small Groups", sublabel: "Maximum 8 divers per guide" },
+  { icon: Users, label: "Small Groups", sublabel: `Maximum ${OPERATIONS.maxDiversPerGuide} divers per guide` },
   { icon: Bus, label: "Complimentary Taxi Shuttle", sublabel: "Anywhere on Saba" },
-  { icon: Droplets, label: "Free 32% Nitrox", sublabel: "For certified divers" },
-  { icon: Award, label: "Since 1985", sublabel: "Saba's only continuously operating dive center" },
+  { icon: Droplets, label: `Free ${OPERATIONS.nitroxBlend} Nitrox`, sublabel: "For certified divers" },
+  { icon: Award, label: `Since ${OPERATIONS.establishedYear}`, sublabel: "Saba's only continuously operating dive center" },
 ];
 
 const DIVE_EXPERIENCES = [
   {
-    title: "Classic 2-Tank Dive",
+    title: DIVE_PRODUCTS.classic.name,
     subtitle: "THE CLASSIC SEA SABA EXPERIENCE",
     description:
       "Two relaxed dives in Saba's Marine Park. Perfect for most certified divers and our most popular option.",
     details: [
-      "10:30 AM departure",
-      "Return about 3:00 PM",
+      `${DIVE_PRODUCTS.classic.schedule.departure} departure`,
+      `Return about ${DIVE_PRODUCTS.classic.schedule.returns}`,
       "Two dives to ~70 ft / 21 m",
-      "Free 32% Nitrox",
-      "Scuba Diver minimum",
+      `Free ${OPERATIONS.nitroxBlend} Nitrox`,
+      DIVE_PRODUCTS.classic.requirement,
     ],
     cta: "Book Classic Diving",
-    href: "/book?item=classic",
-    itemId: "classic",
+    href: bookingHref("classic"),
+    itemId: DIVE_PRODUCTS.classic.slug,
     featured: true,
   },
   {
-    title: "Advanced 2-Tank Dive",
+    title: DIVE_PRODUCTS.advanced.name,
     subtitle: "FOR EXPERIENCED DIVERS",
     description:
       "Explore deeper pinnacles, walls, and seamounts with dramatic underwater terrain.",
     details: [
-      "9:00 AM departure",
-      "Return about 1:00 PM",
+      `${DIVE_PRODUCTS.advanced.schedule.departure} departure`,
+      `Return about ${DIVE_PRODUCTS.advanced.schedule.returns}`,
       "Dive 1 to ~110 ft / 33 m",
       "Dive 2 to ~70 ft / 21 m",
       "Free Nitrox (mandatory on Dive 1)",
-      "AOW + 20 dives OR OW + 50 dives",
+      DIVE_PRODUCTS.advanced.requirement,
     ],
     cta: "Book Advanced Diving",
-    href: "/book?item=advanced",
-    itemId: "advanced",
+    href: bookingHref("advanced"),
+    itemId: DIVE_PRODUCTS.advanced.slug,
     featured: false,
   },
   {
-    title: "Afternoon 1-Tank Dive",
+    title: DIVE_PRODUCTS.afternoon.name,
     subtitle: "A RELAXED AFTERNOON DIVE",
     description:
       "A single afternoon dive to one of Saba's signature sites. Great for adding another dive or enjoying a lighter day.",
     details: [
-      "1:00 PM departure",
-      "Return about 3:00 PM",
+      `${DIVE_PRODUCTS.afternoon.schedule.departure} departure`,
+      `Return about ${DIVE_PRODUCTS.afternoon.schedule.returns}`,
       "Up to ~70 ft / 21 m",
-      "Scuba Diver minimum",
+      DIVE_PRODUCTS.afternoon.requirement,
     ],
     cta: "Book Afternoon Dive",
-    href: "/book?item=afternoon",
-    itemId: "afternoon",
+    href: bookingHref("afternoon"),
+    itemId: DIVE_PRODUCTS.afternoon.slug,
     featured: false,
   },
   {
-    title: "Afternoon Snorkel Trip",
+    title: DIVE_PRODUCTS.snorkel.name,
     subtitle: "SURFACE EXPLORATION",
     description:
       "Enjoy Saba's reefs, turtles, and marine life from the surface while divers explore below.",
     details: [
-      "1:00 PM departure",
-      "Return about 3:00 PM",
+      `${DIVE_PRODUCTS.snorkel.schedule.departure} departure`,
+      `Return about ${DIVE_PRODUCTS.snorkel.schedule.returns}`,
       "Equipment included",
       "Comfortable swimmers",
       "Unguided experience",
     ],
     cta: "Book Snorkeling",
-    href: "/book?item=snorkel",
-    itemId: "snorkel",
+    href: bookingHref("snorkel"),
+    itemId: DIVE_PRODUCTS.snorkel.slug,
     featured: false,
   },
   {
-    title: "Private Charter",
+    title: DIVE_PRODUCTS.private.name,
     subtitle: "EXCLUSIVE EXPERIENCES",
     description:
       "Private diving aboard our custom Caribbean-built catamarans with flexible schedules and personalized itineraries.",
     details: [
       "Half or full day",
-      "Up to 8 guests",
+      DIVE_PRODUCTS.private.capacity,
       "Dedicated captain",
       "Flexible departure times",
     ],
     cta: "Book Private Charter",
-    href: "/book?item=private",
-    itemId: "private",
+    href: bookingHref("private"),
+    itemId: DIVE_PRODUCTS.private.slug,
     featured: false,
   },
   {
@@ -127,12 +128,12 @@ export default function DivingPage() {
         src="/images/optimized/diving-hero.webp"
         alt="Scuba divers exploring the reef in the Saba Marine Park"
         title="Diving with Sea Saba"
-        subtitle="Professional boat diving in Saba's Marine Park since 1985"
+        subtitle={`Professional boat diving in Saba's Marine Park since ${OPERATIONS.establishedYear}`}
         objectPosition="center bottom"
       />
 
       <p className="text-base leading-relaxed text-muted-foreground">
-        Sea Saba has been introducing divers to Saba since 1985. As the island&apos;s only 
+        Sea Saba has been introducing divers to Saba since {OPERATIONS.establishedYear}. As the island&apos;s only 
         continuously operating dive center, we combine decades of local knowledge with 
         small groups, comfortable boats, and personalized service.
       </p>
@@ -163,7 +164,7 @@ export default function DivingPage() {
           <div>
             <h2 className="text-xl font-semibold text-foreground">The Sea Saba Experience</h2>
             <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-              Since 1985, generations of divers have explored Saba with Sea Saba. Our custom 38-foot
+              Since {OPERATIONS.establishedYear}, generations of divers have explored Saba with Sea Saba. Our custom 38-foot
               catamarans are built for Caribbean conditions and designed around diver comfort, with
               spacious shaded decks, camera tables, freshwater rinse buckets, large ladders, and
               experienced local crews.
@@ -174,9 +175,9 @@ export default function DivingPage() {
         {/* Feature checklist — full-width 2-col grid below the media row */}
         <ul className="mt-6 grid gap-3 sm:grid-cols-2 text-sm text-muted-foreground">
           <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Complimentary taxi pickup anywhere on Saba</span></li>
-          <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Free 32% Nitrox for certified divers</span></li>
-          <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Saba&apos;s only continuously operating dive center since 1985</span></li>
-          <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Maximum 8 divers per guide</span></li>
+          <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Free {OPERATIONS.nitroxBlend} Nitrox for certified divers</span></li>
+          <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Saba&apos;s only continuously operating dive center since {OPERATIONS.establishedYear}</span></li>
+          <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Maximum {OPERATIONS.maxDiversPerGuide} divers per guide</span></li>
           <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Large stable catamarans with shade and marine heads</span></li>
           <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Equipment rinsed and delivered back to your accommodation</span></li>
         </ul>
@@ -260,7 +261,7 @@ export default function DivingPage() {
             <p className="mt-1 text-sm text-muted-foreground">Stay longer. Experience more.</p>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
               Most guests spend several days exploring Saba&apos;s world-famous pinnacles, walls, and reefs.
-              Multi-day pricing rewards continuous diving schedules, and complimentary 32% Nitrox is
+              Multi-day pricing rewards continuous diving schedules, and complimentary {OPERATIONS.nitroxBlend} Nitrox is
               included on qualifying dives.
             </p>
           </div>
@@ -278,7 +279,7 @@ export default function DivingPage() {
           <div className="flex items-start gap-3 rounded-lg border border-border/40 bg-muted/20 p-3">
             <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">✓</span>
             <div>
-              <h3 className="text-sm font-medium text-foreground">Free 32% Nitrox</h3>
+              <h3 className="text-sm font-medium text-foreground">Free {OPERATIONS.nitroxBlend} Nitrox</h3>
               <p className="text-xs text-muted-foreground">Included on qualifying dives for certified divers.</p>
             </div>
           </div>
@@ -414,7 +415,7 @@ export default function DivingPage() {
           <h2 className="text-xl font-semibold text-foreground">Free Nitrox for Certified Divers</h2>
         </div>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          Sea Saba provides complimentary 32% Nitrox to all certified Nitrox divers — no extra charge, no rental fee. Please bring proof of Nitrox certification.
+          Sea Saba provides complimentary {OPERATIONS.nitroxBlend} Nitrox to all certified Nitrox divers — no extra charge, no rental fee. Please bring proof of Nitrox certification.
         </p>
 
         <div className="mt-6 grid gap-5 sm:grid-cols-2">
@@ -468,7 +469,7 @@ export default function DivingPage() {
         <div className="mt-5 rounded-lg border border-border/40 bg-muted/20 p-5">
           <h3 className="text-sm font-semibold text-foreground">A Different Kind of Flight</h3>
           <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-            For decades, divers have routinely flown between Saba and St. Maarten as part of their dive vacations. Sea Saba has operated these schedules since 1985, and many guests fly back to St. Maarten after diving under our normal operating schedule.
+            For decades, divers have routinely flown between Saba and St. Maarten as part of their dive vacations. Sea Saba has operated these schedules since {OPERATIONS.establishedYear}, and many guests fly back to St. Maarten after diving under our normal operating schedule.
           </p>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
             This short, low-altitude flight is fundamentally different from a typical commercial jet flight, which is pressurized to a much higher cabin altitude for a considerably longer period.
