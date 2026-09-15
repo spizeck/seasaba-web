@@ -31,7 +31,7 @@
 | `email_click` | Footer, contact form/page, privacy page | Page parameters, link parameters, and legacy aliases |
 | `phone_click` | Footer and contact page | Page parameters, link parameters, and legacy aliases |
 | `whatsapp_click` | Footer and contact form/page | Page parameters, sanitized link parameters, and legacy aliases |
-| `directions_click` | FindSeaSaba map card/tooltip and LocationPin | Page parameters, link parameters, and legacy aliases |
+| `directions_click` | FindSeaSaba map card/tooltip | Page parameters, link parameters, and legacy aliases |
 | `ferry_link_click` | Plan-your-trip and local partner ferry links | Page parameters, link parameters, and legacy aliases |
 | `social_click` | Social, partner, accommodation, and outbound resource links | Page parameters, link parameters, `partner_name` where applicable, and legacy aliases |
 | `pdf_download` | Dive-log PDF export | Page parameters, `dive_count`, `unit_system` |
