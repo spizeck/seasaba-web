@@ -18,7 +18,11 @@
     "test:smoke": "playwright test --grep @smoke",
     "test:smoke:prod": "playwright test --config playwright.production.config.ts",
     "test:perf": "node scripts/perf-baseline.mjs",
-    "test:ci": "npm run lint && npm run typecheck && npm run test:coverage && npm run build:test && npm run test:e2e"
+    "check:docs": "node scripts/check-doc-links.mjs",
+    "check:env": "node scripts/check-env-vars.mjs",
+    "check:hygiene": "node scripts/check-repo-hygiene.mjs",
+    "check": "npm run check:docs && npm run check:env && npm run check:hygiene",
+    "test:ci": "npm run check && npm run lint && npm run typecheck && npm run test:coverage && npm run build:test && npm run test:e2e"
   },
   "dependencies": {
     "@tailwindcss/typography": "^0.5.20",
