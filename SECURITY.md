@@ -30,6 +30,8 @@ declined.
 - Third-party scripts are limited to the hosts allow-listed in the CSP
   (Checkfront, GTM/GA, Microsoft Clarity, Cookiebot, Vercel).
 - Dependencies are updated via Dependabot (weekly, grouped minor/patch) and
-  `npm audit`; CodeQL analysis runs on PRs.
+  `npm audit`. GitHub code scanning (CodeQL default setup, configured in
+  repository settings — not a committed workflow) analyzes PRs and the
+  default branch weekly.
 - Cookie/consent management is documented in
   `docs/COOKIEBOT_CONSENT_SETUP.md`.
