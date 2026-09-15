@@ -41,6 +41,7 @@ Use **Node 24 LTS** and npm. From the repository root:
 ```sh
 npm ci
 npx playwright install chromium webkit
+npm run check
 npm test
 npm run test:watch
 npm run test:unit
@@ -54,7 +55,7 @@ npm run test:smoke
 npm run test:perf
 ```
 
-`test:e2e` and `test:smoke` start and stop the production server on port 3100; run `build:test` first, and rebuild after application changes. `test:perf` starts its own server on port 3101 and needs `build:test` first too. They refuse to reuse another running server. `npm run test:ci` runs lint, type checks, coverage, the test build and all browser projects in order. Install browsers locally with `npx playwright install chromium webkit` beforehand (on Linux add `--with-deps` or install the OS libraries separately; on Windows/macOS the download alone is sufficient). CI uses the official Playwright Docker container, which has browsers and system dependencies pre-installed. `test:perf` additionally needs a Chrome/Chromium binary — a system Chrome, `CHROME_PATH`, or the Playwright Chromium install are discovered automatically.
+`test:e2e` and `test:smoke` start and stop the production server on port 3100; run `build:test` first, and rebuild after application changes. `test:perf` starts its own server on port 3101 and needs `build:test` first too. They refuse to reuse another running server. `npm run test:ci` runs the repo-hygiene checks, lint, type checks, coverage, the test build and all browser projects in order. Install browsers locally with `npx playwright install chromium webkit` beforehand (on Linux add `--with-deps` or install the OS libraries separately; on Windows/macOS the download alone is sufficient). CI uses the official Playwright Docker container, which has browsers and system dependencies pre-installed. `test:perf` additionally needs a Chrome/Chromium binary — a system Chrome, `CHROME_PATH`, or the Playwright Chromium install are discovered automatically.
 
 `build:test` writes a normal `.next` build with an explicit **demo Firebase project** and empty analytics IDs. Do not deploy that test build. Use the normal deployment build with the deployment environment for releases. No production credentials or service accounts are needed for automated tests. The existing Google font build requires network access.
 
@@ -113,6 +114,28 @@ The coverage denominator explicitly includes seven critical implementation modul
 Validation on Windows/Node 24: 72 unit/integration tests passed; selected-module coverage was 95.42% lines, 93.73% statements, 91.23% functions and 84.50% branches. Production build, TypeScript and ESLint passed. Compatible `fast-uri` and `qs` transitive patches removed the two install-time audit findings (zero reported vulnerabilities after update).
 
 The complete `npm run test:ci` command passed locally: 62 browser checks passed across the three profiles, with one intentional desktop skip for the mobile-only menu scenario. GitHub-hosted Linux execution remains to be confirmed when the workflow runs there.
+
+## Repository hygiene checks
+
+`npm run check` runs three fast, offline, deterministic guards against documentation and repo-structure drift. They run first in the `Critical website tests` CI job and inside `npm run test:ci`, and take under a second.
+
+| Command | Script | Enforces |
+| --- | --- | --- |
+| `npm run check:docs` | `scripts/check-doc-links.mjs` | Relative links in tracked Markdown resolve; README still links the canonical docs (`CANONICAL_README_LINKS`); backticked repo paths in docs resolve. |
+| `npm run check:env` | `scripts/check-env-vars.mjs` | Every `process.env.*` read in code is documented in `.env.example`, and every name in `.env.example` is still referenced — catches dead variables; also rejects real-looking secrets in `.env.example`. |
+| `npm run check:hygiene` | `scripts/check-repo-hygiene.mjs` | No generated/local artifacts are tracked (`git ls-files` denylist); `.gitignore` still covers them (`git check-ignore` probes); required files/dirs exist; root `*.md` stays limited to README/AI_INSTRUCTIONS/SECURITY; removed structures (MDX/`content/`) stay gone. |
+
+Intentional limits and exclusions:
+
+- **Anchors are not validated** — `#fragment` parts of links are ignored; anchor validity is renderer-dependent.
+- **External links are never fetched** — this is not an internet link checker.
+- **Backticked path scope** — only inline-code tokens starting with `app/`, `components/`, `lib/`, `scripts/`, `tests/`, `docs/`, `data/`, `perf/`, `public/` or `.github/` are resolved (repo-root-relative; a leading `./` resolves against the containing file). `docs/historical/` is exempt because it deliberately documents files that no longer exist. Generated-output paths (`coverage/`, `playwright-report/`, …) and site routes (`/diving/…`) are out of scope by design.
+- **Env allowlists** — `TOOLING_ALLOWLIST` in `check-env-vars.mjs` covers platform/tooling vars read from the environment but never documented (`CI`, `CHROME_PATH`, `PLAYWRIGHT_BROWSERS_PATH`, `SMOKE_BASE_URL`, `NEXT_TELEMETRY_DISABLED`, `NODE_ENV`). `EXAMPLE_ALLOWLIST` exempts a documented-but-unreferenced name — currently empty; add one only with a justification comment.
+- **Env scan scope** — only code under `app/`, `components/`, `lib/`, `tests/`, `scripts/`, `perf/`, `data/`, `public/` plus root `*.config.*`/`middleware` files is scanned (`SCAN_DIR_RE`/`ROOT_CONFIG_RE`); a new source root must be added there. `scripts/check-*.mjs` is excluded — those meta-checks document env semantics (they literally contain `process.env.NAME` in comments), so scanning them makes the checker flag its own documentation.
+- **Tracked-files basis** — checks run against `git ls-files`, i.e. the committed tree; untracked scratch files are ignored.
+- **Deliberate additions** — a new canonical doc, a new root Markdown file, or a new diagnostic env var will fail until the matching allowlist/required list in the scripts is updated; the failure message names the list to edit.
+
+Failures name the file/reference and the fix. These checks complement — not replace — human judgment on prose quality; they only assert structure that has already regressed once.
 
 ## CI and merge gate
 
