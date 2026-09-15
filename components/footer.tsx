@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { CONTACT, SOCIAL_LINKS } from "@/lib/constants";
+import { OPERATIONS } from "@/data/operations";
 import { trackLinkClick } from "@/lib/analytics";
 import { CookieSettingsButton } from "@/components/cookie-settings-button";
 
@@ -141,7 +142,7 @@ export function Footer() {
         <div className="mt-12 border-t border-border/30 pt-8">
           <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
             <p className="text-xs text-muted-foreground text-center sm:text-left">
-              &copy; 1985&ndash;2026 Sea Saba, NV &bull; The Bottom, Saba, Caribbean Netherlands
+              &copy; {OPERATIONS.establishedYear}&ndash;2026 Sea Saba, NV &bull; The Bottom, Saba, Caribbean Netherlands
             </p>
             <div className="flex flex-wrap items-center justify-center gap-5 sm:justify-end">
               <CookieSettingsButton className="text-xs text-muted-foreground transition-colors hover:text-foreground" />

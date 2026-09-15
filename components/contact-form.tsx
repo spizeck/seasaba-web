@@ -4,37 +4,14 @@ import { useState, useCallback, useMemo, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Mail, MessageCircle } from "lucide-react";
 import { trackEvent, trackLinkClick } from "@/lib/analytics";
+import { CONTACT } from "@/lib/constants";
+import {
+  COURSE_INQUIRIES,
+  GENERAL_INQUIRIES,
+  inquiryFor,
+} from "@/data/operations";
 
-interface InquiryType {
-  value: string;
-  label: string;
-  subject: string;
-}
 
-const COURSE_INQUIRIES: InquiryType[] = [
-  { value: "try-scuba", label: "Try Scuba", subject: "Try Scuba Inquiry" },
-  { value: "sdi-open-water", label: "SDI Open Water Diver", subject: "SDI Open Water Diver Inquiry" },
-  { value: "sdi-advanced-specialty", label: "SDI Advanced & Specialty Training", subject: "SDI Advanced & Specialty Training Inquiry" },
-  { value: "sdi-nitrox", label: "SDI Nitrox Diver", subject: "SDI Nitrox Diver Inquiry" },
-  { value: "sdi-rescue", label: "SDI Rescue Diver", subject: "SDI Rescue Diver Inquiry" },
-  { value: "sdi-divemaster", label: "SDI Divemaster", subject: "SDI Divemaster Inquiry" },
-  { value: "tdi-technical", label: "TDI Technical Diving", subject: "TDI Technical Diving Inquiry" },
-];
-
-const GENERAL_INQUIRIES: InquiryType[] = [
-  { value: "general", label: "General Question", subject: "General Question" },
-  { value: "book-diving", label: "Book Diving", subject: "Book Diving Inquiry" },
-  { value: "course-inquiry", label: "Course Inquiry", subject: "Course Inquiry" },
-  { value: "private-charter", label: "Private Charter", subject: "Private Charter Inquiry" },
-  { value: "group-travel", label: "Group Travel", subject: "Group Travel Inquiry" },
-  { value: "transportation", label: "Transportation", subject: "Transportation Inquiry" },
-  { value: "other", label: "Other", subject: "Other Inquiry" },
-];
-
-const ALL_INQUIRIES: InquiryType[] = [...COURSE_INQUIRIES, ...GENERAL_INQUIRIES];
-
-const EMAIL_TO = "info@seasaba.com";
-const WHATSAPP_NUMBER = "5994162246";
 
 interface ContactFormProps {
   initialInterest?: string;
@@ -43,7 +20,7 @@ interface ContactFormProps {
 export function ContactForm({ initialInterest }: ContactFormProps) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [inquiryType, setInquiryType] = useState(initialInterest && ALL_INQUIRIES.some((i) => i.value === initialInterest) ? initialInterest : "");
+  const [inquiryType, setInquiryType] = useState(initialInterest && inquiryFor(initialInterest) ? initialInterest : "");
   const [whatsapp, setWhatsapp] = useState("");
   const [dates, setDates] = useState("");
   const [students, setStudents] = useState("");
@@ -59,7 +36,7 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
   const lastHandoffAt = useRef<Record<"email" | "whatsapp", number>>({ email: 0, whatsapp: 0 });
 
   const selectedInquiry = useMemo(
-    () => ALL_INQUIRIES.find((i) => i.value === inquiryType),
+    () => inquiryFor(inquiryType),
     [inquiryType]
   );
 
@@ -86,7 +63,7 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
 
   const handleInquiryChange = useCallback((value: string) => {
     setInquiryType(value);
-    const inquiry = ALL_INQUIRIES.find((i) => i.value === value);
+    const inquiry = inquiryFor(value);
     if (inquiry && COURSE_INQUIRIES.some((c) => c.value === value)) {
       setMessage(buildInitialMessage(value));
     }
@@ -130,7 +107,7 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
 
     const subject = selectedInquiry ? selectedInquiry.subject : "Contact Inquiry";
     const body = buildEmailBody();
-    const emailHref = `mailto:${EMAIL_TO}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    const emailHref = `mailto:${CONTACT.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     const eventParams = { method: "email", inquiry_type: selectedInquiry?.label || "General", button_location: "contact_form" };
     trackEvent("contact_form_submit", eventParams);
     trackLinkClick("email_click", emailHref, "Email Sea Saba", eventParams);
@@ -146,7 +123,7 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
     lastHandoffAt.current.whatsapp = Date.now();
 
     const text = buildWhatsAppMessage();
-    const whatsappHref = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
+    const whatsappHref = `https://wa.me/${CONTACT.whatsappNumber}?text=${encodeURIComponent(text)}`;
     const eventParams = { method: "whatsapp", inquiry_type: selectedInquiry?.label || "General", button_location: "contact_form" };
     trackEvent("contact_form_submit", eventParams);
     trackLinkClick("whatsapp_click", whatsappHref, "WhatsApp Sea Saba", eventParams);

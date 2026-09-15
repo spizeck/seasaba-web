@@ -6,6 +6,7 @@ import {
   OG_IMAGE,
   SOCIAL_LINKS,
 } from "@/lib/constants";
+import { OPERATIONS } from "@/data/operations";
 
 export function LocalBusinessJsonLd() {
   const jsonLd = {
@@ -16,7 +17,7 @@ export function LocalBusinessJsonLd() {
     url: SITE_URL,
     telephone: CONTACT.phoneRaw,
     email: CONTACT.email,
-    foundingDate: "1985",
+    foundingDate: `${OPERATIONS.establishedYear}`,
     address: {
       "@type": "PostalAddress",
       streetAddress: CONTACT.address.streetAddress,

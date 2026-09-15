@@ -1,5 +1,6 @@
 import { createMetadata } from "@/lib/metadata";
 import { TrackedContactLink } from "@/components/tracked-contact-link";
+import { CONTACT } from "@/lib/constants";
 import Link from "next/link";
 
 export const metadata = createMetadata({
@@ -178,12 +179,12 @@ export default function PrivacyPage() {
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
             Requests may be made by contacting us directly at{" "}
             <TrackedContactLink
-              href="mailto:info@seasaba.com"
+              href={`mailto:${CONTACT.email}`}
               eventName="email_click"
               buttonText="Email"
               className="text-primary transition-colors hover:text-primary/80"
             >
-              info@seasaba.com
+              {CONTACT.email}
             </TrackedContactLink>
             .
           </p>
@@ -193,19 +194,19 @@ export default function PrivacyPage() {
           <h2 className="text-xl font-semibold text-foreground">Contact Information</h2>
           <div className="mt-3 text-sm leading-relaxed text-muted-foreground">
             <p className="font-medium text-foreground">Sea Saba Dive Center</p>
-            <p>66 Fort Bay Harbor</p>
-            <p>The Bottom, Saba</p>
-            <p>Caribbean Netherlands</p>
-            <p className="mt-3">Phone / WhatsApp: +599 416 2246</p>
+            {CONTACT.address.displayLines.map((line) => (
+              <p key={line}>{line}</p>
+            ))}
+            <p className="mt-3">Phone / WhatsApp: {CONTACT.phone}</p>
             <p>
               Email:{" "}
               <TrackedContactLink
-                href="mailto:info@seasaba.com"
+                href={`mailto:${CONTACT.email}`}
                 eventName="email_click"
                 buttonText="Email"
                 className="text-primary transition-colors hover:text-primary/80"
               >
-                info@seasaba.com
+                {CONTACT.email}
               </TrackedContactLink>
             </p>
           </div>
