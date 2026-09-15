@@ -54,7 +54,7 @@ npm run test:smoke
 npm run test:perf
 ```
 
-`test:e2e` and `test:smoke` start and stop the production server on port 3100; run `build:test` first, and rebuild after application changes. `test:perf` starts its own server on port 3101 and needs `build:test` first too. They refuse to reuse another running server. `npm run test:ci` runs lint, type checks, coverage, the test build and all browser projects in order. Install browsers locally with `npx playwright install chromium webkit` beforehand. CI uses the official Playwright Docker container, which has browsers and system dependencies pre-installed.
+`test:e2e` and `test:smoke` start and stop the production server on port 3100; run `build:test` first, and rebuild after application changes. `test:perf` starts its own server on port 3101 and needs `build:test` first too. They refuse to reuse another running server. `npm run test:ci` runs lint, type checks, coverage, the test build and all browser projects in order. Install browsers locally with `npx playwright install chromium webkit` beforehand (on Linux add `--with-deps` or install the OS libraries separately; on Windows/macOS the download alone is sufficient). CI uses the official Playwright Docker container, which has browsers and system dependencies pre-installed. `test:perf` additionally needs a Chrome/Chromium binary — a system Chrome, `CHROME_PATH`, or the Playwright Chromium install are discovered automatically.
 
 `build:test` writes a normal `.next` build with an explicit **demo Firebase project** and empty analytics IDs. Do not deploy that test build. Use the normal deployment build with the deployment environment for releases. No production credentials or service accounts are needed for automated tests. The existing Google font build requires network access.
 
@@ -66,6 +66,27 @@ npm run test:perf
 - Browser interception blocks all non-local network requests. The Checkfront happy-path case supplies a small script double for the vendor interface. Real Next.js routing, rendering, hydration, CSS and browser interaction still run.
 - Contact tests capture generated URLs. They do not send email/WhatsApp messages. The jsdom email case emits its expected “navigation to another Document” diagnostic because jsdom cannot launch a mail client; the test checks the generated recipient, subject and body.
 - Tests do not create reservations, charge cards, write Firestore data, or invoke the live Firestore diagnostic.
+
+## Firestore diagnostic script
+
+`node scripts/test-public-firestore-read.mjs` verifies that the deployed Firestore rules allow anonymous reads of `dives`, `sites`, `species` and `boats` on a **real** Firebase project. It is a plain Node script — it does **not** load `.env.local`, so the unprefixed `FIREBASE_*` variables (see `.env.example`) must be exported into the shell first:
+
+```sh
+# bash / zsh
+set -a; . ./.env.local; set +a
+node scripts/test-public-firestore-read.mjs
+```
+
+```powershell
+# PowerShell — export only the unprefixed FIREBASE_* names
+Get-Content .env.local | Where-Object { $_ -match '^FIREBASE_\w+=' } | ForEach-Object {
+  $name, $value = $_ -split '=', 2
+  [Environment]::SetEnvironmentVariable($name, $value)
+}
+node scripts/test-public-firestore-read.mjs
+```
+
+Run it only with real values exported: with placeholders it still exits 0 and can misleadingly print `read allowed (0 docs)` because the SDK falls back to offline mode. It is intentionally excluded from CI — it is a live-environment check, not a deterministic test.
 
 ## Accessibility regression testing
 

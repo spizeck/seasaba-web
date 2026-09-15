@@ -63,16 +63,86 @@ This is **not** intended to be a retail-heavy or generic dive shop template.
 
 ## Getting Started
 
-Requires **Node 24** (see `.nvmrc`) and npm.
+### Prerequisites
+
+- **Node.js 24** — pinned in `.nvmrc`. Version managers that read `.nvmrc`
+  (nvm on macOS/Linux, fnm everywhere) pick it up automatically
+  (`nvm use` / `fnm use`). **nvm-windows ignores `.nvmrc`** — run
+  `nvm install 24` once, then `nvm use <installed-24.x>` in each new shell.
+- **npm** — ships with Node. No global CLIs are required; Playwright,
+  Lighthouse and all other tooling are project dependencies run via
+  `npm run` / `npx`.
+- **Playwright browsers** — only for the browser test suites, not for
+  `npm run dev`: `npx playwright install chromium webkit` (~370 MB download).
+- **Chrome/Chromium** — only for `npm run test:perf`: a system Chrome,
+  `CHROME_PATH`, or the Playwright Chromium install are all discovered
+  automatically.
+
+### Setup
 
 ```bash
-npm install
-cp .env.example .env.local
-# fill in .env.local with your Firebase values
-npm run dev
+npm ci                      # reproducible install from package-lock.json
+cp .env.example .env.local  # placeholders are fine — see below
+npm run dev                 # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to view the site.
+Use `npm ci`, not `npm install`: CI and every documented test command assume
+the exact lockfile dependency set. `npm install` may silently rewrite
+`package-lock.json`.
+
+`.env.local` can stay entirely placeholder: the site starts, every page
+renders, and no analytics tags load. The only features that need real values
+are live `/dive-log` data (Firebase) and the `/cookie-policy` declaration
+widget (Cookiebot CBID). `.env.example` documents what each variable does and
+which are optional. Do not use production credentials locally — a personal
+Firebase project is enough for dive-log work.
+
+### What runs without credentials
+
+- The dev server, `npm run build`, lint, typecheck, unit/integration tests,
+  coverage, browser E2E and performance budgets all work with placeholder
+  env vars — the test build injects a demo Firebase project itself.
+- `/dive-log` renders its "unable to load" state when Firestore is
+  unreachable; no other page depends on Firebase.
+- `/book` loads the real Checkfront widget from `seasaba.checkfront.com`
+  (read-only browsing is safe — do not complete a real booking). If the
+  vendor script is unreachable the page falls back to a direct booking link.
+- GTM/GA4/ads/Clarity/Meta load only when `NEXT_PUBLIC_GTM_ID` is set, so
+  local browsing sends no analytics. Vercel Analytics only reports from
+  Vercel deployments; its `/_vercel/*` calls simply 404 on localhost.
+
+### Troubleshooting
+
+- **`EBADENGINE` warnings or strange install/test failures** — check
+  `node -v`; it must be 24.x. On Windows, `npm` from
+  `C:\Program Files\nodejs` pins its own bundled Node regardless of your
+  version manager — make sure the manager's shim precedes it on PATH
+  (`where node`).
+- **nvm-windows didn't switch versions** — it does not read `.nvmrc`; run
+  `nvm install 24` and `nvm use <installed-24.x>` explicitly.
+- **Playwright "browser not found"** — run
+  `npx playwright install chromium webkit`. On Linux also install the OS
+  libraries (`npx playwright install --with-deps chromium webkit`); CI uses
+  the official Playwright container which already has them.
+- **`test:perf` can't find Chrome** — install Chrome, set `CHROME_PATH`, or
+  rely on the Playwright Chromium from the step above.
+- **Port already in use** — dev uses 3000; `test:e2e`/`test:smoke` start
+  their own server on 3100 and `test:perf` on 3101, and they refuse to reuse
+  a running server. Stop other `next` processes first.
+- **`/dive-log` shows an error state** — expected without real Firebase
+  `NEXT_PUBLIC_*` values; everything else is unaffected.
+- **`test-public-firestore-read.mjs` prints "read allowed (0 docs)"** — it
+  does not load `.env.local`; export the unprefixed `FIREBASE_*` variables
+  first (see `docs/TESTING.md`).
+- **`test:smoke:prod` hits the live site** — it is a read-only post-deploy
+  check against https://www.seasaba.com, not a local test. On PowerShell set
+  the target with `$env:SMOKE_BASE_URL="https://..."` (POSIX `VAR=value`
+  syntax does not work there).
+- **Windows shells** — snippets assume POSIX (`cp`, `export`,
+  `VAR=value cmd`). In PowerShell use `Copy-Item` and `$env:VAR="..."`;
+  cmd.exe has neither `cp` nor `export`.
+- **Stale `.next` output** — after switching branches, delete `.next` and
+  rebuild (`npm run build:test` for tests, `npm run build` for parity).
 
 ---
 
@@ -190,7 +260,9 @@ The site is deployed on **Vercel** from the `master` branch.
 
 ### Required Environment Variables
 
-Copy `.env.example` to `.env.local` and fill in the values from your Firebase Console.
+Set these in the Vercel project (Production + Preview). For local development
+copy `.env.example` to `.env.local` — every value there may stay a
+placeholder.
 
 **Critical:** the browser-side Firebase SDK requires the public variables to use the `NEXT_PUBLIC_` prefix:
 
@@ -202,8 +274,33 @@ NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
 NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
 NEXT_PUBLIC_FIREBASE_APP_ID
 NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
-NEXT_PUBLIC_SITE_URL=https://www.seasaba.com
+NEXT_PUBLIC_GTM_ID
+NEXT_PUBLIC_COOKIEBOT_CBID
 ```
+
+The canonical site URL is **not** an environment variable — it is the
+`SITE_URL` constant in `lib/constants.ts` (used by metadata, sitemap, robots
+and structured data). If the domain ever changes, update that constant.
+
+### External settings not in source control
+
+These operational settings live outside the repository and must already exist
+(or be configured by an admin) — they cannot be inferred from the code:
+
+- **Vercel project** linked to this repo, deploying `master` to
+  `https://www.seasaba.com` (production domain alias + TLS managed there),
+  with the env vars above configured and a Node version compatible with 24.
+- **GitHub repository settings:** branch ruleset/protection on `master`
+  requiring the `Critical website tests` check (see `docs/TESTING.md`), and
+  CodeQL default setup for code scanning (see `SECURITY.md`).
+- **Firebase console:** the production Firebase project and its public-read
+  Firestore rules for `dives`/`sites`/`species`/`boats` (rules are not
+  versioned here).
+- **GTM container** (`GTM-5PFMJFN`) and **Cookiebot account/domain group** —
+  all tag and consent configuration lives in those dashboards; see
+  `docs/COOKIEBOT_CONSENT_SETUP.md`.
+- **Checkfront account** (`seasaba.checkfront.com`) — booking inventory,
+  checkout and its own GTM integration are vendor-managed.
 
 ### Firestore Security Rules
 
