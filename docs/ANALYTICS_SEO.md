@@ -10,7 +10,7 @@
 
 - Removed unused `firebase-admin` dependency, which eliminated 8 moderate severity `uuid` vulnerabilities (via transitive `gaxios`, `google-gax`, and `teeny-request` packages).
 - Kept `firebase` client SDK because the dive-log feature uses `lib/firebase.ts` and `lib/firestore/dive-log.ts`.
-- `npm audit` now reports **0 vulnerabilities**.
+- `npm audit` reported **0 vulnerabilities** at that time; the current count changes with every advisory release — see `SECURITY.md` for the ongoing process.
 
 ## Implemented Tools
 
