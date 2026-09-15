@@ -41,7 +41,8 @@ const page = await browser.newPage();
 if (enforce) {
   await page.route("**/*", async (route) => {
     const req = route.request();
-    if (req.resourceType() === "document" && req.url().startsWith(BASE)) {
+    const sameOrigin = new URL(req.url()).origin === new URL(BASE).origin;
+    if (req.resourceType() === "document" && sameOrigin) {
       const res = await route.fetch();
       const headers = { ...res.headers(), "content-security-policy": NEW_CSP };
       await route.fulfill({ response: res, headers });
