@@ -36,14 +36,22 @@
 | `social_click` | Social, partner, accommodation, and outbound resource links | Page parameters, link parameters, `partner_name` where applicable, and legacy aliases |
 | `pdf_download` | Dive-log PDF export | Page parameters, `dive_count`, `unit_system` |
 
-## Required Environment Variables
+## Environment Variables
 
 ```env
 NEXT_PUBLIC_GTM_ID=GTM-XXXXXXX
-NEXT_PUBLIC_SITE_URL=https://www.seasaba.com
 ```
 
-See `.env.example` for the full list (Firebase, site URL, etc.).
+`NEXT_PUBLIC_GTM_ID` is **optional**: when unset, `AnalyticsLoader` renders
+nothing and no GTM/GA4/ads/Clarity/Meta tags load — the recommended state for
+local development so browsing never pollutes analytics. Set the real
+container ID only in deployed environments (Vercel).
+
+There is no `NEXT_PUBLIC_SITE_URL` — the canonical site URL is the `SITE_URL`
+constant in `lib/constants.ts`, used by metadata, sitemap, robots and JSON-LD.
+
+See `.env.example` for the full variable inventory (Firebase, Cookiebot CBID,
+diagnostic-only variables) and what each one does.
 
 ## Sitemap Inclusions
 
