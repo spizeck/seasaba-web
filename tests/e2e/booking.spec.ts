@@ -38,7 +38,38 @@ test("an unknown item param degrades to the full inventory with a notice", async
   await expect(page.getByText("We couldn't find that experience.")).toBeVisible();
   // No product banner for an unrecognized value, and nothing bogus reaches the vendor.
   await expect(page.getByText(/^Booking:/)).toHaveCount(0);
-  await expect(page.getByText("Test availability for item 245,244,243,246,247,248,253,249,254")).toBeVisible();
+  await expect(page.getByText("Test availability for item 245,244,243,246,247,248,253,249,254,328")).toBeVisible();
+});
+
+test("sunset cruise deep links select the owner-confirmed Checkfront items", async ({ page }) => {
+  await mockCheckfrontScript(page);
+  await hydratedGoto(page, "/book?item=sunset-cruise");
+  await expect(page.getByText("Booking: Shared Sunset Cruise")).toBeVisible();
+  await expect(page.getByText("Test availability for item 247")).toBeVisible();
+
+  await hydratedGoto(page, "/book?item=private-sunset-cruise");
+  await expect(page.getByText("Booking: Private Sunset Cruise")).toBeVisible();
+  await expect(page.getByText("Test availability for item 328")).toBeVisible();
+});
+
+test("the sunset cruise CTAs on plan-your-trip enter the booking flow", async ({ page }) => {
+  await hydratedGoto(page, "/plan-your-trip");
+  const shared = page.getByRole("link", { name: "Book a Sunset Cruise" });
+  const privateCruise = page.getByRole("link", { name: "Book a Private Sunset Cruise" });
+  await expect(shared).toHaveAttribute("href", "/book?item=sunset-cruise");
+  await expect(privateCruise).toHaveAttribute("href", "/book?item=private-sunset-cruise");
+
+  await shared.click();
+  await expect(page).toHaveURL(/\/book\?item=sunset-cruise/);
+  // A booking CTA must emit booking intent, not a contact/inquiry event.
+  const events = await page.evaluate(
+    () => (window as unknown as { dataLayer?: Record<string, unknown>[] }).dataLayer ?? []
+  );
+  expect(events.find((e) => e.event === "book_now_click")).toMatchObject({
+    booking_item: "sunset-cruise",
+    button_location: "plan_your_trip_sunset",
+  });
+  expect(events.find((e) => e.event === "contact_click" && e.link_url === "/contact?interest=sunset-cruise")).toBeUndefined();
 });
 
 test("a failed widget keeps the selected product in its recovery links", async ({ page }) => {

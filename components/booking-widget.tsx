@@ -4,11 +4,11 @@ import { useEffect, useRef, useState } from "react";
 import { trackLinkClick } from "@/lib/analytics";
 import { BOOKING_URL, CONTACT } from "@/lib/constants";
 import {
+  BOOKABLE_PRODUCTS,
   CHECKFRONT_ALL_ITEM_IDS,
   CHECKFRONT_EXTRA_ITEMS,
-  DIVE_PRODUCTS,
   resolveBookingItem,
-  type DiveProduct,
+  type BookableProduct,
 } from "@/data/operations";
 
 const CF_SCRIPT_SRC = "//seasaba.checkfront.com/lib/interface--0.js";
@@ -18,7 +18,7 @@ const CF_SCRIPT_ID = "checkfront-interface-script";
 // data/operations.ts so /book?item= deep links can't drift from the catalog.
 const ITEM_NAMES: Record<string, string> = {
   ...Object.fromEntries(
-    Object.values(DIVE_PRODUCTS).map((p) => [p.checkfrontItemId, p.name])
+    Object.values(BOOKABLE_PRODUCTS).map((p) => [p.checkfrontItemId, p.name])
   ),
   ...CHECKFRONT_EXTRA_ITEMS,
 };
@@ -37,9 +37,9 @@ function directBookingUrl(itemId: string | null): string {
   const url = new URL(BOOKING_URL);
   url.searchParams.set("tid", TRACKING_ID);
   if (itemId) {
-    const product: DiveProduct | undefined = Object.values(DIVE_PRODUCTS).find(
-      (p) => p.checkfrontItemId === itemId
-    );
+    const product: BookableProduct | undefined = Object.values(
+      BOOKABLE_PRODUCTS
+    ).find((p) => p.checkfrontItemId === itemId);
     if (product?.checkfrontCategoryId) {
       url.searchParams.set("category_id", product.checkfrontCategoryId);
     } else {
@@ -94,7 +94,7 @@ export function BookingWidget({ item }: BookingWidgetProps) {
       suppressScroll();
 
       // Build widget config based on preselected item
-      const product: DiveProduct | undefined = Object.values(DIVE_PRODUCTS).find((p) => p.checkfrontItemId === itemId);
+      const product: BookableProduct | undefined = Object.values(BOOKABLE_PRODUCTS).find((p) => p.checkfrontItemId === itemId);
       const categoryId = product?.checkfrontCategoryId;
       const widgetConfig = {
         host: CHECKFRONT_HOST,
@@ -230,7 +230,7 @@ export function BookingWidget({ item }: BookingWidgetProps) {
       {itemId && (
         <div className="mb-6 rounded-lg border border-primary/20 bg-primary/5 p-4">
           <p className="text-sm font-medium text-primary">
-            Booking: {ITEM_NAMES[itemId] || "Selected Dive Experience"}
+            Booking: {ITEM_NAMES[itemId] || "Selected Experience"}
           </p>
           <p className="mt-1 text-xs text-muted-foreground">
             Check availability below or{" "}

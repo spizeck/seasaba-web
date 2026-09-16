@@ -42,7 +42,7 @@ export interface ProductSchedule {
   returns: string;
 }
 
-export interface DiveProduct {
+export interface BookableProduct {
   /**
    * Public slug used in `/book?item=<slug>` deep links and analytics.
    * Renaming a slug changes the public URL contract — check data/redirects.ts
@@ -59,7 +59,7 @@ export interface DiveProduct {
    */
   checkfrontCategoryId?: string;
   schedule?: ProductSchedule;
-  /** Number of dives; undefined for surface/charter products. */
+  /** Number of dives; undefined for surface/charter/cruise products. */
   dives?: number;
   /** Minimum certification/experience requirement, customer-facing. */
   requirement?: string;
@@ -116,12 +116,36 @@ export const DIVE_PRODUCTS = {
     checkfrontCategoryId: "49",
     capacity: "Up to 8 guests",
   },
-} as const satisfies Record<string, DiveProduct>;
+} as const satisfies Record<string, BookableProduct>;
 
-export type DiveProductSlug = keyof typeof DIVE_PRODUCTS;
+/**
+ * Bookable non-dive products. Same model as `DIVE_PRODUCTS` — these are
+ * experiences customers book directly, just not dive trips. Item ids are
+ * owner-confirmed Checkfront inventory.
+ */
+export const CRUISE_PRODUCTS = {
+  "sunset-cruise": {
+    slug: "sunset-cruise",
+    name: "Shared Sunset Cruise",
+    checkfrontItemId: "247",
+  },
+  "private-sunset-cruise": {
+    slug: "private-sunset-cruise",
+    name: "Private Sunset Cruise",
+    checkfrontItemId: "328",
+  },
+} as const satisfies Record<string, BookableProduct>;
+
+/** Every marketed product resolvable by `/book?item=<slug>`. */
+export const BOOKABLE_PRODUCTS = {
+  ...DIVE_PRODUCTS,
+  ...CRUISE_PRODUCTS,
+} as const;
+
+export type BookableProductSlug = keyof typeof BOOKABLE_PRODUCTS;
 
 /** `/book?item=<slug>` deep link for a marketed product. */
-export function bookingHref(slug: DiveProductSlug): string {
+export function bookingHref(slug: BookableProductSlug): string {
   return `/book?item=${slug}`;
 }
 
@@ -142,7 +166,8 @@ export const CHECKFRONT_EXTRA_ITEMS: Record<string, string> = {
  * Checkfront owns this set — update it when items are added or removed there.
  * Also the allowlist for numeric `/book?item=<id>` passthrough values.
  */
-export const CHECKFRONT_ALL_ITEM_IDS = "245,244,243,246,247,248,253,249,254";
+export const CHECKFRONT_ALL_ITEM_IDS =
+  "245,244,243,246,247,248,253,249,254,328";
 
 const KNOWN_ITEM_IDS = new Set(CHECKFRONT_ALL_ITEM_IDS.split(","));
 
@@ -161,7 +186,9 @@ export interface ResolvedBookingItem {
  */
 export function resolveBookingItem(item: string | undefined): ResolvedBookingItem {
   if (!item) return { itemId: null, unknown: false };
-  const product = Object.values(DIVE_PRODUCTS).find((p) => p.slug === item);
+  const product = Object.values(BOOKABLE_PRODUCTS).find(
+    (p) => p.slug === item
+  );
   if (product) return { itemId: product.checkfrontItemId, unknown: false };
   if (KNOWN_ITEM_IDS.has(item)) return { itemId: item, unknown: false };
   return { itemId: null, unknown: true };

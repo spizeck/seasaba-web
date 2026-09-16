@@ -10,7 +10,7 @@ function script() { return document.getElementById("checkfront-interface-script"
 
 const GENERIC_FALLBACK = "https://seasaba.checkfront.com/reserve/?tid=seasaba-website";
 
-it.each([["classic", "244", undefined], ["advanced", "243", undefined], ["afternoon", "245", undefined], ["snorkel", "246", undefined], ["private", undefined, "49"], ["248", "248", undefined], [undefined, "245,244,243,246,247,248,253,249,254", "4,51,49"]])("hands %s bookings to the expected Checkfront inventory", (slug, item, category) => {
+it.each([["classic", "244", undefined], ["advanced", "243", undefined], ["afternoon", "245", undefined], ["snorkel", "246", undefined], ["private", undefined, "49"], ["sunset-cruise", "247", undefined], ["private-sunset-cruise", "328", undefined], ["248", "248", undefined], [undefined, "245,244,243,246,247,248,253,249,254,328", "4,51,49"]])("hands %s bookings to the expected Checkfront inventory", (slug, item, category) => {
   const received = vi.fn();
   const renderWidget = vi.fn();
   state.DROPLET = { Widget: class { constructor(config: WidgetConfig) { received(config); } render = renderWidget; } };
@@ -46,6 +46,18 @@ it("keeps the selected product in the fallback when the widget fails", () => {
     .toHaveAttribute("href", "https://seasaba.checkfront.com/reserve/?tid=seasaba-website&item_id=244");
 });
 
+it.each([["sunset-cruise", "247"], ["private-sunset-cruise", "328"]])("keeps the selected %s in the fallback when the widget fails", (slug, itemId) => {
+  render(<BookingWidget item={slug} />);
+  fireEvent.error(script());
+  expect(screen.getByRole("link", { name: "Continue to Secure Booking System" }))
+    .toHaveAttribute("href", `https://seasaba.checkfront.com/reserve/?tid=seasaba-website&item_id=${itemId}`);
+});
+
+it("names the sunset cruise products in the selection banner", () => {
+  render(<BookingWidget item="sunset-cruise" />);
+  expect(screen.getByText("Booking: Shared Sunset Cruise")).toBeVisible();
+});
+
 it("uses the category fallback for the private charter", () => {
   render(<BookingWidget item="private" />);
   fireEvent.error(script());
@@ -62,7 +74,7 @@ it("rejects an unknown item param and loads the full inventory instead", () => {
   fireEvent.load(script());
   act(() => vi.advanceTimersByTime(100));
   // Nothing bogus reaches the vendor — the generic inventory loads.
-  expect(received).toHaveBeenCalledWith(expect.objectContaining({ item_id: "245,244,243,246,247,248,253,249,254", category_id: "4,51,49" }));
+  expect(received).toHaveBeenCalledWith(expect.objectContaining({ item_id: "245,244,243,246,247,248,253,249,254,328", category_id: "4,51,49" }));
 });
 
 it("shows the product banner for a valid preselected item", () => {

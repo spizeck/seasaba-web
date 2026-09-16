@@ -9,7 +9,7 @@ keeps its own wording and context.
 
 | Source | Owns |
 | --- | --- |
-| `data/operations.ts` | `OPERATIONS` (founding year, recreational guide ratio, nitrox blend, harbor), `DIVE_PRODUCTS` (slugs, Checkfront ids, schedules, requirements, nitrox policy, capacity), `CHECKFRONT_EXTRA_ITEMS`, `CHECKFRONT_ALL_ITEM_IDS`, `INQUIRY_TYPES` (`/contact?interest=` routing), `resolveBookingItem` (`/book?item=` validation) |
+| `data/operations.ts` | `OPERATIONS` (founding year, recreational guide ratio, nitrox blend, harbor), `DIVE_PRODUCTS` and `CRUISE_PRODUCTS` (slugs, Checkfront ids, schedules, requirements, nitrox policy, capacity), `BOOKABLE_PRODUCTS` (combined `/book?item=` registry), `CHECKFRONT_EXTRA_ITEMS`, `CHECKFRONT_ALL_ITEM_IDS`, `INQUIRY_TYPES` (`/contact?interest=` routing), `resolveBookingItem` (`/book?item=` validation) |
 | `lib/constants.ts` | `SITE_*`, `BOOKING_URL`, `CONTACT` (phone/WhatsApp/email/address), `SOCIAL_LINKS`, `OG_IMAGE`, `NAV_ITEMS` |
 | `lib/anchors.ts` | Route section ids shared by pages and `data/redirects.ts` |
 | `app/(content)/terms/page.tsx` | Cancellation, reschedule, refund, weather, and charter policy — the canonical legal terms |
@@ -25,11 +25,12 @@ keeps its own wording and context.
 - **A new `/contact?interest=` link:** the slug must exist in
   `INQUIRY_TYPES`, or the form silently ignores it. `tests/unit/operations.test.ts`
   scans the source tree and fails on unknown slugs.
-- **A new Checkfront item:** add it to `DIVE_PRODUCTS` (with a `/book?item=`
-  slug) or `CHECKFRONT_EXTRA_ITEMS`, and update `CHECKFRONT_ALL_ITEM_IDS` in
-  `data/operations.ts`. `/book?item=` values that match neither are rejected
-  by `resolveBookingItem` — the widget shows the full inventory with a notice
-  rather than handing a bogus id to Checkfront.
+- **A new Checkfront item:** add it to `DIVE_PRODUCTS` or `CRUISE_PRODUCTS`
+  (with a `/book?item=` slug) or `CHECKFRONT_EXTRA_ITEMS`, and update
+  `CHECKFRONT_ALL_ITEM_IDS` in `data/operations.ts`. `/book?item=` values
+  that match neither are rejected by `resolveBookingItem` — the widget shows
+  the full inventory with a notice rather than handing a bogus id to
+  Checkfront.
 
 ## Intentionally page-specific
 
@@ -76,3 +77,10 @@ The website owns explanatory copy: eligibility, schedules, inclusions,
 descriptions. Checkfront owns live availability, actual bookable inventory,
 and prices at checkout. Do not scrape or sync Checkfront; the item ids in
 `data/operations.ts` are a hand-maintained lookup for deep links only.
+
+Owner-confirmed non-dive inventory (in `CRUISE_PRODUCTS`):
+
+| Product | Slug | Checkfront item |
+| --- | --- | --- |
+| Shared Sunset Cruise | `sunset-cruise` | `247` |
+| Private Sunset Cruise | `private-sunset-cruise` | `328` |

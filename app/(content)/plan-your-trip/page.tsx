@@ -625,15 +625,27 @@ export default function PlanYourTripPage() {
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
                 Sea Saba offers both shared and private sunset cruises along Saba&apos;s dramatic coastline. Relax with a drink in hand as the sun sets over the Caribbean, enjoy spectacular views from the water, and experience the island from a completely different perspective.
               </p>
-              <TrackedInternalButton
-                className="mt-4"
-                href="/contact?interest=sunset-cruise"
-                eventName="contact_click"
-                buttonText="Book a Sunset Cruise"
-                buttonLocation="plan_your_trip_sunset"
-              >
-                Book a Sunset Cruise &rarr;
-              </TrackedInternalButton>
+              <div className="mt-4 flex flex-wrap items-center gap-3">
+                <TrackedInternalButton
+                  href={bookingHref("sunset-cruise")}
+                  eventName="book_now_click"
+                  buttonText="Book a Sunset Cruise"
+                  buttonLocation="plan_your_trip_sunset"
+                  bookingItem="sunset-cruise"
+                >
+                  Book a Sunset Cruise &rarr;
+                </TrackedInternalButton>
+                <TrackedInternalButton
+                  variant="outline"
+                  href={bookingHref("private-sunset-cruise")}
+                  eventName="book_now_click"
+                  buttonText="Book a Private Sunset Cruise"
+                  buttonLocation="plan_your_trip_sunset_private"
+                  bookingItem="private-sunset-cruise"
+                >
+                  Book a Private Sunset Cruise &rarr;
+                </TrackedInternalButton>
+              </div>
             </div>
           </FeatureImage>
 
