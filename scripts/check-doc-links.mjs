@@ -27,6 +27,7 @@ const CANONICAL_README_LINKS = [
   "docs/ANALYTICS_SEO.md",
   "docs/COOKIEBOT_CONSENT_SETUP.md",
   "docs/OPERATIONS.md",
+  "docs/DEPENDENCIES.md",
   "docs/design/THEME_UX_GUIDE.md",
   "docs/design/IMAGE_STANDARD.md",
   "docs/design/Sea_Saba_Logo_Spec_DEC_21.pdf",
