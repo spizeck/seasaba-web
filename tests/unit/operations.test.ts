@@ -99,7 +99,7 @@ describe("contact inquiry registry", () => {
 describe("shared business facts", () => {
   it("exposes the facts pages share", () => {
     expect(typeof OPERATIONS.establishedYear).toBe("number");
-    expect(typeof OPERATIONS.maxDiversPerGuide).toBe("number");
+    expect(typeof OPERATIONS.maxRecreationalDiversPerGuide).toBe("number");
     expect(OPERATIONS.nitroxBlend).toMatch(/%$/);
     expect(OPERATIONS.harbor).toBeTruthy();
   });

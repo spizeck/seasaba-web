@@ -18,7 +18,7 @@ export const metadata = createMetadata({
 });
 
 const TRUST_SIGNALS = [
-  { icon: Users, label: "Small Groups", sublabel: `Maximum ${OPERATIONS.maxDiversPerGuide} divers per guide` },
+  { icon: Users, label: "Small Groups", sublabel: `Recreational dives — max ${OPERATIONS.maxRecreationalDiversPerGuide} per guide` },
   { icon: Bus, label: "Complimentary Taxi Shuttle", sublabel: "Anywhere on Saba" },
   { icon: Droplets, label: `Free ${OPERATIONS.nitroxBlend} Nitrox`, sublabel: "For certified divers" },
   { icon: Award, label: `Since ${OPERATIONS.establishedYear}`, sublabel: "Saba's only continuously operating dive center" },
@@ -35,7 +35,9 @@ const DIVE_EXPERIENCES = [
       `Return about ${DIVE_PRODUCTS.classic.schedule.returns}`,
       "Two dives to ~70 ft / 21 m",
       `Free ${OPERATIONS.nitroxBlend} Nitrox`,
-      DIVE_PRODUCTS.classic.requirement,
+      // Pre-existing site copy kept verbatim — minimum certification is
+      // pending owner confirmation, not a canonical rule (data/operations.ts).
+      "Scuba Diver minimum",
     ],
     cta: "Book Classic Diving",
     href: bookingHref("classic"),
@@ -69,7 +71,8 @@ const DIVE_EXPERIENCES = [
       `${DIVE_PRODUCTS.afternoon.schedule.departure} departure`,
       `Return about ${DIVE_PRODUCTS.afternoon.schedule.returns}`,
       "Up to ~70 ft / 21 m",
-      DIVE_PRODUCTS.afternoon.requirement,
+      // Pre-existing site copy kept verbatim — pending owner confirmation.
+      "Scuba Diver minimum",
     ],
     cta: "Book Afternoon Dive",
     href: bookingHref("afternoon"),
@@ -177,7 +180,7 @@ export default function DivingPage() {
           <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Complimentary taxi pickup anywhere on Saba</span></li>
           <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Free {OPERATIONS.nitroxBlend} Nitrox for certified divers</span></li>
           <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Saba&apos;s only continuously operating dive center since {OPERATIONS.establishedYear}</span></li>
-          <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Maximum {OPERATIONS.maxDiversPerGuide} divers per guide</span></li>
+          <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Maximum {OPERATIONS.maxRecreationalDiversPerGuide} divers per guide on recreational dives</span></li>
           <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Large stable catamarans with shade and marine heads</span></li>
           <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Equipment rinsed and delivered back to your accommodation</span></li>
         </ul>

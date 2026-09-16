@@ -16,8 +16,11 @@
 export const OPERATIONS = {
   /** First year of continuous operation — used by About and Diving. */
   establishedYear: 1985,
-  /** Maximum divers per guide — trust signal on About and Diving. */
-  maxDiversPerGuide: 8,
+  /**
+   * Maximum divers per guide on recreational guided dives (owner-confirmed
+   * scope). Course ratios are course-specific and live on the courses page.
+   */
+  maxRecreationalDiversPerGuide: 8,
   /** Complimentary enriched-air blend for certified Nitrox divers. */
   nitroxBlend: "32%",
   /** Every dive trip departs from and returns to Fort Bay Harbor. */
@@ -69,7 +72,9 @@ export const DIVE_PRODUCTS = {
     checkfrontItemId: "244",
     schedule: { taxiPickup: "10:00 AM", departure: "10:30 AM", returns: "3:00 PM" },
     dives: 2,
-    requirement: "Scuba Diver minimum",
+    // Minimum certification is deliberately NOT canonicalized: the
+    // "Scuba Diver minimum" copy stays on the diving page pending owner
+    // confirmation (see docs/OPERATIONS.md).
     nitrox: "included",
   },
   advanced: {
@@ -78,7 +83,8 @@ export const DIVE_PRODUCTS = {
     checkfrontItemId: "243",
     schedule: { taxiPickup: "8:30 AM", departure: "9:00 AM", returns: "1:00 PM" },
     dives: 2,
-    requirement: "AOW + 20 dives OR OW + 50 dives",
+    // Owner-confirmed eligibility rule.
+    requirement: "AOW + 20 logged dives OR OW + 50 logged dives",
     nitrox: "required-first-dive",
   },
   afternoon: {
@@ -87,7 +93,8 @@ export const DIVE_PRODUCTS = {
     checkfrontItemId: "245",
     schedule: { taxiPickup: "12:30 PM", departure: "1:00 PM", returns: "3:00 PM" },
     dives: 1,
-    requirement: "Scuba Diver minimum",
+    // Minimum certification is deliberately NOT canonicalized — same
+    // "Scuba Diver minimum" pending owner confirmation as classic.
   },
   snorkel: {
     slug: "snorkel",

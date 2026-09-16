@@ -24,7 +24,7 @@ describe("diving page canonical sourcing", () => {
   it("renders the shared guide-ratio and nitrox facts", () => {
     render(<DivingPage />);
     expect(
-      screen.getAllByText((_, el) => el?.textContent?.includes(`${OPERATIONS.maxDiversPerGuide} divers per guide`) ?? false).length
+      screen.getAllByText((_, el) => el?.textContent?.includes(`${OPERATIONS.maxRecreationalDiversPerGuide} divers per guide`) ?? false).length
     ).toBeGreaterThan(0);
     expect(
       screen.getAllByText((_, el) => el?.textContent?.includes(`${OPERATIONS.nitroxBlend} Nitrox`) ?? false).length

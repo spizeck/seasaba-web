@@ -9,7 +9,7 @@ keeps its own wording and context.
 
 | Source | Owns |
 | --- | --- |
-| `data/operations.ts` | `OPERATIONS` (founding year, guide ratio, nitrox blend, harbor), `DIVE_PRODUCTS` (slugs, Checkfront ids, schedules, requirements, nitrox policy, capacity), `CHECKFRONT_EXTRA_ITEMS`, `INQUIRY_TYPES` (`/contact?interest=` routing) |
+| `data/operations.ts` | `OPERATIONS` (founding year, recreational guide ratio, nitrox blend, harbor), `DIVE_PRODUCTS` (slugs, Checkfront ids, schedules, requirements, nitrox policy, capacity), `CHECKFRONT_EXTRA_ITEMS`, `INQUIRY_TYPES` (`/contact?interest=` routing) |
 | `lib/constants.ts` | `SITE_*`, `BOOKING_URL`, `CONTACT` (phone/WhatsApp/email/address), `SOCIAL_LINKS`, `OG_IMAGE`, `NAV_ITEMS` |
 | `lib/anchors.ts` | Route section ids shared by pages and `data/redirects.ts` |
 | `app/(content)/terms/page.tsx` | Cancellation, reschedule, refund, weather, and charter policy — the canonical legal terms |
@@ -47,6 +47,22 @@ keeps its own wording and context.
 Anything in `DIVE_PRODUCTS`, `OPERATIONS`, `CONTACT`, or the Terms page is a
 real business claim. Changing a schedule, requirement, ratio, fee, or policy
 wording needs owner sign-off — the code change is one line, the decision is not.
+
+### Pending owner confirmation
+
+- **Classic / Afternoon minimum certification** — the site has shown
+  "Scuba Diver minimum" since June 2026 (owner-authored commits `8e7126f` and
+  `e543552`), but Afternoon previously said "Open Water minimum" and no other
+  source confirms the rule. The copy stays on the page verbatim and is
+  deliberately **not** in `DIVE_PRODUCTS.requirement`. Once confirmed, either
+  move it into the registry or update the copy to the correct rule.
+- **`OPERATIONS.maxRecreationalDiversPerGuide`** applies to recreational
+  guided dives only (owner-confirmed). Course ratios on `/courses` are
+  separate, course-specific facts.
+- **Dive computers are required** for diving with Sea Saba; rental computers
+  are available (owner-confirmed — `/plan-your-trip` wording reflects this).
+- **Taxi pickup times** in `DIVE_PRODUCTS.*.schedule.taxiPickup` are
+  owner-approved for public display.
 
 ## Checkfront boundary
 

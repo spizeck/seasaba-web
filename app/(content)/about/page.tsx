@@ -18,7 +18,7 @@ export const metadata = createMetadata({
 
 const TRUST_FACTS: { number: string; label: string; href?: string }[] = [
   { number: `${OPERATIONS.establishedYear}`, label: `Operating continuously since ${OPERATIONS.establishedYear}` },
-  { number: `${OPERATIONS.maxDiversPerGuide}:1`, label: "Maximum guide ratio" },
+  { number: `${OPERATIONS.maxRecreationalDiversPerGuide}:1`, label: "Maximum recreational guide ratio" },
   { number: "30+", label: "Dive sites" },
   { number: "4.8★", label: "Google & TripAdvisor", href: "https://www.google.com/maps/search/?api=1&query=Sea+Saba+Dive+Center+Fort+Bay+Saba&query_place_id=ChIJX0c19WkgDowRn2l3bKbFrRU" },
 ];
@@ -78,7 +78,8 @@ export default function AboutPage() {
             <h3 className="text-lg font-semibold text-foreground">Small Groups, Personal Attention</h3>
           </div>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-            We maintain a maximum {OPERATIONS.maxDiversPerGuide}:1 diver-to-guide ratio. This is not a marketing 
+            We maintain a maximum {OPERATIONS.maxRecreationalDiversPerGuide}:1 diver-to-guide ratio on our
+            recreational guided dives. This is not a marketing 
             point. It is how we believe diving should be conducted. Small groups allow 
             for better briefings, more flexible site selection, and a more personal 
             experience on every dive.
