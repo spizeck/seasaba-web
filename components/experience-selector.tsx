@@ -19,7 +19,7 @@ const EXPERIENCES: Experience[] = [
     id: "classic",
     label: "Classic 2-Tank",
     entries: [
-      { type: "step", time: DIVE_PRODUCTS.classic.schedule.taxiPickup, icon: Users, label: "Taxi pickup" },
+      { type: "step", time: DIVE_PRODUCTS.classic.schedule.taxiPickup, icon: Users, label: "Be ready for taxi pickup" },
       { type: "step", time: DIVE_PRODUCTS.classic.schedule.departure, icon: Anchor, label: `Boat departs ${OPERATIONS.harbor} for two relaxed dives in Saba's Marine Park (~70 ft / 21 m)` },
       { type: "callout", variant: "warning", title: "Bring Your Own Lunch", description: "Lunch availability in Fort Bay Harbor isn't reliable, so pack something before you arrive. The trip runs through midday with no stop." },
       { type: "step", time: DIVE_PRODUCTS.classic.schedule.returns, icon: Clock, label: `Return to ${OPERATIONS.harbor}` },
@@ -29,7 +29,7 @@ const EXPERIENCES: Experience[] = [
     id: "advanced",
     label: "Advanced 2-Tank",
     entries: [
-      { type: "step", time: DIVE_PRODUCTS.advanced.schedule.taxiPickup, icon: Users, label: "Taxi pickup" },
+      { type: "step", time: DIVE_PRODUCTS.advanced.schedule.taxiPickup, icon: Users, label: "Be ready for taxi pickup" },
       { type: "step", time: DIVE_PRODUCTS.advanced.schedule.departure, icon: Anchor, label: "Boat departs for two dives (Dive 1 to ~110 ft / 33 m, Dive 2 to ~70 ft / 21 m)" },
       { type: "callout", variant: "info", title: "Want a Third Dive?", description: "Ask about upgrading to our Triple Tank option for an extended day. If you add the third dive, consider bringing a lunch — the day will run past typical lunch hours and harbor food isn't reliable." },
       { type: "step", time: DIVE_PRODUCTS.advanced.schedule.returns, icon: Clock, label: `Return to ${OPERATIONS.harbor}` },
@@ -39,7 +39,7 @@ const EXPERIENCES: Experience[] = [
     id: "afternoon",
     label: "Afternoon 1-Tank",
     entries: [
-      { type: "step", time: DIVE_PRODUCTS.afternoon.schedule.taxiPickup, icon: Users, label: "Taxi pickup" },
+      { type: "step", time: DIVE_PRODUCTS.afternoon.schedule.taxiPickup, icon: Users, label: "Be ready for taxi pickup" },
       { type: "step", time: DIVE_PRODUCTS.afternoon.schedule.departure, icon: Anchor, label: "Boat departs for a single dive to ~70 ft / 21 m" },
       { type: "step", time: DIVE_PRODUCTS.afternoon.schedule.returns, icon: Clock, label: `Return to ${OPERATIONS.harbor}` },
     ],
@@ -48,7 +48,7 @@ const EXPERIENCES: Experience[] = [
     id: "snorkel",
     label: "Afternoon Snorkel",
     entries: [
-      { type: "step", time: DIVE_PRODUCTS.snorkel.schedule.taxiPickup, icon: Users, label: "Taxi pickup" },
+      { type: "step", time: DIVE_PRODUCTS.snorkel.schedule.taxiPickup, icon: Users, label: "Be ready for taxi pickup" },
       { type: "step", time: DIVE_PRODUCTS.snorkel.schedule.departure, icon: Waves, label: "Boat departs; snorkel from the surface while divers explore below" },
       { type: "step", time: DIVE_PRODUCTS.snorkel.schedule.returns, icon: Clock, label: `Return to ${OPERATIONS.harbor}` },
     ],
@@ -57,7 +57,7 @@ const EXPERIENCES: Experience[] = [
     id: "tryscuba",
     label: "Try Scuba",
     entries: [
-      { type: "step", time: "8:30 AM", icon: Users, label: "Taxi pickup" },
+      { type: "step", time: "8:30 AM", icon: Users, label: "Be ready for taxi pickup" },
       { type: "step", time: "9:00 AM", icon: Fish, label: `Theory and confined water session at ${OPERATIONS.harbor}` },
       { type: "step", time: "11:30 AM", icon: Clock, label: "Lunch break" },
       { type: "callout", variant: "warning", title: "Bring Your Own Lunch", description: "Lunch availability in Fort Bay Harbor isn't reliable, so pack something before you arrive." },
@@ -137,7 +137,9 @@ export function ExperienceSelector() {
           </div>
         </div>
         <p className="mt-4 text-xs italic text-muted-foreground">
-          Times are approximate and may vary depending on conditions.
+          Pickup times are when taxi pickups begin — please be ready; actual
+          arrival varies with the route. All times are approximate and may
+          vary depending on conditions.
         </p>
       </div>
     </section>

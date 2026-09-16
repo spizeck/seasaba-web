@@ -30,7 +30,11 @@ export const OPERATIONS = {
 // --- Bookable products -------------------------------------------------------
 
 export interface ProductSchedule {
-  /** Complimentary taxi pickup from the guest's accommodation. */
+  /**
+   * Time taxi pickups BEGIN — guests must be ready by this time. Actual
+   * taxi arrival varies with the route and pickup order; this is not a
+   * guaranteed per-guest pickup time.
+   */
   taxiPickup: string;
   /** Boat departure from Fort Bay Harbor. */
   departure: string;
@@ -72,9 +76,11 @@ export const DIVE_PRODUCTS = {
     checkfrontItemId: "244",
     schedule: { taxiPickup: "10:00 AM", departure: "10:30 AM", returns: "3:00 PM" },
     dives: 2,
-    // Minimum certification is deliberately NOT canonicalized: the
-    // "Scuba Diver minimum" copy stays on the diving page pending owner
-    // confirmation (see docs/OPERATIONS.md).
+    // Eligibility is deliberately NOT a `requirement`: Scuba
+    // Diver-certified guests may join with no logged-dive minimum but
+    // require a private guide (owner-confirmed — see docs/OPERATIONS.md).
+    // A single requirement string would imply they can join the normal
+    // guided group autonomously.
     nitrox: "included",
   },
   advanced: {
@@ -93,8 +99,8 @@ export const DIVE_PRODUCTS = {
     checkfrontItemId: "245",
     schedule: { taxiPickup: "12:30 PM", departure: "1:00 PM", returns: "3:00 PM" },
     dives: 1,
-    // Minimum certification is deliberately NOT canonicalized — same
-    // "Scuba Diver minimum" pending owner confirmation as classic.
+    // Eligibility is deliberately NOT a `requirement` — same
+    // owner-confirmed private-guide rule as classic (see docs/OPERATIONS.md).
   },
   snorkel: {
     slug: "snorkel",

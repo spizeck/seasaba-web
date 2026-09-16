@@ -48,21 +48,25 @@ Anything in `DIVE_PRODUCTS`, `OPERATIONS`, `CONTACT`, or the Terms page is a
 real business claim. Changing a schedule, requirement, ratio, fee, or policy
 wording needs owner sign-off — the code change is one line, the decision is not.
 
-### Pending owner confirmation
+### Owner-confirmed rules
 
-- **Classic / Afternoon minimum certification** — the site has shown
-  "Scuba Diver minimum" since June 2026 (owner-authored commits `8e7126f` and
-  `e543552`), but Afternoon previously said "Open Water minimum" and no other
-  source confirms the rule. The copy stays on the page verbatim and is
-  deliberately **not** in `DIVE_PRODUCTS.requirement`. Once confirmed, either
-  move it into the registry or update the copy to the correct rule.
+- **Classic / Afternoon certification rule** — Scuba Diver-certified guests
+  may book either product with no logged-dive minimum, but they are not
+  autonomous Open Water-level divers: they require a private guide. This is
+  deliberately **not** a `DIVE_PRODUCTS.requirement` value — a single
+  requirement string would imply Scuba Diver divers can join the normal
+  guided group autonomously. The diving page carries the wording
+  "Scuba Diver minimum — private guide required" as page copy.
 - **`OPERATIONS.maxRecreationalDiversPerGuide`** applies to recreational
   guided dives only (owner-confirmed). Course ratios on `/courses` are
   separate, course-specific facts.
 - **Dive computers are required** for diving with Sea Saba; rental computers
   are available (owner-confirmed — `/plan-your-trip` wording reflects this).
-- **Taxi pickup times** in `DIVE_PRODUCTS.*.schedule.taxiPickup` are
-  owner-approved for public display.
+- **Taxi pickup times** — `DIVE_PRODUCTS.*.schedule.taxiPickup` is the time
+  pickups BEGIN, not a guaranteed per-guest pickup time. Guests must be
+  ready by that time; actual taxi arrival varies with the route and pickup
+  order. UI must never present these as exact arrival times (the
+  `ExperienceSelector` timeline labels them "Be ready for taxi pickup").
 
 ## Checkfront boundary
 

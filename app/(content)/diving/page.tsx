@@ -35,9 +35,9 @@ const DIVE_EXPERIENCES = [
       `Return about ${DIVE_PRODUCTS.classic.schedule.returns}`,
       "Two dives to ~70 ft / 21 m",
       `Free ${OPERATIONS.nitroxBlend} Nitrox`,
-      // Pre-existing site copy kept verbatim — minimum certification is
-      // pending owner confirmation, not a canonical rule (data/operations.ts).
-      "Scuba Diver minimum",
+      // Owner-confirmed rule — kept as page copy, not a canonical
+      // `requirement` (see data/operations.ts and docs/OPERATIONS.md).
+      "Scuba Diver minimum — private guide required",
     ],
     cta: "Book Classic Diving",
     href: bookingHref("classic"),
@@ -71,8 +71,8 @@ const DIVE_EXPERIENCES = [
       `${DIVE_PRODUCTS.afternoon.schedule.departure} departure`,
       `Return about ${DIVE_PRODUCTS.afternoon.schedule.returns}`,
       "Up to ~70 ft / 21 m",
-      // Pre-existing site copy kept verbatim — pending owner confirmation.
-      "Scuba Diver minimum",
+      // Owner-confirmed rule — same private-guide requirement as Classic.
+      "Scuba Diver minimum — private guide required",
     ],
     cta: "Book Afternoon Dive",
     href: bookingHref("afternoon"),
