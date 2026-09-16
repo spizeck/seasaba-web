@@ -40,8 +40,11 @@ migration work:
    review, a CI pass, and related-family alignment before starting.
 3. Families migrate together: Vitest with `@vitest/coverage-v8`; Next with
    `eslint-config-next` and compatible React/types; `typescript` only after
-   the Next.js and ESLint toolchain supports it; `@types/node` tracks the
-   Node major in `.nvmrc` (currently 24 — not the latest published major).
+   the Next.js and ESLint toolchain supports it.
+   `@types/node` should track the Node major in `.nvmrc` — the repository
+   currently targets Node 24 but still declares `@types/node` ^20, an
+   existing mismatch to resolve in a dedicated dependency maintenance
+   change, not by jumping to the latest published major.
 4. Action majors (e.g. `actions/checkout` v5→v7) get the same treatment —
    review the release notes for behavioral changes, and preserve
    `persist-credentials: false` on every checkout step.
