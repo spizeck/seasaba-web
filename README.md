@@ -10,6 +10,7 @@ A fast, SEO-first, destination-led marketing website for Sea Saba, a professiona
 | [docs/ANALYTICS_SEO.md](docs/ANALYTICS_SEO.md) | Analytics/GTM/consent architecture, tracked events, sitemap and indexing rules |
 | [docs/COOKIEBOT_CONSENT_SETUP.md](docs/COOKIEBOT_CONSENT_SETUP.md) | Cookiebot CMP + GTM consent-mode runbook |
 | [docs/OPERATIONS.md](docs/OPERATIONS.md) | Source of truth for operational facts (schedules, requirements, contact, Checkfront boundary) |
+| [docs/DEPENDENCIES.md](docs/DEPENDENCIES.md) | Dependabot update policy, dependency groups, and the major-version migration workflow |
 | [docs/design/THEME_UX_GUIDE.md](docs/design/THEME_UX_GUIDE.md) | Brand colors, typography, spacing, imagery and UX rules |
 | [docs/design/IMAGE_STANDARD.md](docs/design/IMAGE_STANDARD.md) | Image categories, ratios, naming and the `PageHero`/`FeatureImage` components |
 | [docs/design/Sea_Saba_Logo_Spec_DEC_21.pdf](docs/design/Sea_Saba_Logo_Spec_DEC_21.pdf) | Official logo specification (brand asset) |

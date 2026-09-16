@@ -1,5 +1,10 @@
 version: 2
 
+# Dependency maintenance policy — see docs/DEPENDENCIES.md for the rationale,
+# the major-version migration workflow, and how this file relates to
+# Dependabot security updates (which are configured in repo settings and are
+# not affected by the ignore rule below).
+
 updates:
   - package-ecosystem: "npm"
     directory: "/"
@@ -15,8 +20,57 @@ updates:
       - "area: dependencies"
       - "type: maintenance"
 
+    # Major-version upgrades are deliberate migration work, not routine
+    # maintenance — no unattended major-bump PRs. Scoped to version updates
+    # only; security updates still arrive for every dependency, including
+    # fixes that cross a major boundary.
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
+
     groups:
-      npm-minor-patch:
+      # Compatibility families first — an update is assigned to the first
+      # group whose rules match it.
+      next-react:
+        # next and eslint-config-next ship from the same repo in lockstep;
+        # react/react-dom must move together; @types/react* track React.
+        patterns:
+          - "next"
+          - "eslint-config-next"
+          - "react"
+          - "react-dom"
+          - "@types/react"
+          - "@types/react-dom"
+        update-types:
+          - "minor"
+          - "patch"
+      vitest:
+        # vitest and @vitest/coverage-v8 release in lockstep and must share
+        # a major — never migrate them independently.
+        patterns:
+          - "vitest"
+          - "@vitest/*"
+        update-types:
+          - "minor"
+          - "patch"
+      firebase:
+        # Runtime dependency behind the public Dive Log — reviewed on its
+        # own rather than mixed into unrelated bumps.
+        patterns:
+          - "firebase"
+        update-types:
+          - "minor"
+          - "patch"
+      runtime:
+        # Everything else that ships to visitors: one reviewable PR.
+        dependency-type: "production"
+        update-types:
+          - "minor"
+          - "patch"
+      dev-tooling:
+        # Dev/test/tooling deps — cannot break the site at runtime.
+        dependency-type: "development"
         update-types:
           - "minor"
           - "patch"
@@ -36,7 +90,17 @@ updates:
       - "area: infrastructure"
       - "type: maintenance"
 
+    # Same rule as npm: action majors (e.g. checkout v5 -> v7) are
+    # deliberate migrations, not unattended grouped PRs.
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
+
     groups:
       github-actions:
         patterns:
           - "*"
+        update-types:
+          - "minor"
+          - "patch"
