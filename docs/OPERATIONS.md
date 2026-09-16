@@ -9,7 +9,7 @@ keeps its own wording and context.
 
 | Source | Owns |
 | --- | --- |
-| `data/operations.ts` | `OPERATIONS` (founding year, recreational guide ratio, nitrox blend, harbor), `DIVE_PRODUCTS` (slugs, Checkfront ids, schedules, requirements, nitrox policy, capacity), `CHECKFRONT_EXTRA_ITEMS`, `INQUIRY_TYPES` (`/contact?interest=` routing) |
+| `data/operations.ts` | `OPERATIONS` (founding year, recreational guide ratio, nitrox blend, harbor), `DIVE_PRODUCTS` (slugs, Checkfront ids, schedules, requirements, nitrox policy, capacity), `CHECKFRONT_EXTRA_ITEMS`, `CHECKFRONT_ALL_ITEM_IDS`, `INQUIRY_TYPES` (`/contact?interest=` routing), `resolveBookingItem` (`/book?item=` validation) |
 | `lib/constants.ts` | `SITE_*`, `BOOKING_URL`, `CONTACT` (phone/WhatsApp/email/address), `SOCIAL_LINKS`, `OG_IMAGE`, `NAV_ITEMS` |
 | `lib/anchors.ts` | Route section ids shared by pages and `data/redirects.ts` |
 | `app/(content)/terms/page.tsx` | Cancellation, reschedule, refund, weather, and charter policy — the canonical legal terms |
@@ -26,8 +26,10 @@ keeps its own wording and context.
   `INQUIRY_TYPES`, or the form silently ignores it. `tests/unit/operations.test.ts`
   scans the source tree and fails on unknown slugs.
 - **A new Checkfront item:** add it to `DIVE_PRODUCTS` (with a `/book?item=`
-  slug) or `CHECKFRONT_EXTRA_ITEMS`, and update `ALL_ITEM_IDS` in
-  `components/booking-widget.tsx`.
+  slug) or `CHECKFRONT_EXTRA_ITEMS`, and update `CHECKFRONT_ALL_ITEM_IDS` in
+  `data/operations.ts`. `/book?item=` values that match neither are rejected
+  by `resolveBookingItem` — the widget shows the full inventory with a notice
+  rather than handing a bogus id to Checkfront.
 
 ## Intentionally page-specific
 

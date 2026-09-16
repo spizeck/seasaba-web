@@ -356,9 +356,13 @@ export default function CoursesPage() {
         </div>
       </section>
 
+      {/* Courses are inquiry-based, not bookable in Checkfront — send course
+          seekers to the contact form rather than a booking page without them. */}
       <BookingCTA
         heading="Start your training"
         description="Reserve your course or request more information about SDI and TDI training in Saba."
+        buttonText="Contact Us About Courses"
+        href="/contact?interest=course-inquiry"
         className="mt-12"
         buttonLocation="courses_footer_cta"
       />

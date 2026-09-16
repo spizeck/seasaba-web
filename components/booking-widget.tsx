@@ -1,19 +1,21 @@
 "use client";
 
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState } from "react";
 import { trackLinkClick } from "@/lib/analytics";
-import { BOOKING_URL } from "@/lib/constants";
-import { CHECKFRONT_EXTRA_ITEMS, DIVE_PRODUCTS, type DiveProduct } from "@/data/operations";
+import { BOOKING_URL, CONTACT } from "@/lib/constants";
+import {
+  CHECKFRONT_ALL_ITEM_IDS,
+  CHECKFRONT_EXTRA_ITEMS,
+  DIVE_PRODUCTS,
+  resolveBookingItem,
+  type DiveProduct,
+} from "@/data/operations";
 
 const CF_SCRIPT_SRC = "//seasaba.checkfront.com/lib/interface--0.js";
 const CF_SCRIPT_ID = "checkfront-interface-script";
 
 // Slug and display-name lookups derive from the canonical product registry in
 // data/operations.ts so /book?item= deep links can't drift from the catalog.
-const SLUG_TO_ITEM_ID: Record<string, string> = Object.fromEntries(
-  Object.values(DIVE_PRODUCTS).map((p) => [p.slug, p.checkfrontItemId])
-);
-
 const ITEM_NAMES: Record<string, string> = {
   ...Object.fromEntries(
     Object.values(DIVE_PRODUCTS).map((p) => [p.checkfrontItemId, p.name])
@@ -21,51 +23,56 @@ const ITEM_NAMES: Record<string, string> = {
   ...CHECKFRONT_EXTRA_ITEMS,
 };
 
-// Full inventory list shown when no item is preselected. Checkfront owns this
-// set — update it here when items are added or removed there.
-const ALL_ITEM_IDS = "245,244,243,246,247,248,253,249,254";
-
 const POLL_INTERVAL_MS = 100;
 const POLL_TIMEOUT_MS = 12000;
-const DIRECT_BOOKING_URL = BOOKING_URL;
 const CHECKFRONT_HOST = new URL(BOOKING_URL).host;
+const TRACKING_ID = "seasaba-website";
 
-function trackCheckfrontClick(buttonText: string, buttonLocation: string) {
-  trackLinkClick("checkfront_click", DIRECT_BOOKING_URL, buttonText, {
+/**
+ * Hosted-booking-page fallback URL. When a product is preselected the item
+ * (or its category) is carried over so the recovery path lands on the same
+ * product the customer chose; tid preserves website attribution.
+ */
+function directBookingUrl(itemId: string | null): string {
+  const url = new URL(BOOKING_URL);
+  url.searchParams.set("tid", TRACKING_ID);
+  if (itemId) {
+    const product: DiveProduct | undefined = Object.values(DIVE_PRODUCTS).find(
+      (p) => p.checkfrontItemId === itemId
+    );
+    if (product?.checkfrontCategoryId) {
+      url.searchParams.set("category_id", product.checkfrontCategoryId);
+    } else {
+      url.searchParams.set("item_id", itemId);
+    }
+  }
+  return url.toString();
+}
+
+function trackCheckfrontClick(buttonText: string, buttonLocation: string, bookingItem: string) {
+  trackLinkClick("checkfront_click", BOOKING_URL, buttonText, {
     button_name: buttonText,
     button_location: buttonLocation,
-    booking_item: getPreselectedItemId() || "general",
+    booking_item: bookingItem,
   });
 }
 
-function getPreselectedItemId(): string | null {
-  if (typeof window === "undefined") return null;
-  const params = new URLSearchParams(window.location.search);
-  const slug = params.get("item");
-  if (!slug) return null;
-  // Translate slug to Checkfront item ID, or return slug if it's already numeric
-  return SLUG_TO_ITEM_ID[slug] || slug;
+interface BookingWidgetProps {
+  /**
+   * Raw `/book?item=` value, resolved by the server page. The page keys this
+   * component by the param so client-side navigation between items remounts
+   * and re-renders the widget with the new preselection.
+   */
+  item?: string;
 }
 
-function subscribeToNothing() {
-  return () => {};
-}
-
-export function BookingWidget() {
+export function BookingWidget({ item }: BookingWidgetProps) {
   const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
-  // Read the preselected item from the URL without a setState-in-effect:
-  // null on the server, resolved value on the client (hydration-safe).
-  const preselectedItem = useSyncExternalStore(
-    subscribeToNothing,
-    getPreselectedItemId,
-    () => null
-  );
+  const { itemId, unknown } = resolveBookingItem(item);
+  const fallbackUrl = directBookingUrl(itemId);
   const renderedRef = useRef(false);
 
   useEffect(() => {
-    // Get preselected item from URL
-    const itemId = getPreselectedItemId();
-
     if (renderedRef.current) return;
 
     let pollTimer: ReturnType<typeof setInterval> | null = null;
@@ -92,9 +99,9 @@ export function BookingWidget() {
       const widgetConfig = {
         host: CHECKFRONT_HOST,
         target: "CHECKFRONT_WIDGET_01",
-        item_id: categoryId ? undefined : (itemId || ALL_ITEM_IDS),
+        item_id: categoryId ? undefined : (itemId || CHECKFRONT_ALL_ITEM_IDS),
         category_id: categoryId ?? (itemId ? undefined : "4,51,49"),
-        tid: "seasaba-website",
+        tid: TRACKING_ID,
         options: itemId && !categoryId ? undefined : "category_select",
         style: "font-family: Inter",
         provider: "droplet",
@@ -142,36 +149,88 @@ export function BookingWidget() {
       if (timeoutTimer) clearTimeout(timeoutTimer);
       if (originalScrollTo) window.scrollTo = originalScrollTo;
     };
-  }, []);
+  }, [itemId]);
 
   return (
     <div className="w-full">
       {status === "error" && (
         <div className="rounded-lg border border-border/40 bg-muted/20 p-10 text-center">
           <p className="text-lg font-semibold text-foreground">
-            Booking system unavailable
+            Booking isn&apos;t loading
           </p>
           <p className="mt-2 text-sm text-muted-foreground">
-            Please continue to our secure booking portal to check availability.
+            Open our secure booking page directly
+            {itemId ? ` for ${ITEM_NAMES[itemId]}` : ""}, or reach us another
+            way — we&apos;ll get you booked.
           </p>
-          <div className="mt-6">
+          <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <a
-              href={DIRECT_BOOKING_URL}
+              href={fallbackUrl}
               target="_blank"
               rel="noopener noreferrer"
-              onClick={() => trackCheckfrontClick("Continue to Secure Booking System", "booking_widget_error")}
+              onClick={() => trackCheckfrontClick("Continue to Secure Booking System", "booking_widget_error", itemId || "general")}
               className="inline-flex items-center rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
             >
               Continue to Secure Booking System
+            </a>
+            <a
+              href={CONTACT.whatsappHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() =>
+                trackLinkClick("whatsapp_click", CONTACT.whatsappHref, "WhatsApp", {
+                  button_location: "booking_widget_error",
+                })
+              }
+              className="inline-flex items-center rounded-md border border-border px-6 py-3 text-sm font-semibold text-foreground hover:bg-muted"
+            >
+              WhatsApp Us
+            </a>
+            {/* Plain anchors for recovery links: a hard navigation does not
+                depend on the SPA router, which is the right guarantee when the
+                widget has already failed. */}
+            <a
+              href="/contact?interest=book-diving"
+              onClick={() =>
+                trackLinkClick("contact_click", "/contact?interest=book-diving", "Contact Us", {
+                  button_location: "booking_widget_error",
+                })
+              }
+              className="text-sm font-medium text-muted-foreground underline underline-offset-2 hover:text-foreground"
+            >
+              Contact us instead
             </a>
           </div>
         </div>
       )}
 
-      {preselectedItem && (
+      {unknown && (
+        <div className="mb-6 rounded-lg border border-border/40 bg-muted/20 p-4">
+          <p className="text-sm font-medium text-foreground">
+            We couldn&apos;t find that experience.
+          </p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Browse all bookable options below, or{" "}
+            <a
+              href="/contact"
+              onClick={() =>
+                trackLinkClick("contact_click", "/contact", "ask us what fits", {
+                  button_location: "booking_widget_unknown_item",
+                })
+              }
+              className="underline hover:text-foreground"
+            >
+              ask us what fits
+            </a>
+            .
+          </p>
+        </div>
+      )}
+
+      {itemId && (
         <div className="mb-6 rounded-lg border border-primary/20 bg-primary/5 p-4">
           <p className="text-sm font-medium text-primary">
-            Booking: {ITEM_NAMES[preselectedItem] || "Selected Dive Experience"}
+            Booking: {ITEM_NAMES[itemId] || "Selected Dive Experience"}
           </p>
           <p className="mt-1 text-xs text-muted-foreground">
             Check availability below or{" "}
@@ -203,10 +262,9 @@ export function BookingWidget() {
         <p className="mt-4 text-center text-sm text-muted-foreground">
           JavaScript is required to load the booking widget.{" "}
           <a
-            href={DIRECT_BOOKING_URL}
+            href={BOOKING_URL}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={() => trackCheckfrontClick("Continue to Secure Booking System", "booking_widget_noscript")}
             className="underline underline-offset-2 hover:text-foreground"
           >
             Continue to Secure Booking System
@@ -226,10 +284,10 @@ export function BookingWidget() {
         </a>
         . You can also{" "}
         <a
-          href={DIRECT_BOOKING_URL}
+          href={fallbackUrl}
           target="_blank"
           rel="noopener noreferrer"
-          onClick={() => trackCheckfrontClick("Book directly", "booking_widget_footer")}
+          onClick={() => trackCheckfrontClick("Book directly", "booking_widget_footer", itemId || "general")}
           className="underline underline-offset-2 hover:text-foreground"
         >
           book directly

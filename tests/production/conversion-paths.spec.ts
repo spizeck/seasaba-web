@@ -18,15 +18,29 @@ test("/book renders and exposes a usable booking path", async ({ page }) => {
 
   // With the vendor script aborted, the documented fallback must appear —
   // this is the booking path a customer always has, even if Checkfront is down.
-  await expect(page.getByText("Booking system unavailable")).toBeVisible();
+  await expect(page.getByText("Booking isn't loading")).toBeVisible();
   const fallback = page.getByRole("link", { name: "Continue to Secure Booking System" });
-  await expect(fallback).toHaveAttribute("href", "https://seasaba.checkfront.com/reserve/");
+  await expect(fallback).toHaveAttribute(
+    "href",
+    "https://seasaba.checkfront.com/reserve/?tid=seasaba-website"
+  );
   await expect(fallback).toHaveAttribute("target", "_blank");
   await expect(page.getByRole("link", { name: "book directly" })).toHaveAttribute(
     "href",
-    "https://seasaba.checkfront.com/reserve/"
+    "https://seasaba.checkfront.com/reserve/?tid=seasaba-website"
   );
   // Deliberately not clicked: following the link opens the vendor checkout.
+});
+
+test("/book?item=classic keeps the product in the banner and the fallback", async ({ page }) => {
+  const response = await hydratedGoto(page, "/book?item=classic");
+  expect(response?.status()).toBe(200);
+  await expect(page.getByText("Booking: Classic 2-Tank Dive")).toBeVisible();
+  // Vendor script aborted → fallback must preserve the selected item.
+  await expect(page.getByRole("link", { name: "Continue to Secure Booking System" })).toHaveAttribute(
+    "href",
+    "https://seasaba.checkfront.com/reserve/?tid=seasaba-website&item_id=244"
+  );
 });
 
 test("/contact renders a usable form and failed validation sends nothing", async ({ page }) => {

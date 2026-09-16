@@ -70,7 +70,7 @@ test("trip planner: plan-your-trip → generic booking page with fallback", asyn
   await expect(page).toHaveURL(/\/book$/);
   await expect(page.getByRole("heading", { name: "Book Your Dive" })).toBeVisible();
   // Checkfront is blocked by the test fixture, so the fallback must appear.
-  await expect(page.getByText("Booking system unavailable")).toBeVisible();
+  await expect(page.getByText("Booking isn't loading")).toBeVisible();
 });
 
 // Navigations between pages are client-side transitions; wait for the

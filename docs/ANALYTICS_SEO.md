@@ -26,7 +26,7 @@
 |-------|------------------|------------|
 | `book_now_click` | Actual Sea Saba booking CTAs | Page parameters, link parameters, `button_name`, `button_location`, `booking_item`, and legacy aliases |
 | `checkfront_click` | BookingWidget fallback/direct links | Page parameters, link parameters, `button_name`, `button_location`, `booking_item`, and legacy aliases |
-| `contact_click` | Internal course and partner contact CTAs | Page parameters, link parameters, `button_location`, and legacy aliases |
+| `contact_click` | Internal course/partner contact CTAs, plan-your-trip inquiries, and BookingWidget recovery links | Page parameters, link parameters, `button_location`, and legacy aliases |
 | `contact_form_submit` | ContactForm email/WhatsApp handlers | Page parameters, `method`, `inquiry_type`, `button_location` |
 | `email_click` | Footer, contact form/page, privacy page | Page parameters, link parameters, and legacy aliases |
 | `phone_click` | Footer and contact page | Page parameters, link parameters, and legacy aliases |

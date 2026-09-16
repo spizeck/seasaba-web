@@ -27,7 +27,8 @@ const DISCOUNT_HIGHLIGHTS = [
   "Single afternoon dives are not discounted",
 ];
 
-export default function BookPage() {
+export default async function BookPage({ searchParams }: BookPageProps) {
+  const { item } = await searchParams;
   return (
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
       <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
@@ -79,7 +80,10 @@ export default function BookPage() {
       </section>
 
       <div className="mt-8">
-        <BookingWidget />
+        {/* Keying by item forces a remount when the query param changes via
+            client-side navigation, so the widget re-renders with the new
+            preselection instead of showing the previous item. */}
+        <BookingWidget key={item ?? "all"} item={item} />
       </div>
     </div>
   );

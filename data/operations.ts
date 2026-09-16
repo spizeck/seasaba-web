@@ -137,6 +137,36 @@ export const CHECKFRONT_EXTRA_ITEMS: Record<string, string> = {
   "249": "Dive Packages",
 };
 
+/**
+ * Full Checkfront inventory list shown when no item is preselected.
+ * Checkfront owns this set — update it when items are added or removed there.
+ * Also the allowlist for numeric `/book?item=<id>` passthrough values.
+ */
+export const CHECKFRONT_ALL_ITEM_IDS = "245,244,243,246,247,248,253,249,254";
+
+const KNOWN_ITEM_IDS = new Set(CHECKFRONT_ALL_ITEM_IDS.split(","));
+
+export interface ResolvedBookingItem {
+  /** Checkfront item id when the `?item=` value maps to real inventory. */
+  itemId: string | null;
+  /** True when `?item=` was supplied but matches no slug or known item id. */
+  unknown: boolean;
+}
+
+/**
+ * Resolve a `/book?item=` value to a Checkfront item id. Accepts marketed
+ * slugs (`classic`) and numeric ids that exist in the Checkfront inventory
+ * (`248`). Anything else is rejected rather than handed to Checkfront as a
+ * bogus item id — the widget falls back to the full inventory with a notice.
+ */
+export function resolveBookingItem(item: string | undefined): ResolvedBookingItem {
+  if (!item) return { itemId: null, unknown: false };
+  const product = Object.values(DIVE_PRODUCTS).find((p) => p.slug === item);
+  if (product) return { itemId: product.checkfrontItemId, unknown: false };
+  if (KNOWN_ITEM_IDS.has(item)) return { itemId: item, unknown: false };
+  return { itemId: null, unknown: true };
+}
+
 // --- Contact-inquiry routing -------------------------------------------------
 
 export interface InquiryType {

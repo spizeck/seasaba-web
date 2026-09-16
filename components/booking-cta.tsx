@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { trackBookingClick } from "@/lib/analytics";
+import { trackBookingClick, trackLinkClick } from "@/lib/analytics";
 
 interface BookingCTAProps {
   heading?: string;
@@ -10,6 +10,8 @@ interface BookingCTAProps {
   buttonText?: string;
   className?: string;
   buttonLocation?: string;
+  /** Defaults to /book. Contact destinations emit contact_click, not book_now_click. */
+  href?: string;
 }
 
 export function BookingCTA({
@@ -18,7 +20,16 @@ export function BookingCTA({
   buttonText = "Book Diving",
   className = "",
   buttonLocation = "booking_cta",
+  href = "/book",
 }: BookingCTAProps) {
+  const handleClick = () => {
+    if (href.startsWith("/contact")) {
+      trackLinkClick("contact_click", href, buttonText, { button_location: buttonLocation });
+      return;
+    }
+    trackBookingClick(href, buttonText, buttonLocation);
+  };
+
   return (
     <div
       className={`rounded-lg border border-border/40 bg-muted/20 p-8 text-center ${className}`}
@@ -30,9 +41,9 @@ export function BookingCTA({
           asChild
           size="lg"
           className="text-base font-semibold"
-          onClick={() => trackBookingClick("/book", buttonText, buttonLocation)}
+          onClick={handleClick}
         >
-          <Link href="/book">{buttonText}</Link>
+          <Link href={href}>{buttonText}</Link>
         </Button>
       </div>
     </div>

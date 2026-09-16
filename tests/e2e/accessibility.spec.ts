@@ -83,7 +83,7 @@ test.describe("automated axe scans", () => {
     test.skip(isMobile || browserName !== "chromium", "representative scan on desktop-chromium");
     await hydratedGoto(page, "/book");
     // The fixture blocks the Checkfront loader, so the degraded state is shown.
-    await expect(page.getByText("Booking system unavailable")).toBeVisible();
+    await expect(page.getByText("Booking isn't loading")).toBeVisible();
     await expectNoAxeViolations(page);
   });
 });
