@@ -33,6 +33,13 @@ it("prefills supported course inquiries and ignores unknown interests", () => {
   render(<ContactForm initialInterest="unknown" />);
   expect(screen.getByRole("combobox")).toHaveValue("");
 });
+it.each(["sunset-cruise", "saba-lace", "jewelry-making", "glass-art"])(
+  "prefills the %s inquiry linked from plan-your-trip",
+  (value) => {
+    render(<ContactForm initialInterest={value} />);
+    expect(screen.getByRole("combobox")).toHaveValue(value);
+  }
+);
 it("builds an encoded WhatsApp handoff with course and travel details", async () => {
   const open = vi.spyOn(window, "open").mockReturnValue(null);
   render(<ContactForm />);

@@ -3,12 +3,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { trackBookingClick, trackLinkClick } from "@/lib/analytics";
+import { OPERATIONS } from "@/data/operations";
 
 // A/B test toggle: "A" = Sea Saba red CTA, "B" = white CTA with red text
 const HERO_CTA_VARIANT: "A" | "B" = "A";
 
 const TRUST_INDICATORS: { stat: string; label: string; href?: string }[] = [
-  { stat: "Since 1985", label: "Established" },
+  { stat: `Since ${OPERATIONS.establishedYear}`, label: "Established" },
   { stat: "30+ Dive Sites", label: "Protected Waters" },
   { stat: "\u2605\u2605\u2605\u2605\u2605 4.8/5", label: "Google & TripAdvisor", href: "https://www.google.com/maps/search/?api=1&query=Sea+Saba+Dive+Center+Fort+Bay+Saba&query_place_id=ChIJX0c19WkgDowRn2l3bKbFrRU" },
 ];

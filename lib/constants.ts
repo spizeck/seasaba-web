@@ -25,6 +25,8 @@ export const CONTACT = {
   phoneRaw: "+5994162246",
   phoneHref: "tel:+5994162246",
   whatsapp: "+599 416 2246",
+  /** Bare international digits for wa.me links: https://wa.me/<whatsappNumber> */
+  whatsappNumber: "5994162246",
   whatsappHref: "https://wa.me/5994162246",
   email: "info@seasaba.com",
   address: {

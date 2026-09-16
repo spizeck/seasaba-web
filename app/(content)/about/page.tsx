@@ -7,17 +7,18 @@ import { Anchor, Users, Shield, Ship, Bus, MapPin } from "lucide-react";
 import { TeamCarousel, OwnerFeature } from "@/components/about-page-client";
 import { TrackedInternalButton } from "@/components/tracked-internal-button";
 import { TrackedOutboundLink } from "@/components/tracked-outbound-link";
+import { OPERATIONS } from "@/data/operations";
 
 export const metadata = createMetadata({
   title: "About Us",
   description:
-    "Professional scuba diving in Saba since 1985. Small guided groups, experienced local professionals, and a commitment to exceptional underwater experiences.",
+    `Professional scuba diving in Saba since ${OPERATIONS.establishedYear}. Small guided groups, experienced local professionals, and a commitment to exceptional underwater experiences.`,
   path: "/about",
 });
 
 const TRUST_FACTS: { number: string; label: string; href?: string }[] = [
-  { number: "1985", label: "Operating continuously since 1985" },
-  { number: "8:1", label: "Maximum guide ratio" },
+  { number: `${OPERATIONS.establishedYear}`, label: `Operating continuously since ${OPERATIONS.establishedYear}` },
+  { number: `${OPERATIONS.maxRecreationalDiversPerGuide}:1`, label: "Maximum recreational guide ratio" },
   { number: "30+", label: "Dive sites" },
   { number: "4.8★", label: "Google & TripAdvisor", href: "https://www.google.com/maps/search/?api=1&query=Sea+Saba+Dive+Center+Fort+Bay+Saba&query_place_id=ChIJX0c19WkgDowRn2l3bKbFrRU" },
 ];
@@ -30,12 +31,12 @@ export default function AboutPage() {
         src="/images/optimized/fort-bay-harbor-saba.webp"
         alt="Sea Saba diving operation at Fort Bay Harbor, Saba"
         title="About Sea Saba"
-        subtitle="Professional diving in Saba since 1985"
+        subtitle={`Professional diving in Saba since ${OPERATIONS.establishedYear}`}
       />
 
       <p className="text-base leading-relaxed text-muted-foreground">
-        Sea Saba is a professional scuba diving operation based at Fort Bay Harbor 
-        on the island of Saba. Since 1985, we have guided divers through some of 
+        Sea Saba is a professional scuba diving operation based at {OPERATIONS.harbor}{" "}
+        on the island of Saba. Since {OPERATIONS.establishedYear}, we have guided divers through some of 
         the Caribbean&apos;s most dramatic and pristine underwater terrain: from 
         submerged pinnacles rising from the deep to sheer walls dropping into blue water.
       </p>
@@ -77,7 +78,8 @@ export default function AboutPage() {
             <h3 className="text-lg font-semibold text-foreground">Small Groups, Personal Attention</h3>
           </div>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-            We maintain a maximum 8:1 diver-to-guide ratio. This is not a marketing 
+            We maintain a maximum {OPERATIONS.maxRecreationalDiversPerGuide}:1 diver-to-guide ratio on our
+            recreational guided dives. This is not a marketing 
             point. It is how we believe diving should be conducted. Small groups allow 
             for better briefings, more flexible site selection, and a more personal 
             experience on every dive.
@@ -229,7 +231,7 @@ export default function AboutPage() {
         <h2 className="text-xl font-semibold text-foreground">Dive with Sea Saba</h2>
         <p className="mt-3 text-base text-muted-foreground">
           Experience professional, small-group diving with a team that has been exploring 
-          Saba&apos;s waters since 1985.
+          Saba&apos;s waters since {OPERATIONS.establishedYear}.
         </p>
         <div className="mt-6 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
           <TrackedInternalButton

@@ -4,6 +4,7 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
 import { FeatureImage } from "@/components/feature-image";
+import { OPERATIONS } from "@/data/operations";
 
 interface TeamMember {
   name: string;
@@ -386,7 +387,7 @@ export function OwnerFeature() {
             Chad and Katy moved to Saba with their children, Caleb and Skylar,
             in 2021 to continue the Sea Saba tradition. Together they oversee
             daily operations and are committed to preserving the relaxed,
-            professional atmosphere that has made Sea Saba special since 1985.
+            professional atmosphere that has made Sea Saba special since {OPERATIONS.establishedYear}.
           </p>
           <p>
             Sea Saba is a family business, and their goal is simple: help guests
