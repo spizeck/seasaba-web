@@ -129,8 +129,13 @@ export async function POST(request: Request) {
   const result = validateContactSubmission(payload);
   if (!result.ok) return json({ ok: false, errors: result.errors }, 400);
 
+  // Client-supplied X-Forwarded-For entries come first in the list, so the
+  // first entry is spoofable — use the platform-set header on Vercel, then
+  // the LAST x-forwarded-for entry (the one the edge appended).
+  const forwarded = request.headers.get("x-forwarded-for")?.split(",") ?? [];
   const ip =
-    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    request.headers.get("x-vercel-forwarded-for")?.split(",")[0]?.trim() ||
+    forwarded[forwarded.length - 1]?.trim() ||
     request.headers.get("x-real-ip") ||
     "unknown";
   if (rateLimited(ip)) return json({ ok: false, error: GENERIC_FAILURE }, 429);

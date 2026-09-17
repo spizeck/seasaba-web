@@ -188,6 +188,24 @@ describe("POST /api/contact", () => {
     expect(send).toHaveBeenCalledTimes(5);
   });
 
+  it("keys the rate limit on the edge-appended IP, not a spoofable first entry", async () => {
+    // A client can inject leading X-Forwarded-For entries; the real client
+    // IP is the last entry the edge appends. Five spoofed first-entries
+    // with the same real IP must still share one budget.
+    for (let i = 0; i < 5; i++) {
+      const res = await post(
+        { ...VALID, submissionId: `xff-${i}` },
+        { "x-forwarded-for": `10.9.9.${i}, 203.0.113.200` }
+      );
+      expect(res.status).toBe(200);
+    }
+    const res = await post(
+      { ...VALID, submissionId: "xff-blocked" },
+      { "x-forwarded-for": "10.9.9.99, 203.0.113.200" }
+    );
+    expect(res.status).toBe(429);
+  });
+
   it("evicts the oldest tracked keys when the rate-limit map hits its cap", async () => {
     const blocked = { "x-forwarded-for": "203.0.113.99" };
     for (let i = 0; i < 5; i++) {
