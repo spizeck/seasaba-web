@@ -7,9 +7,10 @@ import { Plane, PlaneTakeoff, Ship, Helicopter, Check, Droplets, Eye, Sun, Therm
 import { HotelPills } from "@/components/hotel-pills";
 import { InsuranceCTAs } from "@/components/insurance-ctas";
 import { TrackedOutboundButton } from "@/components/tracked-outbound-button";
+import { TrackedInternalButton } from "@/components/tracked-internal-button";
 import { PageSectionNav } from "@/components/navigation/PageSectionNav";
 import { planYourTripAnchors } from "@/lib/anchors";
-import { OPERATIONS } from "@/data/operations";
+import { OPERATIONS, bookingHref } from "@/data/operations";
 
 export const metadata = createMetadata({
   title: "Plan Your Trip to Saba",
@@ -624,9 +625,27 @@ export default function PlanYourTripPage() {
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
                 Sea Saba offers both shared and private sunset cruises along Saba&apos;s dramatic coastline. Relax with a drink in hand as the sun sets over the Caribbean, enjoy spectacular views from the water, and experience the island from a completely different perspective.
               </p>
-              <Button asChild className="mt-4">
-                <Link href="/contact?interest=sunset-cruise">Book a Sunset Cruise &rarr;</Link>
-              </Button>
+              <div className="mt-4 flex flex-wrap items-center gap-3">
+                <TrackedInternalButton
+                  href={bookingHref("sunset-cruise")}
+                  eventName="book_now_click"
+                  buttonText="Book a Sunset Cruise"
+                  buttonLocation="plan_your_trip_sunset"
+                  bookingItem="sunset-cruise"
+                >
+                  Book a Sunset Cruise &rarr;
+                </TrackedInternalButton>
+                <TrackedInternalButton
+                  variant="outline"
+                  href={bookingHref("private-sunset-cruise")}
+                  eventName="book_now_click"
+                  buttonText="Book a Private Sunset Cruise"
+                  buttonLocation="plan_your_trip_sunset_private"
+                  bookingItem="private-sunset-cruise"
+                >
+                  Book a Private Sunset Cruise &rarr;
+                </TrackedInternalButton>
+              </div>
             </div>
           </FeatureImage>
 
@@ -662,9 +681,16 @@ export default function PlanYourTripPage() {
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
                 Saba&apos;s shallow reefs are excellent for snorkeling. The afternoon snorkel trip runs alongside the dive boats, so snorkelers stay at the surface while divers go deeper. No certification required.
               </p>
-              <Button asChild className="mt-4">
-                <Link href="/book?item=snorkel">Book a Snorkel Trip &rarr;</Link>
-              </Button>
+              <TrackedInternalButton
+                className="mt-4"
+                href={bookingHref("snorkel")}
+                eventName="book_now_click"
+                buttonText="Book a Snorkel Trip"
+                buttonLocation="plan_your_trip_snorkel"
+                bookingItem="snorkel"
+              >
+                Book a Snorkel Trip &rarr;
+              </TrackedInternalButton>
             </div>
           </FeatureImage>
 
@@ -685,9 +711,16 @@ export default function PlanYourTripPage() {
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
                 Saba Lace is one of the island&apos;s most recognizable traditions. This delicate needlework has been made by hand for generations and is still sold in local shops today. Each piece carries the patience and skill of the artisan who made it.
               </p>
-              <Button asChild variant="outline" className="mt-4">
-                <Link href="/contact?interest=saba-lace">Ask Us About Saba Lace &rarr;</Link>
-              </Button>
+              <TrackedInternalButton
+                variant="outline"
+                className="mt-4"
+                href="/contact?interest=saba-lace"
+                eventName="contact_click"
+                buttonText="Ask Us About Saba Lace"
+                buttonLocation="plan_your_trip_crafts"
+              >
+                Ask Us About Saba Lace &rarr;
+              </TrackedInternalButton>
             </div>
           </FeatureImage>
 
@@ -702,9 +735,16 @@ export default function PlanYourTripPage() {
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
                 Local jewelers work with volcanic stone, sea glass, and silver to create pieces inspired by Saba&apos;s colors and textures. Many designs are made entirely by hand and can only be found here.
               </p>
-              <Button asChild variant="outline" className="mt-4">
-                <Link href="/contact?interest=jewelry-making">Ask Us About Local Jewelry &rarr;</Link>
-              </Button>
+              <TrackedInternalButton
+                variant="outline"
+                className="mt-4"
+                href="/contact?interest=jewelry-making"
+                eventName="contact_click"
+                buttonText="Ask Us About Local Jewelry"
+                buttonLocation="plan_your_trip_crafts"
+              >
+                Ask Us About Local Jewelry &rarr;
+              </TrackedInternalButton>
             </div>
           </FeatureImage>
 
@@ -718,9 +758,16 @@ export default function PlanYourTripPage() {
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
                 Skilled artisans transform molten glass into unique handmade pieces right before your eyes. Visitors can watch the process and take home one-of-a-kind ornaments, jewelry, and art inspired by the island.
               </p>
-              <Button asChild variant="outline" className="mt-4">
-                <Link href="/contact?interest=glass-art">Ask Us About Glass Art &rarr;</Link>
-              </Button>
+              <TrackedInternalButton
+                variant="outline"
+                className="mt-4"
+                href="/contact?interest=glass-art"
+                eventName="contact_click"
+                buttonText="Ask Us About Glass Art"
+                buttonLocation="plan_your_trip_crafts"
+              >
+                Ask Us About Glass Art &rarr;
+              </TrackedInternalButton>
             </div>
           </FeatureImage>
         </div>
@@ -819,12 +866,27 @@ export default function PlanYourTripPage() {
           We&apos;ll help with accommodations, transportation, and diving so you can focus on enjoying one of the Caribbean&apos;s most pristine marine parks.
         </p>
         <div className="mt-6 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-          <Button asChild size="lg" className="text-base font-semibold">
-            <Link href="/book">Book Diving</Link>
-          </Button>
-          <Button asChild variant="outline" size="lg" className="text-base font-semibold">
-            <Link href="/contact">Contact Us</Link>
-          </Button>
+          <TrackedInternalButton
+            size="lg"
+            className="text-base font-semibold"
+            href="/book"
+            eventName="book_now_click"
+            buttonText="Book Diving"
+            buttonLocation="plan_your_trip_footer_cta"
+          >
+            Book Diving
+          </TrackedInternalButton>
+          <TrackedInternalButton
+            variant="outline"
+            size="lg"
+            className="text-base font-semibold"
+            href="/contact"
+            eventName="contact_click"
+            buttonText="Contact Us"
+            buttonLocation="plan_your_trip_footer_cta"
+          >
+            Contact Us
+          </TrackedInternalButton>
         </div>
       </section>
     </>

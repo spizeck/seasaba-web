@@ -2,13 +2,17 @@ import { describe, expect, it } from "vitest";
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import {
+  BOOKABLE_PRODUCTS,
+  CHECKFRONT_ALL_ITEM_IDS,
   CHECKFRONT_EXTRA_ITEMS,
+  CRUISE_PRODUCTS,
   DIVE_PRODUCTS,
   INQUIRY_TYPES,
   OPERATIONS,
   bookingHref,
   inquiryFor,
-  type DiveProduct,
+  resolveBookingItem,
+  type BookableProduct,
 } from "@/data/operations";
 import { CONTACT } from "@/lib/constants";
 
@@ -17,23 +21,31 @@ import { CONTACT } from "@/lib/constants";
 // duplicated here.
 
 function collectInterestSlugs(): Set<string> {
-  const slugs = new Set<string>();
+  return collectQueryValues(/interest=([a-z0-9-]+)/g);
+}
+
+function collectBookItemSlugs(): Set<string> {
+  return collectQueryValues(/item=([a-z0-9-]+)/g);
+}
+
+function collectQueryValues(pattern: RegExp): Set<string> {
+  const values = new Set<string>();
   const walk = (dir: string) => {
     for (const entry of readdirSync(dir)) {
       const p = join(dir, entry);
       if (statSync(p).isDirectory()) walk(p);
       else if (/\.tsx?$/.test(entry)) {
-        for (const m of readFileSync(p, "utf8").matchAll(/interest=([a-z0-9-]+)/g)) {
-          slugs.add(m[1]);
+        for (const m of readFileSync(p, "utf8").matchAll(pattern)) {
+          values.add(m[1]);
         }
       }
     }
   };
   for (const root of ["app", "components"]) walk(root);
-  return slugs;
+  return values;
 }
 
-const products: DiveProduct[] = Object.values(DIVE_PRODUCTS);
+const products: BookableProduct[] = Object.values(DIVE_PRODUCTS);
 
 describe("canonical dive products", () => {
   it("keeps slugs and Checkfront item ids unique", () => {
@@ -59,8 +71,8 @@ describe("canonical dive products", () => {
   });
 
   it("derives booking deep links from product slugs", () => {
-    for (const p of products) {
-      expect(bookingHref(p.slug as keyof typeof DIVE_PRODUCTS)).toBe(`/book?item=${p.slug}`);
+    for (const p of Object.values(BOOKABLE_PRODUCTS)) {
+      expect(bookingHref(p.slug as keyof typeof BOOKABLE_PRODUCTS)).toBe(`/book?item=${p.slug}`);
     }
   });
 
@@ -74,6 +86,68 @@ describe("canonical dive products", () => {
   it("flags a nitrox policy for products where nitrox applies", () => {
     expect(DIVE_PRODUCTS.classic.nitrox).toBe("included");
     expect(DIVE_PRODUCTS.advanced.nitrox).toBe("required-first-dive");
+  });
+});
+
+describe("canonical cruise products", () => {
+  it("maps the owner-confirmed sunset cruise items", () => {
+    expect(CRUISE_PRODUCTS["sunset-cruise"].checkfrontItemId).toBe("247");
+    expect(CRUISE_PRODUCTS["sunset-cruise"].name).toBe("Shared Sunset Cruise");
+    expect(CRUISE_PRODUCTS["private-sunset-cruise"].checkfrontItemId).toBe("328");
+    expect(CRUISE_PRODUCTS["private-sunset-cruise"].name).toBe("Private Sunset Cruise");
+  });
+
+  it("does not collide with dive products on slug or item id", () => {
+    const diveSlugs = new Set<string>(Object.values(DIVE_PRODUCTS).map((p) => p.slug));
+    const diveIds = new Set<string>(Object.values(DIVE_PRODUCTS).map((p) => p.checkfrontItemId));
+    for (const p of Object.values(CRUISE_PRODUCTS)) {
+      expect(diveSlugs.has(p.slug)).toBe(false);
+      expect(diveIds.has(p.checkfrontItemId)).toBe(false);
+    }
+  });
+
+  it("lists every cruise item in the Checkfront inventory allowlist", () => {
+    for (const p of Object.values(CRUISE_PRODUCTS)) {
+      expect(CHECKFRONT_ALL_ITEM_IDS.split(",")).toContain(p.checkfrontItemId);
+    }
+  });
+});
+
+describe("booking item resolution", () => {
+  it("resolves every marketed slug to its Checkfront item id", () => {
+    for (const p of Object.values(BOOKABLE_PRODUCTS)) {
+      const resolved = resolveBookingItem(p.slug);
+      expect(resolved.unknown).toBe(false);
+      expect(resolved.itemId).toBe(p.checkfrontItemId);
+    }
+  });
+
+  it("resolves the sunset cruise slugs to their owner-confirmed items", () => {
+    expect(resolveBookingItem("sunset-cruise")).toEqual({ itemId: "247", unknown: false });
+    expect(resolveBookingItem("private-sunset-cruise")).toEqual({ itemId: "328", unknown: false });
+  });
+
+  it("accepts numeric ids that exist in the Checkfront inventory", () => {
+    for (const id of CHECKFRONT_ALL_ITEM_IDS.split(",")) {
+      expect(resolveBookingItem(id)).toEqual({ itemId: id, unknown: false });
+    }
+  });
+
+  it("rejects unknown values without inventing an item id", () => {
+    for (const bad of ["bogus", "classic2", "999", "CLASSIC"]) {
+      expect(resolveBookingItem(bad)).toEqual({ itemId: null, unknown: true });
+    }
+  });
+
+  it("treats a missing param as no preselection, not an error", () => {
+    expect(resolveBookingItem(undefined)).toEqual({ itemId: null, unknown: false });
+    expect(resolveBookingItem("")).toEqual({ itemId: null, unknown: false });
+  });
+
+  it("resolves every literal /book?item= link used on the site", () => {
+    for (const slug of collectBookItemSlugs()) {
+      expect(resolveBookingItem(slug).unknown, `/book?item=${slug} has no matching product or item id`).toBe(false);
+    }
   });
 });
 

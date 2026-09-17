@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
 import DivingPage from "@/app/(content)/diving/page";
-import { DIVE_PRODUCTS, OPERATIONS, type DiveProduct } from "@/data/operations";
+import { DIVE_PRODUCTS, OPERATIONS, type BookableProduct } from "@/data/operations";
 
 // Asserts the diving page is wired to the canonical registry — the values
 // themselves are not duplicated here, so this cannot become a second
@@ -10,7 +10,7 @@ import { DIVE_PRODUCTS, OPERATIONS, type DiveProduct } from "@/data/operations";
 describe("diving page canonical sourcing", () => {
   it("renders each scheduled product's name and departure from the registry", () => {
     render(<DivingPage />);
-    for (const p of Object.values(DIVE_PRODUCTS) as DiveProduct[]) {
+    for (const p of Object.values(DIVE_PRODUCTS) as BookableProduct[]) {
       expect(screen.getAllByText(p.name).length).toBeGreaterThan(0);
       if (p.schedule) {
         const departure = p.schedule.departure;
