@@ -9,7 +9,7 @@ keeps its own wording and context.
 
 | Source | Owns |
 | --- | --- |
-| `data/operations.ts` | `OPERATIONS` (founding year, recreational guide ratio, nitrox blend, harbor), `DIVE_PRODUCTS` and `CRUISE_PRODUCTS` (slugs, Checkfront ids, schedules, requirements, nitrox policy, capacity), `BOOKABLE_PRODUCTS` (combined `/book?item=` registry), `CHECKFRONT_EXTRA_ITEMS`, `CHECKFRONT_ALL_ITEM_IDS`, `INQUIRY_TYPES` (`/contact?interest=` routing), `resolveBookingItem` (`/book?item=` validation) |
+| `data/operations.ts` | `OPERATIONS` (founding year, recreational guide ratio, nitrox blend, harbor), `DIVE_PRODUCTS` and `CRUISE_PRODUCTS` (slugs, Checkfront ids, schedules, requirements, nitrox policy, capacity), `BOOKABLE_PRODUCTS` (combined `/book?item=` registry), `CHECKFRONT_EXTRA_ITEMS`, `CHECKFRONT_ALL_ITEM_IDS`, `INQUIRY_TYPES` (`/contact?interest=` routing plus per-inquiry `fields`/`partyLabel` driving the contact form's progressive contextual fields), `resolveBookingItem` (`/book?item=` validation) |
 | `lib/constants.ts` | `SITE_*`, `BOOKING_URL`, `CONTACT` (phone/WhatsApp/email/address), `SOCIAL_LINKS`, `OG_IMAGE`, `NAV_ITEMS` |
 | `lib/contact.ts` + `app/api/contact/route.ts` | Contact-form server validation limits and the Resend delivery boundary. `POST /api/contact` sends the inquiry to `CONTACT.email` from `website@${RESEND_EMAIL_DOMAIN}` with `Reply-To` set to the visitor. WhatsApp stays a client-side handoff |
 | `lib/anchors.ts` | Route section ids shared by pages and `data/redirects.ts` |

@@ -1,4 +1,4 @@
-import { expect, it, vi, beforeEach } from "vitest";
+import { describe, expect, it, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { ContactForm } from "@/components/contact-form";
@@ -72,8 +72,7 @@ it("builds an encoded WhatsApp handoff with course and travel details", async ()
   await userEvent.type(screen.getByRole("textbox", { name: /^Name/ }), " Alex & Sam ");
   await userEvent.type(screen.getByRole("textbox", { name: /^Email/ }), "guest@example.test");
   await userEvent.selectOptions(screen.getByRole("combobox"), "try-scuba");
-  await userEvent.type(screen.getByLabelText("Planned travel dates"), "October 10–12");
-  await userEvent.click(screen.getByRole("radio", { name: "WhatsApp" }));
+  await userEvent.type(screen.getByLabelText(/^Planned travel dates/), "October 10–12");
   await userEvent.click(screen.getByRole("button", { name: "Send inquiry by WhatsApp" }));
   expect(open).toHaveBeenCalledOnce();
   const url = new URL(String(open.mock.calls[0][0]));
@@ -167,4 +166,130 @@ it("includes the honeypot field in the payload", async () => {
   await screen.findByRole("status");
   const body = JSON.parse(String(vi.mocked(global.fetch).mock.calls[0][1]?.body));
   expect(body.website).toBe("");
+});
+
+// Progressive disclosure: contextual fields are driven by each inquiry's
+// `fields` list in data/operations.ts — these tests prove the contract.
+describe("progressive inquiry fields", () => {
+  const contextual = () => ({
+    whatsapp: screen.queryByLabelText(/^WhatsApp number/),
+    dates: screen.queryByLabelText(/^Planned travel dates/),
+    students: screen.queryByLabelText(/^Number of/),
+    groupSize: screen.queryByLabelText(/^Group size/),
+    certification: screen.queryByLabelText(/^Certification level/),
+    loggedDives: screen.queryByLabelText(/^Logged dives/),
+  });
+
+  it("renders a compact default form with no contextual fields", () => {
+    render(<ContactForm />);
+    expect(screen.getByRole("textbox", { name: /^Name/ })).toBeVisible();
+    expect(screen.getByRole("textbox", { name: /^Email/ })).toBeVisible();
+    expect(screen.getByRole("combobox")).toBeVisible();
+    expect(screen.getByRole("textbox", { name: /^Message/ })).toBeVisible();
+    for (const el of Object.values(contextual())) expect(el).toBeNull();
+    // No preferred-contact radio group anymore.
+    expect(screen.queryByRole("radio")).toBeNull();
+  });
+
+  it("reveals the full diving field set for a certified-diving inquiry", async () => {
+    render(<ContactForm />);
+    await userEvent.selectOptions(screen.getByRole("combobox"), "book-diving");
+    const c = contextual();
+    expect(c.whatsapp).toBeVisible();
+    expect(c.dates).toBeVisible();
+    expect(screen.getByLabelText(/^Number of divers/)).toBeVisible();
+    expect(c.certification).toBeVisible();
+    expect(c.loggedDives).toBeVisible();
+  });
+
+  it("does not ask Try Scuba or Open Water visitors for credentials", async () => {
+    render(<ContactForm />);
+    for (const value of ["try-scuba", "sdi-open-water"]) {
+      await userEvent.selectOptions(screen.getByRole("combobox"), value);
+      const c = contextual();
+      expect(c.certification, value).toBeNull();
+      expect(c.loggedDives, value).toBeNull();
+      expect(c.dates, value).toBeVisible();
+      expect(c.whatsapp, value).toBeVisible();
+    }
+    expect(screen.getByLabelText(/^Number of students/)).toBeVisible();
+  });
+
+  it("shows no scuba fields for non-diving inquiries", async () => {
+    render(<ContactForm />);
+    await userEvent.selectOptions(screen.getByRole("combobox"), "sunset-cruise");
+    const c = contextual();
+    expect(c.certification).toBeNull();
+    expect(c.loggedDives).toBeNull();
+    expect(screen.getByLabelText(/^Number of guests/)).toBeVisible();
+    expect(c.dates).toBeVisible();
+  });
+
+  it("keeps general inquiries minimal", async () => {
+    render(<ContactForm />);
+    await userEvent.selectOptions(screen.getByRole("combobox"), "general");
+    const c = contextual();
+    expect(c.whatsapp).toBeVisible();
+    expect(c.dates).toBeNull();
+    expect(c.certification).toBeNull();
+    expect(c.loggedDives).toBeNull();
+    expect(c.students).toBeNull();
+    expect(c.groupSize).toBeNull();
+  });
+
+  it("preselects a valid ?interest= and reveals its fields immediately", () => {
+    render(<ContactForm initialInterest="sdi-divemaster" />);
+    expect(screen.getByRole("combobox")).toHaveValue("sdi-divemaster");
+    expect(screen.getByLabelText(/^Certification level/)).toBeVisible();
+    expect(screen.getByLabelText(/^Logged dives/)).toBeVisible();
+    expect(screen.getByLabelText(/^Number of students/)).toBeVisible();
+  });
+
+  it("keeps an unknown ?interest= compact and safe", () => {
+    render(<ContactForm initialInterest="not-real" />);
+    expect(screen.getByRole("combobox")).toHaveValue("");
+    for (const el of Object.values(contextual())) expect(el).toBeNull();
+  });
+
+  it("clears and omits stale scuba values when the inquiry changes", async () => {
+    mockFetchOnce({});
+    render(<ContactForm />);
+    await userEvent.type(screen.getByRole("textbox", { name: /^Name/ }), "Alex Diver");
+    await userEvent.type(screen.getByRole("textbox", { name: /^Email/ }), "guest@example.test");
+    await userEvent.selectOptions(screen.getByRole("combobox"), "book-diving");
+    await userEvent.type(screen.getByLabelText(/^Certification level/), "Advanced");
+    await userEvent.type(screen.getByLabelText(/^Logged dives/), "100");
+    await userEvent.type(screen.getByLabelText(/^Number of divers/), "2");
+    await userEvent.type(screen.getByRole("textbox", { name: /^Message/ }), "Availability?");
+
+    // Switching to a non-diving inquiry removes the fields entirely.
+    await userEvent.selectOptions(screen.getByRole("combobox"), "sunset-cruise");
+    expect(screen.queryByLabelText(/^Certification level/)).toBeNull();
+    expect(screen.queryByLabelText(/^Logged dives/)).toBeNull();
+
+    await userEvent.click(sendButton());
+    await screen.findByRole("status");
+    const body = JSON.parse(String(vi.mocked(global.fetch).mock.calls[0][1]?.body));
+    expect(body.certification).toBe("");
+    expect(body.loggedDives).toBe("");
+    expect(body.inquiryType).toBe("sunset-cruise");
+    // Party size applies to the cruise too — its value correctly survives
+    // the switch under the "Number of guests" label.
+    expect(body.students).toBe("2");
+  });
+
+  it("derives preferredContact from the WhatsApp number field", async () => {
+    mockFetchOnce({});
+    render(<ContactForm />);
+    await userEvent.type(screen.getByRole("textbox", { name: /^Name/ }), "Alex Diver");
+    await userEvent.type(screen.getByRole("textbox", { name: /^Email/ }), "guest@example.test");
+    await userEvent.selectOptions(screen.getByRole("combobox"), "sunset-cruise");
+    await userEvent.type(screen.getByLabelText(/^WhatsApp number/), "+599 416 0000");
+    await userEvent.type(screen.getByRole("textbox", { name: /^Message/ }), "Two seats Friday?");
+    await userEvent.click(sendButton());
+    await screen.findByRole("status");
+    const body = JSON.parse(String(vi.mocked(global.fetch).mock.calls[0][1]?.body));
+    expect(body.preferredContact).toBe("whatsapp");
+    expect(body.whatsapp).toBe("+599 416 0000");
+  });
 });

@@ -168,6 +168,37 @@ describe("contact inquiry registry", () => {
       expect(inquiryFor(slug), `?interest=${slug} has no inquiry type`).toBeDefined();
     }
   });
+
+  it("declares a valid progressive-disclosure field model", () => {
+    const VALID = ["whatsapp", "dates", "partySize", "certification", "loggedDives"];
+    for (const i of INQUIRY_TYPES) {
+      expect(new Set(i.fields).size, `${i.value} has duplicate fields`).toBe(i.fields.length);
+      for (const f of i.fields) expect(VALID, `${i.value}.${f}`).toContain(f);
+      if (i.fields.includes("partySize")) {
+        expect(i.partyLabel, `${i.value} needs partyLabel`).toBeTruthy();
+      }
+    }
+  });
+
+  it("never asks entry-level or non-diving inquiries for scuba credentials", () => {
+    for (const slug of [
+      "try-scuba",
+      "sdi-open-water",
+      "general",
+      "other",
+      "sunset-cruise",
+      "private-charter",
+      "group-travel",
+      "saba-lace",
+      "jewelry-making",
+      "glass-art",
+      "transportation",
+    ]) {
+      const i = inquiryFor(slug)!;
+      expect(i.fields, slug).not.toContain("certification");
+      expect(i.fields, slug).not.toContain("loggedDives");
+    }
+  });
 });
 
 describe("shared business facts", () => {

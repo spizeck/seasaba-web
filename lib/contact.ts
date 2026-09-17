@@ -31,6 +31,8 @@ export interface ContactSubmission {
   inquiryType: string;
   inquiryLabel: string;
   inquirySubject: string;
+  /** Canonical party-size label for this inquiry (e.g. "Number of divers"). */
+  partyLabel: string;
   message: string;
   /** Client-generated idempotency key; forwarded to the email provider. */
   submissionId: string;
@@ -105,6 +107,7 @@ export function validateContactSubmission(input: unknown): ContactValidation {
       inquiryType: inquiry!.value,
       inquiryLabel: inquiry!.label,
       inquirySubject: inquiry!.subject,
+      partyLabel: inquiry!.partyLabel ?? "Number of divers/students",
       message,
       submissionId,
     },
@@ -135,7 +138,7 @@ export function contactEmailText(data: ContactSubmission): string {
   ];
   if (data.whatsapp) lines.push(`WhatsApp: ${data.whatsapp}`);
   if (data.dates) lines.push(`Planned travel dates: ${data.dates}`);
-  if (data.students) lines.push(`Number of divers/students: ${data.students}`);
+  if (data.students) lines.push(`${data.partyLabel}: ${data.students}`);
   if (data.certification) lines.push(`Certification level: ${data.certification}`);
   if (data.loggedDives) lines.push(`Logged dives: ${data.loggedDives}`);
   lines.push(`Preferred contact method: ${data.preferredContact === "whatsapp" ? "WhatsApp" : "Email"}`);
@@ -154,7 +157,7 @@ export function contactEmailHtml(data: ContactSubmission): string {
     row("Inquiry", data.inquiryLabel),
     data.whatsapp ? row("WhatsApp", data.whatsapp) : "",
     data.dates ? row("Travel dates", data.dates) : "",
-    data.students ? row("Divers/students", data.students) : "",
+    data.students ? row(data.partyLabel, data.students) : "",
     data.certification ? row("Certification", data.certification) : "",
     data.loggedDives ? row("Logged dives", data.loggedDives) : "",
     row("Prefers", data.preferredContact === "whatsapp" ? "WhatsApp" : "Email"),

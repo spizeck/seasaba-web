@@ -149,6 +149,34 @@ test("a provider failure keeps the entered message and allows recovery", async (
   expect(calls).toBe(1);
 });
 
+test("progressive disclosure reveals only fields relevant to the inquiry", async ({ page }) => {
+  await hydratedGoto(page, "/contact", "#inquiry-type");
+  // Default: no contextual fields at all.
+  await expect(page.getByLabel(/Certification level/)).toHaveCount(0);
+  await expect(page.getByLabel(/WhatsApp number/)).toHaveCount(0);
+
+  await inquiry(page).selectOption("sdi-divemaster");
+  await expect(page.getByLabel(/Certification level/)).toBeVisible();
+  await expect(page.getByLabel(/Logged dives/)).toBeVisible();
+  await expect(page.getByLabel(/Number of students/)).toBeVisible();
+
+  // Switching to a non-diving inquiry removes the scuba fields.
+  await inquiry(page).selectOption("sunset-cruise");
+  await expect(page.getByLabel(/Certification level/)).toHaveCount(0);
+  await expect(page.getByLabel(/Logged dives/)).toHaveCount(0);
+  await expect(page.getByLabel(/Number of guests/)).toBeVisible();
+});
+
+test("a valid ?interest= preselects the inquiry and reveals its fields", async ({ page }) => {
+  await hydratedGoto(page, "/contact?interest=sdi-open-water", "#inquiry-type");
+  await expect(inquiry(page)).toHaveValue("sdi-open-water");
+  await expect(page.getByLabel(/Number of students/)).toBeVisible();
+  await expect(page.getByLabel(/Planned travel dates/)).toBeVisible();
+  // Entry-level course: no credential questions.
+  await expect(page.getByLabel(/Certification level/)).toHaveCount(0);
+  await expect(page.getByLabel(/Logged dives/)).toHaveCount(0);
+});
+
 test("course interest query params preselect the inquiry and unknown values are ignored", async ({ page }) => {
   await hydratedGoto(page, "/contact?interest=sdi-nitrox", "#inquiry-type");
   await expect(page.getByRole("heading", { name: "SDI Nitrox Diver Inquiry" })).toBeVisible();
