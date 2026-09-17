@@ -27,9 +27,9 @@
 | `book_now_click` | Actual Sea Saba booking CTAs | Page parameters, link parameters, `button_name`, `button_location`, `booking_item`, and legacy aliases |
 | `checkfront_click` | BookingWidget fallback/direct links | Page parameters, link parameters, `button_name`, `button_location`, `booking_item`, and legacy aliases |
 | `contact_click` | Internal course/partner contact CTAs, plan-your-trip inquiries, and BookingWidget recovery links | Page parameters, link parameters, `button_location`, and legacy aliases |
-| `contact_form_submit` | ContactForm — fired once when a submission is confirmed (server send accepted for `method: "email"`, WhatsApp handoff for `method: "whatsapp"`) | Page parameters, `method`, `inquiry_type`, `button_location` |
-| `contact_form_error` | ContactForm — server send rejected or unreachable | Page parameters, `method`, `inquiry_type`, `button_location` |
-| `email_click` | Footer, contact page, privacy page `mailto:` links | Page parameters, link parameters, and legacy aliases |
+| `contact_form_submit` | ContactForm — WhatsApp handoff only (`method: "whatsapp"`). The email path is a `mailto:` client handoff tracked as `email_click`, not a confirmed submission | Page parameters, `method`, `inquiry_type`, `button_location` |
+| `contact_form_error` | Defined but currently unwired — it fired when the (removed) server send was rejected; returns with the Respond.io integration (#104) | Page parameters, `method`, `inquiry_type`, `button_location` |
+| `email_click` | Footer, contact page, privacy page `mailto:` links, and the contact form's email handoff (`button_location: "contact_form"`, `method`, `inquiry_type`) | Page parameters, link parameters, and legacy aliases |
 | `phone_click` | Footer and contact page | Page parameters, link parameters, and legacy aliases |
 | `whatsapp_click` | Footer and contact form/page | Page parameters, sanitized link parameters, and legacy aliases |
 | `directions_click` | FindSeaSaba map card/tooltip | Page parameters, link parameters, and legacy aliases |
@@ -100,7 +100,7 @@ There are no admin/private pages in the current site to exclude.
 
 ## Google Ads Follow-up Items
 
-1. **Map the existing events to GA4 inside GTM:** preserve each custom event and map `checkfront_click` to an additional `begin_checkout` event and `contact_form_submit` to an additional `generate_lead` event.
+1. **Map the existing events to GA4 inside GTM:** preserve each custom event and map `checkfront_click` to an additional `begin_checkout` event and `contact_form_submit` to an additional `generate_lead` event. Note `contact_form_submit` currently fires for WhatsApp handoffs only; the contact-form email handoff is an `email_click` with `button_location: "contact_form"` — map that parameter variant to `generate_lead` as well if email inquiries should count as leads.
 2. **Mark primary GA4 Key Events:** use `begin_checkout` and `generate_lead`; do not also import their source custom events as primary conversions.
 3. **Mark secondary GA4 Key Events:** `book_now_click`, `phone_click`, `whatsapp_click`, and `email_click`.
 4. **Configure Checkfront's native Google Ads integration** before launching ads; completed purchase tracking remains a separate project.

@@ -196,6 +196,18 @@ export function resolveBookingItem(item: string | undefined): ResolvedBookingIte
 
 // --- Contact-inquiry routing -------------------------------------------------
 
+/**
+ * Optional contextual fields the contact form can reveal for an inquiry.
+ * "whatsapp" is the visitor's WhatsApp number (Respond.io is WhatsApp-first);
+ * "partySize" is divers/students/guests depending on `partyLabel`.
+ */
+export type ContactField =
+  | "whatsapp"
+  | "dates"
+  | "partySize"
+  | "certification"
+  | "loggedDives";
+
 export interface InquiryType {
   /** Slug accepted by `/contact?interest=<value>`. */
   value: string;
@@ -204,6 +216,14 @@ export interface InquiryType {
   /** Email subject / page headline when the inquiry is preselected. */
   subject: string;
   group: "courses" | "general";
+  /**
+   * Contextual fields worth asking for this inquiry. The form renders only
+   * these after the core fields; hidden fields are cleared and never
+   * submitted. Ordered as displayed.
+   */
+  fields: readonly ContactField[];
+  /** Label for the party-size field when `fields` includes "partySize". */
+  partyLabel?: string;
 }
 
 /**
@@ -211,26 +231,48 @@ export interface InquiryType {
  * the contact form ignores unknown values, so a missing entry is a silently
  * broken link. Course entries are linked from app/(content)/courses/page.tsx;
  * general entries from plan-your-trip and elsewhere.
+ *
+ * `fields` drives progressive disclosure in the contact form: entry-level
+ * offerings (Try Scuba, Open Water) never ask certification/experience;
+ * scuba-specific fields stay off non-diving inquiries entirely.
  */
 export const INQUIRY_TYPES: readonly InquiryType[] = [
-  { value: "try-scuba", label: "Try Scuba", subject: "Try Scuba Inquiry", group: "courses" },
-  { value: "sdi-open-water", label: "SDI Open Water Diver", subject: "SDI Open Water Diver Inquiry", group: "courses" },
-  { value: "sdi-advanced-specialty", label: "SDI Advanced & Specialty Training", subject: "SDI Advanced & Specialty Training Inquiry", group: "courses" },
-  { value: "sdi-nitrox", label: "SDI Nitrox Diver", subject: "SDI Nitrox Diver Inquiry", group: "courses" },
-  { value: "sdi-rescue", label: "SDI Rescue Diver", subject: "SDI Rescue Diver Inquiry", group: "courses" },
-  { value: "sdi-divemaster", label: "SDI Divemaster", subject: "SDI Divemaster Inquiry", group: "courses" },
-  { value: "tdi-technical", label: "TDI Technical Diving", subject: "TDI Technical Diving Inquiry", group: "courses" },
-  { value: "general", label: "General Question", subject: "General Question", group: "general" },
-  { value: "book-diving", label: "Book Diving", subject: "Book Diving Inquiry", group: "general" },
-  { value: "course-inquiry", label: "Course Inquiry", subject: "Course Inquiry", group: "general" },
-  { value: "private-charter", label: "Private Charter", subject: "Private Charter Inquiry", group: "general" },
-  { value: "group-travel", label: "Group Travel", subject: "Group Travel Inquiry", group: "general" },
-  { value: "sunset-cruise", label: "Sunset Cruise", subject: "Sunset Cruise Inquiry", group: "general" },
-  { value: "saba-lace", label: "Saba Lace", subject: "Saba Lace Inquiry", group: "general" },
-  { value: "jewelry-making", label: "Jewelry Making", subject: "Jewelry Making Inquiry", group: "general" },
-  { value: "glass-art", label: "Glass Art", subject: "Glass Art Inquiry", group: "general" },
-  { value: "transportation", label: "Transportation", subject: "Transportation Inquiry", group: "general" },
-  { value: "other", label: "Other", subject: "Other Inquiry", group: "general" },
+  { value: "try-scuba", label: "Try Scuba", subject: "Try Scuba Inquiry", group: "courses",
+    fields: ["whatsapp", "dates", "partySize"], partyLabel: "Number of participants" },
+  { value: "sdi-open-water", label: "SDI Open Water Diver", subject: "SDI Open Water Diver Inquiry", group: "courses",
+    fields: ["whatsapp", "dates", "partySize"], partyLabel: "Number of students" },
+  { value: "sdi-advanced-specialty", label: "SDI Advanced & Specialty Training", subject: "SDI Advanced & Specialty Training Inquiry", group: "courses",
+    fields: ["whatsapp", "dates", "partySize", "certification", "loggedDives"], partyLabel: "Number of students" },
+  { value: "sdi-nitrox", label: "SDI Nitrox Diver", subject: "SDI Nitrox Diver Inquiry", group: "courses",
+    fields: ["whatsapp", "dates", "partySize", "certification"], partyLabel: "Number of students" },
+  { value: "sdi-rescue", label: "SDI Rescue Diver", subject: "SDI Rescue Diver Inquiry", group: "courses",
+    fields: ["whatsapp", "dates", "partySize", "certification", "loggedDives"], partyLabel: "Number of students" },
+  { value: "sdi-divemaster", label: "SDI Divemaster", subject: "SDI Divemaster Inquiry", group: "courses",
+    fields: ["whatsapp", "dates", "partySize", "certification", "loggedDives"], partyLabel: "Number of students" },
+  { value: "tdi-technical", label: "TDI Technical Diving", subject: "TDI Technical Diving Inquiry", group: "courses",
+    fields: ["whatsapp", "dates", "partySize", "certification", "loggedDives"], partyLabel: "Number of students" },
+  { value: "general", label: "General Question", subject: "General Question", group: "general",
+    fields: ["whatsapp"] },
+  { value: "book-diving", label: "Book Diving", subject: "Book Diving Inquiry", group: "general",
+    fields: ["whatsapp", "dates", "partySize", "certification", "loggedDives"], partyLabel: "Number of divers" },
+  { value: "course-inquiry", label: "Course Inquiry", subject: "Course Inquiry", group: "general",
+    fields: ["whatsapp", "dates", "partySize", "certification"], partyLabel: "Number of students" },
+  { value: "private-charter", label: "Private Charter", subject: "Private Charter Inquiry", group: "general",
+    fields: ["whatsapp", "dates", "partySize"], partyLabel: "Group size" },
+  { value: "group-travel", label: "Group Travel", subject: "Group Travel Inquiry", group: "general",
+    fields: ["whatsapp", "dates", "partySize"], partyLabel: "Group size" },
+  { value: "sunset-cruise", label: "Sunset Cruise", subject: "Sunset Cruise Inquiry", group: "general",
+    fields: ["whatsapp", "dates", "partySize"], partyLabel: "Number of guests" },
+  { value: "saba-lace", label: "Saba Lace", subject: "Saba Lace Inquiry", group: "general",
+    fields: ["whatsapp", "dates"] },
+  { value: "jewelry-making", label: "Jewelry Making", subject: "Jewelry Making Inquiry", group: "general",
+    fields: ["whatsapp", "dates", "partySize"], partyLabel: "Number of participants" },
+  { value: "glass-art", label: "Glass Art", subject: "Glass Art Inquiry", group: "general",
+    fields: ["whatsapp", "dates", "partySize"], partyLabel: "Number of participants" },
+  { value: "transportation", label: "Transportation", subject: "Transportation Inquiry", group: "general",
+    fields: ["whatsapp", "dates", "partySize"], partyLabel: "Group size" },
+  { value: "other", label: "Other", subject: "Other Inquiry", group: "general",
+    fields: ["whatsapp"] },
 ] as const;
 
 export const COURSE_INQUIRIES = INQUIRY_TYPES.filter((i) => i.group === "courses");

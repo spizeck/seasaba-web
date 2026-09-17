@@ -64,7 +64,7 @@ test.describe("automated axe scans", () => {
   test("contact form with validation errors shown has no accessibility violations", async ({ page, isMobile, browserName }) => {
     test.skip(isMobile || browserName !== "chromium", "representative scan on desktop-chromium");
     await hydratedGoto(page, "/contact", "#name");
-    await page.getByRole("button", { name: "Send inquiry by email" }).click();
+    await page.getByRole("button", { name: "Continue to email" }).click();
     // Error text is always mounted but `invisible` until the field is touched.
     await expect(page.locator("#name-error")).not.toHaveClass(/invisible/);
     await expect(page.locator("#email-error")).not.toHaveClass(/invisible/);

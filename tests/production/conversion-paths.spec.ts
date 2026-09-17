@@ -56,7 +56,7 @@ test("/contact renders a usable form and failed validation sends nothing", async
     page.getByRole("textbox", { name: /^Email/ }),
     page.getByRole("combobox"),
     page.getByRole("textbox", { name: /^Message/ }),
-    page.getByRole("button", { name: "Send inquiry by email" }),
+    page.getByRole("button", { name: "Continue to email" }),
     page.getByRole("button", { name: "Send inquiry by WhatsApp" }),
   ]) {
     await expect(control).toBeVisible();
@@ -64,7 +64,7 @@ test("/contact renders a usable form and failed validation sends nothing", async
   }
 
   // Client-side validation on an empty form is provably side-effect free:
-  // the handler returns before posting to /api/contact or opening WhatsApp.
+  // the handler returns before opening the mailto:/WhatsApp handoff.
   await page.getByRole("button", { name: "Send inquiry by WhatsApp" }).click();
   for (const message of [
     "Please enter your name.",
@@ -78,13 +78,13 @@ test("/contact renders a usable form and failed validation sends nothing", async
   expect(page.url()).toContain("/contact");
 });
 
-test("/api/contact rejects invalid submissions without sending", async ({ request }) => {
-  // Missing required fields fail server-side validation before Resend is
-  // called, so this can never send a real email.
+test("/api/contact is gone — contact uses a client-side email handoff", async ({ request }) => {
+  // The Resend endpoint was removed: server-side sending from a common
+  // address collapsed all visitors into one Respond.io contact. The form
+  // now opens the visitor's own mail app (see issue #104 for the planned
+  // Custom Channel architecture), so this route must not exist.
   const response = await request.post("/api/contact", {
     data: { name: "", email: "not-an-email", inquiryType: "bogus", message: "" },
   });
-  expect(response.status()).toBe(400);
-  const body = await response.json();
-  expect(body.ok).toBe(false);
+  expect(response.status()).toBe(404);
 });
