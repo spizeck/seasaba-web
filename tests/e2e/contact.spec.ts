@@ -98,28 +98,55 @@ test("the form submits via keyboard activation", async ({ page }) => {
   await expect.poll(() => windowOpenCalls(page)).toHaveLength(1);
 });
 
-test("email handoff targets info@seasaba.com and leaves the visitor on the page", async ({ page, browserName }) => {
-  // mailto: handoffs cannot be verified in Playwright's WebKit: assigning a
-  // mailto: URL to window.location makes emulated WebKit parse `info@` as
-  // userinfo and navigate the page to https://www.seasaba.com/?subject=...
-  // Real Safari delegates mailto: to the mail client without navigating, so
-  // this is an emulation limitation, not an app defect. Verified on Chromium.
-  test.skip(browserName === "webkit", "Playwright WebKit navigates mailto: handoffs away from the page");
-
+test("email submission posts to the site endpoint and confirms in place", async ({ page }) => {
+  // The contact endpoint is a first-party boundary: intercepted here so the
+  // test never touches Resend and the outcome is deterministic.
+  let sent: unknown;
+  await page.route("**/api/contact", async (route) => {
+    sent = route.request().postDataJSON();
+    await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ ok: true }) });
+  });
   await hydratedGoto(page, "/contact?interest=sdi-open-water", "#name");
   await name(page).fill("Email Guest");
   await email(page).fill("guest@example.test");
   await emailButton(page).click();
-  // handleEmail navigates via a mailto: URL, which browsers delegate to the mail
-  // client without a page navigation. The observable browser-level signals are
-  // the tracked handoff events pushed to the data layer. Subject/body contents
-  // are covered by tests/integration/contact-form.test.tsx.
-  const events = await page.evaluate(() => (window as unknown as { dataLayer?: Record<string, unknown>[] }).dataLayer ?? []);
-  const submit = events.find((e) => e.event === "contact_form_submit" && e.method === "email");
-  const click = events.find((e) => e.event === "email_click");
-  expect(submit).toMatchObject({ inquiry_type: "SDI Open Water Diver" });
-  expect(click).toMatchObject({ link_url: "mailto:info@seasaba.com" });
+  await expect(page.getByRole("status")).toContainText("Your inquiry has been sent.");
   expect(page.url()).toContain("/contact");
+  const body = sent as Record<string, unknown>;
+  expect(body).toMatchObject({ name: "Email Guest", email: "guest@example.test", inquiryType: "sdi-open-water" });
+  const events = await page.evaluate(() => (window as unknown as { dataLayer?: Record<string, unknown>[] }).dataLayer ?? []);
+  expect(events.find((e) => e.event === "contact_form_submit")).toMatchObject({ method: "email", inquiry_type: "SDI Open Water Diver" });
+});
+
+test("a provider failure keeps the entered message and allows recovery", async ({ page, monitor }) => {
+  // The mocked 502 is the point of the test; keep the failure monitor strict.
+  monitor.allowRequestFailure(/\/api\/contact/);
+  monitor.allowConsoleError(/status of 502/);
+  let calls = 0;
+  await page.route("**/api/contact", async (route) => {
+    calls++;
+    await route.fulfill({
+      status: 502,
+      contentType: "application/json",
+      body: JSON.stringify({ ok: false, error: "Your message could not be sent right now. Please try again, or reach us on WhatsApp." }),
+    });
+  });
+  await hydratedGoto(page, "/contact", "#name");
+  await name(page).fill("Retry Guest");
+  await email(page).fill("guest@example.test");
+  await inquiry(page).selectOption("general");
+  await page.getByRole("textbox", { name: /^Message/ }).fill("Please keep this text.");
+  await emailButton(page).click();
+  // Next's route announcer also has role="alert" — filter to the form error.
+  await expect(page.getByRole("alert").filter({ hasText: "could not be sent" })).toBeVisible();
+  // Nothing is lost: the fields still hold the entered values for a retry.
+  await expect(page.getByRole("textbox", { name: /^Message/ })).toHaveValue("Please keep this text.");
+  const formError = page.getByRole("alert").filter({ hasText: "could not be sent" });
+  await expect(formError.getByRole("link", { name: "info@seasaba.com" })).toHaveAttribute("href", "mailto:info@seasaba.com");
+  const events = await page.evaluate(() => (window as unknown as { dataLayer?: Record<string, unknown>[] }).dataLayer ?? []);
+  expect(events.find((e) => e.event === "contact_form_error")).toMatchObject({ method: "email" });
+  expect(events.find((e) => e.event === "contact_form_submit")).toBeUndefined();
+  expect(calls).toBe(1);
 });
 
 test("course interest query params preselect the inquiry and unknown values are ignored", async ({ page }) => {

@@ -27,8 +27,9 @@
 | `book_now_click` | Actual Sea Saba booking CTAs | Page parameters, link parameters, `button_name`, `button_location`, `booking_item`, and legacy aliases |
 | `checkfront_click` | BookingWidget fallback/direct links | Page parameters, link parameters, `button_name`, `button_location`, `booking_item`, and legacy aliases |
 | `contact_click` | Internal course/partner contact CTAs, plan-your-trip inquiries, and BookingWidget recovery links | Page parameters, link parameters, `button_location`, and legacy aliases |
-| `contact_form_submit` | ContactForm email/WhatsApp handlers | Page parameters, `method`, `inquiry_type`, `button_location` |
-| `email_click` | Footer, contact form/page, privacy page | Page parameters, link parameters, and legacy aliases |
+| `contact_form_submit` | ContactForm — fired once when a submission is confirmed (server send accepted for `method: "email"`, WhatsApp handoff for `method: "whatsapp"`) | Page parameters, `method`, `inquiry_type`, `button_location` |
+| `contact_form_error` | ContactForm — server send rejected or unreachable | Page parameters, `method`, `inquiry_type`, `button_location` |
+| `email_click` | Footer, contact page, privacy page `mailto:` links | Page parameters, link parameters, and legacy aliases |
 | `phone_click` | Footer and contact page | Page parameters, link parameters, and legacy aliases |
 | `whatsapp_click` | Footer and contact form/page | Page parameters, sanitized link parameters, and legacy aliases |
 | `directions_click` | FindSeaSaba map card/tooltip | Page parameters, link parameters, and legacy aliases |

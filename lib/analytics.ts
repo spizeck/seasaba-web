@@ -7,6 +7,7 @@ export type AnalyticsEvent =
   | "checkfront_click"
   | "contact_click"
   | "contact_form_submit"
+  | "contact_form_error"
   | "email_click"
   | "phone_click"
   | "whatsapp_click"

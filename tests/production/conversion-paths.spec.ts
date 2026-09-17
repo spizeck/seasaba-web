@@ -64,7 +64,7 @@ test("/contact renders a usable form and failed validation sends nothing", async
   }
 
   // Client-side validation on an empty form is provably side-effect free:
-  // the handler returns before building any mailto/WhatsApp URL.
+  // the handler returns before posting to /api/contact or opening WhatsApp.
   await page.getByRole("button", { name: "Send inquiry by WhatsApp" }).click();
   for (const message of [
     "Please enter your name.",
@@ -76,4 +76,15 @@ test("/contact renders a usable form and failed validation sends nothing", async
   }
   expect(await windowOpenCalls(page)).toEqual([]);
   expect(page.url()).toContain("/contact");
+});
+
+test("/api/contact rejects invalid submissions without sending", async ({ request }) => {
+  // Missing required fields fail server-side validation before Resend is
+  // called, so this can never send a real email.
+  const response = await request.post("/api/contact", {
+    data: { name: "", email: "not-an-email", inquiryType: "bogus", message: "" },
+  });
+  expect(response.status()).toBe(400);
+  const body = await response.json();
+  expect(body.ok).toBe(false);
 });
