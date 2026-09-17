@@ -141,11 +141,71 @@ describe("POST /api/contact", () => {
     expect(send).not.toHaveBeenCalled();
   });
 
+  it("rejects a JSON null body with a validation error, not a crash", async () => {
+    const res = await post("null");
+    expect(res.status).toBe(400);
+    const body = await res.json();
+    expect(body.ok).toBe(false);
+    expect(body.errors).toBeDefined();
+    expect(send).not.toHaveBeenCalled();
+  });
+
   it("rejects oversized request bodies", async () => {
     const res = await post(VALID, { "content-length": String(64 * 1024) });
     expect(res.status).toBe(413);
     expect(send).not.toHaveBeenCalled();
   });
+
+  it("bounds streamed bodies that carry no Content-Length", async () => {
+    // Chunked/streamed requests omit Content-Length; the bound must be
+    // enforced while reading rather than trusted from the header.
+    const stream = new ReadableStream({
+      start(controller) {
+        controller.enqueue(new Uint8Array(64 * 1024));
+        controller.close();
+      },
+    });
+    const init: RequestInit & { duplex: "half" } = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: stream,
+      duplex: "half",
+    };
+    const res = await POST(new Request("http://localhost/api/contact", init));
+    expect(res.status).toBe(413);
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("rate-limits repeated submissions from one source IP", async () => {
+    send.mockClear();
+    const headers = { "x-forwarded-for": "203.0.113.7" };
+    for (let i = 0; i < 5; i++) {
+      const res = await post({ ...VALID, submissionId: `rl-${i}` }, headers);
+      expect(res.status).toBe(200);
+    }
+    const res = await post({ ...VALID, submissionId: "rl-blocked" }, headers);
+    expect(res.status).toBe(429);
+    expect(send).toHaveBeenCalledTimes(5);
+  });
+
+  it("evicts the oldest tracked keys when the rate-limit map hits its cap", async () => {
+    const blocked = { "x-forwarded-for": "203.0.113.99" };
+    for (let i = 0; i < 5; i++) {
+      await post({ ...VALID, submissionId: `ev-${i}` }, blocked);
+    }
+    expect((await post({ ...VALID, submissionId: "ev-6" }, blocked)).status).toBe(429);
+
+    // A spray of fresh keys past the cap forces eviction of the oldest
+    // entries — the blocked IP's window state is discarded with them.
+    for (let i = 0; i < 5200; i++) {
+      await post(
+        { ...VALID, submissionId: `spray-${i}` },
+        { "x-forwarded-for": `198.51.${Math.floor(i / 256)}.${i % 256}` }
+      );
+    }
+
+    expect((await post({ ...VALID, submissionId: "ev-7" }, blocked)).status).toBe(200);
+  }, 30000);
 
   it("returns a safe error and never reports success when the provider rejects", async () => {
     send.mockResolvedValue({ data: null, error: { name: "validation_error", message: "internal detail" } });
