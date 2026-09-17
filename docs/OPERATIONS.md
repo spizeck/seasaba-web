@@ -11,6 +11,7 @@ keeps its own wording and context.
 | --- | --- |
 | `data/operations.ts` | `OPERATIONS` (founding year, recreational guide ratio, nitrox blend, harbor), `DIVE_PRODUCTS` and `CRUISE_PRODUCTS` (slugs, Checkfront ids, schedules, requirements, nitrox policy, capacity), `BOOKABLE_PRODUCTS` (combined `/book?item=` registry), `CHECKFRONT_EXTRA_ITEMS`, `CHECKFRONT_ALL_ITEM_IDS`, `INQUIRY_TYPES` (`/contact?interest=` routing), `resolveBookingItem` (`/book?item=` validation) |
 | `lib/constants.ts` | `SITE_*`, `BOOKING_URL`, `CONTACT` (phone/WhatsApp/email/address), `SOCIAL_LINKS`, `OG_IMAGE`, `NAV_ITEMS` |
+| `lib/contact.ts` + `app/api/contact/route.ts` | Contact-form server validation limits and the Resend delivery boundary. `POST /api/contact` sends the inquiry to `CONTACT.email` from `website@${RESEND_EMAIL_DOMAIN}` with `Reply-To` set to the visitor. WhatsApp stays a client-side handoff |
 | `lib/anchors.ts` | Route section ids shared by pages and `data/redirects.ts` |
 | `app/(content)/terms/page.tsx` | Cancellation, reschedule, refund, weather, and charter policy — the canonical legal terms |
 | Checkfront | Live availability, bookable inventory, transactional pricing. The site intentionally shows no prices; `/book` links into Checkfront |
@@ -20,7 +21,7 @@ keeps its own wording and context.
 - **A product's time, requirement, or capacity:** edit its entry in
   `DIVE_PRODUCTS`. Pages and `ExperienceSelector` pick it up automatically.
 - **Contact details:** edit `CONTACT` in `lib/constants.ts`. Everything —
-  footer, contact page, form handoffs, privacy page, structured data —
+  footer, contact page, contact delivery, privacy page, structured data —
   derives from it.
 - **A new `/contact?interest=` link:** the slug must exist in
   `INQUIRY_TYPES`, or the form silently ignores it. `tests/unit/operations.test.ts`

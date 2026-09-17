@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useMemo, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { Mail, MessageCircle } from "lucide-react";
+import { CheckCircle2, Mail, MessageCircle } from "lucide-react";
 import { trackEvent, trackLinkClick } from "@/lib/analytics";
 import { CONTACT } from "@/lib/constants";
 import {
@@ -17,6 +17,8 @@ interface ContactFormProps {
   initialInterest?: string;
 }
 
+type SendStatus = "idle" | "sending" | "sent" | "failed";
+
 export function ContactForm({ initialInterest }: ContactFormProps) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -28,12 +30,20 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
   const [loggedDives, setLoggedDives] = useState("");
   const [preferredContact, setPreferredContact] = useState("email");
   const [message, setMessage] = useState(() => buildInitialMessage(initialInterest));
+  const [honeypot, setHoneypot] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
-  // Guards against a rapid second click opening duplicate handoffs (e.g. two
-  // WhatsApp tabs). Tracked per method so switching between email and WhatsApp
-  // is unaffected; the window is short so deliberate resubmission still works.
-  const lastHandoffAt = useRef<Record<"email" | "whatsapp", number>>({ email: 0, whatsapp: 0 });
+  const [sendStatus, setSendStatus] = useState<SendStatus>("idle");
+  const [sendError, setSendError] = useState("");
+  const successRef = useRef<HTMLDivElement>(null);
+  // Idempotency: the server forwards this key to Resend, which deduplicates
+  // retries within 24h. Reused only while the payload is unchanged — editing
+  // any field after a failed attempt generates a fresh key so the new content
+  // is never suppressed by the earlier attempt's key.
+  const submission = useRef<{ key: string; payload: string } | null>(null);
+  // Guards against a rapid second click opening duplicate WhatsApp tabs; the
+  // window is short so deliberate resubmission still works.
+  const lastWhatsAppAt = useRef(0);
 
   const selectedInquiry = useMemo(
     () => inquiryFor(inquiryType),
@@ -69,21 +79,19 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
     }
   }, []);
 
-  const buildEmailBody = useCallback(() => {
-    const lines: string[] = [];
-    lines.push(`Name: ${name.trim()}`);
-    lines.push(`Email: ${email.trim()}`);
-    if (selectedInquiry) lines.push(`Inquiry: ${selectedInquiry.label}`);
-    if (whatsapp.trim()) lines.push(`WhatsApp: ${whatsapp.trim()}`);
-    if (dates.trim()) lines.push(`Planned travel dates: ${dates.trim()}`);
-    if (students.trim()) lines.push(`Number of students: ${students.trim()}`);
-    if (certification.trim()) lines.push(`Certification level: ${certification.trim()}`);
-    if (loggedDives.trim()) lines.push(`Logged dives: ${loggedDives.trim()}`);
-    lines.push(`Preferred contact method: ${preferredContact === "whatsapp" ? "WhatsApp" : "Email"}`);
-    lines.push("");
-    lines.push(message.trim() || "No additional message provided.");
-    return lines.join("\n");
-  }, [name, email, selectedInquiry, whatsapp, dates, students, certification, loggedDives, preferredContact, message]);
+  const buildPayload = useCallback(() => ({
+    name,
+    email,
+    whatsapp,
+    dates,
+    students,
+    certification,
+    loggedDives,
+    preferredContact,
+    inquiryType,
+    message,
+    website: honeypot,
+  }), [name, email, whatsapp, dates, students, certification, loggedDives, preferredContact, inquiryType, message, honeypot]);
 
   const buildWhatsAppMessage = useCallback(() => {
     const parts: string[] = [];
@@ -97,30 +105,59 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
     return parts.join(" ");
   }, [name, selectedInquiry, dates, students, certification, loggedDives, message]);
 
-  const handleEmail = useCallback(() => {
+  const handleEmail = useCallback(async () => {
     const validationErrors = validate();
     setErrors(validationErrors);
     setTouched({ name: true, email: true, inquiryType: true, message: true });
-    if (Object.keys(validationErrors).length > 0) return;
-    if (Date.now() - lastHandoffAt.current.email < 1000) return;
-    lastHandoffAt.current.email = Date.now();
+    if (Object.keys(validationErrors).length > 0 || sendStatus === "sending") return;
 
-    const subject = selectedInquiry ? selectedInquiry.subject : "Contact Inquiry";
-    const body = buildEmailBody();
-    const emailHref = `mailto:${CONTACT.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    const payload = buildPayload();
+    const serialized = JSON.stringify({ ...payload, website: undefined });
+    if (!submission.current || serialized !== submission.current.payload) {
+      submission.current = { key: crypto.randomUUID(), payload: serialized };
+    }
+
+    setSendStatus("sending");
+    setSendError("");
     const eventParams = { method: "email", inquiry_type: selectedInquiry?.label || "General", button_location: "contact_form" };
-    trackEvent("contact_form_submit", eventParams);
-    trackLinkClick("email_click", emailHref, "Email Sea Saba", eventParams);
-    window.location.href = emailHref;
-  }, [validate, selectedInquiry, buildEmailBody]);
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...payload, submissionId: submission.current.key }),
+      });
+      const body = (await response.json().catch(() => ({}))) as {
+        ok?: boolean;
+        error?: string;
+        errors?: Record<string, string>;
+      };
+      if (response.ok && body.ok) {
+        setSendStatus("sent");
+        trackEvent("contact_form_submit", eventParams);
+        requestAnimationFrame(() => successRef.current?.focus());
+      } else {
+        setSendStatus("failed");
+        if (body.errors) {
+          setErrors((prev) => ({ ...prev, ...body.errors }));
+          setTouched({ name: true, email: true, inquiryType: true, message: true });
+        }
+        setSendError(typeof body.error === "string" && body.error ? body.error : "Your message could not be sent right now. Please try again, or reach us on WhatsApp.");
+        trackEvent("contact_form_error", eventParams);
+      }
+    } catch {
+      setSendStatus("failed");
+      setSendError("Your message could not be sent right now. Please check your connection and try again, or reach us on WhatsApp.");
+      trackEvent("contact_form_error", eventParams);
+    }
+  }, [validate, sendStatus, buildPayload, selectedInquiry]);
 
   const handleWhatsApp = useCallback(() => {
     const validationErrors = validate();
     setErrors(validationErrors);
     setTouched({ name: true, email: true, inquiryType: true, message: true });
     if (Object.keys(validationErrors).length > 0) return;
-    if (Date.now() - lastHandoffAt.current.whatsapp < 1000) return;
-    lastHandoffAt.current.whatsapp = Date.now();
+    if (Date.now() - lastWhatsAppAt.current < 1000) return;
+    lastWhatsAppAt.current = Date.now();
 
     const text = buildWhatsAppMessage();
     const whatsappHref = `https://wa.me/${CONTACT.whatsappNumber}?text=${encodeURIComponent(text)}`;
@@ -130,8 +167,52 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
     window.open(whatsappHref, "_blank", "noopener,noreferrer");
   }, [validate, selectedInquiry, buildWhatsAppMessage]);
 
+  if (sendStatus === "sent") {
+    return (
+      <div
+        ref={successRef}
+        tabIndex={-1}
+        role="status"
+        className="rounded-lg border border-primary/30 bg-primary/5 p-6 outline-none"
+      >
+        <div className="flex items-start gap-3">
+          <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+          <div>
+            <p className="font-medium text-foreground">Your inquiry has been sent.</p>
+            <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+              Thank you{selectedInquiry ? ` — our team will reply about ${selectedInquiry.label}` : ""} as soon as
+              possible. For anything urgent, reach us on{" "}
+              <a
+                href={CONTACT.whatsappHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium text-primary underline-offset-2 hover:underline"
+              >
+                WhatsApp
+              </a>
+              .
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <form className="space-y-5" onSubmit={(e) => e.preventDefault()} noValidate>
+    <form className="space-y-5" onSubmit={(e) => { e.preventDefault(); void handleEmail(); }} noValidate>
+      {/* Honeypot: hidden from humans, only bots fill it. */}
+      <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
+        <label htmlFor="contact-website">Website</label>
+        <input
+          id="contact-website"
+          name="website"
+          type="text"
+          tabIndex={-1}
+          autoComplete="off"
+          value={honeypot}
+          onChange={(e) => setHoneypot(e.target.value)}
+        />
+      </div>
       <div className="grid gap-5 sm:grid-cols-2">
         <div className="space-y-2">
           <label htmlFor="name" className="text-sm font-medium text-foreground">
@@ -341,21 +422,36 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
         </p>
       </div>
 
+      {sendStatus === "failed" && (
+        <div role="alert" className="rounded-md border border-destructive/40 bg-destructive/5 p-4">
+          <p className="text-sm text-foreground">{sendError}</p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Your message above is unchanged — nothing was lost. You can also email us directly at{" "}
+            <a href={`mailto:${CONTACT.email}`} className="font-medium text-primary underline-offset-2 hover:underline">
+              {CONTACT.email}
+            </a>
+            .
+          </p>
+        </div>
+      )}
+
       <div className="flex flex-col gap-3 pt-2 sm:flex-row">
         <Button
-          type="button"
+          type="submit"
           variant={preferredContact === "email" ? "default" : "outline"}
-          onClick={handleEmail}
+          disabled={sendStatus === "sending"}
+          aria-busy={sendStatus === "sending"}
           className="w-full sm:w-auto"
           aria-label="Send inquiry by email"
         >
           <Mail className="h-4 w-4" />
-          Email Sea Saba
+          {sendStatus === "sending" ? "Sending…" : "Send Inquiry"}
         </Button>
         <Button
           type="button"
           variant="outline"
           onClick={handleWhatsApp}
+          disabled={sendStatus === "sending"}
           className={
             preferredContact === "whatsapp"
               ? "w-full border-green-700 bg-green-700 text-white hover:bg-green-800 hover:text-white sm:w-auto"
@@ -369,7 +465,7 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
       </div>
 
       <p className="text-xs text-muted-foreground">
-        Email is best for detailed trip planning. WhatsApp is great for quick questions.
+        We reply by email — typically within a day. WhatsApp is great for quick questions.
       </p>
     </form>
   );

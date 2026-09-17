@@ -74,17 +74,17 @@ export default function PrivacyPage() {
             how you interact with us, these may include:
           </p>
           <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-relaxed text-muted-foreground">
-            <li>Rezdy (reservations and booking management)</li>
+            <li>Checkfront (reservations and booking management)</li>
             <li>Payment processors used in connection with reservations</li>
             <li>Respond.io (customer and WhatsApp communication)</li>
-            <li>Email providers</li>
+            <li>Email providers (Resend delivers contact-form inquiries to our inbox)</li>
             <li>Analytics providers</li>
             <li>Advertising and measurement platforms</li>
             <li>Cookie and consent-management providers</li>
             <li>Social media platforms</li>
           </ul>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-            Information necessary to complete and manage a booking may be processed by Rezdy and
+            Information necessary to complete and manage a booking may be processed by Checkfront and
             applicable payment providers under their own privacy policies and legal obligations.
             These and other third-party services may collect information according to their own
             privacy policies.
