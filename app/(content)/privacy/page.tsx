@@ -77,7 +77,7 @@ export default function PrivacyPage() {
             <li>Checkfront (reservations and booking management)</li>
             <li>Payment processors used in connection with reservations</li>
             <li>Respond.io (customer and WhatsApp communication)</li>
-            <li>Email providers (Resend delivers contact-form inquiries to our inbox)</li>
+            <li>Your email provider (our contact form prepares a message in your own email app, which you review and send yourself)</li>
             <li>Analytics providers</li>
             <li>Advertising and measurement platforms</li>
             <li>Cookie and consent-management providers</li>
@@ -129,6 +129,11 @@ export default function PrivacyPage() {
           <h2 className="text-xl font-semibold text-foreground">Email and WhatsApp Communication</h2>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
             If you contact Sea Saba through email, WhatsApp, or website forms, we may retain those communications to provide customer service and assist with future inquiries.
+          </p>
+          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+            Our website contact form does not transmit your message to us directly — it opens a
+            pre-filled email in your own email application, and the message is sent from your email
+            account when you choose to send it.
           </p>
         </section>
 

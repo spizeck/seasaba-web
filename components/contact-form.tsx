@@ -2,9 +2,10 @@
 
 import { useState, useCallback, useMemo, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, Mail, MessageCircle } from "lucide-react";
+import { Mail, MailCheck, MessageCircle } from "lucide-react";
 import { trackEvent, trackLinkClick } from "@/lib/analytics";
 import { CONTACT } from "@/lib/constants";
+import { buildContactMailto, CONTACT_LIMITS, type InquiryDraft } from "@/lib/contact";
 import {
   COURSE_INQUIRIES,
   GENERAL_INQUIRIES,
@@ -18,9 +19,7 @@ interface ContactFormProps {
   initialInterest?: string;
 }
 
-type SendStatus = "idle" | "sending" | "sent" | "failed";
-
-/** Payload key each contextual field maps to (server-side field name). */
+/** Payload key each contextual field maps to. */
 const PAYLOAD_KEY: Record<ContactField, string> = {
   whatsapp: "whatsapp",
   dates: "dates",
@@ -29,12 +28,12 @@ const PAYLOAD_KEY: Record<ContactField, string> = {
   loggedDives: "loggedDives",
 };
 
-const FIELD_META: Record<ContactField, { id: string; label: string; type: string; placeholder: string }> = {
-  whatsapp: { id: "whatsapp", label: "WhatsApp number", type: "tel", placeholder: "+1 234 567 8900" },
-  dates: { id: "dates", label: "Planned travel dates", type: "text", placeholder: "e.g. March 10 - 17, 2027" },
-  partySize: { id: "students", label: "Number of people", type: "text", placeholder: "1" },
-  certification: { id: "certification", label: "Certification level", type: "text", placeholder: "e.g. Open Water, Advanced" },
-  loggedDives: { id: "logged-dives", label: "Logged dives", type: "text", placeholder: "e.g. 25" },
+const FIELD_META: Record<ContactField, { id: string; label: string; type: string; placeholder: string; maxLength: number }> = {
+  whatsapp: { id: "whatsapp", label: "WhatsApp number", type: "tel", placeholder: "+1 234 567 8900", maxLength: CONTACT_LIMITS.whatsapp },
+  dates: { id: "dates", label: "Planned travel dates", type: "text", placeholder: "e.g. March 10 - 17, 2027", maxLength: CONTACT_LIMITS.dates },
+  partySize: { id: "students", label: "Number of people", type: "text", placeholder: "1", maxLength: CONTACT_LIMITS.students },
+  certification: { id: "certification", label: "Certification level", type: "text", placeholder: "e.g. Open Water, Advanced", maxLength: CONTACT_LIMITS.certification },
+  loggedDives: { id: "logged-dives", label: "Logged dives", type: "text", placeholder: "e.g. 25", maxLength: CONTACT_LIMITS.loggedDives },
 };
 
 export function ContactForm({ initialInterest }: ContactFormProps) {
@@ -51,20 +50,16 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
   const [certification, setCertification] = useState("");
   const [loggedDives, setLoggedDives] = useState("");
   const [message, setMessage] = useState(() => buildInitialMessage(initialInterest));
-  const [honeypot, setHoneypot] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
-  const [sendStatus, setSendStatus] = useState<SendStatus>("idle");
-  const [sendError, setSendError] = useState("");
-  const successRef = useRef<HTMLDivElement>(null);
-  // Idempotency: the server forwards this key to Resend, which deduplicates
-  // retries within 24h. Reused only while the payload is unchanged — editing
-  // any field after a failed attempt generates a fresh key so the new content
-  // is never suppressed by the earlier attempt's key.
-  const submission = useRef<{ key: string; payload: string } | null>(null);
-  // Guards against a rapid second click opening duplicate WhatsApp tabs; the
+  // The mailto: href built for the most recent handoff — rendered as a
+  // "reopen" link in the notice so a missed protocol handoff is retryable.
+  const [handoffHref, setHandoffHref] = useState("");
+  const handoffRef = useRef<HTMLDivElement>(null);
+  // Guards against a rapid second click firing duplicate handoffs; the
   // window is short so deliberate resubmission still works.
   const lastWhatsAppAt = useRef(0);
+  const lastEmailAt = useRef(0);
 
   const selectedInquiry = useMemo(
     () => inquiryFor(inquiryType),
@@ -119,7 +114,7 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
     if (!inquiry) return;
     // Fields the new inquiry doesn't use are dropped from state entirely so
     // stale values (e.g. certification after switching to Sunset Cruise) can
-    // never leak into a later submission.
+    // never leak into a later handoff.
     const keep = new Set<ContactField>(inquiry.fields);
     const clear = (field: ContactField, set: (v: string) => void) => {
       if (keep.has(field)) return;
@@ -142,9 +137,9 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
     }
   }, []);
 
-  const buildPayload = useCallback(() => {
-    // Only fields relevant to the selected inquiry are submitted; anything
-    // else is sent empty so the server/email never sees stale values.
+  const buildDraft = useCallback((): InquiryDraft => {
+    // Only fields relevant to the selected inquiry go into the email;
+    // anything else is sent empty so stale hidden values never leak.
     const keep = new Set<ContactField>(selectedInquiry?.fields ?? []);
     return {
       name,
@@ -162,9 +157,8 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
         keep.has("whatsapp") && whatsapp.trim() && preferWhatsapp ? "whatsapp" : "email",
       inquiryType,
       message,
-      website: honeypot,
     };
-  }, [selectedInquiry, name, email, whatsapp, preferWhatsapp, dates, students, certification, loggedDives, inquiryType, message, honeypot]);
+  }, [selectedInquiry, name, email, whatsapp, preferWhatsapp, dates, students, certification, loggedDives, inquiryType, message]);
 
   const buildWhatsAppMessage = useCallback(() => {
     const keep = new Set<ContactField>(selectedInquiry?.fields ?? []);
@@ -181,51 +175,29 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
     return parts.join(" ");
   }, [name, selectedInquiry, dates, students, certification, loggedDives, message]);
 
-  const handleEmail = useCallback(async () => {
+  // Client-email handoff: build a structured inquiry and open it in the
+  // visitor's own email app via mailto:. The visitor reviews and sends it
+  // themselves, so their real address reaches info@seasaba.com and
+  // Respond.io attaches the inquiry to the correct contact — a shared
+  // server-side sender collapsed every visitor into one contact.
+  const handleEmail = useCallback(() => {
     const validationErrors = validate();
     setErrors(validationErrors);
     setTouched({ name: true, email: true, inquiryType: true, message: true });
-    if (Object.keys(validationErrors).length > 0 || sendStatus === "sending") return;
+    if (Object.keys(validationErrors).length > 0) return;
+    if (Date.now() - lastEmailAt.current < 1000) return;
+    lastEmailAt.current = Date.now();
 
-    const payload = buildPayload();
-    const serialized = JSON.stringify({ ...payload, website: undefined });
-    if (!submission.current || serialized !== submission.current.payload) {
-      submission.current = { key: crypto.randomUUID(), payload: serialized };
-    }
-
-    setSendStatus("sending");
-    setSendError("");
+    const href = buildContactMailto(buildDraft());
     const eventParams = { method: "email", inquiry_type: selectedInquiry?.label || "General", button_location: "contact_form" };
-    try {
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...payload, submissionId: submission.current.key }),
-      });
-      const body = (await response.json().catch(() => ({}))) as {
-        ok?: boolean;
-        error?: string;
-        errors?: Record<string, string>;
-      };
-      if (response.ok && body.ok) {
-        setSendStatus("sent");
-        trackEvent("contact_form_submit", eventParams);
-        requestAnimationFrame(() => successRef.current?.focus());
-      } else {
-        setSendStatus("failed");
-        if (body.errors) {
-          setErrors((prev) => ({ ...prev, ...body.errors }));
-          setTouched({ name: true, email: true, inquiryType: true, message: true });
-        }
-        setSendError(typeof body.error === "string" && body.error ? body.error : "Your message could not be sent right now. Please try again, or reach us on WhatsApp.");
-        trackEvent("contact_form_error", eventParams);
-      }
-    } catch {
-      setSendStatus("failed");
-      setSendError("Your message could not be sent right now. Please check your connection and try again, or reach us on WhatsApp.");
-      trackEvent("contact_form_error", eventParams);
-    }
-  }, [validate, sendStatus, buildPayload, selectedInquiry]);
+    // This is a handoff, not a confirmed send — tracked as an email click,
+    // never as a submitted inquiry.
+    trackLinkClick("email_click", href, "Continue to Email", eventParams);
+    setHandoffHref(href);
+    // "_self" delegates to the OS mail handler without opening a blank tab.
+    window.open(href, "_self");
+    requestAnimationFrame(() => handoffRef.current?.focus());
+  }, [validate, buildDraft, selectedInquiry]);
 
   const handleWhatsApp = useCallback(() => {
     const validationErrors = validate();
@@ -243,52 +215,8 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
     window.open(whatsappHref, "_blank", "noopener,noreferrer");
   }, [validate, selectedInquiry, buildWhatsAppMessage]);
 
-  if (sendStatus === "sent") {
-    return (
-      <div
-        ref={successRef}
-        tabIndex={-1}
-        role="status"
-        className="rounded-lg border border-primary/30 bg-primary/5 p-6 outline-none"
-      >
-        <div className="flex items-start gap-3">
-          <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
-          <div>
-            <p className="font-medium text-foreground">Your inquiry has been sent.</p>
-            <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-              Thank you{selectedInquiry ? ` — our team will reply about ${selectedInquiry.label}` : ""} as soon as
-              possible. For anything urgent, reach us on{" "}
-              <a
-                href={CONTACT.whatsappHref}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-medium text-primary underline-offset-2 hover:underline"
-              >
-                WhatsApp
-              </a>
-              .
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); void handleEmail(); }} noValidate>
-      {/* Honeypot: hidden from humans, only bots fill it. */}
-      <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
-        <label htmlFor="contact-website">Website</label>
-        <input
-          id="contact-website"
-          name="website"
-          type="text"
-          tabIndex={-1}
-          autoComplete="off"
-          value={honeypot}
-          onChange={(e) => setHoneypot(e.target.value)}
-        />
-      </div>
+    <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); handleEmail(); }} noValidate>
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
           <label htmlFor="name" className="text-sm font-medium text-foreground">
@@ -299,6 +227,7 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
             name="name"
             type="text"
             value={name}
+            maxLength={CONTACT_LIMITS.name}
             onChange={(e) => setName(e.target.value)}
             onBlur={() => handleBlur("name")}
             aria-invalid={touched.name && !!errors.name}
@@ -307,7 +236,7 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
             placeholder="Your full name"
           />
           <p id="name-error" className={`min-h-5 text-xs text-destructive${touched.name && errors.name ? "" : " invisible"}`}>
-            {touched.name && errors.name ? errors.name : " "}
+            {touched.name && errors.name ? errors.name : " "}
           </p>
         </div>
 
@@ -320,6 +249,7 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
             name="email"
             type="email"
             value={email}
+            maxLength={CONTACT_LIMITS.email}
             onChange={(e) => setEmail(e.target.value)}
             onBlur={() => handleBlur("email")}
             aria-invalid={touched.email && !!errors.email}
@@ -328,7 +258,7 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
             placeholder="you@example.com"
           />
           <p id="email-error" className={`min-h-5 text-xs text-destructive${touched.email && errors.email ? "" : " invisible"}`}>
-            {touched.email && errors.email ? errors.email : " "}
+            {touched.email && errors.email ? errors.email : " "}
           </p>
         </div>
       </div>
@@ -366,7 +296,7 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
           </optgroup>
         </select>
         <p id="inquiry-type-error" className={`min-h-5 text-xs text-destructive${touched.inquiryType && errors.inquiryType ? "" : " invisible"}`}>
-          {touched.inquiryType && errors.inquiryType ? errors.inquiryType : " "}
+          {touched.inquiryType && errors.inquiryType ? errors.inquiryType : " "}
         </p>
       </div>
 
@@ -389,6 +319,7 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
                   name={meta.id}
                   type={meta.type}
                   value={contextualValues[field]}
+                  maxLength={meta.maxLength}
                   onChange={(e) => contextualSetters[field](e.target.value)}
                   aria-invalid={!!error}
                   aria-describedby={error ? `${meta.id}-error` : undefined}
@@ -412,7 +343,7 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
                   </label>
                 )}
                 <p id={`${meta.id}-error`} className={`min-h-5 text-xs text-destructive${error ? "" : " invisible"}`}>
-                  {error || " "}
+                  {error || " "}
                 </p>
               </div>
             );
@@ -429,47 +360,67 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
           name="message"
           rows={4}
           value={message}
+          maxLength={CONTACT_LIMITS.message}
           onChange={(e) => setMessage(e.target.value)}
           onBlur={() => handleBlur("message")}
           aria-invalid={touched.message && !!errors.message}
-          aria-describedby={touched.message && errors.message ? "message-error" : undefined}
+          aria-describedby={touched.message && errors.message ? "message-error" : "message-limit"}
           className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
           placeholder="Tell us about your plans, questions, or anything we should know."
         />
-        <p id="message-error" className={`min-h-5 text-xs text-destructive${touched.message && errors.message ? "" : " invisible"}`}>
-          {touched.message && errors.message ? errors.message : " "}
-        </p>
+        <div className="flex items-baseline justify-between gap-3">
+          <p id="message-error" className={`min-h-5 text-xs text-destructive${touched.message && errors.message ? "" : " invisible"}`}>
+            {touched.message && errors.message ? errors.message : " "}
+          </p>
+          <p id="message-limit" className="shrink-0 text-xs text-muted-foreground">
+            {message.length} / {CONTACT_LIMITS.message}
+          </p>
+        </div>
       </div>
 
-      {sendStatus === "failed" && (
-        <div role="alert" className="rounded-md border border-destructive/40 bg-destructive/5 p-4">
-          <p className="text-sm text-foreground">{sendError}</p>
-          <p className="mt-1 text-xs text-muted-foreground">
-            Your message above is unchanged — nothing was lost. You can also email us directly at{" "}
-            <a href={`mailto:${CONTACT.email}`} className="font-medium text-primary underline-offset-2 hover:underline">
-              {CONTACT.email}
-            </a>
-            .
-          </p>
+      {handoffHref && (
+        <div
+          ref={handoffRef}
+          tabIndex={-1}
+          role="status"
+          className="rounded-md border border-primary/30 bg-primary/5 p-4 outline-none"
+        >
+          <div className="flex items-start gap-3">
+            <MailCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+            <div>
+              <p className="text-sm font-medium text-foreground">
+                Your email app should open with your inquiry ready to send.
+              </p>
+              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                Review it and press Send — it goes to {CONTACT.email} from your own email address. If
+                nothing opened,{" "}
+                <a href={handoffHref} className="font-medium text-primary underline-offset-2 hover:underline">
+                  try opening it again
+                </a>{" "}
+                or email us directly at{" "}
+                <a href={`mailto:${CONTACT.email}`} className="font-medium text-primary underline-offset-2 hover:underline">
+                  {CONTACT.email}
+                </a>
+                . You can edit anything above first — your changes are kept.
+              </p>
+            </div>
+          </div>
         </div>
       )}
 
       <div className="flex flex-col gap-3 pt-1 sm:flex-row">
         <Button
           type="submit"
-          disabled={sendStatus === "sending"}
-          aria-busy={sendStatus === "sending"}
           className="w-full sm:w-auto"
-          aria-label="Send inquiry by email"
+          aria-label="Continue to email"
         >
           <Mail className="h-4 w-4" />
-          {sendStatus === "sending" ? "Sending…" : "Send Inquiry"}
+          Continue to Email
         </Button>
         <Button
           type="button"
           variant="outline"
           onClick={handleWhatsApp}
-          disabled={sendStatus === "sending"}
           className="w-full border-green-700 text-green-700 hover:bg-green-50 hover:text-green-800 sm:w-auto"
           aria-label="Send inquiry by WhatsApp"
         >
@@ -479,7 +430,8 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
       </div>
 
       <p className="text-xs text-muted-foreground">
-        We reply by email — typically within a day. WhatsApp is great for quick questions.
+        This opens your email app with the inquiry ready to send — we reply by email, typically within a day.
+        WhatsApp is great for quick questions.
       </p>
     </form>
   );

@@ -6,7 +6,7 @@ import { test, expect, hydratedGoto, stubWindowOpen, windowOpenCalls } from "./f
 const name = (page: import("@playwright/test").Page) => page.getByRole("textbox", { name: /^Name/ });
 const email = (page: import("@playwright/test").Page) => page.getByRole("textbox", { name: /^Email/ });
 const inquiry = (page: import("@playwright/test").Page) => page.getByRole("combobox");
-const emailButton = (page: import("@playwright/test").Page) => page.getByRole("button", { name: "Send inquiry by email" });
+const emailButton = (page: import("@playwright/test").Page) => page.getByRole("button", { name: "Continue to email" });
 const whatsappButton = (page: import("@playwright/test").Page) => page.getByRole("button", { name: "Send inquiry by WhatsApp" });
 
 test("empty submission reports every required field without a handoff", async ({ page }) => {
@@ -98,55 +98,61 @@ test("the form submits via keyboard activation", async ({ page }) => {
   await expect.poll(() => windowOpenCalls(page)).toHaveLength(1);
 });
 
-test("email submission posts to the site endpoint and confirms in place", async ({ page }) => {
-  // The contact endpoint is a first-party boundary: intercepted here so the
-  // test never touches Resend and the outcome is deterministic.
-  let sent: unknown;
-  await page.route("**/api/contact", async (route) => {
-    sent = route.request().postDataJSON();
-    await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ ok: true }) });
+test("email handoff opens the visitor's mail app and sends nothing to a server", async ({ page }) => {
+  // The handoff is a mailto: URI delegated to the OS mail client — stubbed
+  // here so the test captures the draft instead of launching an app.
+  await stubWindowOpen(page, "mailCalls");
+  const apiCalls: string[] = [];
+  page.on("request", (req) => {
+    if (req.url().includes("/api/contact")) apiCalls.push(req.url());
   });
   await hydratedGoto(page, "/contact?interest=sdi-open-water", "#name");
   await name(page).fill("Email Guest");
   await email(page).fill("guest@example.test");
   await emailButton(page).click();
-  await expect(page.getByRole("status")).toContainText("Your inquiry has been sent.");
+
+  await expect.poll(() => windowOpenCalls(page, "mailCalls")).toHaveLength(1);
+  const href = (await windowOpenCalls(page, "mailCalls"))[0];
+  const url = new URL(href);
+  expect(href.startsWith("mailto:")).toBe(true);
+  expect(url.pathname).toBe("info@seasaba.com");
+  expect(url.searchParams.get("subject")).toBe("SDI Open Water Diver Inquiry — Email Guest");
+  const body = url.searchParams.get("body") ?? "";
+  expect(body).toContain("Name: Email Guest");
+  expect(body).toContain("Email: guest@example.test");
+  expect(body).toContain("Inquiry: SDI Open Water Diver");
+  expect(body).toContain("Preferred contact method: Email");
+
+  // Truthful UX: a handoff notice, never a delivery confirmation.
+  await expect(page.getByRole("status")).toContainText("email app should open");
+  await expect(page.getByRole("status")).not.toContainText("sent");
   expect(page.url()).toContain("/contact");
-  const body = sent as Record<string, unknown>;
-  expect(body).toMatchObject({ name: "Email Guest", email: "guest@example.test", inquiryType: "sdi-open-water" });
+  // No server round-trip and no submission-confirmed analytics for email.
+  expect(apiCalls).toEqual([]);
   const events = await page.evaluate(() => (window as unknown as { dataLayer?: Record<string, unknown>[] }).dataLayer ?? []);
-  expect(events.find((e) => e.event === "contact_form_submit")).toMatchObject({ method: "email", inquiry_type: "SDI Open Water Diver" });
+  expect(events.find((e) => e.event === "email_click")).toMatchObject({ method: "email", inquiry_type: "SDI Open Water Diver" });
+  expect(events.find((e) => e.event === "contact_form_submit" && e.method === "email")).toBeUndefined();
 });
 
-test("a provider failure keeps the entered message and allows recovery", async ({ page, monitor }) => {
-  // The mocked 502 is the point of the test; keep the failure monitor strict.
-  monitor.allowRequestFailure(/\/api\/contact/);
-  monitor.allowConsoleError(/status of 502/);
-  let calls = 0;
-  await page.route("**/api/contact", async (route) => {
-    calls++;
-    await route.fulfill({
-      status: 502,
-      contentType: "application/json",
-      body: JSON.stringify({ ok: false, error: "Your message could not be sent right now. Please try again, or reach us on WhatsApp." }),
-    });
-  });
+test("the handoff notice keeps the form editable and offers a reopen link", async ({ page }) => {
+  await stubWindowOpen(page, "mailCalls");
   await hydratedGoto(page, "/contact", "#name");
   await name(page).fill("Retry Guest");
   await email(page).fill("guest@example.test");
   await inquiry(page).selectOption("general");
   await page.getByRole("textbox", { name: /^Message/ }).fill("Please keep this text.");
   await emailButton(page).click();
-  // Next's route announcer also has role="alert" — filter to the form error.
-  await expect(page.getByRole("alert").filter({ hasText: "could not be sent" })).toBeVisible();
-  // Nothing is lost: the fields still hold the entered values for a retry.
+
+  const notice = page.getByRole("status");
+  await expect(notice).toContainText("email app should open");
+  // Nothing is lost: the fields still hold the entered values.
   await expect(page.getByRole("textbox", { name: /^Message/ })).toHaveValue("Please keep this text.");
-  const formError = page.getByRole("alert").filter({ hasText: "could not be sent" });
-  await expect(formError.getByRole("link", { name: "info@seasaba.com" })).toHaveAttribute("href", "mailto:info@seasaba.com");
-  const events = await page.evaluate(() => (window as unknown as { dataLayer?: Record<string, unknown>[] }).dataLayer ?? []);
-  expect(events.find((e) => e.event === "contact_form_error")).toMatchObject({ method: "email" });
-  expect(events.find((e) => e.event === "contact_form_submit")).toBeUndefined();
-  expect(calls).toBe(1);
+  // A missed protocol handoff is retryable — the notice links the same draft.
+  const reopen = notice.getByRole("link", { name: "try opening it again" });
+  const reopenHref = await reopen.getAttribute("href");
+  expect(reopenHref?.startsWith("mailto:info@seasaba.com")).toBe(true);
+  expect(reopenHref).toBe((await windowOpenCalls(page, "mailCalls"))[0]);
+  await expect(notice.getByRole("link", { name: "info@seasaba.com" })).toHaveAttribute("href", "mailto:info@seasaba.com");
 });
 
 test("progressive disclosure reveals only fields relevant to the inquiry", async ({ page }) => {

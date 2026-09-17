@@ -49,18 +49,19 @@ test("course inquiry customer: courses → open water info → message handoff",
 
   if (browserName === "webkit") {
     // The WhatsApp handoff exercises the alternate contact path on this engine;
-    // the email submission itself is verified on Chromium below.
+    // the email handoff itself is verified on Chromium below.
     await page.getByRole("button", { name: "Send inquiry by WhatsApp" }).click();
     await expect.poll(() => windowOpenCalls(page)).toHaveLength(1);
   } else {
-    // Intercept the first-party endpoint — the test must never touch Resend.
-    await page.route("**/api/contact", (route) =>
-      route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ ok: true }) })
-    );
-    await page.getByRole("button", { name: "Send inquiry by email" }).click();
-    await expect(page.getByRole("status")).toContainText("Your inquiry has been sent.");
+    // Email is a client-side mailto: handoff — stubbed window.open captures
+    // the draft URI; nothing is posted to a server.
+    await page.getByRole("button", { name: "Continue to email" }).click();
+    await expect(page.getByRole("status")).toContainText("email app should open");
+    await expect.poll(() => windowOpenCalls(page)).toHaveLength(1);
+    const calls = await windowOpenCalls(page);
+    expect(calls[0].startsWith("mailto:info@seasaba.com")).toBe(true);
     const events = await page.evaluate(() => (window as unknown as { dataLayer?: Record<string, unknown>[] }).dataLayer ?? []);
-    expect(events.find((e) => e.event === "contact_form_submit")).toMatchObject({ method: "email" });
+    expect(events.find((e) => e.event === "email_click")).toMatchObject({ method: "email" });
     expect(page.url()).toContain("/contact");
   }
 });
