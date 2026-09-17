@@ -278,7 +278,9 @@ describe("progressive inquiry fields", () => {
     expect(body.students).toBe("2");
   });
 
-  it("derives preferredContact from the WhatsApp number field", async () => {
+  it("keeps email as the preferred channel when only a WhatsApp number is given", async () => {
+    // A number is alternate contact info, not a WhatsApp-first request —
+    // Respond.io/WhatsApp outreach requires explicit opt-in.
     mockFetchOnce({});
     render(<ContactForm />);
     await userEvent.type(screen.getByRole("textbox", { name: /^Name/ }), "Alex Diver");
@@ -289,7 +291,58 @@ describe("progressive inquiry fields", () => {
     await userEvent.click(sendButton());
     await screen.findByRole("status");
     const body = JSON.parse(String(vi.mocked(global.fetch).mock.calls[0][1]?.body));
+    expect(body.whatsapp).toBe("+599 416 0000");
+    expect(body.preferredContact).toBe("email");
+  });
+
+  it("sends preferredContact=whatsapp only when the visitor explicitly opts in", async () => {
+    mockFetchOnce({});
+    render(<ContactForm />);
+    await userEvent.type(screen.getByRole("textbox", { name: /^Name/ }), "Alex Diver");
+    await userEvent.type(screen.getByRole("textbox", { name: /^Email/ }), "guest@example.test");
+    await userEvent.selectOptions(screen.getByRole("combobox"), "sunset-cruise");
+    await userEvent.type(screen.getByLabelText(/^WhatsApp number/), "+599 416 0000");
+    await userEvent.click(screen.getByRole("checkbox", { name: /prefer to be contacted on WhatsApp/i }));
+    await userEvent.type(screen.getByRole("textbox", { name: /^Message/ }), "Two seats Friday?");
+    await userEvent.click(sendButton());
+    await screen.findByRole("status");
+    const body = JSON.parse(String(vi.mocked(global.fetch).mock.calls[0][1]?.body));
     expect(body.preferredContact).toBe("whatsapp");
     expect(body.whatsapp).toBe("+599 416 0000");
+  });
+
+  it("defaults to email when no WhatsApp number is provided", async () => {
+    mockFetchOnce({});
+    render(<ContactForm />);
+    await fillValidForm(); // book-diving — WhatsApp field visible, left empty
+    await userEvent.click(sendButton());
+    await screen.findByRole("status");
+    const body = JSON.parse(String(vi.mocked(global.fetch).mock.calls[0][1]?.body));
+    expect(body.whatsapp).toBe("");
+    expect(body.preferredContact).toBe("email");
+  });
+
+  it("drops the WhatsApp preference when the number is removed", async () => {
+    mockFetchOnce({});
+    render(<ContactForm />);
+    await userEvent.selectOptions(screen.getByRole("combobox"), "sunset-cruise");
+    const number = screen.getByLabelText(/^WhatsApp number/);
+    const checkbox = screen.getByRole("checkbox", { name: /prefer to be contacted on WhatsApp/i });
+    await userEvent.type(number, "+599 416 0000");
+    await userEvent.click(checkbox);
+    expect(checkbox).toBeChecked();
+
+    // Removing the number auto-unchecks: a preference with no number is
+    // meaningless and must not survive to the payload.
+    await userEvent.clear(number);
+    expect(checkbox).not.toBeChecked();
+
+    await userEvent.type(screen.getByRole("textbox", { name: /^Name/ }), "Alex Diver");
+    await userEvent.type(screen.getByRole("textbox", { name: /^Email/ }), "guest@example.test");
+    await userEvent.type(screen.getByRole("textbox", { name: /^Message/ }), "Two seats Friday?");
+    await userEvent.click(sendButton());
+    await screen.findByRole("status");
+    const body = JSON.parse(String(vi.mocked(global.fetch).mock.calls[0][1]?.body));
+    expect(body.preferredContact).toBe("email");
   });
 });

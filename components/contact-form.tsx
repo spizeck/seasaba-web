@@ -42,6 +42,10 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
   const [email, setEmail] = useState("");
   const [inquiryType, setInquiryType] = useState(initialInterest && inquiryFor(initialInterest) ? initialInterest : "");
   const [whatsapp, setWhatsapp] = useState("");
+  // Explicit visitor opt-in only: supplying a number is alternate contact
+  // info, not consent to WhatsApp-first outreach (WhatsApp has template
+  // restrictions, so Coral/staff must not be told it's preferred by default).
+  const [preferWhatsapp, setPreferWhatsapp] = useState(false);
   const [dates, setDates] = useState("");
   const [students, setStudents] = useState("");
   const [certification, setCertification] = useState("");
@@ -76,7 +80,12 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
   };
 
   const contextualSetters: Record<ContactField, (value: string) => void> = {
-    whatsapp: setWhatsapp,
+    // Clearing the number must also drop any WhatsApp preference: a checked
+    // box with no number is a stale preference that must never be submitted.
+    whatsapp: (v) => {
+      setWhatsapp(v);
+      if (!v.trim()) setPreferWhatsapp(false);
+    },
     dates: setDates,
     partySize: setStudents,
     certification: setCertification,
@@ -123,7 +132,7 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
         return next;
       });
     };
-    clear("whatsapp", setWhatsapp);
+    clear("whatsapp", (v) => { setWhatsapp(v); if (!v.trim()) setPreferWhatsapp(false); });
     clear("dates", setDates);
     clear("partySize", setStudents);
     clear("certification", setCertification);
@@ -145,14 +154,17 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
       students: keep.has("partySize") ? students : "",
       certification: keep.has("certification") ? certification : "",
       loggedDives: keep.has("loggedDives") ? loggedDives : "",
-      // No visible control: supplying a WhatsApp number implies a WhatsApp
-      // reply is welcome; the channel is otherwise email.
-      preferredContact: whatsapp.trim() ? "whatsapp" : "email",
+      // Explicit opt-in only: a submitted WhatsApp number is alternate
+      // contact info; WhatsApp is "preferred" solely when the visitor
+      // checked the box AND a number exists — and never when the field
+      // itself isn't applicable to the selected inquiry.
+      preferredContact:
+        keep.has("whatsapp") && whatsapp.trim() && preferWhatsapp ? "whatsapp" : "email",
       inquiryType,
       message,
       website: honeypot,
     };
-  }, [selectedInquiry, name, email, whatsapp, dates, students, certification, loggedDives, inquiryType, message, honeypot]);
+  }, [selectedInquiry, name, email, whatsapp, preferWhatsapp, dates, students, certification, loggedDives, inquiryType, message, honeypot]);
 
   const buildWhatsAppMessage = useCallback(() => {
     const keep = new Set<ContactField>(selectedInquiry?.fields ?? []);
@@ -383,6 +395,22 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
                   className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                   placeholder={meta.placeholder}
                 />
+                {field === "whatsapp" && (
+                  <label
+                    htmlFor="whatsapp-prefer"
+                    className="flex items-center gap-2 text-xs text-muted-foreground"
+                  >
+                    <input
+                      id="whatsapp-prefer"
+                      name="whatsapp-prefer"
+                      type="checkbox"
+                      checked={preferWhatsapp}
+                      onChange={(e) => setPreferWhatsapp(e.target.checked)}
+                      className="h-4 w-4 shrink-0 rounded border-border accent-primary focus:ring-1 focus:ring-primary"
+                    />
+                    I prefer to be contacted on WhatsApp
+                  </label>
+                )}
                 <p id={`${meta.id}-error`} className={`min-h-5 text-xs text-destructive${error ? "" : " invisible"}`}>
                   {error || " "}
                 </p>

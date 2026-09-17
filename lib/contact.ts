@@ -92,7 +92,11 @@ export function validateContactSubmission(input: unknown): ContactValidation {
     if (value.length > limit) errors[field] = overLimit(field, limit);
   }
 
-  const preferredContact = body.preferredContact === "whatsapp" ? "whatsapp" : "email";
+  // WhatsApp-preferred is only meaningful when a number was supplied;
+  // normalize otherwise so the email never claims a WhatsApp-first
+  // preference without a reachable channel.
+  const preferredContact =
+    body.preferredContact === "whatsapp" && optional.whatsapp ? "whatsapp" : "email";
   const submissionId = stripNewlines(asString(body.submissionId)).slice(0, CONTACT_LIMITS.submissionId);
 
   if (Object.keys(errors).length > 0) return { ok: false, errors };

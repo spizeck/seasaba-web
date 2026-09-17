@@ -101,6 +101,35 @@ describe("email construction", () => {
     expect(text).toContain("alex@example.test");
     expect(text).toContain("seasaba.com");
   });
+
+  it("keeps a supplied WhatsApp number as alternate info while email stays preferred", () => {
+    const r = validateContactSubmission({
+      ...VALID,
+      whatsapp: "+599 416 0000",
+      preferredContact: "email",
+    });
+    if (!r.ok) throw new Error("fixture invalid");
+    const text = contactEmailText(r.data);
+    expect(text).toContain("WhatsApp: +599 416 0000");
+    expect(text).toContain("Preferred contact method: Email");
+  });
+
+  it("reports WhatsApp-preferred only when a number accompanies the explicit choice", () => {
+    const r = validateContactSubmission({
+      ...VALID,
+      whatsapp: "+599 416 0000",
+      preferredContact: "whatsapp",
+    });
+    if (!r.ok) throw new Error("fixture invalid");
+    expect(contactEmailText(r.data)).toContain("Preferred contact method: WhatsApp");
+  });
+
+  it("normalizes a WhatsApp preference that arrives without a number", () => {
+    const r = validateContactSubmission({ ...VALID, preferredContact: "whatsapp" });
+    if (!r.ok) throw new Error("fixture invalid");
+    expect(r.data.preferredContact).toBe("email");
+    expect(contactEmailText(r.data)).toContain("Preferred contact method: Email");
+  });
 });
 
 describe("POST /api/contact", () => {
