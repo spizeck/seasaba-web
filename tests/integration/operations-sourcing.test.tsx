@@ -49,6 +49,16 @@ describe("diving page canonical sourcing", () => {
     ).toBeGreaterThan(0);
   });
 
+  it("describes the shared dive-day slots and same-day afternoon add-on honestly", () => {
+    render(<DivingPage />);
+    expect(
+      screen.getAllByText((_, el) => /Dives 2 and 3 shared/i.test(el?.textContent ?? "")).length
+    ).toBeGreaterThan(0);
+    expect(
+      screen.getAllByText((_, el) => /space permitting/i.test(el?.textContent ?? "")).length
+    ).toBeGreaterThan(0);
+  });
+
   it("states the guided/no-solo and no-decompression rules", () => {
     render(<DivingPage />);
     expect(

@@ -9,7 +9,7 @@ keeps its own wording and context.
 
 | Source | Owns |
 | --- | --- |
-| `data/operations.ts` | `OPERATIONS` (founding year, recreational guide ratio, nitrox blend, harbor), `DIVE_PRODUCTS` and `CRUISE_PRODUCTS` (slugs, Checkfront ids, schedules, requirements, nitrox policy, capacity), `BOOKABLE_PRODUCTS` (combined `/book?item=` registry), `CHECKFRONT_EXTRA_ITEMS`, `CHECKFRONT_ALL_ITEM_IDS`, `INQUIRY_TYPES` (`/contact?interest=` routing plus per-inquiry `fields`/`partyLabel` driving the contact form's progressive contextual fields), `resolveBookingItem` (`/book?item=` validation) |
+| `data/operations.ts` | `OPERATIONS` (founding year, recreational guide ratio, nitrox blend, harbor), `DIVE_PRODUCTS` and `CRUISE_PRODUCTS` (slugs, Checkfront ids, schedules, `diveSlots`, requirements, nitrox policy, capacity), `BOOKABLE_PRODUCTS` (combined `/book?item=` registry), `CHECKFRONT_EXTRA_ITEMS`, `CHECKFRONT_ALL_ITEM_IDS`, `INQUIRY_TYPES` (`/contact?interest=` routing plus per-inquiry `fields`/`partyLabel` driving the contact form's progressive contextual fields), `resolveBookingItem` (`/book?item=` validation) |
 | `lib/constants.ts` | `SITE_*`, `BOOKING_URL`, `CONTACT` (phone/WhatsApp/email/address), `SOCIAL_LINKS`, `OG_IMAGE`, `NAV_ITEMS` |
 | `lib/contact.ts` | Contact-form field limits and the inquiry email builders (subject, structured body, `mailto:` URI). The form opens the visitor's own email app addressed to `CONTACT.email` — server-side sending was removed because a common `From` address collapsed all visitors into one Respond.io contact. Direct Respond.io ingestion is deferred pending a plan upgrade; see issue #104. WhatsApp stays a client-side handoff |
 | `lib/anchors.ts` | Route section ids shared by pages and `data/redirects.ts` |
@@ -71,6 +71,11 @@ wording needs owner sign-off — the code change is one line, the decision is no
   ready by that time; actual taxi arrival varies with the route and pickup
   order. UI must never present these as exact arrival times (the
   `ExperienceSelector` timeline labels them "Be ready for taxi pickup").
+- **Shared dive-day slots** — `DIVE_PRODUCTS.*.diveSlots` records which of
+  the day's three dives each product covers: Advanced = Dives 1–2, Classic =
+  Dives 2–3, Afternoon = Dive 3. Advanced and Classic therefore share Dive 2,
+  and Classic and the afternoon dive share Dive 3 (owner-confirmed). The
+  `/diving` mixed-experience section relies on this overlap.
 
 ## Checkfront boundary
 

@@ -16,7 +16,7 @@ import { DIVE_PRODUCTS, OPERATIONS, bookingHref } from "@/data/operations";
 export const metadata = createMetadata({
   title: "Diving in Saba",
   description:
-    `The practical guide to scuba diving in Saba with Sea Saba — boat diving in the Marine Park, small guided groups, dive options for every certification level, and free ${OPERATIONS.nitroxBlend} Nitrox.`,
+    `The practical guide to scuba diving in Saba with Sea Saba: boat diving in the Marine Park, small guided groups, dive options for every certification level, and free ${OPERATIONS.nitroxBlend} Nitrox.`,
   path: "/diving",
 });
 
@@ -140,11 +140,11 @@ const DIVING_FAQS = [
     ),
   },
   {
-    question: "I'm Scuba Diver certified — can I dive with Sea Saba?",
+    question: "Can I dive with Sea Saba if I'm Scuba Diver certified?",
     answer: (
       <>
         Yes. Scuba Diver-certified guests can book the {DIVE_PRODUCTS.classic.name} or{" "}
-        {DIVE_PRODUCTS.afternoon.name} with no logged-dive minimum — you&apos;ll dive with a
+        {DIVE_PRODUCTS.afternoon.name} with no logged-dive minimum, and you&apos;ll dive with a
         private guide. <Link href="/contact?interest=book-diving" className="font-medium text-primary hover:underline underline-offset-4">Contact us</Link> so we can arrange it.
       </>
     ),
@@ -153,8 +153,8 @@ const DIVING_FAQS = [
     question: "Do I need my own dive computer?",
     answer: (
       <>
-        Yes — a dive computer is required on every dive. If you don&apos;t own one, rental
-        computers are available.
+        Yes. A dive computer is required on every dive, and rental computers are available if
+        you don&apos;t own one.
       </>
     ),
   },
@@ -162,7 +162,7 @@ const DIVING_FAQS = [
     question: "Do I need Nitrox certification?",
     answer: (
       <>
-        No — you can dive air on any trip. Certified Nitrox divers get complimentary{" "}
+        No. You can dive air on any trip. Certified Nitrox divers get complimentary{" "}
         {OPERATIONS.nitroxBlend} Nitrox, and on the {DIVE_PRODUCTS.advanced.name} it&apos;s
         required on Dive 1.
       </>
@@ -172,7 +172,7 @@ const DIVING_FAQS = [
     question: "Can we dive together if our experience levels differ?",
     answer: (
       <>
-        Usually, yes — the right arrangement depends on the gap. See{" "}
+        Usually, yes. The right arrangement depends on the gap. See{" "}
         <Link href={`#${divingAnchors.mixedExperience}`} className="font-medium text-primary hover:underline underline-offset-4">Diving Together at Different Experience Levels</Link>{" "}
         above, or just ask us.
       </>
@@ -191,7 +191,7 @@ const DIVING_FAQS = [
     question: "What should I bring?",
     answer: (
       <>
-        Certification card, dive computer, logbook, swimwear, and a towel — everything else can be
+        Certification card, dive computer, logbook, swimwear, and a towel; everything else can be
         rented. Full list:{" "}
         <Link href={`/plan-your-trip#${planYourTripAnchors.whatToBring}`} className="font-medium text-primary hover:underline underline-offset-4">What to Bring</Link>.
       </>
@@ -349,7 +349,7 @@ export default function DivingPage() {
         </div>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
           Saba is a dormant volcano rising straight out of deep water, and the diving reflects it.
-          Instead of flat coral gardens, the sites are built from volcanic rock — pinnacles
+          Instead of flat coral gardens, the sites are built from volcanic rock: pinnacles
           climbing toward the surface, walls, boulder fields, and lava-flow ridges. Everything we
           dive is inside the Saba Marine Park, on permanent moorings a short boat ride from{" "}
           {OPERATIONS.harbor}.
@@ -359,10 +359,11 @@ export default function DivingPage() {
           <div className="rounded-lg border border-border/40 bg-muted/20 p-5">
             <h3 className="text-sm font-semibold text-foreground">Volcanic Terrain, Real Variety</h3>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              The signature dives are the offshore pinnacles and seamounts — Third Encounter,
-              Man O&apos; War Shoals, Diamond Rock — rising from deep water into recreational range.
-              Closer to shore, sites like Tent Reef start shallow and step down into ledges and
-              walls. Depths and profiles vary enough that a week of diving doesn&apos;t repeat itself.
+              The signature dives are offshore pinnacles and seamounts like Third Encounter,
+              Man O&apos; War Shoals, and Diamond Rock, which rise from deep water into
+              recreational range. Closer to shore, sites like Tent Reef start shallow and step
+              down into ledges and walls. Depths and profiles vary enough that a week of diving
+              doesn&apos;t repeat itself.
             </p>
           </div>
           <div className="rounded-lg border border-border/40 bg-muted/20 p-5">
@@ -371,12 +372,11 @@ export default function DivingPage() {
               Saba sits in open ocean, so conditions are real. Exposed pinnacles can carry current,
               leeward sites are usually calmer, and the east side is only diveable in settled
               weather. Our crew chooses each day&apos;s sites for the actual conditions and the
-              experience aboard — not every site suits every diver or every day.
+              experience aboard. Not every site suits every diver or every day.
             </p>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
               Entries and exits are from the boat, and our large deep ladders make getting back
-              aboard straightforward. Green and hawksbill turtles are seen often, and reef sharks
-              regularly patrol the pinnacles.
+              aboard straightforward.
             </p>
           </div>
         </div>
@@ -474,7 +474,7 @@ export default function DivingPage() {
         </div>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
           Sea Saba offers several dive options partly so each diver is matched to sites and
-          profiles that fit their training and experience. Pick the trip that fits you — not the
+          profiles that fit their training and experience. Pick the trip that fits you, not the
           one with the most dives.
         </p>
 
@@ -492,15 +492,15 @@ export default function DivingPage() {
             <h3 className="text-sm font-semibold text-foreground">Want deeper profiles? That&apos;s the Advanced trip.</h3>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
               The {DIVE_PRODUCTS.advanced.name} runs earlier, dives deeper on the first dive, and
-              requires Nitrox on Dive 1. Eligibility: {DIVE_PRODUCTS.advanced.requirement} —
-              it&apos;s a combined certification-and-experience rule, not just a card check.
+              requires Nitrox on Dive 1. Eligibility: {DIVE_PRODUCTS.advanced.requirement}.
+              It&apos;s a combined certification-and-experience rule, not just a card check.
             </p>
           </div>
           <div className="rounded-lg border border-border/40 bg-muted/20 p-5">
             <h3 className="text-sm font-semibold text-foreground">Scuba Diver certified? You&apos;re welcome here.</h3>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              Scuba Diver is a supervised-level certification — it doesn&apos;t qualify you to dive
-              autonomously with a buddy the way Open Water does. You can still book the{" "}
+              Scuba Diver is a supervised-level certification, so it doesn&apos;t qualify you to
+              dive autonomously with a buddy the way Open Water does. You can still book the{" "}
               {DIVE_PRODUCTS.classic.name} or {DIVE_PRODUCTS.afternoon.name} with no logged-dive
               minimum; you&apos;ll simply dive with a private guide. Contact us when booking so we
               can arrange it.
@@ -512,8 +512,8 @@ export default function DivingPage() {
               Try Scuba and full certification live on our{" "}
               <Link href="/courses" className="font-medium text-primary hover:underline underline-offset-4">Courses page</Link>.
               If it&apos;s been a while since your last dive, mention it when you book or{" "}
-              <Link href="/contact?interest=book-diving" className="font-medium text-primary hover:underline underline-offset-4">send us a note</Link>{" "}
-              — we&apos;d rather suggest the right arrangement than have you guess.
+              <Link href="/contact?interest=book-diving" className="font-medium text-primary hover:underline underline-offset-4">send us a note</Link>
+              {" "}and we&apos;ll suggest the right arrangement.
             </p>
           </div>
         </div>
@@ -526,50 +526,57 @@ export default function DivingPage() {
           <h2 className="text-xl font-semibold text-foreground">Diving Together at Different Experience Levels</h2>
         </div>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          Usually, yes — it just takes a little planning. How it works depends on the gap:
+          Usually, yes. It just takes a little planning. How it works depends on the difference in
+          experience.
         </p>
 
-        <ul className="mt-5 space-y-3 text-sm text-muted-foreground">
+        <ul className="mt-5 space-y-4 text-sm text-muted-foreground">
           <li className="flex items-start gap-3">
-            <span className="text-primary">✓</span>
+            <span className="mt-0.5 text-primary">✓</span>
             <span>
               <strong className="font-medium text-foreground">Open Water + Advanced-certified partners.</strong>{" "}
-              You can each book the trip that fits — the {DIVE_PRODUCTS.advanced.name} departs at{" "}
-              {DIVE_PRODUCTS.advanced.schedule.departure} and returns about{" "}
-              {DIVE_PRODUCTS.advanced.schedule.returns}, while the {DIVE_PRODUCTS.classic.name} runs{" "}
-              {DIVE_PRODUCTS.classic.schedule.departure} to about {DIVE_PRODUCTS.classic.schedule.returns}.
-              Partners can simply book different trips on the same day.
+              You have options:
+              <span className="mt-1.5 block space-y-1.5">
+                <span className="block">Book the {DIVE_PRODUCTS.classic.name} together and share both dives.</span>
+                <span className="block">
+                  Or the qualifying diver starts earlier on the {DIVE_PRODUCTS.advanced.name} (Dive 1),
+                  then shares Dive 2 with the Classic group. Adding the afternoon dive gives them a
+                  three-dive day, with Dives 2 and 3 shared with their partner. The afternoon dive
+                  can usually be added the same day, space permitting.
+                </span>
+              </span>
             </span>
           </li>
           <li className="flex items-start gap-3">
             <span className="text-primary">✓</span>
             <span>
               <strong className="font-medium text-foreground">Scuba Diver + autonomous divers.</strong>{" "}
-              A private guide can accompany the Scuba Diver-certified member of your party on the
-              same boat — you stay together, they dive within their certification.
+              A private guide can accompany the Scuba Diver-certified member of the party on the
+              same boat. The group stays together while each diver dives within their certification.
             </span>
           </li>
           <li className="flex items-start gap-3">
             <span className="text-primary">✓</span>
             <span>
               <strong className="font-medium text-foreground">A diver and a snorkeler.</strong>{" "}
-              The {DIVE_PRODUCTS.snorkel.name} rides the same boat as the{" "}
-              {DIVE_PRODUCTS.afternoon.name}, so non-diving friends can still share the afternoon.
+              The {DIVE_PRODUCTS.snorkel.name} shares the boat with the{" "}
+              {DIVE_PRODUCTS.afternoon.name}, so non-diving friends can spend the afternoon on the
+              water with the diver.
             </span>
           </li>
           <li className="flex items-start gap-3">
             <span className="text-primary">✓</span>
             <span>
               <strong className="font-medium text-foreground">Larger or unusual groups.</strong>{" "}
-              A {DIVE_PRODUCTS.private.name.toLowerCase()} keeps everyone on one boat with a
-              flexible schedule and itinerary.
+              A {DIVE_PRODUCTS.private.name.toLowerCase()} keeps everyone on one boat and provides
+              more flexibility with the schedule and itinerary.
             </span>
           </li>
         </ul>
 
         <div className="mt-5 rounded-lg border border-primary/20 bg-primary/5 px-5 py-4">
           <p className="text-sm text-muted-foreground">
-            Every group is different — if you&apos;re unsure which arrangement fits, tell us your
+            Every group is different. If you&apos;re unsure which arrangement fits, tell us your
             certifications and logged dives and we&apos;ll suggest the right setup.{" "}
             <Link href="/contact?interest=book-diving" className="font-medium text-primary hover:underline underline-offset-4">
               Contact us
@@ -596,7 +603,7 @@ export default function DivingPage() {
           <h2 className="text-xl font-semibold text-foreground">Equipment, Tanks &amp; Dive Computers</h2>
         </div>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          Bring your own kit or rent everything on-island — both are normal here. The crew handles
+          Bring your own kit or rent everything on-island. Both are normal here. The crew handles
           setup and tank changes; you handle your certification card and your computer.
         </p>
 
@@ -605,7 +612,7 @@ export default function DivingPage() {
             <h3 className="text-sm font-semibold text-foreground">What You Need</h3>
             <ul className="mt-3 space-y-2.5 text-sm text-muted-foreground">
               <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Certification card or digital certification</span></li>
-              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>A dive computer — required on every dive. No computer, no diving; rentals are available if you don&apos;t own one.</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>A dive computer is required on every dive; rentals are available if you don&apos;t own one.</span></li>
               <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Logbook or digital dive history</span></li>
             </ul>
           </div>
@@ -613,8 +620,8 @@ export default function DivingPage() {
             <h3 className="text-sm font-semibold text-foreground">Tanks &amp; Gas</h3>
             <ul className="mt-3 space-y-2.5 text-sm text-muted-foreground">
               <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>AL80 tanks standard; AL100s available on request</span></li>
-              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>PRO valves — work with both DIN and yoke regulators</span></li>
-              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Complimentary {OPERATIONS.nitroxBlend} Nitrox for certified divers — details in the <Link href={`#${divingAnchors.nitrox}`} className="font-medium text-primary hover:underline underline-offset-4">Nitrox section</Link></span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>PRO valves work with both DIN and yoke regulators</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Complimentary {OPERATIONS.nitroxBlend} Nitrox for certified divers (details in the <Link href={`#${divingAnchors.nitrox}`} className="font-medium text-primary hover:underline underline-offset-4">Nitrox section</Link>)</span></li>
             </ul>
           </div>
           <div className="rounded-lg border border-border/40 bg-muted/20 p-5">
@@ -628,7 +635,7 @@ export default function DivingPage() {
         </div>
 
         <p className="mt-4 text-sm text-muted-foreground">
-          For the full packing list — reef-safe sunscreen, dry bags, and the rest — see{" "}
+          For the full packing list, including reef-safe sunscreen and dry bags, see{" "}
           <Link href={`/plan-your-trip#${planYourTripAnchors.whatToBring}`} className="font-medium text-primary hover:underline underline-offset-4">
             What to Bring
           </Link>{" "}
@@ -691,7 +698,7 @@ export default function DivingPage() {
           Everything we dive is inside the Saba National Marine Park, established in 1987 and
           managed by the Saba Conservation Foundation. The park circles the entire island from the
           high-water mark down to 60 m (200 ft), and it&apos;s one of the few self-sustaining marine
-          parks in the world — visitor fees, souvenir sales, and donations fund the moorings, patrols,
+          parks in the world. Visitor fees, souvenir sales, and donations fund the moorings, patrols,
           and conservation work that keep the reefs healthy.
         </p>
 
@@ -699,17 +706,17 @@ export default function DivingPage() {
           <div className="rounded-lg border border-border/40 bg-muted/20 p-5">
             <h3 className="text-sm font-semibold text-foreground">Park Rules That Apply to Every Diver</h3>
             <ul className="mt-3 space-y-2.5 text-sm text-muted-foreground">
-              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>No gloves — they remove the temptation to touch the reef</span></li>
-              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Look, don&apos;t touch — corals, sponges, and marine life are protected</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>No gloves, which removes the temptation to touch the reef</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Look, don&apos;t touch; corals, sponges, and marine life are protected</span></li>
               <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>No collecting, no spearfishing on scuba, no feeding fish</span></li>
-              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Good buoyancy matters — practice before diving close to the reef</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Good buoyancy matters: practice before diving close to the reef</span></li>
             </ul>
           </div>
           <div className="rounded-lg border border-border/40 bg-muted/20 p-5">
             <h3 className="text-sm font-semibold text-foreground">How Sea Saba Dives the Park</h3>
             <ul className="mt-3 space-y-2.5 text-sm text-muted-foreground">
-              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Boats tie to permanent moorings — nobody anchors on the reef</span></li>
-              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Guided diving only — no solo diving</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Boats tie to permanent moorings, so nobody anchors on the reef</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Guided diving only; no solo diving</span></li>
               <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Recreational trips stay within no-decompression limits</span></li>
               <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Sites are chosen each day for the conditions and the group aboard</span></li>
             </ul>
@@ -1039,7 +1046,7 @@ export default function DivingPage() {
           Ready to dive Saba?
         </h2>
         <p className="mt-3 text-base text-muted-foreground">
-          Pick the trip that fits, tell us your certification, and we&apos;ll take care of the rest —
+          Pick the trip that fits, tell us your certification, and we&apos;ll take care of the rest:
           taxi, tanks, and the route to the right sites.
         </p>
         <div className="mt-6 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
