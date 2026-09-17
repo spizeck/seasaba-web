@@ -59,6 +59,65 @@ describe("diving page canonical sourcing", () => {
     ).toBeGreaterThan(0);
   });
 
+  it("presents refresher guidance as recommendation, then requirement at Sea Saba's discretion", () => {
+    render(<DivingPage />);
+    expect(
+      screen.getAllByText((_, el) =>
+        el?.textContent?.includes(`more than ${OPERATIONS.refresher.recommendedAfterYears} year`) ?? false
+      ).length
+    ).toBeGreaterThan(0);
+    expect(
+      screen.getAllByText((_, el) => /recommend a refresher/i.test(el?.textContent ?? "")).length
+    ).toBeGreaterThan(0);
+    expect(
+      screen.getAllByText((_, el) =>
+        el?.textContent?.includes(`${OPERATIONS.refresher.generallyRequiredAfterYears} years`) ?? false
+      ).length
+    ).toBeGreaterThan(0);
+    // Discretion, not an immutable rule.
+    expect(
+      screen.getAllByText((_, el) => /not a hard line|discretion|our call/i.test(el?.textContent ?? "")).length
+    ).toBeGreaterThan(0);
+  });
+
+  it("breaks the combined dive fee into park and chamber components", () => {
+    render(<DivingPage />);
+    const { marineParkPerDiveUsd, chamberContributionPerDiveUsd, snorkelParkPerPersonUsd } =
+      OPERATIONS.conservationFees;
+    const combined = marineParkPerDiveUsd + chamberContributionPerDiveUsd;
+    expect(
+      screen.getAllByText((_, el) =>
+        el?.textContent?.includes(`$${combined} per diver, per dive`) ?? false
+      ).length
+    ).toBeGreaterThan(0);
+    expect(
+      screen.getAllByText((_, el) =>
+        el?.textContent?.includes(`$${marineParkPerDiveUsd} goes to the`) ?? false
+      ).length
+    ).toBeGreaterThan(0);
+    expect(
+      screen.getAllByText((_, el) =>
+        el?.textContent?.includes(`$${snorkelParkPerPersonUsd} per person`) ?? false
+      ).length
+    ).toBeGreaterThan(0);
+  });
+
+  it("welcomes junior divers without inventing a universal minimum age", () => {
+    render(<DivingPage />);
+    expect(
+      screen.getAllByText((_, el) => /limits of their certification/i.test(el?.textContent ?? "")).length
+    ).toBeGreaterThan(0);
+    expect(
+      screen.getAllByText((_, el) =>
+        el?.textContent?.includes(`under ${OPERATIONS.juniorPrivateGuideRecommendedUnderAge}`) ?? false
+      ).length
+    ).toBeGreaterThan(0);
+    // Recommendation language, not a mandate for every junior diver.
+    expect(
+      screen.getAllByText((_, el) => /recommend considering a private guide/i.test(el?.textContent ?? "")).length
+    ).toBeGreaterThan(0);
+  });
+
   it("states the guided/no-solo and no-decompression rules", () => {
     render(<DivingPage />);
     expect(

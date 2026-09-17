@@ -21,6 +21,7 @@ export const divingAnchors = {
   diveDay: "dive-day",
   certification: "certification",
   mixedExperience: "mixed-experience",
+  juniorDivers: "junior-divers",
   equipment: "equipment",
   nitrox: "nitrox",
   marinePark: "marine-park",
@@ -45,4 +46,15 @@ export const planYourTripAnchors = {
 
 export const coursesAnchors = {
   nitrox: "nitrox",
+} as const;
+
+export const visitingYachtsAnchors = {
+  arriving: "arriving",
+  mooring: "mooring",
+  comingAshore: "coming-ashore",
+  diving: "diving",
+  charter: "charter",
+  equipment: "equipment",
+  conditions: "conditions",
+  contact: "contact",
 } as const;

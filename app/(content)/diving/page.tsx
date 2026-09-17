@@ -3,7 +3,7 @@ import { PageHero } from "@/components/page-hero";
 import { FeatureImage } from "@/components/feature-image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Users, Award, Bus, Droplets, ShieldCheck, Wind, HelpCircle, Mountain, Gauge, Waves, Wrench, Anchor } from "lucide-react";
+import { Users, Award, Bus, Droplets, ShieldCheck, Wind, HelpCircle, Mountain, Gauge, Waves, Wrench, Anchor, Heart } from "lucide-react";
 import { InsuranceCTAs } from "@/components/insurance-ctas";
 import { ExperienceSelector } from "@/components/experience-selector";
 import { TrackedInternalButton } from "@/components/tracked-internal-button";
@@ -242,6 +242,7 @@ export default function DivingPage() {
           { id: divingAnchors.diveDay, label: "A Dive Day" },
           { id: divingAnchors.certification, label: "Certification" },
           { id: divingAnchors.mixedExperience, label: "Mixed Groups" },
+          { id: divingAnchors.juniorDivers, label: "Kids & Juniors" },
           { id: divingAnchors.equipment, label: "Equipment" },
           { id: divingAnchors.nitrox, label: "Nitrox" },
           { id: divingAnchors.marinePark, label: "Marine Park" },
@@ -511,7 +512,12 @@ export default function DivingPage() {
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
               Try Scuba and full certification live on our{" "}
               <Link href="/courses" className="font-medium text-primary hover:underline underline-offset-4">Courses page</Link>.
-              If it&apos;s been a while since your last dive, mention it when you book or{" "}
+              If it&apos;s been more than {OPERATIONS.refresher.recommendedAfterYears} year since your last
+              dive, we recommend a refresher to get comfortable again. Past roughly{" "}
+              {OPERATIONS.refresher.generallyRequiredAfterYears} years, expect one to be required.
+              It&apos;s not a hard line: the call depends on your experience, comfort, the
+              conditions, and the dives planned, and sometimes a private guide is the better
+              answer. Mention it when you book or{" "}
               <Link href="/contact?interest=book-diving" className="font-medium text-primary hover:underline underline-offset-4">send us a note</Link>
               {" "}and we&apos;ll suggest the right arrangement.
             </p>
@@ -594,6 +600,53 @@ export default function DivingPage() {
             .
           </p>
         </div>
+
+        <p className="mt-4 text-sm text-muted-foreground">
+          Traveling with young divers? See{" "}
+          <Link href={`#${divingAnchors.juniorDivers}`} className="font-medium text-primary hover:underline underline-offset-4">
+            Diving with Kids &amp; Junior Divers
+          </Link>{" "}
+          below.
+        </p>
+      </section>
+
+      {/* Diving with Kids & Junior Divers */}
+      <section id={divingAnchors.juniorDivers} className="mt-14 scroll-mt-40">
+        <div className="flex items-center gap-3">
+          <Heart className="h-5 w-5 text-primary" />
+          <h2 className="text-xl font-semibold text-foreground">Diving with Kids &amp; Junior Divers</h2>
+        </div>
+        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          We love diving with young divers, and it&apos;s something close to us at Sea Saba.
+          We&apos;ve watched our own kids grow up diving here, so we know the difference a
+          patient first boat dive makes. Junior divers are welcome on our trips and dive
+          within the depth, supervision, and other limits of their certification.
+        </p>
+        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          Families with younger divers often do best with their own guide. We especially
+          recommend considering a private guide when diving with children under{" "}
+          {OPERATIONS.juniorPrivateGuideRecommendedUnderAge}: it lets the family set its own
+          pace and dive profile instead of matching the rest of a group, which makes the day
+          more relaxed and a lot more fun for everyone.
+        </p>
+        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          Every young diver is different, so tell us about their certification, experience,
+          and comfort in the water and we&apos;ll help you choose the right arrangement.{" "}
+          <Link href="/contact?interest=book-diving" className="font-medium text-primary hover:underline underline-offset-4">
+            Contact us
+          </Link>{" "}
+          or message us on{" "}
+          <TrackedContactLink
+            href={CONTACT.whatsappHref}
+            eventName="whatsapp_click"
+            buttonText="WhatsApp — diving junior divers"
+            external
+            className="font-medium text-primary hover:underline underline-offset-4"
+          >
+            WhatsApp
+          </TrackedContactLink>
+          .
+        </p>
       </section>
 
       {/* Equipment, Tanks & Computers */}
@@ -721,6 +774,19 @@ export default function DivingPage() {
               <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Sites are chosen each day for the conditions and the group aboard</span></li>
             </ul>
           </div>
+        </div>
+
+        <div className="mt-5 rounded-lg border border-primary/20 bg-primary/5 px-5 py-4">
+          <p className="text-sm text-muted-foreground">
+            Diving carries a conservation contribution of{" "}
+            ${OPERATIONS.conservationFees.marineParkPerDiveUsd + OPERATIONS.conservationFees.chamberContributionPerDiveUsd}{" "}
+            per diver, per dive: ${OPERATIONS.conservationFees.marineParkPerDiveUsd} goes to the
+            Saba Marine Park and ${OPERATIONS.conservationFees.chamberContributionPerDiveUsd} to the
+            island&apos;s hyperbaric chamber fund. Snorkeling is{" "}
+            ${OPERATIONS.conservationFees.snorkelParkPerPersonUsd} per person. These fees are set by
+            the park and the chamber, not Sea Saba, and they directly fund the moorings, patrols,
+            and emergency coverage described above.
+          </p>
         </div>
 
         <p className="mt-4 text-sm text-muted-foreground">
@@ -1068,6 +1134,10 @@ export default function DivingPage() {
           Not sure which trip fits?{" "}
           <Link href="/contact?interest=book-diving" className="font-medium text-primary hover:underline underline-offset-4">
             Ask us before you book
+          </Link>
+          . Arriving on your own boat? See our{" "}
+          <Link href="/visiting-yachts" className="font-medium text-primary hover:underline underline-offset-4">
+            yacht visitors&apos; guide
           </Link>
           .
         </p>

@@ -25,6 +25,36 @@ export const OPERATIONS = {
   nitroxBlend: "32%",
   /** Every dive trip departs from and returns to Fort Bay Harbor. */
   harbor: "Fort Bay Harbor",
+  /**
+   * Refresher guidance (owner-confirmed): a refresher is recommended once a
+   * guest has been out of the water more than `recommendedAfterYears` year(s)
+   * and is generally required past `generallyRequiredAfterYears`. The call is
+   * always Sea Saba's — experience, comfort, conditions, and the planned dives
+   * factor in, and a private guide can be the better answer. Guidance, not an
+   * immutable agency rule.
+   */
+  refresher: {
+    recommendedAfterYears: 1,
+    generallyRequiredAfterYears: 3,
+  },
+  /**
+   * Owner-confirmed: families diving with children under this age should
+   * consider a private guide so the family sets its own pace and profile.
+   * A recommendation, not a blanket requirement — junior divers dive within
+   * the limits of their certification.
+   */
+  juniorPrivateGuideRecommendedUnderAge: 12,
+  /**
+   * Externally set conservation contributions charged per activity
+   * (owner-confirmed amounts; the Saba Conservation Foundation and the
+   * hyperbaric chamber fund control the actual rates — update here if they
+   * change). Divers see the combined per-dive total.
+   */
+  conservationFees: {
+    marineParkPerDiveUsd: 3,
+    chamberContributionPerDiveUsd: 1,
+    snorkelParkPerPersonUsd: 3,
+  },
 } as const;
 
 // --- Bookable products -------------------------------------------------------
@@ -270,6 +300,8 @@ export const INQUIRY_TYPES: readonly InquiryType[] = [
     fields: ["whatsapp", "dates", "partySize", "certification"], partyLabel: "Number of students" },
   { value: "private-charter", label: "Private Charter", subject: "Private Charter Inquiry", group: "general",
     fields: ["whatsapp", "dates", "partySize"], partyLabel: "Group size" },
+  { value: "visiting-yacht", label: "Visiting by Yacht / Sailboat", subject: "Visiting by Yacht Inquiry", group: "general",
+    fields: ["whatsapp", "dates", "partySize", "certification", "loggedDives"], partyLabel: "Number of guests" },
   { value: "group-travel", label: "Group Travel", subject: "Group Travel Inquiry", group: "general",
     fields: ["whatsapp", "dates", "partySize"], partyLabel: "Group size" },
   { value: "sunset-cruise", label: "Sunset Cruise", subject: "Sunset Cruise Inquiry", group: "general",
