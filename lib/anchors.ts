@@ -16,7 +16,15 @@ export const diveSiteAnchors = {
 } as const;
 
 export const divingAnchors = {
+  options: "dive-options",
+  sabaDiving: "saba-diving",
+  diveDay: "dive-day",
+  certification: "certification",
+  mixedExperience: "mixed-experience",
+  equipment: "equipment",
   nitrox: "nitrox",
+  marinePark: "marine-park",
+  faq: "faq",
   altitudeFlying: "altitude-flying",
   technicalDiving: "technical-diving",
 } as const;
