@@ -28,7 +28,7 @@ const SCHEDULED_TRIPS = [
   },
   {
     name: DIVE_PRODUCTS.advanced.name,
-    summary: `Deeper pinnacles and an earlier ${DIVE_PRODUCTS.advanced.schedule.departure} departure. Eligibility: ${DIVE_PRODUCTS.advanced.requirement}.`,
+    summary: `Our earlier ${DIVE_PRODUCTS.advanced.schedule.departure} trip for more experienced divers, with access to advanced dive profiles when conditions allow. Eligibility: ${DIVE_PRODUCTS.advanced.requirement}.`,
     href: bookingHref("advanced"),
     slug: DIVE_PRODUCTS.advanced.slug,
     cta: "Book Advanced Diving",
@@ -277,7 +277,7 @@ export default function VisitingYachtsPage() {
           <ul className="mt-3 space-y-2.5 text-sm text-muted-foreground">
             <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Book ahead where you can. Space on scheduled trips depends on availability, and we can&apos;t promise same-day seats.</span></li>
             <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Published pickup times are for hotel guests; from a yacht, simply be at the dive center ahead of the boat&apos;s departure time.</span></li>
-            <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Tell us you&apos;re arriving by vessel when you book, so we know you don&apos;t need the shuttle.</span></li>
+            <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>If you book online, <Link href="/contact?interest=visiting-yacht" className="font-medium text-primary hover:underline underline-offset-4">send us a quick note</Link> or <Link href={CONTACT.whatsappHref} target="_blank" rel="noopener noreferrer" className="font-medium text-primary hover:underline underline-offset-4">WhatsApp</Link> afterward to let us know you&apos;re arriving by vessel, so we know you don&apos;t need the shuttle.</span></li>
           </ul>
         </div>
 
