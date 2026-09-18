@@ -96,9 +96,14 @@ describe("Content-Security-Policy", () => {
       "https://connect.facebook.net",
       "https://bat.bing.com",
       "https://consent.cookiebot.com",
+      // Respond.io Website Chat launcher script (widget.js).
+      "https://cdn.respond.io",
     ]) {
       expect(scriptSrc, origin).toContain(origin);
     }
+    // Scoped to the CDN host only — never the whole respond.io domain.
+    expect(scriptSrc).not.toContain("https://*.respond.io");
+    expect(scriptSrc).not.toContain("https://respond.io");
   });
 
   it("keeps frame-src limited to real embed providers", async () => {
@@ -113,11 +118,14 @@ describe("Content-Security-Policy", () => {
       "https://www.youtube.com",
       "https://www.googletagmanager.com",
       "https://consentcdn.cookiebot.com",
+      // Respond.io Website Chat iframe (chat.html launcher + window).
+      "https://cdn.respond.io",
     ]) {
       expect(frameSrc, origin).toContain(origin);
     }
     // Removed-forever hosts must not creep back.
     expect(frameSrc).not.toContain("https://www.youtube-nocookie.com");
+    expect(frameSrc).not.toContain("https://*.respond.io");
   });
 
   it("keeps connect-src narrowed to observed destinations", async () => {
@@ -128,9 +136,15 @@ describe("Content-Security-Policy", () => {
     ).get("connect-src")!;
     expect(connectSrc).toContain("https://firestore.googleapis.com");
     expect(connectSrc).toContain("seasaba.checkfront.com");
+    // Respond.io remote-config fetch — the only top-frame call the widget
+    // makes. The chat WebSocket/APIs live inside the vendor iframe and are
+    // governed by that document's own CSP, so they must not appear here.
+    expect(connectSrc).toContain("https://service.respond.io");
     expect(connectSrc).not.toContain("https://*.googleapis.com");
     expect(connectSrc).not.toContain("wss://*.googleapis.com");
     expect(connectSrc).not.toContain("https://google.com");
+    expect(connectSrc).not.toContain("https://*.respond.io");
+    expect(connectSrc.some((s) => s.startsWith("wss://"))).toBe(false);
   });
 
   it("omits 'unsafe-eval' from the production policy", async () => {

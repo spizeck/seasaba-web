@@ -15,7 +15,9 @@ export type AnalyticsEvent =
   | "ferry_link_click"
   | "social_click"
   | "pdf_download"
-  | "newsletter_signup";
+  | "newsletter_signup"
+  | "chat_open"
+  | "chat_conversation_started";
 
 export type AnalyticsValue = string | number | boolean | undefined;
 
