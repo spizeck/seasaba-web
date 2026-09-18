@@ -69,7 +69,7 @@ describe("visiting yachts page", () => {
     // Checkfront booking notes capture the vessel name — no invented field.
     expect(text).toMatch(/vessel.{0,20}name in the booking notes/i);
     // Marine Park/chamber fees on the Sea Saba invoice; harbor/mooring separate.
-    expect(text).toMatch(/diving invoice/i);
+    expect(text).toMatch(/line item on your Sea Saba invoice/i);
     expect(text).toMatch(/harbor fees[^.]*separat/i);
     // Independent diving is prohibited, not merely "check the rules".
     expect(text).toMatch(/independent diving isn.t permitted/i);
@@ -148,6 +148,30 @@ describe("visiting yachts page", () => {
     expect(text).toMatch(/pinned directly to the reef/i);
     expect(text).toMatch(/shock absorption/i);
     expect(text).toMatch(/unattended/i);
+  });
+
+  it("states correct Harbor Office hours and the scheduled-vs-charter fee distinction", () => {
+    const { container } = render(<VisitingYachtsPage />);
+    const text = container.textContent ?? "";
+    expect(text).toMatch(/7:30 AM to 6:00 PM/i);
+    expect(text).not.toMatch(/6 AM to 6 PM/);
+    // Scheduled diving: the contribution is itemized on the Sea Saba invoice.
+    expect(text).toMatch(/own line item on your Sea Saba invoice/i);
+    // Charter: diving-related costs are included, vessel fees stay separate.
+    expect(text).toMatch(/Charter pricing is inclusive/i);
+    expect(text).toMatch(/per-diver charge on top of the charter price/i);
+    expect(text).toMatch(/Vessel-related fees/i);
+  });
+
+  it("separates scheduled diving, private charter, and tender diving clearly", () => {
+    const { container } = render(<VisitingYachtsPage />);
+    const text = container.textContent ?? "";
+    expect(text).toMatch(/Private Charters & Yacht Tender Diving/i);
+    expect(text).toMatch(/Private Charter on a Sea Saba Boat/i);
+    expect(text).toMatch(/A Sea Saba Guide Aboard Your Tender/i);
+    expect(text).toMatch(/Want the boat to yourselves/i);
+    // No undefined technical-diving capability is implied.
+    expect(text).not.toMatch(/technical divers|technical diving|custom program/i);
   });
 
   it("warns dinghies to pass dive vessels on the seaward side", () => {

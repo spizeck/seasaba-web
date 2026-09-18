@@ -82,7 +82,7 @@ export default function VisitingYachtsPage() {
           { id: visitingYachtsAnchors.mooring, label: "Moorings" },
           { id: visitingYachtsAnchors.comingAshore, label: "Coming Ashore" },
           { id: visitingYachtsAnchors.diving, label: "Diving" },
-          { id: visitingYachtsAnchors.charter, label: "Private & Larger Yachts" },
+          { id: visitingYachtsAnchors.charter, label: "Private Charters" },
           { id: visitingYachtsAnchors.equipment, label: "Tanks & Gear" },
           { id: visitingYachtsAnchors.conditions, label: "Conditions" },
           { id: visitingYachtsAnchors.contact, label: "Contact" },
@@ -128,7 +128,7 @@ export default function VisitingYachtsPage() {
               ))}
             </ol>
             <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-              The Harbor Office is open from 6 AM to 6 PM; if Customs and Immigration aren&apos;t
+              The Harbor Office is open from 7:30 AM to 6:00 PM; if Customs and Immigration aren&apos;t
               available when you land, proceed there directly. The Harbor Master monitors VHF
               channel 16. Entry forms for customs, immigration, and yacht registration can be
               completed in advance.
@@ -273,28 +273,29 @@ export default function VisitingYachtsPage() {
           src="/images/optimized/fort-bay-two-boats.webp"
           alt="Sea Saba's dive boats moored at Fort Bay Harbor, Saba"
           imageRight
+          balanced
           centerText
         >
           <div>
             <h2 className="text-xl font-semibold text-foreground">Coming Ashore at Fort Bay</h2>
-            <p className="mt-4 text-base leading-relaxed text-muted-foreground">
+            <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
               Everything you need on arrival is at Fort Bay: Customs and Immigration, the Harbor
               Office, the Marine Park office, and us. Fort Bay is Saba&apos;s only harbor, and
               Sea Saba&apos;s dive center at 66 Fort Bay Harbor sits close to both piers. Walking
               the full length of the harbor takes about five minutes.
             </p>
-            <p className="mt-3 text-base leading-relaxed text-muted-foreground">
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
               Dock space and dinghy landing arrangements are the harbor&apos;s domain. If
               you&apos;re unsure where to leave the dinghy, ask at the Harbor Office when you
               check in. If you have a lot of gear to move, we can run it between the dock and the
               shop on our flatbed trucks.
             </p>
-            <p className="mt-3 text-base leading-relaxed text-muted-foreground">
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
               Sea Saba monitors VHF channel 10; that&apos;s the channel for reaching the shop and
               our boats. We also keep a watch on channel 16, but that channel belongs to the
               Harbor Master and emergency traffic, so use 10 for us.
             </p>
-            <p className="mt-3 text-base leading-relaxed text-muted-foreground">
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
               Need to get online while you&apos;re ashore? We run an open guest Wi-Fi network at
               the Fort Bay office. Join through the guest portal and you get about 12 hours of
               access. It covers the area around the shop; don&apos;t count on it out on the
@@ -357,11 +358,13 @@ export default function VisitingYachtsPage() {
           help coordinate taxis for anything beyond that.
         </p>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          The same diving requirements apply to yacht guests. Conservation contributions of{" "}
+          The same diving requirements apply to yacht guests. For scheduled diving, the Marine
+          Park and hyperbaric chamber contribution of{" "}
           ${OPERATIONS.conservationFees.marineParkPerDiveUsd + OPERATIONS.conservationFees.chamberContributionPerDiveUsd}{" "}
-          per diver, per dive (Marine Park and hyperbaric chamber) come through on your Sea Saba
-          diving invoice. Mooring, yacht registration, and harbor fees are handled separately,
-          directly with the Marine Park and the Harbor Office. The full guide to our trips,
+          per diver, per dive appears as its own line item on your Sea Saba invoice. On a
+          private charter those diving-related costs are included in the charter price. Mooring,
+          yacht registration, and harbor fees are always handled separately, directly with the
+          Marine Park and the Harbor Office. The full guide to our trips,
           certification fit, equipment, and park rules is on the{" "}
           <Link href="/diving" className="font-medium text-primary hover:underline underline-offset-4">
             Diving page
@@ -389,6 +392,18 @@ export default function VisitingYachtsPage() {
           ))}
         </div>
 
+        <div className="mt-5 rounded-lg border border-primary/20 bg-primary/5 p-5">
+          <h3 className="text-sm font-semibold text-foreground">Want the boat to yourselves?</h3>
+          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+            A private charter gives your crew exclusive use of a Sea Saba boat, crew, and guide,
+            with pricing that includes the diving itself. For larger vessels, a Sea Saba guide
+            can also dive with you from your own tender.
+          </p>
+          <Button asChild variant="outline" className="mt-4">
+            <Link href={`#${visitingYachtsAnchors.charter}`}>See Private Diving Options</Link>
+          </Button>
+        </div>
+
         <div className="mt-5 rounded-lg border border-border/40 bg-muted/20 p-5">
           <h3 className="text-sm font-semibold text-foreground">Booking and timing</h3>
           <ul className="mt-3 space-y-2.5 text-sm text-muted-foreground">
@@ -411,61 +426,60 @@ export default function VisitingYachtsPage() {
         </p>
       </section>
 
-      {/* Private Charter */}
+      {/* Private Charters & Tender Diving */}
       <section id={visitingYachtsAnchors.charter} className="mt-14 scroll-mt-40">
         <div className="flex items-center gap-3">
           <Ship className="h-5 w-5 text-primary" />
-          <h2 className="text-xl font-semibold text-foreground">Larger Yachts &amp; Private Diving</h2>
+          <h2 className="text-xl font-semibold text-foreground">Private Charters &amp; Yacht Tender Diving</h2>
         </div>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          A {DIVE_PRODUCTS.private.name.toLowerCase()} makes sense when the whole crew wants to
-          dive together: mixed experience levels, a schedule shaped around your visit, or simply
-          the privacy of your own boat and guide ({DIVE_PRODUCTS.private.capacity.toLowerCase()}).
-          Routes and sites still follow the Marine Park&apos;s rules and the day&apos;s
-          conditions, but the boat and the pace are yours.
+          Scheduled trips aren&apos;t the only way to dive with us. Two private arrangements
+          cover most yacht visits, and neither is limited to large yachts.
         </p>
-        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          We regularly work with larger yachts and superyachts, where a fully customized program
-          usually fits better than a seat on a scheduled boat. Two setups cover most visits:
-        </p>
-        <ul className="mt-4 space-y-4 text-sm text-muted-foreground">
-          <li className="flex items-start gap-3">
-            <span className="mt-0.5 text-primary">✓</span>
-            <span>
-              <strong className="font-medium text-foreground">A private charter on a Sea Saba boat.</strong>{" "}
-              Our boat, our crew and guide, and a schedule and dive profile shaped to your guests
-              and the conditions. It&apos;s the normal private-charter idea, arranged around your
-              vessel&apos;s timetable.
-            </span>
-          </li>
-          <li className="flex items-start gap-3">
-            <span className="mt-0.5 text-primary">✓</span>
-            <span>
-              <strong className="font-medium text-foreground">A Sea Saba guide aboard your tender.</strong>{" "}
-              Common for larger and mega yachts: your tender normally picks the guide up, and the
-              diving runs from the tender rather than the yacht itself. Even when our boat comes
-              out to a large vessel, guests transfer by tender. We can provide whatever the
-              planned diving needs, including cylinders, weights, rental equipment, and first-aid
-              and oxygen kits. Many large yachts already carry substantial dive gear, in which
-              case our guide may simply join with tanks and personal kit.
-            </span>
-          </li>
-        </ul>
-        <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-          For diving from a customer&apos;s tender, we&apos;ll confirm the tender and its safety
-          equipment are appropriate before the diving plan is finalized. We&apos;re looking for a
-          suitable dive platform and ladder, first-aid kit, oxygen, ship-to-shore radio, and a
-          dive flag. If anything is missing we can supply first-aid and oxygen equipment,
-          including DAN combination kits. Pricing and arrangements are tailored, so tell us what
-          you have aboard and what you&apos;re planning.
-        </p>
-        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          For highly experienced or technical divers,{" "}
-          <Link href="/contact?interest=private-charter" className="font-medium text-primary hover:underline underline-offset-4">
-            contact us about a custom program
-          </Link>
-          . Profiles can be tailored to your guests&apos; certification and experience.
-        </p>
+
+        <div className="mt-6 grid gap-5 lg:grid-cols-2">
+          <div className="flex flex-col rounded-lg border border-border/60 bg-card p-5">
+            <h3 className="text-base font-semibold text-foreground">Private Charter on a Sea Saba Boat</h3>
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+              Your group has exclusive use of a Sea Saba boat, crew, and guide (
+              {DIVE_PRODUCTS.private.capacity.toLowerCase()}). Mixed experience levels stay
+              together, and the schedule and dive profile shape around your visit. Routes and
+              sites still follow the Marine Park&apos;s rules and the day&apos;s conditions,
+              but the boat and the pace are yours.
+            </p>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+              Charter pricing is inclusive: the Sea Saba boat, crew and guide, the diving,
+              tanks, weights, normal rental equipment, {OPERATIONS.nitroxBlend} Nitrox for
+              certified divers, and the Marine Park and hyperbaric chamber contributions for
+              the diving are all covered. None of that appears as a per-diver charge on top of
+              the charter price.
+            </p>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+              Vessel-related fees are a separate matter: yacht registration, mooring, harbor,
+              and clearance costs stay between you and the authorities whatever diving
+              arrangement you choose.
+            </p>
+          </div>
+          <div className="flex flex-col rounded-lg border border-border/60 bg-card p-5">
+            <h3 className="text-base font-semibold text-foreground">A Sea Saba Guide Aboard Your Tender</h3>
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+              Common for larger and mega yachts: your tender picks the guide up, and the diving
+              runs from the tender rather than the yacht itself. Even when our boat comes out to
+              a large vessel, guests transfer by tender. We can provide whatever the planned
+              diving needs, including cylinders, weights, rental equipment, and first-aid and
+              oxygen kits. Many large yachts already carry substantial dive gear, in which case
+              our guide may simply join with tanks and personal kit.
+            </p>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+              We&apos;ll confirm the tender and its safety equipment are appropriate before the
+              diving plan is finalized: a suitable dive platform and ladder, first-aid kit,
+              oxygen, ship-to-shore radio, and a dive flag. If anything is missing we can supply
+              first-aid and oxygen equipment, including DAN combination kits. Pricing and
+              arrangements are tailored, so tell us what you have aboard and what you&apos;re
+              planning.
+            </p>
+          </div>
+        </div>
         <div className="mt-5 flex flex-col gap-3 sm:flex-row">
           <TrackedInternalButton
             variant="default"
