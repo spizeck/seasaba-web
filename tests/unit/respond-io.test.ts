@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { expect, it, vi } from "vitest";
 import {
   RESPOND_IO_CDN,
@@ -53,4 +54,25 @@ it("subscribes to both widget events through the documented $respond.on API", ()
   const respond = { on: (e: string) => events.push(e) };
   wireRespondAnalytics(respond, { onChatOpen: vi.fn(), onConversationStart: vi.fn() });
   expect(events).toEqual(["chat:opened", "chat:sent"]);
+});
+
+// The launcher clearance rule in globals.css is the only website-controlled
+// positioning lever that works: Respond.io positions the widget iframe with
+// inline !important styles, so stylesheet bottom/top rules cannot override
+// it — but `transform` is never set by the vendor. The contract below pins
+// the narrow scoping that keeps this safe: the widget's own `state`
+// attribute limits the lift to the closed launcher, never the open panel.
+const globalsCss = readFileSync("app/globals.css", "utf8");
+
+it("lifts only the closed widget launcher, on small screens, via transform", () => {
+  const rule = globalsCss.match(
+    /@media \(max-width: (\d+)px\)\s*{\s*([^}]+)}\s*}/
+  );
+  expect(rule).not.toBeNull();
+  const [, maxWidth, body] = rule!;
+  expect(Number(maxWidth)).toBeLessThan(1024);
+  expect(body).toContain('iframe[title="Webchat Widget"][state="widgetClose"]');
+  expect(body).toContain("transform: translateY(");
+  expect(body).toContain("env(safe-area-inset-bottom");
+  expect(body).not.toContain("!important");
 });
