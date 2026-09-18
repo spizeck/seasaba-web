@@ -67,7 +67,7 @@ it("injects the vendor script after the window load event", () => {
     "src",
     "https://cdn.respond.io/webchat/widget/widget.js?cId=test-cid-123"
   );
-  expect(el).toHaveAttribute("async");
+  expect((el as HTMLScriptElement).async).toBe(true);
 });
 
 it("injects immediately when the page is already complete (client-side navigation)", () => {
