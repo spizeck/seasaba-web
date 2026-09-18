@@ -39,6 +39,9 @@ const cspDirectives: [string, string[]][] = [
       "https://connect.facebook.net",
       "https://consent.cookiebot.com",
       "https://consentcdn.cookiebot.com",
+      // Respond.io Website Chat launcher (widget.js). The chat UI itself
+      // lives inside the cdn.respond.io iframe in frame-src below.
+      "https://cdn.respond.io",
       // Vercel Live toolbar — only ever loaded on preview deployments.
       "https://vercel.live",
     ],
@@ -83,6 +86,12 @@ const cspDirectives: [string, string[]][] = [
       "https://www.facebook.com",
       "https://consent.cookiebot.com",
       "https://consentcdn.cookiebot.com",
+      // Respond.io Website Chat remote-config fetch
+      // (GET /webchat/connect?cId=...) issued by widget.js in the top
+      // frame — the only respond.io call our CSP governs. The widget's
+      // APIs, WebSocket, fonts and assets all run inside its iframe and
+      // are governed by that document's own CSP.
+      "https://service.respond.io",
     ],
   ],
   [
@@ -99,6 +108,9 @@ const cspDirectives: [string, string[]][] = [
       "https://*.doubleclick.net",
       // Cookiebot consent banner/dialog iframe.
       "https://consentcdn.cookiebot.com",
+      // Respond.io Website Chat — the launcher and chat window are a
+      // single iframe (chat.html) injected by widget.js.
+      "https://cdn.respond.io",
     ],
   ],
   ["media-src", ["'self'"]],

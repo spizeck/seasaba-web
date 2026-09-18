@@ -393,6 +393,62 @@ running each case against the live GTM Preview + production deployment.
    deployment to confirm the declaration and Consent Mode wiring.
 6. **Clarity dashboard** — confirm consent signals are received and no
    persistent cookies are created pre-consent.
+
+---
+
+## 8. Respond.io Website Chat — Consent Classification
+
+The Website Chat widget (`components/respond-io-widget.tsx`, channel
+`451154`, public cId `a3b9f90d77e28d988ca0f559795c4c7`) was audited by
+direct runtime observation (Playwright: fresh profile, real production
+`widget.js`, request/storage/WebSocket capture at each lifecycle stage)
+and by reading the shipped vendor bundles.
+
+### Observed behavior
+
+| Lifecycle stage | Cookies (any origin) | Storage on seasaba.com | Network |
+|---|---|---|---|
+| Page load, widget blocked | none | none | — |
+| `widget.js` loaded, no interaction | **none** | **none** — no `document.cookie`, `localStorage`, or `sessionStorage` access exists in the top-frame script | `GET https://cdn.respond.io/webchat/widget/widget.js`, `GET https://service.respond.io/webchat/connect?cId=…` (remote config), iframe document `chat.html` |
+| Chat opened | none | none | traffic stays inside the `cdn.respond.io` iframe (its own origin and CSP) |
+| Reload / returning visitor | none | none | same as script-load stage |
+
+Inside the iframe (governed by respond.io's own CSP, not ours): `chat.js`
+uses `localStorage` on the `cdn.respond.io` origin for chat-session
+persistence, calls `service.respond.io` / `webhook.respond.io`, loads
+Roboto from Google Fonts, assets from `cdn.chatapi.net`, and opens a
+WebSocket (`wss://…execute-api.ap-southeast-1.amazonaws.com/production`)
+for realtime messaging. **None of that touches the seasaba.com origin or
+first-party storage.**
+
+### Classification: Necessary
+
+- The widget sets **no cookies on any origin** and writes **no storage on
+  seasaba.com** — Cookiebot's scanner has nothing to classify or block,
+  and auto-blocking would find nothing anyway.
+- The only data reaching Respond.io before any interaction is the
+  remote-config fetch (page origin + normal request metadata) — the same
+  class of disclosure as the ungated Checkfront booking script, which
+  this site already treats as necessary functional tooling.
+- Gating it behind a consent category would hide the chat launcher from
+  visitors who decline Preferences — breaking a core contact channel for
+  no measurable privacy gain, since there is no tracking behavior to
+  prevent.
+
+If the owner later decides a stricter classification is required, gate
+the script tag the standard Cookiebot way (`type="text/plain"
+data-cookieconsent="<category>"` on the injected element) and update the
+loader to inject only after the matching `Cookiebot.onConsentReady`
+state — do not weaken the rest of the CMP setup to accommodate it.
+
+### Remaining owner-side decisions (not code)
+
+- Whether transmitting the page-load config fetch to Respond.io under
+  "necessary/legitimate interest" is acceptable for the site's privacy
+  posture (the chat cannot offer its launcher without it).
+- Cookiebot declaration wording for the widget, once the post-deploy
+  scan runs — expect no cookie entries; the declaration should reflect
+  that.
 7. **Meta Pixel Helper** — confirm `PageView`/custom events do not fire
    before marketing consent and are not duplicated after.
 

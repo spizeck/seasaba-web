@@ -76,7 +76,7 @@ export default function PrivacyPage() {
           <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-relaxed text-muted-foreground">
             <li>Checkfront (reservations and booking management)</li>
             <li>Payment processors used in connection with reservations</li>
-            <li>Respond.io (customer and WhatsApp communication)</li>
+            <li>Respond.io (website chat and customer messaging, including WhatsApp)</li>
             <li>Your email provider (our contact form prepares a message in your own email app, which you review and send yourself)</li>
             <li>Analytics providers</li>
             <li>Advertising and measurement platforms</li>
@@ -126,14 +126,21 @@ export default function PrivacyPage() {
         </section>
 
         <section>
-          <h2 className="text-xl font-semibold text-foreground">Email and WhatsApp Communication</h2>
+          <h2 className="text-xl font-semibold text-foreground">Email, Chat, and WhatsApp Communication</h2>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-            If you contact Sea Saba through email, WhatsApp, or website forms, we may retain those communications to provide customer service and assist with future inquiries.
+            If you contact Sea Saba through email, WhatsApp, website chat, or website forms, we may retain those communications to provide customer service and assist with future inquiries.
           </p>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
             Our website contact form does not transmit your message to us directly — it opens a
             pre-filled email in your own email application, and the message is sent from your email
             account when you choose to send it.
+          </p>
+          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+            The website chat widget is provided by Respond.io. When you open the chat and submit the
+            pre-chat form or send messages, the information you enter — such as your first name,
+            email address, and message contents — is transmitted directly to Respond.io and processed
+            under its own privacy policy. The widget does not set cookies or store data on the
+            seasaba.com domain; its session state is kept inside the widget itself.
           </p>
         </section>
 

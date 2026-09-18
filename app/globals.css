@@ -191,3 +191,31 @@
     display: none;
   }
 }
+
+/*
+ * Respond.io Website Chat — small-screen launcher clearance.
+ *
+ * The vendor iframe is positioned with inline `bottom: <25 + Vertical
+ * Spacing>px !important`. Respond.io's dashboard offers a single
+ * Vertical/Horizontal Spacing pair for all viewports — there is no
+ * supported per-device offset, and `window.__respond_settings` only maps
+ * to contactDetails. Raising the dashboard value would also move the
+ * desktop launcher, which is already correctly placed.
+ *
+ * Instead we lift the whole iframe 60px via `transform` — a property the
+ * widget never sets inline, so its `!important` rules are untouched and
+ * nothing fights the vendor render loop. The `state="widgetClose"`
+ * attribute (emitted by the widget itself) scopes the rule to the closed
+ * launcher + greeting popup only: the open chat panel keeps its own
+ * positioning (fullscreen under 600px, anchored panel above). Measured
+ * overlap with the homepage trust bar's right-hand review column extends
+ * to ~900px; below `lg` (1024px) is the smallest bound that clears it at
+ * every width. `env(safe-area-inset-bottom)` is inert today (the site
+ * does not set viewport-fit=cover) but keeps the launcher above device
+ * chrome if that ever changes.
+ */
+@media (max-width: 1023px) {
+  iframe[title="Webchat Widget"][state="widgetClose"] {
+    transform: translateY(calc(-60px - env(safe-area-inset-bottom, 0px)));
+  }
+}
