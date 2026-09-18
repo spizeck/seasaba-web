@@ -515,10 +515,10 @@ export default function DivingPage() {
               If it&apos;s been more than {OPERATIONS.refresher.recommendedAfterYears} year since your last
               dive, we recommend a refresher to get comfortable again. Past roughly{" "}
               {OPERATIONS.refresher.generallyRequiredAfterYears} years, expect one to be required.
-              It&apos;s not a hard line: ultimately it&apos;s at Sea Saba&apos;s discretion which
-              option is most appropriate, based on your actual experience, recent dive history,
-              comfort level, and the diving planned — and sometimes a private guide is the better
-              answer. Mention it when you book or{" "}
+              It&apos;s not a hard line, though. Which option fits best is at Sea Saba&apos;s
+              discretion, based on your actual experience, recent dive history, comfort level,
+              and the diving you have planned. Sometimes a private guide is the better answer.
+              Mention it when you book or{" "}
               <Link href="/contact?interest=book-diving" className="font-medium text-primary hover:underline underline-offset-4">send us a note</Link>
               {" "}and we&apos;ll suggest the right arrangement.
             </p>
@@ -618,18 +618,15 @@ export default function DivingPage() {
           <h2 className="text-xl font-semibold text-foreground">Diving with Kids &amp; Junior Divers</h2>
         </div>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          We love diving with young divers, and it&apos;s something close to us at Sea Saba.
-          Our own two kids were certified at 10 and grew up diving Saba with us, so helping
-          families introduce young divers to boat diving is something we know personally.
-          Junior divers are welcome on our trips and dive
-          within the depth, supervision, and other limits of their certification.
+          Diving with young divers is something we know personally. Our own two kids were
+          certified at 10 and grew up diving Saba with us. Junior divers are welcome on our
+          trips and dive within the depth, supervision, and other limits of their certification.
         </p>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
           Families with younger divers often do best with their own guide. We especially
           recommend considering a private guide when diving with children under{" "}
           {OPERATIONS.juniorPrivateGuideRecommendedUnderAge}: it lets the family set its own
-          pace and dive profile instead of matching the rest of a group, which makes the day
-          more relaxed and a lot more fun for everyone.
+          pace and dive profile instead of matching the rest of a group.
         </p>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
           Every young diver is different, so tell us about their certification, experience,

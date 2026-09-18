@@ -70,7 +70,7 @@ describe("visiting yachts page", () => {
     expect(text).toMatch(/vessel.{0,20}name in the booking notes/i);
     // Marine Park/chamber fees on the Sea Saba invoice; harbor/mooring separate.
     expect(text).toMatch(/diving invoice/i);
-    expect(text).toMatch(/harbor fees are a separate/i);
+    expect(text).toMatch(/harbor fees[^.]*separat/i);
     // Independent diving is prohibited, not merely "check the rules".
     expect(text).toMatch(/independent diving isn.t permitted/i);
     expect(text).toMatch(/licensed dive operator/i);
@@ -116,5 +116,11 @@ describe("visiting yachts page", () => {
     // No invented public fill pricing anywhere on the page.
     const { container } = render(<VisitingYachtsPage />);
     expect(container.textContent).not.toMatch(/fill[^\n]{0,40}\$\d/i);
+  });
+
+  it("keeps the rendered customer-facing prose free of em dashes", () => {
+    // Scoped to this guide on purpose — not a site-wide typography rule.
+    const { container } = render(<VisitingYachtsPage />);
+    expect(container.textContent).not.toContain("\u2014");
   });
 });
