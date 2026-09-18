@@ -18,6 +18,7 @@
     "test:smoke": "playwright test --grep @smoke",
     "test:smoke:prod": "playwright test --config playwright.production.config.ts",
     "test:perf": "node scripts/perf-baseline.mjs",
+    "audit:typography": "node scripts/audit-typography.mjs",
     "check:docs": "node scripts/check-doc-links.mjs",
     "check:env": "node scripts/check-env-vars.mjs",
     "check:hygiene": "node scripts/check-repo-hygiene.mjs",

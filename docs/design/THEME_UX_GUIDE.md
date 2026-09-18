@@ -122,6 +122,15 @@ The brand red should feel like deliberate punctuation, not a decorative theme co
 
 ## Typography
 
+> **Implementation divergence (Issue #112 audit, Sept 2026):** the declared
+> stack and scale below do not match what the site currently renders. Open
+> Sans is loaded but not applied to body text (a CSS-variable scoping bug);
+> no heading font is loaded, so headings resolve to locally installed fonts
+> that differ by OS; and component-level `text-*` utilities produce smaller
+> sizes than the scale below. See `docs/design/TYPOGRAPHY_AUDIT.md` for the
+> measured inventory and the proposed canonical system. This section remains
+> the *declared intent* until the audit recommendations are approved.
+
 ### Font Stack
 - **Headings:** Century Gothic
 - **Body / Copy:** Open Sans
