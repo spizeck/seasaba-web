@@ -515,8 +515,9 @@ export default function DivingPage() {
               If it&apos;s been more than {OPERATIONS.refresher.recommendedAfterYears} year since your last
               dive, we recommend a refresher to get comfortable again. Past roughly{" "}
               {OPERATIONS.refresher.generallyRequiredAfterYears} years, expect one to be required.
-              It&apos;s not a hard line: the call depends on your experience, comfort, the
-              conditions, and the dives planned, and sometimes a private guide is the better
+              It&apos;s not a hard line: ultimately it&apos;s at Sea Saba&apos;s discretion which
+              option is most appropriate, based on your actual experience, recent dive history,
+              comfort level, and the diving planned — and sometimes a private guide is the better
               answer. Mention it when you book or{" "}
               <Link href="/contact?interest=book-diving" className="font-medium text-primary hover:underline underline-offset-4">send us a note</Link>
               {" "}and we&apos;ll suggest the right arrangement.
@@ -618,8 +619,9 @@ export default function DivingPage() {
         </div>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
           We love diving with young divers, and it&apos;s something close to us at Sea Saba.
-          We&apos;ve watched our own kids grow up diving here, so we know the difference a
-          patient first boat dive makes. Junior divers are welcome on our trips and dive
+          Our own two kids were certified at 10 and grew up diving Saba with us, so helping
+          families introduce young divers to boat diving is something we know personally.
+          Junior divers are welcome on our trips and dive
           within the depth, supervision, and other limits of their certification.
         </p>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">

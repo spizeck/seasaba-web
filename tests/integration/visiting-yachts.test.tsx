@@ -44,6 +44,62 @@ describe("visiting yachts page", () => {
     const hrefs = screen.getAllByRole("link").map((a) => a.getAttribute("href"));
     expect(hrefs).toContain("/contact?interest=visiting-yacht");
     expect(hrefs).toContain("/diving");
+    // The stale mailto framing must not reappear — the form sends server-side.
+    const { container } = render(<VisitingYachtsPage />);
+    expect(container.textContent).not.toMatch(/email app|doesn.t send anything/i);
+  });
+
+  it("describes the standard dinghy-to-Fort-Bay flow and shuttle support", () => {
+    const { container } = render(<VisitingYachtsPage />);
+    const text = container.textContent ?? "";
+    // Dinghy in, gear to the shop (storable between days), ~30 min before departure.
+    expect(text).toMatch(/dinghy into Fort Bay/i);
+    expect(text).toMatch(/store it for you between dive days/i);
+    expect(text).toMatch(/30 minutes before/i);
+    // Yacht guests still get the included shuttle into town + taxi coordination.
+    expect(text).toMatch(/scheduled shuttle into town/i);
+    expect(text).toMatch(/coordinate taxis/i);
+    // Vessel pickup exists only for later dives and is never promised.
+    expect(text).toMatch(/not practical for the first dive/i);
+  });
+
+  it("keeps booking, fee, and independent-diving boundaries accurate", () => {
+    const { container } = render(<VisitingYachtsPage />);
+    const text = container.textContent ?? "";
+    // Checkfront booking notes capture the vessel name — no invented field.
+    expect(text).toMatch(/vessel.{0,20}name in the booking notes/i);
+    // Marine Park/chamber fees on the Sea Saba invoice; harbor/mooring separate.
+    expect(text).toMatch(/diving invoice/i);
+    expect(text).toMatch(/harbor fees are a separate/i);
+    // Independent diving is prohibited, not merely "check the rules".
+    expect(text).toMatch(/independent diving isn.t permitted/i);
+    expect(text).toMatch(/licensed dive operator/i);
+    // No customer-cylinder fills, no unguided tank supply.
+    expect(text).toMatch(/don.t fill customer-owned cylinders/i);
+    expect(text).toMatch(/tanks for independent diving/i);
+  });
+
+  it("describes tender-based private diving with its safety requirements", () => {
+    const { container } = render(<VisitingYachtsPage />);
+    const text = container.textContent ?? "";
+    expect(text).toMatch(/guide aboard your tender/i);
+    expect(text).toMatch(/runs from the tender rather than the yacht/i);
+    // Required safety equipment is confirmed before the plan is finalized.
+    expect(text).toMatch(/before the diving plan is finalized/i);
+    expect(text).toMatch(/dive flag/i);
+    expect(text).toMatch(/ship-to-shore radio/i);
+    expect(text).toMatch(/oxygen/i);
+  });
+
+  it("shows the canonical Advanced departure and links authoritative sources", () => {
+    const { container } = render(<VisitingYachtsPage />);
+    expect(container.textContent).toContain(DIVE_PRODUCTS.advanced.schedule.departure);
+    const hrefs = screen.getAllByRole("link").map((a) => a.getAttribute("href") ?? "");
+    // Marine Park's licensed-operator rule and the harbor expansion project.
+    expect(hrefs.some((h) => h.includes("SCF_Yacht_Registration_Form"))).toBe(true);
+    expect(hrefs.some((h) => h.includes("black-rocks-harbor"))).toBe(true);
+    // Saba C-Transport referral for vessel-agency needs.
+    expect(hrefs.some((h) => h.startsWith("https://www.sabaferry.com"))).toBe(true);
   });
 
   it("makes Sea Saba's boundaries honest: guided diving, no promised fills or moorings", () => {
