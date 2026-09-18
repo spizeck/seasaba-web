@@ -59,6 +59,98 @@ describe("diving page canonical sourcing", () => {
     ).toBeGreaterThan(0);
   });
 
+  it("presents refresher guidance as recommendation, then requirement at Sea Saba's discretion", () => {
+    render(<DivingPage />);
+    expect(
+      screen.getAllByText((_, el) =>
+        el?.textContent?.includes(`more than ${OPERATIONS.refresher.recommendedAfterYears} year`) ?? false
+      ).length
+    ).toBeGreaterThan(0);
+    expect(
+      screen.getAllByText((_, el) => /recommend a refresher/i.test(el?.textContent ?? "")).length
+    ).toBeGreaterThan(0);
+    expect(
+      screen.getAllByText((_, el) =>
+        el?.textContent?.includes(`${OPERATIONS.refresher.generallyRequiredAfterYears} years`) ?? false
+      ).length
+    ).toBeGreaterThan(0);
+    // Discretion, not an immutable rule.
+    expect(
+      screen.getAllByText((_, el) => /not a hard line|discretion|our call/i.test(el?.textContent ?? "")).length
+    ).toBeGreaterThan(0);
+  });
+
+  it("breaks the combined dive fee into park and chamber components", () => {
+    render(<DivingPage />);
+    const { marineParkPerDiveUsd, chamberContributionPerDiveUsd, snorkelParkPerPersonUsd } =
+      OPERATIONS.conservationFees;
+    const combined = marineParkPerDiveUsd + chamberContributionPerDiveUsd;
+    expect(
+      screen.getAllByText((_, el) =>
+        el?.textContent?.includes(`$${combined} per diver, per dive`) ?? false
+      ).length
+    ).toBeGreaterThan(0);
+    expect(
+      screen.getAllByText((_, el) =>
+        el?.textContent?.includes(`$${marineParkPerDiveUsd} goes to the`) ?? false
+      ).length
+    ).toBeGreaterThan(0);
+    expect(
+      screen.getAllByText((_, el) =>
+        el?.textContent?.includes(`$${snorkelParkPerPersonUsd} per person`) ?? false
+      ).length
+    ).toBeGreaterThan(0);
+  });
+
+  it("welcomes junior divers without inventing a universal minimum age", () => {
+    render(<DivingPage />);
+    expect(
+      screen.getAllByText((_, el) => /limits of their certification/i.test(el?.textContent ?? "")).length
+    ).toBeGreaterThan(0);
+    expect(
+      screen.getAllByText((_, el) =>
+        el?.textContent?.includes(`under ${OPERATIONS.juniorPrivateGuideRecommendedUnderAge}`) ?? false
+      ).length
+    ).toBeGreaterThan(0);
+    // Recommendation language, not a mandate for every junior diver.
+    expect(
+      screen.getAllByText((_, el) => /recommend considering a private guide/i.test(el?.textContent ?? "")).length
+    ).toBeGreaterThan(0);
+  });
+
+  it("describes drift diving alongside mooring diving with correct site examples", () => {
+    const { container } = render(<DivingPage />);
+    const text = container.textContent ?? "";
+    // Diving is not presented as exclusively mooring-based.
+    expect(text).toMatch(/drift dives/i);
+    expect(text).toMatch(/live drop|live pickup/i);
+    // Deeper-water examples are the genuinely offshore sites.
+    expect(text).toMatch(/Shark Shoal/i);
+    expect(text).toMatch(/Twilight Zone/i);
+    // Man O' War Shoals and Diamond Rock are described as close to shore,
+    // not as offshore/deep-water examples.
+    expect(text).toMatch(/Man O.{0,3}War Shoals and Diamond Rock[^.]*close to shore/i);
+  });
+
+  it("states Nitrox depth wording and the Advanced Dive 1 requirement accurately", () => {
+    const { container } = render(<DivingPage />);
+    const text = container.textContent ?? "";
+    expect(text).toMatch(/30 m \/ 100 ft/i);
+    expect(text).not.toMatch(/90.{0,3}120 feet/i);
+    expect(text).not.toMatch(/same deep pinnacles two mornings/i);
+    // The Nitrox FAQ must not contradict the Advanced Dive 1 requirement.
+    expect(text).toMatch(/required on Dive 1 of the/i);
+    expect(text).not.toMatch(/dive air on any trip/i);
+  });
+
+  it("describes multiple breathing-air compressors and answers the mooring FAQ", () => {
+    const { container } = render(<DivingPage />);
+    const text = container.textContent ?? "";
+    expect(text).toMatch(/breathing air compressors/i);
+    expect(text).not.toMatch(/a high-pressure breathing air compressor/i);
+    expect(text).toMatch(/Do you always dive from a mooring/i);
+  });
+
   it("states the guided/no-solo and no-decompression rules", () => {
     render(<DivingPage />);
     expect(

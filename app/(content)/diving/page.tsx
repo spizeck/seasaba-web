@@ -3,7 +3,7 @@ import { PageHero } from "@/components/page-hero";
 import { FeatureImage } from "@/components/feature-image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Users, Award, Bus, Droplets, ShieldCheck, Wind, HelpCircle, Mountain, Gauge, Waves, Wrench, Anchor } from "lucide-react";
+import { Users, Award, Bus, Droplets, ShieldCheck, Wind, HelpCircle, Mountain, Gauge, Waves, Wrench, Anchor, Heart } from "lucide-react";
 import { InsuranceCTAs } from "@/components/insurance-ctas";
 import { ExperienceSelector } from "@/components/experience-selector";
 import { TrackedInternalButton } from "@/components/tracked-internal-button";
@@ -162,9 +162,9 @@ const DIVING_FAQS = [
     question: "Do I need Nitrox certification?",
     answer: (
       <>
-        No. You can dive air on any trip. Certified Nitrox divers get complimentary{" "}
-        {OPERATIONS.nitroxBlend} Nitrox, and on the {DIVE_PRODUCTS.advanced.name} it&apos;s
-        required on Dive 1.
+        No. Nitrox certification is not required for most trips. Certified Nitrox divers get
+        complimentary {OPERATIONS.nitroxBlend} Nitrox. Nitrox is required on Dive 1 of the{" "}
+        {DIVE_PRODUCTS.advanced.name}, so you&apos;ll need Nitrox certification for that trip.
       </>
     ),
   },
@@ -194,6 +194,16 @@ const DIVING_FAQS = [
         Certification card, dive computer, logbook, swimwear, and a towel; everything else can be
         rented. Full list:{" "}
         <Link href={`/plan-your-trip#${planYourTripAnchors.whatToBring}`} className="font-medium text-primary hover:underline underline-offset-4">What to Bring</Link>.
+      </>
+    ),
+  },
+  {
+    question: "Do you always dive from a mooring?",
+    answer: (
+      <>
+        Most dives use the Marine Park moorings, but not all of them. We also run drift dives
+        when conditions call for it or when it gives us a better dive. A drift may run from one
+        mooring to another, from a mooring to a live pickup, or use both a live drop and pickup.
       </>
     ),
   },
@@ -242,6 +252,7 @@ export default function DivingPage() {
           { id: divingAnchors.diveDay, label: "A Dive Day" },
           { id: divingAnchors.certification, label: "Certification" },
           { id: divingAnchors.mixedExperience, label: "Mixed Groups" },
+          { id: divingAnchors.juniorDivers, label: "Kids & Juniors" },
           { id: divingAnchors.equipment, label: "Equipment" },
           { id: divingAnchors.nitrox, label: "Nitrox" },
           { id: divingAnchors.marinePark, label: "Marine Park" },
@@ -351,7 +362,7 @@ export default function DivingPage() {
           Saba is a dormant volcano rising straight out of deep water, and the diving reflects it.
           Instead of flat coral gardens, the sites are built from volcanic rock: pinnacles
           climbing toward the surface, walls, boulder fields, and lava-flow ridges. Everything we
-          dive is inside the Saba Marine Park, on permanent moorings a short boat ride from{" "}
+          dive is inside the Saba Marine Park, a short boat ride from{" "}
           {OPERATIONS.harbor}.
         </p>
 
@@ -359,11 +370,12 @@ export default function DivingPage() {
           <div className="rounded-lg border border-border/40 bg-muted/20 p-5">
             <h3 className="text-sm font-semibold text-foreground">Volcanic Terrain, Real Variety</h3>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              The signature dives are offshore pinnacles and seamounts like Third Encounter,
-              Man O&apos; War Shoals, and Diamond Rock, which rise from deep water into
-              recreational range. Closer to shore, sites like Tent Reef start shallow and step
-              down into ledges and walls. Depths and profiles vary enough that a week of diving
-              doesn&apos;t repeat itself.
+              Saba&apos;s dive sites include offshore pinnacles, walls, boulder fields, and
+              lava-flow ridges. Third Encounter, Shark Shoal, and Twilight Zone are among the
+              deeper-water sites, while sites closer to shore, like Tent Reef, start shallow and
+              step down into ledges and walls. Man O&apos; War Shoals and Diamond Rock rise just
+              as dramatically, though both sit close to shore. Depths and profiles vary enough
+              that a week of diving doesn&apos;t repeat itself.
             </p>
           </div>
           <div className="rounded-lg border border-border/40 bg-muted/20 p-5">
@@ -375,8 +387,11 @@ export default function DivingPage() {
               experience aboard. Not every site suits every diver or every day.
             </p>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              Entries and exits are from the boat, and our large deep ladders make getting back
-              aboard straightforward.
+              Most dives use the Marine Park moorings, but we also run drift dives when
+              conditions call for it or when it gives us a better dive. That might mean drifting
+              from one mooring to another, starting from a mooring with a live pickup, or making
+              both a live drop and pickup. Entries remain from the boat, and our large deep
+              ladders make getting back aboard straightforward.
             </p>
           </div>
         </div>
@@ -511,7 +526,13 @@ export default function DivingPage() {
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
               Try Scuba and full certification live on our{" "}
               <Link href="/courses" className="font-medium text-primary hover:underline underline-offset-4">Courses page</Link>.
-              If it&apos;s been a while since your last dive, mention it when you book or{" "}
+              If it&apos;s been more than {OPERATIONS.refresher.recommendedAfterYears} year since your last
+              dive, we recommend a refresher to get comfortable again. Past roughly{" "}
+              {OPERATIONS.refresher.generallyRequiredAfterYears} years, expect one to be required.
+              It&apos;s not a hard line, though. Which option fits best is at Sea Saba&apos;s
+              discretion, based on your actual experience, recent dive history, comfort level,
+              and the diving you have planned. Sometimes a private guide is the better answer.
+              Mention it when you book or{" "}
               <Link href="/contact?interest=book-diving" className="font-medium text-primary hover:underline underline-offset-4">send us a note</Link>
               {" "}and we&apos;ll suggest the right arrangement.
             </p>
@@ -594,6 +615,51 @@ export default function DivingPage() {
             .
           </p>
         </div>
+
+        <p className="mt-4 text-sm text-muted-foreground">
+          Traveling with young divers? See{" "}
+          <Link href={`#${divingAnchors.juniorDivers}`} className="font-medium text-primary hover:underline underline-offset-4">
+            Diving with Kids &amp; Junior Divers
+          </Link>{" "}
+          below.
+        </p>
+      </section>
+
+      {/* Diving with Kids & Junior Divers */}
+      <section id={divingAnchors.juniorDivers} className="mt-14 scroll-mt-40">
+        <div className="flex items-center gap-3">
+          <Heart className="h-5 w-5 text-primary" />
+          <h2 className="text-xl font-semibold text-foreground">Diving with Kids &amp; Junior Divers</h2>
+        </div>
+        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          Diving with young divers is something we know personally. Our own two kids were
+          certified at 10 and grew up diving Saba with us. Junior divers are welcome on our
+          trips and dive within the depth, supervision, and other limits of their certification.
+        </p>
+        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          Families with younger divers often do best with their own guide. We especially
+          recommend considering a private guide when diving with children under{" "}
+          {OPERATIONS.juniorPrivateGuideRecommendedUnderAge}: it lets the family set its own
+          pace and dive profile instead of matching the rest of a group.
+        </p>
+        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          Every young diver is different, so tell us about their certification, experience,
+          and comfort in the water and we&apos;ll help you choose the right arrangement.{" "}
+          <Link href="/contact?interest=book-diving" className="font-medium text-primary hover:underline underline-offset-4">
+            Contact us
+          </Link>{" "}
+          or message us on{" "}
+          <TrackedContactLink
+            href={CONTACT.whatsappHref}
+            eventName="whatsapp_click"
+            buttonText="WhatsApp — diving junior divers"
+            external
+            className="font-medium text-primary hover:underline underline-offset-4"
+          >
+            WhatsApp
+          </TrackedContactLink>
+          .
+        </p>
       </section>
 
       {/* Equipment, Tanks & Computers */}
@@ -650,27 +716,27 @@ export default function DivingPage() {
           <h2 className="text-xl font-semibold text-foreground">Free Nitrox for Certified Divers</h2>
         </div>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          Sea Saba provides complimentary {OPERATIONS.nitroxBlend} Nitrox to all certified Nitrox divers — no extra charge, no rental fee. Please bring proof of Nitrox certification.
+          Sea Saba provides complimentary {OPERATIONS.nitroxBlend} Nitrox to all certified Nitrox divers: no extra charge, no rental fee. Please bring proof of Nitrox certification.
         </p>
 
         <div className="mt-6 grid gap-5 sm:grid-cols-2">
           <div className="rounded-lg border border-border/40 bg-muted/20 p-5">
             <h3 className="text-sm font-semibold text-foreground">Why Nitrox on Saba?</h3>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              Saba&apos;s dive profiles are deeper than average. Volcanic pinnacles like Third Encounter and Man O&apos; War Shoals regularly take divers to 90–120 feet. On a multi-day diving schedule with two dives per day, many divers appreciate the added no-decompression limit flexibility that Nitrox provides at these depths.
+              Saba&apos;s dive profiles can be deeper than average. Volcanic pinnacles like Third Encounter and Shark Shoal can take divers to around 30 m / 100 ft. On a multi-day diving schedule with two dives per day, many divers appreciate the additional no-decompression time that Nitrox provides at these depths.
             </p>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              Nitrox also suits Saba&apos;s repetitive diving schedule well. When you&apos;re diving the same deep pinnacles two mornings in a row, reduced nitrogen loading between dives can be a meaningful advantage.
+              Nitrox also works well with Saba&apos;s repetitive diving schedule, helping reduce nitrogen exposure compared with air on the same dive profile.
             </p>
           </div>
           <div className="rounded-lg border border-border/40 bg-muted/20 p-5">
             <h3 className="text-sm font-semibold text-foreground">Our Air Quality Standard</h3>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              Sea Saba fills all tanks — air and Nitrox — using a high-pressure breathing air compressor maintained to IANTD standards. Our fill station is regularly tested to ensure clean, dry, safe breathing gas. We do not blend Nitrox by partial pressure from industrial oxygen; we use a dedicated membrane system to produce consistent 32% mixes.
+              Sea Saba fills all tanks, air and Nitrox, using high-pressure breathing air compressors maintained to IANTD standards. Our fill station is regularly tested to ensure clean, dry, safe breathing gas. We produce our {OPERATIONS.nitroxBlend} Nitrox with a dedicated membrane system rather than blending with industrial oxygen.
             </p>
             <ul className="mt-3 space-y-1.5 text-sm text-muted-foreground">
               <li className="flex items-center gap-2"><Droplets className="h-3.5 w-3.5 shrink-0 text-primary" />Free 32% Nitrox on all qualifying dives</li>
-              <li className="flex items-center gap-2"><Droplets className="h-3.5 w-3.5 shrink-0 text-primary" />Membrane system — consistent, clean mix</li>
+              <li className="flex items-center gap-2"><Droplets className="h-3.5 w-3.5 shrink-0 text-primary" />Membrane system produces a consistent, clean mix</li>
               <li className="flex items-center gap-2"><Droplets className="h-3.5 w-3.5 shrink-0 text-primary" />Proof of Nitrox certification required</li>
               <li className="flex items-center gap-2"><Droplets className="h-3.5 w-3.5 shrink-0 text-primary" />SDI/TDI Nitrox courses available on Saba</li>
             </ul>
@@ -683,7 +749,7 @@ export default function DivingPage() {
             <Link href={`/courses#${coursesAnchors.nitrox}`} className="font-medium text-primary hover:underline underline-offset-4">
               View our SDI Nitrox course
             </Link>
-            {" "}— get certified before your next dive trip and start using free Nitrox on Saba from day one.
+            {" "}to get certified before your next dive trip and start using free Nitrox on Saba from day one.
           </p>
         </div>
       </section>
@@ -721,6 +787,19 @@ export default function DivingPage() {
               <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Sites are chosen each day for the conditions and the group aboard</span></li>
             </ul>
           </div>
+        </div>
+
+        <div className="mt-5 rounded-lg border border-primary/20 bg-primary/5 px-5 py-4">
+          <p className="text-sm text-muted-foreground">
+            Diving carries a conservation contribution of{" "}
+            ${OPERATIONS.conservationFees.marineParkPerDiveUsd + OPERATIONS.conservationFees.chamberContributionPerDiveUsd}{" "}
+            per diver, per dive: ${OPERATIONS.conservationFees.marineParkPerDiveUsd} goes to the
+            Saba Marine Park and ${OPERATIONS.conservationFees.chamberContributionPerDiveUsd} to the
+            island&apos;s hyperbaric chamber fund. Snorkeling is{" "}
+            ${OPERATIONS.conservationFees.snorkelParkPerPersonUsd} per person. These fees are set by
+            the park and the chamber, not Sea Saba, and they directly fund the moorings, patrols,
+            and emergency coverage described above.
+          </p>
         </div>
 
         <p className="mt-4 text-sm text-muted-foreground">
@@ -1068,6 +1147,10 @@ export default function DivingPage() {
           Not sure which trip fits?{" "}
           <Link href="/contact?interest=book-diving" className="font-medium text-primary hover:underline underline-offset-4">
             Ask us before you book
+          </Link>
+          . Arriving on your own boat? See our{" "}
+          <Link href="/visiting-yachts" className="font-medium text-primary hover:underline underline-offset-4">
+            yacht visitors&apos; guide
           </Link>
           .
         </p>
