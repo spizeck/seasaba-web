@@ -161,6 +161,6 @@ describe("visiting yachts page", () => {
     // yachting brochure — not presented as Sea Saba's own preference.
     expect(text).toMatch(/safety regulation/i);
     const hrefs = screen.getAllByRole("link").map((a) => a.getAttribute("href") ?? "");
-    expect(hrefs.some((h) => h.includes("sabapark.org"))).toBe(true);
+    expect(hrefs).toContain("https://sabapark.org/downloads/SCF%20Yacht%20Brochure.pdf");
   });
 });
