@@ -314,6 +314,18 @@ export default function PlanYourTripPage() {
             </TrackedOutboundButton>
           </div>
         </div>
+
+        <div className="mt-6 flex items-start gap-3 rounded-lg border border-border/50 bg-muted/20 p-5">
+          <Ship className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+          <p className="text-sm leading-relaxed text-muted-foreground">
+            Arriving on your own boat? Our{" "}
+            <Link href="/visiting-yachts" className="font-medium text-primary hover:underline underline-offset-4">
+              guide for yachts and sailboats
+            </Link>{" "}
+            covers Fort Bay clearance, Marine Park moorings, and how to dive with us while your
+            vessel is in Saba.
+          </p>
+        </div>
       </section>
 
       {/* When to Visit */}

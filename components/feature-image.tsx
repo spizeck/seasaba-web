@@ -6,6 +6,8 @@ interface FeatureImageProps {
   objectPosition?: string;
   /** When true the image renders on the right col on desktop */
   imageRight?: boolean;
+  /** When true the text column gets a wider 2/5 share instead of the default 1/3 */
+  balanced?: boolean;
   /** When true the text column is vertically centered (use for short text blocks) */
   centerText?: boolean;
   /** When true, text is stacked above the image on mobile instead of below it. */
@@ -26,17 +28,23 @@ export function FeatureImage({
   alt,
   objectPosition = "center",
   imageRight = false,
+  balanced = false,
   centerText = false,
   mobileTextFirst = false,
   id,
   children,
 }: FeatureImageProps) {
+  const columns = imageRight
+    ? balanced
+      ? "lg:grid-cols-[2fr_3fr]"
+      : "lg:grid-cols-[1fr_2fr]"
+    : balanced
+      ? "lg:grid-cols-[3fr_2fr]"
+      : "lg:grid-cols-[2fr_1fr]";
   return (
     <div
       id={id}
-      className={`not-prose grid gap-6 lg:items-stretch lg:gap-14 ${
-        imageRight ? "lg:grid-cols-[1fr_2fr]" : "lg:grid-cols-[2fr_1fr]"
-      }`}
+      className={`not-prose grid gap-6 lg:items-stretch lg:gap-14 ${columns}`}
     >
       <div className={`relative aspect-[4/3] w-full overflow-hidden rounded-lg lg:aspect-auto lg:h-full lg:min-h-[280px] ${
         imageRight

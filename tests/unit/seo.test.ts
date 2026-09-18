@@ -26,7 +26,7 @@ it("preserves unique single-hop permanent legacy redirects", () => {
 });
 it("advertises production-critical pages on the correct domain", () => {
   const urls = sitemap().map((entry) => entry.url);
-  for (const path of ["", "/diving", "/book", "/contact", "/dive-log", "/courses", "/plan-your-trip"]) expect(urls).toContain(`https://www.seasaba.com${path}`);
+  for (const path of ["", "/diving", "/book", "/contact", "/dive-log", "/courses", "/plan-your-trip", "/visiting-yachts"]) expect(urls).toContain(`https://www.seasaba.com${path}`);
   expect(new Set(urls).size).toBe(urls.length);
   expect(robots().sitemap).toBe("https://www.seasaba.com/sitemap.xml");
 });

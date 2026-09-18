@@ -19,6 +19,9 @@
 - **Google Analytics 4** — configured and loaded exclusively inside GTM. The application does not load GA4 or call `window.gtag()` directly.
 - **Unified event utility** — `lib/analytics.ts` pushes each business event once to the GTM data layer and separately sends it to Vercel Analytics.
 - **Reusable tracking components** — `TrackedInternalButton`, `TrackedOutboundButton`, `TrackedOutboundLink`, and `TrackedContactLink` simplify future instrumentation.
+- **Respond.io Website Chat** — native vendor widget loaded by `components/respond-io-widget.tsx` when `NEXT_PUBLIC_RESPOND_IO_CID` is set. Its `chat:opened` / `chat:sent` events feed the `chat_open` / `chat_conversation_started` analytics events; no names, emails, message text, or Respond.io IDs are ever sent to analytics.
+
+"Page parameters" below means `page_location` (origin + pathname only), `page_path`, `page_title`, and `page_referrer`/`referrer` (origin + pathname only). Query strings and fragments are stripped centrally in `trackEvent` so landing or referrer URLs cannot forward visitor data (emails, names, booking references) embedded in parameters.
 
 ## Tracked Events
 
@@ -36,17 +39,25 @@
 | `ferry_link_click` | Plan-your-trip and local partner ferry links | Page parameters, link parameters, and legacy aliases |
 | `social_click` | Social, partner, accommodation, and outbound resource links | Page parameters, link parameters, `partner_name` where applicable, and legacy aliases |
 | `pdf_download` | Dive-log PDF export | Page parameters, `dive_count`, `unit_system` |
+| `chat_open` | Respond.io Website Chat `chat:opened` event (visitor intentionally opened the native widget) | Page parameters only — no widget or contact data |
+| `chat_conversation_started` | First Respond.io `chat:sent` event per page session (first visitor message; `chat:sent` exists in the shipped widget API but is undocumented — it fires per message, so only the first is counted) | Page parameters only — no widget or contact data |
 
 ## Environment Variables
 
 ```env
 NEXT_PUBLIC_GTM_ID=GTM-XXXXXXX
+NEXT_PUBLIC_RESPOND_IO_CID=<public widget cId>
 ```
 
 `NEXT_PUBLIC_GTM_ID` is **optional**: when unset, `AnalyticsLoader` renders
 nothing and no GTM/GA4/ads/Clarity/Meta tags load — the recommended state for
 local development so browsing never pollutes analytics. Set the real
 container ID only in deployed environments (Vercel).
+
+`NEXT_PUBLIC_RESPOND_IO_CID` is likewise **optional**: when unset the chat
+widget loads nothing. It is a public widget identifier (visible in page
+source wherever the widget is embedded), not a credential — but leaving it
+empty locally keeps development free of third-party calls.
 
 There is no `NEXT_PUBLIC_SITE_URL` — the canonical site URL is the `SITE_URL`
 constant in `lib/constants.ts`, used by metadata, sitemap, robots and JSON-LD.

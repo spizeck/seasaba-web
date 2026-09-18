@@ -25,6 +25,36 @@ export const OPERATIONS = {
   nitroxBlend: "32%",
   /** Every dive trip departs from and returns to Fort Bay Harbor. */
   harbor: "Fort Bay Harbor",
+  /**
+   * Refresher guidance (owner-confirmed): a refresher is recommended once a
+   * guest has been out of the water more than `recommendedAfterYears` year(s)
+   * and is generally required past `generallyRequiredAfterYears`. The call is
+   * always Sea Saba's — experience, comfort, conditions, and the planned dives
+   * factor in, and a private guide can be the better answer. Guidance, not an
+   * immutable agency rule.
+   */
+  refresher: {
+    recommendedAfterYears: 1,
+    generallyRequiredAfterYears: 3,
+  },
+  /**
+   * Owner-confirmed: families diving with children under this age should
+   * consider a private guide so the family sets its own pace and profile.
+   * A recommendation, not a blanket requirement — junior divers dive within
+   * the limits of their certification.
+   */
+  juniorPrivateGuideRecommendedUnderAge: 12,
+  /**
+   * Externally set conservation contributions charged per activity
+   * (owner-confirmed amounts; the Saba Conservation Foundation and the
+   * hyperbaric chamber fund control the actual rates — update here if they
+   * change). Divers see the combined per-dive total.
+   */
+  conservationFees: {
+    marineParkPerDiveUsd: 3,
+    chamberContributionPerDiveUsd: 1,
+    snorkelParkPerPersonUsd: 3,
+  },
 } as const;
 
 // --- Bookable products -------------------------------------------------------
@@ -61,6 +91,14 @@ export interface BookableProduct {
   schedule?: ProductSchedule;
   /** Number of dives; undefined for surface/charter/cruise products. */
   dives?: number;
+  /**
+   * Which dives of the shared daily schedule the product covers. The boat
+   * day runs three dives — Dive 1 (early, deepest), Dive 2 (late morning),
+   * and Dive 3 (afternoon). Advanced and Classic overlap on Dive 2; Classic
+   * and the Afternoon dive share Dive 3, so mixed-experience partners can
+   * dive together when booking different products (owner-confirmed).
+   */
+  diveSlots?: readonly number[];
   /** Minimum certification/experience requirement, customer-facing. */
   requirement?: string;
   /** Nitrox policy for this product. */
@@ -76,6 +114,7 @@ export const DIVE_PRODUCTS = {
     checkfrontItemId: "244",
     schedule: { taxiPickup: "10:00 AM", departure: "10:30 AM", returns: "3:00 PM" },
     dives: 2,
+    diveSlots: [2, 3],
     // Eligibility is deliberately NOT a `requirement`: Scuba
     // Diver-certified guests may join with no logged-dive minimum but
     // require a private guide (owner-confirmed — see docs/OPERATIONS.md).
@@ -89,6 +128,7 @@ export const DIVE_PRODUCTS = {
     checkfrontItemId: "243",
     schedule: { taxiPickup: "8:30 AM", departure: "9:00 AM", returns: "1:00 PM" },
     dives: 2,
+    diveSlots: [1, 2],
     // Owner-confirmed eligibility rule.
     requirement: "AOW + 20 logged dives OR OW + 50 logged dives",
     nitrox: "required-first-dive",
@@ -99,6 +139,7 @@ export const DIVE_PRODUCTS = {
     checkfrontItemId: "245",
     schedule: { taxiPickup: "12:30 PM", departure: "1:00 PM", returns: "3:00 PM" },
     dives: 1,
+    diveSlots: [3],
     // Eligibility is deliberately NOT a `requirement` — same
     // owner-confirmed private-guide rule as classic (see docs/OPERATIONS.md).
   },
@@ -259,6 +300,8 @@ export const INQUIRY_TYPES: readonly InquiryType[] = [
     fields: ["whatsapp", "dates", "partySize", "certification"], partyLabel: "Number of students" },
   { value: "private-charter", label: "Private Charter", subject: "Private Charter Inquiry", group: "general",
     fields: ["whatsapp", "dates", "partySize"], partyLabel: "Group size" },
+  { value: "visiting-yacht", label: "Visiting by Yacht / Sailboat", subject: "Visiting by Yacht Inquiry", group: "general",
+    fields: ["whatsapp", "dates", "partySize", "certification", "loggedDives"], partyLabel: "Number of guests" },
   { value: "group-travel", label: "Group Travel", subject: "Group Travel Inquiry", group: "general",
     fields: ["whatsapp", "dates", "partySize"], partyLabel: "Group size" },
   { value: "sunset-cruise", label: "Sunset Cruise", subject: "Sunset Cruise Inquiry", group: "general",
