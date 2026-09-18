@@ -23,6 +23,7 @@ const PUBLIC_PAGES = [
   { path: "/diving", name: "diving" },
   { path: "/courses", name: "courses" },
   { path: "/plan-your-trip", name: "plan your trip" },
+  { path: "/visiting-yachts", name: "visiting yachts" },
   { path: "/contact", name: "contact" },
   { path: "/book", name: "booking" },
   { path: "/book?item=classic", name: "booking item banner" },

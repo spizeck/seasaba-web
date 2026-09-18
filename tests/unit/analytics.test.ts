@@ -20,6 +20,29 @@ it("records booking item, placement and internal-link status", () => {
   trackBookingClick("/book?item=classic", "Book", "header");
   expect(layer()[0]).toMatchObject({ event: "book_now_click", booking_item: "classic", button_location: "header", outbound: false });
 });
+it("strips query strings and fragments from page_location so URLs cannot leak PII", () => {
+  window.history.replaceState({}, "", "/diving?email=alice@example.com&name=Alice#booking-ref");
+  trackEvent("chat_open");
+  expect(layer()[0]).toMatchObject({
+    event: "chat_open",
+    page_location: "http://localhost:3000/diving",
+    page_path: "/diving",
+  });
+  const serialized = JSON.stringify(layer());
+  expect(serialized).not.toContain("alice@example.com");
+  expect(serialized).not.toContain("booking-ref");
+});
+it("strips query parameters from the page referrer", () => {
+  vi.spyOn(document, "referrer", "get").mockReturnValue(
+    "https://seasaba.checkfront.com/reserve/?email=alice@example.com&name=Alice"
+  );
+  trackEvent("contact_click");
+  expect(layer()[0]).toMatchObject({
+    page_referrer: "https://seasaba.checkfront.com/reserve/",
+    referrer: "https://seasaba.checkfront.com/reserve/",
+  });
+  expect(JSON.stringify(layer())).not.toContain("alice@example.com");
+});
 it("continues safely when analytics is blocked and removes undefined values", () => {
   vi.mocked(track).mockImplementationOnce(() => { throw new Error("blocked"); });
   expect(() => trackEvent("contact_click", { button_location: "footer", unused: undefined })).not.toThrow();

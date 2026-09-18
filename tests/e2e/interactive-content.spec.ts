@@ -69,6 +69,17 @@ test("on-page section nav scrolls to the section and marks the pill current", as
   await expect(page.locator("#where-to-stay")).toBeVisible();
 });
 
+test("the diving page section nav jumps to the Marine Park guide section", async ({ page }) => {
+  await hydratedGoto(page, "/diving");
+  const nav = page.getByRole("navigation", { name: "On this page" });
+  const pill = nav.getByRole("button", { name: "Marine Park" });
+  await pill.click();
+
+  await expect(page).toHaveURL(/#marine-park$/);
+  await expect(pill).toHaveAttribute("aria-current", "true");
+  await expect(page.locator("#marine-park")).toBeVisible();
+});
+
 test("the dive log still renders its UI when Firestore is unreachable", async ({ page }) => {
   // With the backend fully blocked (fixture default), the SDK resolves from an
   // empty offline cache — the page must render its empty state rather than

@@ -15,6 +15,7 @@ const result = spawnSync(process.execPath, ["node_modules/next/dist/bin/next", "
     NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID: "",
     NEXT_PUBLIC_GTM_ID: "",
     NEXT_PUBLIC_COOKIEBOT_CBID: "",
+    NEXT_PUBLIC_RESPOND_IO_CID: "",
     NEXT_TELEMETRY_DISABLED: "1",
   },
 });

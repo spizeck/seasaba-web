@@ -87,6 +87,18 @@ describe("canonical dive products", () => {
     expect(DIVE_PRODUCTS.classic.nitrox).toBe("included");
     expect(DIVE_PRODUCTS.advanced.nitrox).toBe("required-first-dive");
   });
+
+  it("encodes the shared dive-day slots so products overlap as documented", () => {
+    expect(DIVE_PRODUCTS.advanced.diveSlots).toEqual([1, 2]);
+    expect(DIVE_PRODUCTS.classic.diveSlots).toEqual([2, 3]);
+    expect(DIVE_PRODUCTS.afternoon.diveSlots).toEqual([3]);
+    // The /diving mixed-experience copy depends on Advanced↔Classic sharing
+    // Dive 2 and Classic↔Afternoon sharing Dive 3.
+    expect(DIVE_PRODUCTS.advanced.diveSlots).toContain(2);
+    expect(DIVE_PRODUCTS.classic.diveSlots).toEqual(
+      expect.arrayContaining([2, 3])
+    );
+  });
 });
 
 describe("canonical cruise products", () => {
