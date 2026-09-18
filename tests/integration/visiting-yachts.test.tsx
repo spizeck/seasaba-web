@@ -99,7 +99,7 @@ describe("visiting yachts page", () => {
     expect(hrefs.some((h) => h.includes("SCF_Yacht_Registration_Form"))).toBe(true);
     expect(hrefs.some((h) => h.includes("black-rocks-harbor"))).toBe(true);
     // Saba C-Transport referral for vessel-agency needs.
-    expect(hrefs.some((h) => h.startsWith("https://www.sabaferry.com"))).toBe(true);
+    expect(hrefs).toContain("https://www.sabaferry.com/");
   });
 
   it("makes Sea Saba's boundaries honest: guided diving, no promised fills or moorings", () => {
