@@ -21,6 +21,8 @@
 - **Reusable tracking components** — `TrackedInternalButton`, `TrackedOutboundButton`, `TrackedOutboundLink`, and `TrackedContactLink` simplify future instrumentation.
 - **Respond.io Website Chat** — native vendor widget loaded by `components/respond-io-widget.tsx` when `NEXT_PUBLIC_RESPOND_IO_CID` is set. Its `chat:opened` / `chat:sent` events feed the `chat_open` / `chat_conversation_started` analytics events; no names, emails, message text, or Respond.io IDs are ever sent to analytics.
 
+"Page parameters" below means `page_location` (origin + pathname only), `page_path`, `page_title`, and `page_referrer`/`referrer` (origin + pathname only). Query strings and fragments are stripped centrally in `trackEvent` so landing or referrer URLs cannot forward visitor data (emails, names, booking references) embedded in parameters.
+
 ## Tracked Events
 
 | Event | Where it's fired | Parameters |

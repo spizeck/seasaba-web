@@ -43,11 +43,27 @@ function isBrowser(): boolean {
   return typeof window !== "undefined";
 }
 
+// Page context is origin + pathname only. Query strings and fragments are
+// stripped because landing/referrer URLs can carry visitor data (emails,
+// names, booking references, UTM click IDs) that must never reach GTM or
+// Vercel Analytics. page_path preserves the path; nothing downstream needs
+// the parameters.
+function stripUrlParams(url: string): string {
+  try {
+    const parsed = new URL(url);
+    return parsed.origin + parsed.pathname;
+  } catch {
+    return url.split(/[?#]/, 1)[0];
+  }
+}
+
 function getPageInfo(): EventParams {
   if (!isBrowser()) return {};
-  const pageReferrer = document.referrer || undefined;
+  const pageReferrer = document.referrer
+    ? stripUrlParams(document.referrer)
+    : undefined;
   return {
-    page_location: window.location.href,
+    page_location: window.location.origin + window.location.pathname,
     page_path: window.location.pathname,
     page_title: document.title,
     page_referrer: pageReferrer,

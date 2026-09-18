@@ -89,20 +89,36 @@ it("never injects a second script across remounts", () => {
 it("wires chat analytics through the vendor API once the script loads", () => {
   vi.stubEnv("NEXT_PUBLIC_RESPOND_IO_CID", "test-cid-123");
   vi.spyOn(document, "readyState", "get").mockReturnValue("complete");
+  // Visitor landed on a URL carrying PII in query + fragment — chat
+  // analytics must never forward it (Sourcery review on #111).
+  window.history.replaceState(
+    {},
+    "",
+    "/diving?email=alice@example.com#booking-ref"
+  );
   const { emit } = stubRespond();
   render(<RespondIoWidget />);
   fireEvent.load(script()!);
 
   emit("chat:opened");
   expect(layer()).toHaveLength(1);
-  expect(layer()[0]).toMatchObject({ event: "chat_open" });
+  expect(layer()[0]).toMatchObject({
+    event: "chat_open",
+    page_location: "http://localhost:3000/diving",
+    page_path: "/diving",
+  });
 
   emit("chat:sent");
   emit("chat:sent");
   const started = layer().filter((e) => e.event === "chat_conversation_started");
   expect(started).toHaveLength(1);
+  expect(started[0].page_location).toBe("http://localhost:3000/diving");
 
-  // Analytics payload carries page context only — no contact data fields.
+  // Analytics payload carries page context only — no contact data fields,
+  // and no URL query/fragment content from the landing URL.
+  const serialized = JSON.stringify(layer());
+  expect(serialized).not.toContain("alice@example.com");
+  expect(serialized).not.toContain("booking-ref");
   for (const entry of layer()) {
     for (const key of Object.keys(entry)) {
       expect(key).not.toMatch(/email|name|phone|message|contact|conversation/i);
