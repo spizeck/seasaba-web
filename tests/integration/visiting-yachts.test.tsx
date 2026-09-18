@@ -54,7 +54,7 @@ describe("visiting yachts page", () => {
     const text = container.textContent ?? "";
     // Dinghy in, gear to the shop (storable between days), ~30 min before departure.
     expect(text).toMatch(/dinghy into Fort Bay/i);
-    expect(text).toMatch(/store it for you between dive days/i);
+    expect(text).toMatch(/store it between dive days/i);
     expect(text).toMatch(/30 minutes before/i);
     // Yacht guests still get the included shuttle into town + taxi coordination.
     expect(text).toMatch(/scheduled shuttle into town/i);
@@ -122,5 +122,45 @@ describe("visiting yachts page", () => {
     // Scoped to this guide on purpose — not a site-wide typography rule.
     const { container } = render(<VisitingYachtsPage />);
     expect(container.textContent).not.toContain("\u2014");
+  });
+
+  it("uses the Ladder Bay yachts photograph as the hero", () => {
+    const { container } = render(<VisitingYachtsPage />);
+    const heroSrcs = Array.from(container.querySelectorAll("img")).map(
+      (img) => img.getAttribute("src") ?? ""
+    );
+    expect(heroSrcs.some((s) => s.includes("ladder-bay-yachts-saba"))).toBe(true);
+  });
+
+  it("distinguishes public, private, and dive-site moorings", () => {
+    const { container } = render(<VisitingYachtsPage />);
+    const text = container.textContent ?? "";
+    // Public yacht moorings: single pickup line, floats on the pickup.
+    expect(text).toMatch(/single pickup line/i);
+    // Private local moorings exist in front of Fort Bay and are not for visitors.
+    expect(text).toMatch(/private local moorings/i);
+    expect(text).toMatch(/not for visitors/i);
+    // White + blue stripe marks dive-site moorings, not yacht moorings.
+    expect(text).toMatch(/blue stripe/i);
+    expect(text).toMatch(/not yacht moorings/i);
+    // The engineering distinction is explicit: reef-pinned, no shock
+    // absorption, never for leaving a boat unattended.
+    expect(text).toMatch(/pinned directly to the reef/i);
+    expect(text).toMatch(/shock absorption/i);
+    expect(text).toMatch(/unattended/i);
+  });
+
+  it("warns dinghies to pass dive vessels on the seaward side", () => {
+    const { container } = render(<VisitingYachtsPage />);
+    const text = container.textContent ?? "";
+    // The 150-meter seaward passing rule and the reasoning behind it.
+    expect(text).toMatch(/150 meters/i);
+    expect(text).toMatch(/seaward side/i);
+    expect(text).toMatch(/safety stops in shallow water/i);
+    // It is published as a Marine Park safety regulation, linked to the SCF
+    // yachting brochure — not presented as Sea Saba's own preference.
+    expect(text).toMatch(/safety regulation/i);
+    const hrefs = screen.getAllByRole("link").map((a) => a.getAttribute("href") ?? "");
+    expect(hrefs.some((h) => h.includes("sabapark.org"))).toBe(true);
   });
 });

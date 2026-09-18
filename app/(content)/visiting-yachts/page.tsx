@@ -3,7 +3,7 @@ import { PageHero } from "@/components/page-hero";
 import { FeatureImage } from "@/components/feature-image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Anchor, Ship, ClipboardCheck, Waves, Wind, MessageCircle, FileText } from "lucide-react";
+import { Anchor, Ship, ClipboardCheck, Waves, Wind, MessageCircle, FileText, AlertTriangle } from "lucide-react";
 import { PageSectionNav } from "@/components/navigation/PageSectionNav";
 import { TrackedInternalButton } from "@/components/tracked-internal-button";
 import { TrackedContactLink } from "@/components/tracked-contact-link";
@@ -53,23 +53,24 @@ export default function VisitingYachtsPage() {
   return (
     <>
       <PageHero
-        src="/images/optimized/fort-bay-harbor-saba.webp"
-        alt="Fort Bay Harbor on Saba, the island's port of entry for visiting yachts"
+        src="/images/optimized/ladder-bay-yachts-saba.webp"
+        alt="Yachts at anchor in Ladder Bay with the island of Saba rising behind them"
         title="Visiting Saba by Yacht"
         subtitle="Arriving, clearing in, and diving with Sea Saba from Fort Bay"
+        objectPosition="center 42%"
       />
 
       <p className="text-base leading-relaxed text-muted-foreground">
-        Cruising yachts and sailboats stop at Saba every season for a few days of diving, hiking,
-        and a quieter island. This page covers the practical side of that visit: where to secure
+        Cruising yachts and sailboats stop at Saba every season for diving, hiking, and a few
+        days ashore. This page covers the practical side of that visit: where to secure
         your vessel, how clearance works, and how to dive with us while you&apos;re here. We work
         with everything from cruising sailboats to superyachts.
       </p>
       <p className="mt-3 text-base leading-relaxed text-muted-foreground">
         Sea Saba is a dive center at {OPERATIONS.harbor}, not the port authority. Harbor, customs,
         immigration, and Marine Park rules are set by the Public Entity Saba and the Saba
-        Conservation Foundation, and they can change. We link to the official sources throughout.
-        It&apos;s worth verifying requirements before you arrive.
+        Conservation Foundation, and they can change. We link to the official sources throughout,
+        and we recommend checking them before arrival.
       </p>
 
       {/* On This Page */}
@@ -101,31 +102,40 @@ export default function VisitingYachtsPage() {
           advise against coming ashore anywhere else: Well&apos;s Bay, Ladder Bay, and Cove Bay
           can be treacherous in sea conditions that look calm from aboard your vessel.
         </p>
-        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          The clearance sequence published by the Marine Park:
-        </p>
-        <ol className="mt-4 space-y-2.5 text-sm text-muted-foreground">
-          {[
-            "Secure your vessel on a mooring or the check-in buoy",
-            "Dinghy to Fort Bay",
-            "Clear Customs and Immigration",
-            "Check in and out with the Harbor Master",
-            "Register your yacht at the Saba National Marine Park office, also at Fort Bay",
-          ].map((step, i) => (
-            <li key={step} className="flex items-start gap-3">
-              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
-                {i + 1}
-              </span>
-              <span>{step}</span>
-            </li>
-          ))}
-        </ol>
-        <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-          The Harbor Office is open from 6 AM to 6 PM; if Customs and Immigration aren&apos;t
-          available when you land, proceed there directly. The Harbor Master monitors VHF
-          channel 16. Entry forms for customs, immigration, and yacht registration can be
-          completed in advance.
-        </p>
+        <div className="mt-5">
+        <FeatureImage
+          src="/images/optimized/fort-bay-harbor-office-saba.webp"
+          alt="The Fort Bay Harbor Office beneath Saba's cliffs, where visiting yachts clear in"
+        >
+          <div>
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              The clearance sequence published by the Marine Park:
+            </p>
+            <ol className="mt-4 space-y-2.5 text-sm text-muted-foreground">
+              {[
+                "Secure your vessel on a mooring or the check-in buoy",
+                "Dinghy to Fort Bay",
+                "Clear Customs and Immigration",
+                "Check in and out with the Harbor Master",
+                "Register your yacht at the Saba National Marine Park office, also at Fort Bay",
+              ].map((step, i) => (
+                <li key={step} className="flex items-start gap-3">
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
+                    {i + 1}
+                  </span>
+                  <span>{step}</span>
+                </li>
+              ))}
+            </ol>
+            <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+              The Harbor Office is open from 6 AM to 6 PM; if Customs and Immigration aren&apos;t
+              available when you land, proceed there directly. The Harbor Master monitors VHF
+              channel 16. Entry forms for customs, immigration, and yacht registration can be
+              completed in advance.
+            </p>
+          </div>
+        </FeatureImage>
+        </div>
 
         <div className="mt-5 rounded-lg border border-primary/20 bg-primary/5 px-5 py-4">
           <div className="flex items-start gap-3">
@@ -189,14 +199,53 @@ export default function VisitingYachtsPage() {
           </div>
         </div>
 
+        <div className="mt-6 rounded-lg border border-border/40 bg-muted/20 p-5">
+          <h3 className="text-sm font-semibold text-foreground">Telling the Moorings Apart</h3>
+          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+            This part is our local guidance, not regulation. Looking at the buoys around Fort
+            Bay from your dinghy, here&apos;s how to tell what&apos;s what.
+          </p>
+          <ul className="mt-4 space-y-4 text-sm text-muted-foreground">
+            <li className="flex items-start gap-3">
+              <span className="mt-0.5 text-primary">✓</span>
+              <span>
+                <strong className="font-medium text-foreground">Public yacht moorings</strong>{" "}
+                have a single pickup line, with the floats attached directly to that pickup.
+                These are the moorings visiting yachts use.
+              </span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="mt-0.5 text-primary">✓</span>
+              <span>
+                <strong className="font-medium text-foreground">Private local moorings</strong>{" "}
+                fill most of the space directly in front of Fort Bay, and they&apos;re not for
+                visitors. A typical one has an A-4 style fender as the surface buoy, two mooring
+                lines running down from it, and two pickup lines with fish-pot-style floats.
+                There are two pickup loops on purpose, and the floats sit on the lines rather
+                than the loops because two pickups can twist together.
+              </span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="mt-0.5 text-primary">✓</span>
+              <span>
+                <strong className="font-medium text-foreground">White buoys with a blue stripe are dive-site moorings</strong>,
+                not yacht moorings. They&apos;re pinned directly to the reef, so they don&apos;t
+                have the shock absorption a yacht mooring has, they aren&apos;t intended for
+                leaving a boat unattended, and they aren&apos;t rated for most sailboats. An
+                apparently unused white-and-blue mooring is not a place to secure your yacht.
+              </span>
+            </li>
+          </ul>
+        </div>
+
         <p className="mt-4 text-sm text-muted-foreground">
           Moorings can&apos;t be reserved by guests or by Sea Saba. It&apos;s uncommon for every
           suitable visiting-yacht mooring to be taken, but availability depends on the season.
           Larger yachts generally anchor in the designated anchorage areas; the yacht moorings
-          aren&apos;t designed for their size. If you want a current picture of the moorings and
-          conditions,{" "}
+          aren&apos;t designed for their size. If you want to know what the moorings and
+          conditions look like before you arrive,{" "}
           <Link href="/contact?interest=visiting-yacht" className="font-medium text-primary hover:underline underline-offset-4">
-            ask us before you arrive
+            ask us
           </Link>
           . Current fees and mooring details are published by the{" "}
           <Link href="https://sabapark.org/yachting-mooring/" target="_blank" rel="noopener noreferrer" className="font-medium text-primary hover:underline underline-offset-4">
@@ -223,6 +272,7 @@ export default function VisitingYachtsPage() {
         <FeatureImage
           src="/images/optimized/fort-bay-two-boats.webp"
           alt="Sea Saba's dive boats moored at Fort Bay Harbor, Saba"
+          imageRight
           centerText
         >
           <div>
@@ -252,6 +302,32 @@ export default function VisitingYachtsPage() {
             </p>
           </div>
         </FeatureImage>
+
+        <div className="mt-6 rounded-xl border border-amber-200/60 bg-amber-50/50 p-5 dark:border-amber-900/40 dark:bg-amber-950/20">
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-600 dark:text-amber-500" />
+            <div className="text-sm text-muted-foreground">
+              <h3 className="font-semibold text-foreground">Dinghy &amp; Dive Boat Safety: Give Dive Boats Plenty of Room</h3>
+              <p className="mt-2 leading-relaxed">
+                When passing a dive vessel, stay at least 150 meters to seaward, especially
+                when the Alpha flag or dive flag is flying. Do not squeeze between a dive
+                boat and the shoreline.
+              </p>
+              <p className="mt-2 leading-relaxed">
+                Divers may be completing safety stops in shallow water and can be well away
+                from the boat, so keeping close to shore is not the safer route. We&apos;ve
+                had close calls with dinghy propellers passing over divers while trying to
+                hug the shoreline. Keep your propeller well away from the diving area and
+                pass on the seaward side. The Marine Park publishes this as a safety
+                regulation in its{" "}
+                <Link href="https://sabapark.org/downloads/SCF%20Yacht%20Brochure.pdf" target="_blank" rel="noopener noreferrer" className="font-medium text-primary hover:underline underline-offset-4">
+                  yachting brochure ↗
+                </Link>
+                .
+              </p>
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* Diving with Sea Saba from Your Yacht */}
@@ -262,9 +338,9 @@ export default function VisitingYachtsPage() {
         </div>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
           The standard approach is to leave the yacht on its mooring, dinghy into Fort Bay, and
-          join one of our scheduled boats. Bring your gear straight to the dive center and we can
-          store it for you between dive days, and being at the shop means backup equipment is
-          close by if anything gives you trouble. Our trips depart from and return to{" "}
+          join one of our scheduled boats. Bring your gear straight to the dive center. We can
+          store it between dive days, and backup equipment is close by if anything gives you
+          trouble. Our trips depart from and return to{" "}
           {OPERATIONS.harbor}, so there&apos;s no hotel pickup to coordinate. Just be at the dive
           center about 30 minutes before the boat leaves. Rental equipment is available, a dive
           computer is required on every dive (rentals available), and groups stay small at a
@@ -281,7 +357,7 @@ export default function VisitingYachtsPage() {
           help coordinate taxis for anything beyond that.
         </p>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          The same eligibility rules apply as for every guest. Conservation contributions of{" "}
+          The same diving requirements apply to yacht guests. Conservation contributions of{" "}
           ${OPERATIONS.conservationFees.marineParkPerDiveUsd + OPERATIONS.conservationFees.chamberContributionPerDiveUsd}{" "}
           per diver, per dive (Marine Park and hyperbaric chamber) come through on your Sea Saba
           diving invoice. Mooring, yacht registration, and harbor fees are handled separately,
@@ -318,7 +394,9 @@ export default function VisitingYachtsPage() {
           <ul className="mt-3 space-y-2.5 text-sm text-muted-foreground">
             <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Book ahead where you can. Space on scheduled trips depends on availability, and we can&apos;t promise same-day seats.</span></li>
             <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Published pickup times are for hotel guests. From a yacht, be at the dive center about 30 minutes ahead of the boat&apos;s departure time.</span></li>
-            <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>When booking online, tell us your vessel&apos;s name in the booking notes, or <Link href="/contact?interest=visiting-yacht" className="font-medium text-primary hover:underline underline-offset-4">send us a quick note</Link> or <Link href={CONTACT.whatsappHref} target="_blank" rel="noopener noreferrer" className="font-medium text-primary hover:underline underline-offset-4">WhatsApp</Link> afterward so we know you&apos;ll be meeting us at Fort Bay rather than waiting for hotel pickup. Cell service can be weak around Ladder Bay, so it&apos;s worth reaching out before you arrive.</span></li>
+            <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>When booking online, include your vessel&apos;s name in the booking notes. If you&apos;d rather not, <Link href="/contact?interest=visiting-yacht" className="font-medium text-primary hover:underline underline-offset-4">send us a quick note</Link> or <Link href={CONTACT.whatsappHref} target="_blank" rel="noopener noreferrer" className="font-medium text-primary hover:underline underline-offset-4">WhatsApp</Link> afterward.</span></li>
+            <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Either way, we need to know you&apos;ll be meeting us at Fort Bay rather than expecting hotel pickup.</span></li>
+            <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Cell service can be weak around Ladder Bay, so contact us before you arrive rather than relying on last-minute messages.</span></li>
           </ul>
         </div>
 

@@ -52,3 +52,6 @@ next-env.d.ts
 
 # local audit / build scratch
 /tmp/
+
+# local image source originals (not deployed, not committed)
+/images/originals/
