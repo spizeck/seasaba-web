@@ -67,7 +67,11 @@ carries its own independent type scale (see §4.3).
 
 `app/layout.tsx` loads Open Sans via `next/font/google` (variable, weights
 300–800, latin, `display: swap`) and puts the `--font-open-sans` CSS variable
-on `<body>`. `document.fonts` confirms the font is downloaded on every page.
+on `<body>`. The font file itself is fetched — the audit's network capture
+shows the woff2 downloaded on the homepage, and `document.fonts` (after
+`fonts.ready`) reports one `Open Sans 300 800` face `loaded` with ten more
+faces declared-but-`unloaded`. So the bytes arrive and the face is usable;
+it is simply never applied to body text.
 
 But body text never uses it. The chain:
 
@@ -254,8 +258,14 @@ paragraphs.
 ### 5.6 Responsive behavior
 
 H1s scale at `sm`/`lg`; nothing else does — all body and H2 text is flat
-across 320→1440px. No horizontal overflow at 320px on any audited page; no
-clipped text at zoomed-equivalent widths (reflow OK).
+across 320→1440px. No clipped text at zoomed-equivalent widths (reflow OK).
+One layout defect found: **`/about` overflows the viewport by ~4px at
+mobile widths** (320–430px; clean from 768px up) — the testimonial
+carousel's absolutely-positioned next-arrow uses `translate-x-5` and pokes
+past the right edge (the only un-clipped offender; the 100vw PageHero is
+safely clipped by its `overflow-hidden` shell). Minor — a few px of
+horizontal scroll on one page — but worth a follow-up fix outside this
+issue.
 
 ---
 
@@ -285,10 +295,11 @@ clipped text at zoomed-equivalent widths (reflow OK).
    materially different wordmarks in headings (~8% width delta measured).
    Open Sans's `next/font` "Open Sans Fallback" is size-adjusted, so when
    §3.1 is fixed, body swap CLS should be minimal.
-6. **200% zoom / reflow:** no failures found — no fixed-height text
-   clipping, no 320px horizontal overflow. Only truncation points are
-   intentional (`dive-log` site names, modal prev/next labels), all with
-   adjacent context.
+6. **200% zoom / reflow:** no text failures — no fixed-height text
+   clipping. Only truncation points are intentional (`dive-log` site names,
+   modal prev/next labels), all with adjacent context. One non-typography
+   layout defect: `/about` has ~4px of horizontal overflow at mobile widths
+   from a carousel arrow's `translate-x-5` (see §5.6).
 7. **Text-spacing (WCAG 1.4.12):** no containers clip enlarged
    letter/line-spacing in normal prose; `prose` margins are safe.
 8. **Links:** underline-less by design (documented in the guide); legal
@@ -435,8 +446,25 @@ node node_modules/next/dist/bin/next start --hostname 127.0.0.1 --port 3100 &
 node scripts/audit-typography.mjs        # JSON → stdout
 ```
 
-The script samples h1/h2/h3/p/nav/CTA/label/input/footer elements across
-nine pages × six widths, probes which stack fonts resolve locally, and lists
-`document.fonts` (loaded webfonts). Local-font detection is
-machine-dependent — on Linux CI all heading-stack entries should report
-unavailable, which is itself the demonstration of non-determinism.
+The script covers all 14 public routes × six widths and reports:
+
+- per-element computed family/size/weight/line-height for canonical roles
+  (h1/h2/h3, first body paragraph, nav link, CTA, form label/input, footer
+  link, footer column heading, copyright caption)
+- per-page histograms of `main` text-element and heading sizes at 375px and
+  1440px (reproduces the distributions in §5)
+- local availability of each heading-stack name (machine-dependent — on
+  Linux CI all entries should report unavailable, which is itself the
+  demonstration of non-determinism)
+- which font files were actually fetched over the network, and the
+  `document.fonts` face list split into `loaded` vs declared-but-unloaded
+  (after `fonts.ready`) — loaded evidence is never inferred from a face
+  merely existing
+- the `--font-open-sans`/`--default-font-family` variable resolution on
+  `<html>` vs `<body>` (reproduces the §3.1 mechanism)
+- which heading-stack entry a rendered H1 actually resolves to
+- horizontal-overflow detection at 320px per route
+
+Exit code is 1 if the server is unreachable or any route/probe fails
+(failures are also recorded under `errors` in the JSON); 0 only on a clean
+run.
