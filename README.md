@@ -12,6 +12,7 @@ A fast, SEO-first, destination-led marketing website for Sea Saba, a professiona
 | [docs/OPERATIONS.md](docs/OPERATIONS.md) | Source of truth for operational facts (schedules, requirements, contact, Checkfront boundary) |
 | [docs/DEPENDENCIES.md](docs/DEPENDENCIES.md) | Dependabot update policy, dependency groups, and the major-version migration workflow |
 | [docs/design/THEME_UX_GUIDE.md](docs/design/THEME_UX_GUIDE.md) | Brand colors, typography, spacing, imagery and UX rules |
+| [docs/design/TYPOGRAPHY_AUDIT.md](docs/design/TYPOGRAPHY_AUDIT.md) | Issue #112 typography audit: measured font rendering vs declared system, canonical-scale proposal |
 | [docs/design/IMAGE_STANDARD.md](docs/design/IMAGE_STANDARD.md) | Image categories, ratios, naming and the `PageHero`/`FeatureImage` components |
 | [docs/design/Sea_Saba_Logo_Spec_DEC_21.pdf](docs/design/Sea_Saba_Logo_Spec_DEC_21.pdf) | Official logo specification (brand asset) |
 | [docs/historical/](docs/historical/) | Completed-work records: Wix migration report, original IA plan, early homepage spec, unimplemented reviews setup |
