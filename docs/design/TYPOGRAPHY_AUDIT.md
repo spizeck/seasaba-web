@@ -1,12 +1,15 @@
 # Typography Audit — Issue #112
 
-> **Status: Audit findings + recommendations. Nothing in this document is an
-> approved change.** Section 8 proposes a canonical system and Section 9 a
-> heading-font strategy; both require owner review before implementation.
+> **Status: Audit findings + recommendations, partially implemented.**
+> Sections 1–7 record the audit as measured on base SHA `f5425a3`
+> (September 2026). The **font-delivery findings (§3.1, §3.2) were resolved
+> in #115** — see §11 for what is now true. The **scale findings (§5–§7)
+> remain open** pending the canonical-scale implementation; Section 8's
+> proposal is still unapproved.
 >
-> Base SHA audited: `f5425a3` (origin/master). Measurements taken with
-> `scripts/audit-typography.mjs` against a production build (`next build` +
-> `next start`) in headless Chromium on Windows, September 2026.
+> Measurements taken with `scripts/audit-typography.mjs` against a
+> production build (`next build` + `next start`) in headless Chromium on
+> Windows.
 
 ---
 
@@ -63,7 +66,7 @@ carries its own independent type scale (see §4.3).
 
 ## 3. Font delivery — what actually loads and renders
 
-### 3.1 Open Sans is fetched but unused
+### 3.1 Open Sans is fetched but unused — *RESOLVED in #115*
 
 `app/layout.tsx` loads Open Sans via `next/font/google` (variable, weights
 300–800, latin, `display: swap`) and puts the `--font-open-sans` CSS variable
@@ -89,14 +92,10 @@ Windows.
 The only places Open Sans actually applies are the three explicit
 `font-sans` utilities in `components/experience-selector.tsx`.
 
-**Recommended fix (needs owner approval — changes every page's rendering):**
-move `openSans.variable` from `<body>` to `<html>` in `app/layout.tsx`, or
-apply `font-sans` on `<body>`. One-line change; makes the declared body font
-real. Alternatively, if the system-font body text is judged acceptable, the
-Open Sans download should be removed to save bandwidth — but the design
-guide explicitly names Open Sans, so the fix is preferred.
+**Fix applied in #115:** `openSans.variable` moved from `<body>` to `<html>`
+in `app/layout.tsx`. Post-fix computed evidence in §11.
 
-### 3.2 The heading stack is non-deterministic
+### 3.2 The heading stack is non-deterministic — *RESOLVED in #115*
 
 `--font-heading` = `"Century Gothic", "CenturyGothic", "AppleGothic", "Poppins", sans-serif`.
 **No heading font is loaded as a webfont.** What renders depends entirely on
@@ -453,9 +452,10 @@ The script covers all 14 public routes × six widths and reports:
   link, footer column heading, copyright caption)
 - per-page histograms of `main` text-element and heading sizes at 375px and
   1440px (reproduces the distributions in §5)
-- local availability of each heading-stack name (machine-dependent — on
-  Linux CI all entries should report unavailable, which is itself the
-  demonstration of non-determinism)
+- renderability of each heading-stack/body font name (`fontAvailability` —
+  `true` means the name resolves for rendering, whether via a locally
+  installed font or a loaded webfont; the two are distinguishable by
+  cross-checking `loadedFaces`/`downloadedFontFiles`)
 - which font files were actually fetched over the network, and the
   `document.fonts` face list split into `loaded` vs declared-but-unloaded
   (after `fonts.ready`) — loaded evidence is never inferred from a face
@@ -463,8 +463,65 @@ The script covers all 14 public routes × six widths and reports:
 - the `--font-open-sans`/`--default-font-family` variable resolution on
   `<html>` vs `<body>` (reproduces the §3.1 mechanism)
 - which heading-stack entry a rendered H1 actually resolves to
-- horizontal-overflow detection at 320px per route
+- horizontal-overflow detection per route at every sampled width
 
 Exit code is 1 if the server is unreachable or any route/probe fails
 (failures are also recorded under `errors` in the JSON); 0 only on a clean
 run.
+
+---
+
+## 11. Post-audit implementation: deterministic font foundation (#115)
+
+Merged after this audit. Font **delivery** is now fixed; the scale findings
+in §5–§7 are unchanged and still open.
+
+### What changed
+
+- `app/layout.tsx`: `openSans.variable` moved from `<body>` to `<html>`;
+  added `jost.variable` on `<html>`. `Jost` loaded via `next/font/google`
+  (variable font, weights 100–900, `latin` subset, normal + italic styles,
+  `display: swap`).
+- `app/globals.css`: `--font-heading` changed from
+  `"Century Gothic", "CenturyGothic", "AppleGothic", "Poppins", sans-serif`
+  to `var(--font-jost), "Century Gothic", sans-serif`. Poppins,
+  CenturyGothic, and AppleGothic removed (dead/misleading entries);
+  `"Century Gothic"` kept as a graceful last-resort fallback — the design
+  no longer depends on it.
+- `tests/unit/font-wiring.test.ts`: asserts the variables stay on `<html>`,
+  the heading stack leads with `var(--font-jost)`, and the dead entries
+  stay gone.
+
+### Post-fix computed evidence (audit rerun)
+
+- `document.fonts` (after `fonts.ready`): `Open Sans 300 800` faces
+  `loaded`, `Jost 100 900` **normal and italic** `loaded`; five woff2 files
+  fetched over the network (Open Sans + Jost normal/italic + size-adjusted
+  fallbacks). Nothing else loads.
+- `--font-open-sans` now resolves on `<html>`;
+  `--default-font-family` computes to
+  `"Open Sans", "Open Sans Fallback", "Open Sans", sans-serif` and `html`,
+  `body`, and paragraph elements all compute to it. **Body text now renders
+  in Open Sans.**
+- Rendered H1 resolves to **Jost** on the audit machine (measured width
+  match) even though Century Gothic is locally installed — the webfont
+  leads the stack. Heading rendering no longer depends on local fonts on
+  any platform.
+- Zero differences in computed font-size/weight/line-height vs the
+  pre-change baseline across all 14 routes × 6 widths; zero new
+  horizontal-overflow entries. The pre-existing `/about` ~4px mobile
+  overflow (carousel arrow `translate-x-5`) is unchanged.
+- Pre-existing, unrelated to fonts: PageHero's `aspect-[4/3] min-h-[320px]`
+  shell renders ~427px wide below ~427px viewport width, so centered hero
+  titles/subtitles can clip at the screen edge on ≤375px devices (visible
+  on `/diving`, `/about`, and other PageHero pages). Flagged for a separate
+  layout fix — out of scope here.
+
+### Still open (next phase — canonical scale, needs visual review)
+
+- Everything in §5–§7: 14px-dominant body prose, H2 at 20px, scattered H3
+  sizes, `.prose` em-compounding, 14px inputs, declared-vs-actual token
+  mismatch. The §8 canonical role table remains the proposal to review.
+- Jost has slightly different metrics than the fonts headings previously
+  fell back to on non-Office platforms; wrapping shifts are expected and
+  were reviewed (no breakage found).

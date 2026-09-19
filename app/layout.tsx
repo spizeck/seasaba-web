@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Open_Sans } from "next/font/google";
+import { Open_Sans, Jost } from "next/font/google";
 import { Header } from "@/components/header";
 import { FooterWrapper } from "@/components/footer-wrapper";
 import { SITE_NAME, SITE_DESCRIPTION, SITE_URL, OG_IMAGE } from "@/lib/constants";
@@ -12,6 +12,13 @@ import "./globals.css";
 const openSans = Open_Sans({
   variable: "--font-open-sans",
   subsets: ["latin"],
+  display: "swap",
+});
+
+const jost = Jost({
+  variable: "--font-jost",
+  subsets: ["latin"],
+  style: ["normal", "italic"],
   display: "swap",
 });
 
@@ -70,10 +77,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${openSans.variable} antialiased`}
-      >
+    <html lang="en" className={`${openSans.variable} ${jost.variable}`}>
+      <body className="antialiased">
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-100 focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground"
