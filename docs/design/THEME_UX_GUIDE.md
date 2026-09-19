@@ -122,23 +122,24 @@ The brand red should feel like deliberate punctuation, not a decorative theme co
 
 ## Typography
 
-> **Implementation divergence (Issue #112 audit, Sept 2026):** the declared
-> stack and scale below do not match what the site currently renders. Open
-> Sans is loaded but not applied to body text (a CSS-variable scoping bug);
-> no heading font is loaded, so headings resolve to locally installed fonts
-> that differ by OS; and component-level `text-*` utilities produce smaller
-> sizes than the scale below. See `docs/design/TYPOGRAPHY_AUDIT.md` for the
-> measured inventory and the proposed canonical system. This section remains
-> the *declared intent* until the audit recommendations are approved.
+> **Implementation divergence (Issue #112 audit, Sept 2026):** the font
+> *families* below are now implemented (#115): Open Sans is the rendered
+> body/UI font and Jost is the rendered heading font, both loaded via
+> `next/font`. The *scale* below still does not match the site — component
+> `text-*` utilities produce smaller sizes than declared. See
+> `docs/design/TYPOGRAPHY_AUDIT.md` for the measured inventory and the
+> proposed canonical system, which is not yet approved.
 
 ### Font Stack
-- **Headings:** Century Gothic
+- **Headings:** Jost (webfont, deterministic; `"Century Gothic"` then
+  `sans-serif` as fallback) — replaces the former local-font Century Gothic
+  stack
 - **Body / Copy:** Open Sans
 
 ### Heading Style
 - Confident and spacious
 - Clean hierarchy (H1 → H2 → H3 with distinct sizing)
-- Century Gothic should feel modern, structured, and composed
+- The geometric heading face should feel modern, structured, and composed
 
 ### Body Style
 - Highly readable at all screen sizes

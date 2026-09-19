@@ -128,9 +128,12 @@ try {
       ["monospace", "serif", "sans-serif"].some(
         (base) => measure(`'${name}', ${base}`) !== baselines[base]
       );
-    const candidates = ["Century Gothic", "CenturyGothic", "AppleGothic", "Poppins", "Open Sans", "Inter"];
-    const localAvailability = {};
-    for (const c of candidates) localAvailability[c] = available(c);
+    const candidates = ["Jost", "Century Gothic", "CenturyGothic", "AppleGothic", "Poppins", "Open Sans", "Inter"];
+    // Names that resolve for rendering — locally installed OR loaded webfont.
+    // A `true` for a loaded webfont (e.g. Jost) is expected; a `true` for a
+    // name that is not loaded (e.g. Century Gothic) means a local install.
+    const fontAvailability = {};
+    for (const c of candidates) fontAvailability[c] = available(c);
 
     // FontFaceSet: a face is *declared* once registered; it only counts as
     // loaded evidence when status === 'loaded'.
@@ -142,7 +145,7 @@ try {
     }));
     const loadedFaces = declaredFaces.filter((f) => f.status === "loaded");
     const notLoadedFaces = declaredFaces.filter((f) => f.status !== "loaded");
-    return { localAvailability, declaredFaces, loadedFaces, notLoadedFaces };
+    return { fontAvailability, declaredFaces, loadedFaces, notLoadedFaces };
   });
 } catch (e) {
   recordError("fontEvidence", e);
@@ -168,7 +171,7 @@ try {
       return w;
     };
     const rendered = mk(computed.fontFamily);
-    const entries = ["'Century Gothic'", "'CenturyGothic'", "'AppleGothic'", "'Poppins'", "sans-serif"];
+    const entries = ["'Jost'", "'Century Gothic'", "'AppleGothic'", "'Poppins'", "sans-serif"];
     const widths = Object.fromEntries(entries.map((e) => [e, mk(e)]));
     const resolved = entries.find((e) => Math.abs(widths[e] - rendered) < 0.5) ?? "unknown";
     return { declaredStack: computed.fontFamily, text, widths, resolved };
@@ -241,14 +244,12 @@ for (const width of WIDTHS) {
     } catch (e) {
       recordError(`probes:${key}`, e);
     }
-    if (width === 320) {
-      try {
-        horizontalOverflow[route] = await p.evaluate(
-          () => document.documentElement.scrollWidth > document.documentElement.clientWidth
-        );
-      } catch (e) {
-        recordError(`overflow:${key}`, e);
-      }
+    try {
+      horizontalOverflow[key] = await p.evaluate(
+        () => document.documentElement.scrollWidth > document.documentElement.clientWidth
+      );
+    } catch (e) {
+      recordError(`overflow:${key}`, e);
     }
     if (HISTOGRAM_WIDTHS.includes(width)) {
       try {

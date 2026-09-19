@@ -9,7 +9,7 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-open-sans), "Open Sans", sans-serif;
-  --font-heading: "Century Gothic", "CenturyGothic", "AppleGothic", "Poppins", sans-serif;
+  --font-heading: var(--font-jost), "Century Gothic", sans-serif;
   --font-mono: ui-monospace, "SFMono-Regular", monospace;
   
   /* Typography Scale - docs/design/THEME_UX_GUIDE.md */
