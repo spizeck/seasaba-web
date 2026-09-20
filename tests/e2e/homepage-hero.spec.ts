@@ -38,6 +38,9 @@ function heroGeometry() {
 
 test("homepage hero fits the first screen at mobile widths", async ({ page }) => {
   await hydratedGoto(page, "/");
+  // display:swap can leave text measured in fallback metrics if the webfont
+  // hasn't arrived — wait so button widths are the real Open Sans values.
+  await page.evaluate(() => document.fonts.ready);
   for (const width of MOBILE_WIDTHS) {
     await page.setViewportSize({ width, height: 700 });
     const g = await page.evaluate(heroGeometry);
@@ -80,6 +83,7 @@ test("homepage hero fits the first screen at mobile widths", async ({ page }) =>
 
 test("homepage hero preserves the desktop layout", async ({ page }) => {
   await hydratedGoto(page, "/");
+  await page.evaluate(() => document.fonts.ready);
   await page.setViewportSize({ width: 1440, height: 900 });
   const g = await page.evaluate(heroGeometry);
   if ("error" in g) throw new Error(g.error);

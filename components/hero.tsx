@@ -27,7 +27,7 @@ const glassClasses =
 
 // Compact-but-legible secondary styling on narrow phones: same 44px touch
 // target, smaller label/padding so the pair fits side-by-side at 320px.
-const secondaryMobileClasses = "max-sm:px-3.5 max-sm:text-sm";
+const secondaryMobileClasses = "max-sm:px-3 max-sm:text-sm";
 
 export function Hero() {
   return (
