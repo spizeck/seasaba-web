@@ -3,6 +3,34 @@ import { fireEvent, render } from "@testing-library/react";
 import { RespondIoWidget } from "@/components/respond-io-widget";
 import { RESPOND_IO_SCRIPT_ID } from "@/lib/respond-io";
 
+// jsdom has no router context and no IntersectionObserver — the hoisted
+// pathname mock controls the route per test, and the IO stub captures
+// observed elements so tests can drive visibility manually.
+const mocks = vi.hoisted(() => ({ pathname: { current: "/" } }));
+vi.mock("next/navigation", () => ({
+  usePathname: () => mocks.pathname.current,
+}));
+
+type IOCallback = (entries: { isIntersecting: boolean }[]) => void;
+const ioInstances: { cb: IOCallback; observed: Element[]; disconnected: boolean }[] = [];
+class IntersectionObserverStub {
+  cb: IOCallback;
+  observed: Element[] = [];
+  disconnected = false;
+  constructor(cb: IOCallback) {
+    this.cb = cb;
+    ioInstances.push(this);
+  }
+  observe(el: Element) {
+    this.observed.push(el);
+  }
+  unobserve() {}
+  disconnect() {
+    this.disconnected = true;
+  }
+}
+vi.stubGlobal("IntersectionObserver", IntersectionObserverStub);
+
 // The widget itself is a vendor iframe application; the loader is our
 // surface. These tests exercise the real loader (script injection, env
 // gating, load-event deferral, remount dedup, graceful failure) and stub
@@ -35,11 +63,15 @@ const layer = () =>
 
 beforeEach(() => {
   (window as unknown as { dataLayer: unknown[] }).dataLayer = [];
+  mocks.pathname.current = "/";
+  ioInstances.length = 0;
+  document.documentElement.removeAttribute("data-hero-in-view");
 });
 
 afterEach(() => {
   document.getElementById(RESPOND_IO_SCRIPT_ID)?.remove();
   delete (window as unknown as { $respond?: RespondStub }).$respond;
+  document.documentElement.removeAttribute("data-hero-in-view");
   vi.unstubAllEnvs();
 });
 
@@ -151,4 +183,76 @@ it("renders no markup into the React tree", () => {
   vi.stubEnv("NEXT_PUBLIC_RESPOND_IO_CID", "test-cid-123");
   const { container } = render(<RespondIoWidget />);
   expect(container).toBeEmptyDOMElement();
+});
+
+// --- Homepage hero launcher suppression (issue #123) ---
+
+const heroAttr = () => document.documentElement.hasAttribute("data-hero-in-view");
+
+it("sets data-hero-in-view only while the hero intersects the viewport", () => {
+  mocks.pathname.current = "/";
+  render(
+    <>
+      <div data-hero />
+      <RespondIoWidget />
+    </>
+  );
+  expect(ioInstances).toHaveLength(1);
+  expect(ioInstances[0].observed).toHaveLength(1);
+  expect(ioInstances[0].observed[0]).toHaveAttribute("data-hero");
+  expect(heroAttr()).toBe(false);
+
+  ioInstances[0].cb([{ isIntersecting: true }]);
+  expect(heroAttr()).toBe(true);
+  ioInstances[0].cb([{ isIntersecting: false }]);
+  expect(heroAttr()).toBe(false);
+});
+
+it("does not observe or suppress on interior routes", () => {
+  mocks.pathname.current = "/diving";
+  render(<RespondIoWidget />);
+  expect(ioInstances).toHaveLength(0);
+  expect(heroAttr()).toBe(false);
+});
+
+it("clears the attribute when navigating away and re-applies on return", () => {
+  mocks.pathname.current = "/";
+  const view = render(
+    <>
+      <div data-hero />
+      <RespondIoWidget />
+    </>
+  );
+  ioInstances[0].cb([{ isIntersecting: true }]);
+  expect(heroAttr()).toBe(true);
+
+  // App Router keeps the layout mounted — only the pathname changes.
+  mocks.pathname.current = "/diving";
+  view.rerender(<RespondIoWidget />);
+  expect(heroAttr()).toBe(false);
+  expect(ioInstances[0].disconnected).toBe(true);
+
+  mocks.pathname.current = "/";
+  view.rerender(
+    <>
+      <div data-hero />
+      <RespondIoWidget />
+    </>
+  );
+  expect(ioInstances).toHaveLength(2);
+  ioInstances[1].cb([{ isIntersecting: true }]);
+  expect(heroAttr()).toBe(true);
+});
+
+it("removes the attribute on unmount", () => {
+  mocks.pathname.current = "/";
+  const view = render(
+    <>
+      <div data-hero />
+      <RespondIoWidget />
+    </>
+  );
+  ioInstances[0].cb([{ isIntersecting: true }]);
+  view.unmount();
+  expect(heroAttr()).toBe(false);
 });

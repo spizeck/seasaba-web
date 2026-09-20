@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { trackEvent } from "@/lib/analytics";
 import {
   RESPOND_IO_SCRIPT_ID,
@@ -63,6 +64,30 @@ export function RespondIoWidget() {
       window.removeEventListener("load", inject);
     };
   }, []);
+
+  // Homepage hero suppression (issue #123): while the hero/trust-bar
+  // composition is in view, the closed launcher — including the proactive
+  // greeting popup, which lives in the same closed-state iframe — is hidden
+  // via the `data-hero-in-view` attribute this observer toggles on <html>.
+  // Keying the CSS off the widget's own `state="widgetClose"` means an
+  // open conversation is never forcibly hidden, and keying the state off
+  // the document root means a lazily injected iframe is covered the moment
+  // it appears — no MutationObserver needed. Any other route clears the
+  // attribute, so interior pages keep the launcher immediately.
+  const pathname = usePathname();
+  useEffect(() => {
+    if (pathname !== "/") return;
+    const hero = document.querySelector("[data-hero]");
+    if (!hero) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      document.documentElement.toggleAttribute("data-hero-in-view", entry.isIntersecting);
+    });
+    observer.observe(hero);
+    return () => {
+      observer.disconnect();
+      document.documentElement.removeAttribute("data-hero-in-view");
+    };
+  }, [pathname]);
 
   return null;
 }

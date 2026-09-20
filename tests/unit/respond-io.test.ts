@@ -56,23 +56,23 @@ it("subscribes to both widget events through the documented $respond.on API", ()
   expect(events).toEqual(["chat:opened", "chat:sent"]);
 });
 
-// The launcher clearance rule in globals.css is the only website-controlled
-// positioning lever that works: Respond.io positions the widget iframe with
-// inline !important styles, so stylesheet bottom/top rules cannot override
-// it — but `transform` is never set by the vendor. The contract below pins
-// the narrow scoping that keeps this safe: the widget's own `state`
-// attribute limits the lift to the closed launcher, never the open panel.
+// Homepage hero suppression (issue #123): while the hero is in view the
+// closed launcher hides via a document-level attribute. The contract below
+// pins the narrow scoping that keeps this safe — the widget's own `state`
+// attribute limits hiding to the closed launcher (which also carries the
+// greeting popup), so an open conversation is never forcibly hidden, and
+// `visibility` leaves the vendor's inline positioning untouched.
 const globalsCss = readFileSync("app/globals.css", "utf8");
 
-it("lifts only the closed widget launcher, on small screens, via transform", () => {
+it("hides only the closed widget launcher while the homepage hero is in view", () => {
   const rule = globalsCss.match(
-    /@media \(max-width: (\d+)px\)\s*{\s*([^}]+)}\s*}/
+    /html\[data-hero-in-view\]\s*iframe\[title="Webchat Widget"\]\[state="widgetClose"\]\s*{([^}]+)}/
   );
   expect(rule).not.toBeNull();
-  const [, maxWidth, body] = rule!;
-  expect(Number(maxWidth)).toBeLessThan(1024);
-  expect(body).toContain('iframe[title="Webchat Widget"][state="widgetClose"]');
-  expect(body).toContain("transform: translateY(");
-  expect(body).toContain("env(safe-area-inset-bottom");
-  expect(body).not.toContain("!important");
+  expect(rule![1]).toContain("visibility: hidden");
+  // No transform lift or !important overrides fighting the vendor styles.
+  expect(rule![1]).not.toContain("transform");
+  expect(rule![1]).not.toContain("!important");
+  // The old small-screen -60px launcher lift is gone entirely.
+  expect(globalsCss).not.toContain("translateY(calc(-60px");
 });

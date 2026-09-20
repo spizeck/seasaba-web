@@ -193,35 +193,27 @@
 }
 
 /*
- * Respond.io Website Chat — small-screen launcher clearance.
+ * Respond.io Website Chat — homepage hero suppression (issue #123).
  *
- * The vendor iframe is positioned with inline `bottom: <25 + Vertical
- * Spacing>px !important`. Respond.io's dashboard offers a single
- * Vertical/Horizontal Spacing pair for all viewports — there is no
- * supported per-device offset, and `window.__respond_settings` only maps
- * to contactDetails. Raising the dashboard value would also move the
- * desktop launcher, which is already correctly placed.
- *
- * Instead we lift the whole iframe 60px via `transform` — a property the
- * widget never sets inline, so its `!important` rules are untouched and
- * nothing fights the vendor render loop. The `state="widgetClose"`
- * attribute (emitted by the widget itself) scopes the rule to the closed
- * launcher + greeting popup only: the open chat panel keeps its own
- * positioning (fullscreen under 600px, anchored panel above).
- *
- * Measured against the homepage (issue #120): the closed launcher iframe
- * is 90px tall with inline `bottom: 25px` (dashboard spacing = 0), and
- * the compacted trust bar is ~78px tall on mobile. A -60px lift leaves
- * ~9px between the iframe's bottom edge and the trust-bar top — the
- * smallest offset that fully clears it; the visible bubble sits inside
- * the iframe edge so the apparent gap is larger. Below `lg` (1024px) is
- * the bound that clears the review column at every width.
- * `env(safe-area-inset-bottom)` is inert today (the site does not set
- * viewport-fit=cover) but keeps the launcher above device chrome if
- * that ever changes.
+ * While the homepage hero region (marked `data-hero`, hero + trust bar)
+ * intersects the viewport, RespondIoWidget sets `data-hero-in-view` on
+ * <html> and the closed launcher hides. The widget's own `state`
+ * attribute scopes this to `widgetClose` — an open conversation
+ * (`widgetOpen`) is never forcibly hidden — and the proactive greeting
+ * popup lives inside the same closed-state iframe, so it is suppressed
+ * with the launcher. Because the rule keys off a document-level
+ * attribute, the vendor iframe is covered whenever it finishes
+ * injecting. `visibility` (not `display`) keeps the iframe mounted and
+ * out of the tab order without touching the vendor's inline-positioned
+ * styles; on interior routes and after scrolling past the hero the
+ * launcher keeps its normal bottom-right position.
  */
-@media (max-width: 1023px) {
+@media (prefers-reduced-motion: no-preference) {
   iframe[title="Webchat Widget"][state="widgetClose"] {
-    transform: translateY(calc(-60px - env(safe-area-inset-bottom, 0px)));
+    transition: opacity 0.2s ease-out, visibility 0.2s;
   }
+}
+html[data-hero-in-view] iframe[title="Webchat Widget"][state="widgetClose"] {
+  visibility: hidden;
+  opacity: 0;
 }
