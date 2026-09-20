@@ -207,12 +207,18 @@
  * nothing fights the vendor render loop. The `state="widgetClose"`
  * attribute (emitted by the widget itself) scopes the rule to the closed
  * launcher + greeting popup only: the open chat panel keeps its own
- * positioning (fullscreen under 600px, anchored panel above). Measured
- * overlap with the homepage trust bar's right-hand review column extends
- * to ~900px; below `lg` (1024px) is the smallest bound that clears it at
- * every width. `env(safe-area-inset-bottom)` is inert today (the site
- * does not set viewport-fit=cover) but keeps the launcher above device
- * chrome if that ever changes.
+ * positioning (fullscreen under 600px, anchored panel above).
+ *
+ * Measured against the homepage (issue #120): the closed launcher iframe
+ * is 90px tall with inline `bottom: 25px` (dashboard spacing = 0), and
+ * the compacted trust bar is ~78px tall on mobile. A -60px lift leaves
+ * ~9px between the iframe's bottom edge and the trust-bar top — the
+ * smallest offset that fully clears it; the visible bubble sits inside
+ * the iframe edge so the apparent gap is larger. Below `lg` (1024px) is
+ * the bound that clears the review column at every width.
+ * `env(safe-area-inset-bottom)` is inert today (the site does not set
+ * viewport-fit=cover) but keeps the launcher above device chrome if
+ * that ever changes.
  */
 @media (max-width: 1023px) {
   iframe[title="Webchat Widget"][state="widgetClose"] {
