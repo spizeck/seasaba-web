@@ -49,7 +49,8 @@ const headingCls = "text-xs font-semibold uppercase tracking-widest text-foregro
 export function Footer() {
   return (
     <footer className="border-t border-border/40 bg-muted/30">
-      <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
+      {/* pb clears the fixed Respond.io/Cookiebot launchers (~103px zones) plus safe-area */}
+      <div className="mx-auto max-w-6xl px-4 pt-16 pb-[calc(7rem+env(safe-area-inset-bottom,0px))] sm:px-6 lg:px-8">
         <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-4">
 
           {/* Plan Your Trip */}
