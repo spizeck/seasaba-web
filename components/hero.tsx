@@ -32,6 +32,9 @@ const secondaryMobileClasses = "max-sm:px-3 max-sm:text-sm";
 export function Hero() {
   return (
     <section
+      // Marks the homepage hero region: the Respond.io launcher is
+      // suppressed while this intersects the viewport (issue #123).
+      data-hero
       className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden -mt-16 pt-16"
       // 100svh = the small viewport: the hero (and its bottom-anchored trust
       // bar) fits the first screen while mobile browser chrome is shown,
