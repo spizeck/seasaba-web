@@ -1,16 +1,21 @@
 import type { Page } from "@playwright/test";
 import { test, expect, hydratedGoto } from "./fixtures";
 
-// Homepage chat-launcher suppression (issue #123).
+// Homepage chat-launcher suppression (#123) and resting-position
+// calibration (#125).
 //
-// The real Respond.io iframe is third-party and asynchronous, so these tests
-// inject a deterministic stand-in matching the vendor's contract: an iframe
-// titled "Webchat Widget" carrying a `state` attribute ("widgetClose" /
-// "widgetOpen") and the vendor's fixed bottom-right geometry. What we own is
-// the mechanism — IntersectionObserver toggling `data-hero-in-view` on
-// <html>, plus the CSS rule hiding `[state="widgetClose"]` while it is set —
-// and that is what these assertions exercise. Real-widget verification was
-// done manually against a production build.
+// The real Respond.io iframe is third-party and asynchronous, so these
+// tests inject a deterministic stand-in matching the vendor's contract: an
+// iframe titled "Webchat Widget" carrying a `state` attribute
+// ("widgetClose" / "widgetOpen") and the vendor's fixed bottom-right
+// geometry (measured on production: 90x90 at right/bottom:49px). What we
+// own is the mechanism — IntersectionObserver toggling `data-hero-in-view`
+// on <html>, the CSS rule hiding `[state="widgetClose"]` while it is set,
+// and the 36px resting-position translate — and that is what these
+// assertions exercise. The visible bubble sits inset inside the iframe, so
+// iframe-box clearance (13px) intentionally differs from visible-bubble
+// clearance (~17-18px). Real-widget verification was done manually against
+// production.
 
 async function injectLauncher(page: Page, state = "widgetClose") {
   await page.evaluate((s) => {
@@ -18,9 +23,10 @@ async function injectLauncher(page: Page, state = "widgetClose") {
     const f = document.createElement("iframe");
     f.title = "Webchat Widget";
     f.setAttribute("state", s);
-    // Vendor geometry: fixed, 90x90, bottom/right 25px.
+    // Vendor geometry measured on production: fixed, 90x90,
+    // bottom/right 49px.
     f.style.cssText =
-      "position:fixed;bottom:25px;right:25px;width:90px;height:90px;border:0;z-index:9999";
+      "position:fixed;bottom:49px;right:49px;width:90px;height:90px;border:0;z-index:9999";
     document.body.appendChild(f);
   }, state);
 }
@@ -57,9 +63,11 @@ test("homepage: closed launcher hides on hero, appears past it, hides again", as
   await page.evaluate((y) => window.scrollTo(0, y + 10), heroBottom);
   await expect.poll(() => launcherState(page)).toMatchObject({
     visibility: "visible",
-    bottom: 25,
-    right: 25,
-    transform: "none", // the old -60px mobile lift is gone
+    // Vendor 49px offset minus the 36px calibration translate = 13px of
+    // iframe-box clearance (the visible bubble insets ~5px more).
+    bottom: 13,
+    right: 13,
+    transform: "matrix(1, 0, 0, 1, 36, 36)",
   });
 
   // Back to the hero — closed launcher hides again.
@@ -73,6 +81,9 @@ test("an open conversation is never forcibly hidden on the hero", async ({ page 
   await injectLauncher(page, "widgetOpen");
   const s = await launcherState(page);
   expect(s?.visibility).toBe("visible");
+  // The calibration translate is scoped to widgetClose — the open
+  // conversation is never repositioned.
+  expect(s?.transform).toBe("none");
 });
 
 test("interior pages show the launcher immediately", async ({ page }) => {
@@ -80,7 +91,14 @@ test("interior pages show the launcher immediately", async ({ page }) => {
   await injectLauncher(page);
   const s = await launcherState(page);
   expect(s?.visibility).toBe("visible");
-  expect(s?.bottom).toBe(25);
+  expect(s?.bottom).toBe(13);
+  expect(s?.right).toBe(13);
+  expect(s?.transform).toBe("matrix(1, 0, 0, 1, 36, 36)");
+  // Transforms never create document overflow — pin that here.
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - document.documentElement.clientWidth
+  );
+  expect(overflow).toBeLessThanOrEqual(0);
 });
 
 test("client-side navigation toggles suppression", async ({ page }, testInfo) => {

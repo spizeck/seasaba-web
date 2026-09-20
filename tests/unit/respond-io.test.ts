@@ -76,3 +76,20 @@ it("hides only the closed widget launcher while the homepage hero is in view", (
   // The old small-screen -60px launcher lift is gone entirely.
   expect(globalsCss).not.toContain("translateY(calc(-60px");
 });
+
+// Launcher resting-position calibration (issue #125): production
+// measurement showed the visible bubble sits ~4-5px inside the 90x90
+// iframe's corner, so vendor right/bottom:49px yields ~53-54px of
+// visible clearance. A fixed 36px translate on the closed launcher lands
+// the bubble ~17-18px from the viewport edges. The vendor does not set
+// transform, so a plain rule is sufficient.
+it("shifts only the closed launcher to its calibrated resting position", () => {
+  const bodies = [...globalsCss.matchAll(
+    /iframe\[title="Webchat Widget"\]\[state="widgetClose"\]\s*{([^}]+)}/g
+  )].map((m) => m[1]);
+  const combined = bodies.join("\n");
+  expect(combined).toContain("transform: translate(36px, 36px)");
+  expect(combined).not.toContain("!important");
+  // The open conversation panel is never repositioned.
+  expect(globalsCss).not.toMatch(/state="widgetOpen"\]\s*{[^}]*transform/);
+});
