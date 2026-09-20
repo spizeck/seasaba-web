@@ -8,51 +8,37 @@ import { OPERATIONS } from "@/data/operations";
 // A/B test toggle: "A" = Sea Saba red CTA, "B" = white CTA with red text
 const HERO_CTA_VARIANT: "A" | "B" = "A";
 
-const TRUST_INDICATORS: { stat: string; label: string; href?: string }[] = [
+const TRUST_INDICATORS: { stat: string; statMobile?: string; label: string; href?: string }[] = [
   { stat: `Since ${OPERATIONS.establishedYear}`, label: "Established" },
   { stat: "30+ Dive Sites", label: "Protected Waters" },
-  { stat: "\u2605\u2605\u2605\u2605\u2605 4.8/5", label: "Google & TripAdvisor", href: "https://www.google.com/maps/search/?api=1&query=Sea+Saba+Dive+Center+Fort+Bay+Saba&query_place_id=ChIJX0c19WkgDowRn2l3bKbFrRU" },
+  { stat: "\u2605\u2605\u2605\u2605\u2605 4.8/5", statMobile: "\u2605 4.8/5", label: "Google & TripAdvisor", href: "https://www.google.com/maps/search/?api=1&query=Sea+Saba+Dive+Center+Fort+Bay+Saba&query_place_id=ChIJX0c19WkgDowRn2l3bKbFrRU" },
 ];
 
-const primaryCTAStyle: React.CSSProperties =
+const btnClasses =
+  "inline-flex h-11 items-center justify-center whitespace-nowrap rounded-md px-6 text-[0.9375rem] font-semibold no-underline transition-[background-color,box-shadow] duration-200 cursor-pointer";
+
+const primaryCTAClasses =
   HERO_CTA_VARIANT === "A"
-    ? {
-        backgroundColor: "#9D2235",
-        color: "#ffffff",
-      }
-    : {
-        backgroundColor: "#ffffff",
-        color: "#9D2235",
-        fontWeight: 700,
-        boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-      };
+    ? "bg-[#9D2235] text-white"
+    : "bg-white font-bold text-[#9D2235] shadow-[0_4px_12px_rgba(0,0,0,0.15)]";
 
-const glassStyle: React.CSSProperties = {
-  background: "rgba(0,0,0,0.35)",
-  backdropFilter: "blur(8px)",
-  WebkitBackdropFilter: "blur(8px)",
-  border: "1px solid rgba(255,255,255,0.25)",
-  color: "#ffffff",
-};
+const glassClasses =
+  "border border-white/25 bg-black/35 text-white backdrop-blur-[8px]";
 
-const btnBase: React.CSSProperties = {
-  display: "inline-flex",
-  alignItems: "center",
-  justifyContent: "center",
-  height: "44px",
-  padding: "0 24px",
-  borderRadius: "6px",
-  fontSize: "0.9375rem",
-  fontWeight: 600,
-  textDecoration: "none",
-  whiteSpace: "nowrap",
-  transition: "background 0.2s, box-shadow 0.2s",
-  cursor: "pointer",
-};
+// Compact-but-legible secondary styling on narrow phones: same 44px touch
+// target, smaller label/padding so the pair fits side-by-side at 320px.
+const secondaryMobileClasses = "max-sm:px-3.5 max-sm:text-sm";
 
 export function Hero() {
   return (
-    <section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden -mt-16 pt-16">
+    <section
+      className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden -mt-16 pt-16"
+      // 100svh = the small viewport: the hero (and its bottom-anchored trust
+      // bar) fits the first screen while mobile browser chrome is shown,
+      // unlike 100vh which sizes to the chrome-collapsed height. Inline so
+      // browsers without svh support ignore it and keep min-h-screen.
+      style={{ minHeight: "100svh" }}
+    >
       {/* Background image — next/image so the LCP resource is preloaded,
           fetch-prioritised, and served responsively instead of as a
           full-resolution CSS background. */}
@@ -80,33 +66,43 @@ export function Hero() {
           Some of the Caribbean&apos;s most unique diving below.
         </p>
         <div className="mt-6 flex flex-col items-center gap-3 sm:mt-10 sm:flex-row sm:justify-center sm:gap-4">
-          {/* Primary CTA — A/B tested */}
+          {/* Primary CTA — A/B tested, own row on mobile */}
           <Link
             href="/book"
-            style={{ ...btnBase, ...primaryCTAStyle }}
+            className={`${btnClasses} ${primaryCTAClasses}`}
             onClick={() => trackBookingClick("/book", "Book Diving", "homepage_hero")}
           >
             Book Diving
           </Link>
-          {/* Secondary CTAs — glassmorphism */}
-          <Link href="/plan-your-trip" style={{ ...btnBase, ...glassStyle }}>
-            Plan Your Trip
-          </Link>
-          <Link href="/dive-sites" style={{ ...btnBase, ...glassStyle }}>
-            Explore Dive Sites
-          </Link>
+          {/* Secondary CTAs — glassmorphism; side-by-side on mobile where they
+              fit, wrapping to two centered rows at the narrowest widths. */}
+          <div className="flex flex-wrap justify-center gap-2 sm:gap-4">
+            <Link href="/plan-your-trip" className={`${btnClasses} ${glassClasses} ${secondaryMobileClasses}`}>
+              Plan Your Trip
+            </Link>
+            <Link href="/dive-sites" className={`${btnClasses} ${glassClasses} ${secondaryMobileClasses}`}>
+              Explore Dive Sites
+            </Link>
+          </div>
         </div>
       </div>
 
       {/* Trust indicator bar — anchored at bottom of hero */}
       <div className="relative z-10 w-full border-t border-white/20 bg-black/30 backdrop-blur-sm">
         <div className="mx-auto max-w-6xl px-4 py-3 sm:px-6 sm:py-5 lg:px-8">
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-3 gap-2 sm:gap-4">
             {TRUST_INDICATORS.map((item) => {
               const inner = (
                 <>
-                  <div className="text-sm font-semibold text-white sm:text-base" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.4)' }}>
-                    {item.stat}
+                  <div className="whitespace-nowrap text-[13px] font-semibold text-white sm:text-base" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.4)' }}>
+                    {item.statMobile ? (
+                      <>
+                        <span className="sm:hidden">{item.statMobile}</span>
+                        <span className="hidden sm:inline">{item.stat}</span>
+                      </>
+                    ) : (
+                      item.stat
+                    )}
                   </div>
                   <div className="mt-0.5 text-xs text-white/75 uppercase tracking-wide">
                     {item.href ? (
