@@ -217,3 +217,18 @@ html[data-hero-in-view] iframe[title="Webchat Widget"][state="widgetClose"] {
   visibility: hidden;
   opacity: 0;
 }
+
+/*
+ * Resting-position calibration (issue #125). Measured on production: the
+ * closed launcher iframe is 90x90 at right/bottom:49px (vendor 25px +
+ * dashboard spacing), while the visible blue circle (~57-59px) sits ~4-5px
+ * inside the iframe's corner — an effective ~53-54px of clearance vs
+ * Cookiebot's ~10-11px. Shifting the closed launcher 36px right/down puts
+ * the circle ~17-18px from the viewport edges. `transform` is safe: the
+ * vendor positions via inline left/right/bottom and does not use
+ * transform, and transforms never create document overflow. Scoped to
+ * `widgetClose`; the open panel (`widgetOpen`) is untouched.
+ */
+iframe[title="Webchat Widget"][state="widgetClose"] {
+  transform: translate(36px, 36px);
+}
