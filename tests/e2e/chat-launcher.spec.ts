@@ -44,12 +44,11 @@ async function launcherState(page: Page) {
 test("homepage: closed launcher hides on hero, appears past it, hides again", async ({ page }) => {
   await hydratedGoto(page, "/");
   // Inject after the observer is established — covers async widget arrival.
-  // The observer's initial callback is async (slower on WebKit), so wait
-  // for the attribute rather than assuming it is already set.
   await injectLauncher(page);
-  await page.waitForFunction(() => document.documentElement.hasAttribute("data-hero-in-view"));
-  const s = await launcherState(page);
-  expect(s?.visibility).toBe("hidden");
+  // Poll rather than asserting once: `visibility` is a discrete animated
+  // property, so during the no-preference fade the computed value still
+  // reports "visible" until the transition completes (WebKit especially).
+  await expect.poll(async () => (await launcherState(page))?.visibility).toBe("hidden");
 
   // Scroll beyond the hero (the [data-hero] section includes the trust bar).
   const heroBottom = await page.evaluate(
