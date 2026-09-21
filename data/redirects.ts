@@ -132,7 +132,6 @@ export const legacyRedirects: LegacyRedirect[] = [
   { source: "/dive_sites/diving_sites_23_big_rock_market.htm", destination: diveSites(diveSiteAnchors.windwardside), statusCode: 301 },
   { source: "/topside-fun", destination: planYourTrip(planYourTripAnchors.experiences), statusCode: 301 },
   { source: "/english_html/why_saba_topside.htm", destination: planYourTrip(planYourTripAnchors.experiences), statusCode: 301 },
-  { source: "/crew/vicky&aaron.htm", destination: "/about", statusCode: 301 },
 
   // --- Manual review (no suitable destination yet) ---
   // /post/oxe-marine-technician-training — leave as 404 pending a news/resources page
@@ -146,4 +145,6 @@ export const legacyRedirects: LegacyRedirect[] = [
   //   /TargetPages/Deutsch.htm — German page; no multilingual IA (see #134)
   //   /cdn-cgi/l/email-protection — Cloudflare email-obfuscation artifact
   //   /sabas-dive- — truncated slug, no definite referent
+  //   /crew/vicky&aaron.htm — bio page for two specific people; the crew
+  //     carousel on /about is not a semantic equivalent
 ];

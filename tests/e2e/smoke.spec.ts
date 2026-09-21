@@ -62,6 +62,7 @@ test("obsolete legacy URLs intentionally still return 404", async ({ request }) 
     "/TargetPages/Deutsch.htm",
     "/cdn-cgi/l/email-protection",
     "/sabas-dive-",
+    "/crew/vicky&aaron.htm",
   ];
   for (const path of obsolete) {
     const response = await request.get(path);
