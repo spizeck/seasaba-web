@@ -228,7 +228,16 @@ html[data-hero-in-view] iframe[title="Webchat Widget"][state="widgetClose"] {
  * vendor positions via inline left/right/bottom and does not use
  * transform, and transforms never create document overflow. Scoped to
  * `widgetClose`; the open panel (`widgetOpen`) is untouched.
+ *
+ * The iframe's transparent top/left still intercepts pointer events
+ * (verified via elementFromPoint on production). `clip-path` shrinks the
+ * hit area to the bottom-right quarter that actually contains the circle
+ * (~58px circle inset ~5px, so 25% leaves ~5px of slack), letting clicks
+ * pass through to page content beneath. When the greeting card shows, the
+ * iframe grows to host it in the same bottom-right region, which stays
+ * inside the clip. The open panel is unaffected (`widgetOpen` unmatched).
  */
 iframe[title="Webchat Widget"][state="widgetClose"] {
   transform: translate(36px, 36px);
+  clip-path: inset(25% 0 0 25%);
 }
