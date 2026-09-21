@@ -315,26 +315,32 @@ export default function VisitingYachtsPage() {
           </div>
         </FeatureImage>
 
-        <div className="mt-6 rounded-xl border border-amber-200/60 bg-amber-50/50 p-5 dark:border-amber-900/40 dark:bg-amber-950/20">
-          <div className="flex items-start gap-3">
-            <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-600 dark:text-amber-500" />
-            <div className="text-sm text-muted-foreground">
-              <h3 className="font-semibold text-foreground">Keep Your Dinghy Movable at the Dock</h3>
-              <p className="mt-2 leading-relaxed">
-                When you tie your dinghy up at Fort Bay, don&apos;t lock or chain it to
-                the dock in a way that prevents it from being moved. Swell can enter
-                the harbor depending on conditions, and dinghies sometimes need to
-                be shifted quickly, for space or for their own protection. We&apos;ve
-                seen dinghies sink after conditions changed when nobody could move
-                the dinghy or locate its owner.
-              </p>
-              <p className="mt-2 leading-relaxed">
-                This is about the dinghy itself, not your belongings: securing the
-                outboard and your gear is still sensible, as long as the boat can
-                be moved when it needs to be.
-              </p>
-            </div>
-          </div>
+        <div className="mt-6 rounded-lg border border-border/40 bg-muted/20 p-5">
+          <h3 className="text-sm font-semibold text-foreground">At the Dinghy Dock</h3>
+          <ul className="mt-3 space-y-4 text-sm text-muted-foreground">
+            <li className="flex items-start gap-3">
+              <span className="mt-0.5 text-primary">✓</span>
+              <span>
+                <strong className="font-medium text-foreground">Keep it movable.</strong>{" "}
+                Don&apos;t lock or chain your dinghy to the dock in a way that prevents
+                it from being moved. Swell can enter Fort Bay, and dinghies sometimes
+                need to be shifted quickly; we&apos;ve seen them sink when nobody could
+                move the dinghy or locate its owner. Securing the outboard and your
+                belongings is still sensible.
+              </span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="mt-0.5 text-primary">✓</span>
+              <span>
+                <strong className="font-medium text-foreground">Bring your own stern anchor.</strong>{" "}
+                The stern-anchor clips and lines at Saba&apos;s dinghy docks are privately
+                owned, not communal mooring points, and even an unused-looking clip
+                isn&apos;t for visiting dinghies. A dinghy left on a private line may be
+                untied so the owner can use their equipment. Tie to the plastic jetty
+                where that&apos;s appropriate.
+              </span>
+            </li>
+          </ul>
         </div>
 
         <div className="mt-6 rounded-xl border border-amber-200/60 bg-amber-50/50 p-5 dark:border-amber-900/40 dark:bg-amber-950/20">
@@ -372,14 +378,29 @@ export default function VisitingYachtsPage() {
         </div>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
           The standard approach is to leave the yacht on its mooring, dinghy into Fort Bay, and
-          join one of our scheduled boats. Bring your gear straight to the dive center. We can
-          store it between dive days, and backup equipment is close by if anything gives you
-          trouble. Our trips depart from and return to{" "}
+          join one of our scheduled boats. Bring your personal gear straight to the dive center.
+          We can store it between dive days, and backup equipment is close by if anything gives
+          you trouble. Our trips depart from and return to{" "}
           {OPERATIONS.harbor}, so there&apos;s no hotel pickup to coordinate. Just be at the dive
           center about 30 minutes before the boat leaves. Rental equipment is available, a dive
           computer is required on every dive (rentals available), and groups stay small at a
           maximum of {OPERATIONS.maxRecreationalDiversPerGuide} divers per guide.
         </p>
+
+        <div className="mt-5 rounded-lg border border-primary/20 bg-primary/5 px-5 py-4">
+          <div className="flex items-start gap-3">
+            <Wind className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+            <div className="text-sm text-muted-foreground">
+              <h3 className="font-semibold text-foreground">Sea Saba Tanks on Our Boats</h3>
+              <p className="mt-2 leading-relaxed">
+                If you&apos;re diving from a Sea Saba boat, we&apos;ll provide the tanks.
+                Our boats are set up for our own cylinders, so please leave your
+                yacht&apos;s tanks aboard. Tanks, Nitrox and weights are included in
+                your diving.
+              </p>
+            </div>
+          </div>
+        </div>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
           In some situations we can arrange a pickup from your vessel for the later dives of the
           day. It&apos;s not practical for the first dive, and it depends on your position, the
@@ -482,10 +503,12 @@ export default function VisitingYachtsPage() {
             </p>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
               Charter pricing is inclusive: the Sea Saba boat, crew and guide, the diving,
-              tanks, weights, normal rental equipment, {OPERATIONS.nitroxBlend} Nitrox for
-              certified divers, and the Marine Park and hyperbaric chamber contributions for
-              the diving are all covered. None of that appears as a per-diver charge on top of
-              the charter price.
+              Sea Saba cylinders, weights, normal rental equipment, {OPERATIONS.nitroxBlend}{" "}
+              Nitrox for certified divers, and the Marine Park and hyperbaric chamber
+              contributions for the diving are all covered. None of that appears as a per-diver
+              charge on top of the charter price. The cylinder rule is the same as on our
+              scheduled trips: charter guests dive with Sea Saba cylinders, not with tanks
+              brought over from the yacht.
             </p>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
               Vessel-related fees are a separate matter: yacht registration, mooring, harbor,
@@ -542,6 +565,16 @@ export default function VisitingYachtsPage() {
           computers are available. Sea Saba fills its own cylinders for our trips, both air and{" "}
           {OPERATIONS.nitroxBlend} Nitrox. Certified Nitrox divers get complimentary Nitrox on
           qualifying dives.
+        </p>
+        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          When the diving is from one of our boats, those tanks are always Sea Saba cylinders,
+          for a practical reason. The tank racks are configured specifically for our own
+          cylinders; even our aluminum 100s use dedicated racks under the camera table rather
+          than the standard racks, and steel cylinders or cylinders fitted with tank boots
+          don&apos;t rack securely at all. A properly racked cylinder keeps the assembled
+          equipment secure and makes gearing up and water entry smoother. Cylinders aboard
+          your own yacht are unaffected; they simply can&apos;t be used for dives from our
+          boats.
         </p>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
           For private yacht operations we can supply whatever the planned diving needs, including
