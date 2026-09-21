@@ -66,6 +66,16 @@ test("course inquiry customer: courses → open water info → message handoff",
   }
 });
 
+test("yacht visitor: plan-your-trip → visiting yachts guide", async ({ page }) => {
+  await hydratedGoto(page, "/plan-your-trip");
+  await expect(page.getByRole("heading", { name: "Plan Your Trip to Saba" })).toBeVisible();
+
+  // The yacht entry point lives in Getting to Saba alongside the carriers.
+  await page.getByRole("link", { name: "Read the Yacht Guide" }).click();
+  await expect(page).toHaveURL(/\/visiting-yachts$/);
+  await expect(page.getByRole("heading", { name: "Visiting Saba by Yacht" })).toBeVisible();
+});
+
 test("trip planner: plan-your-trip → generic booking page with fallback", async ({ page }) => {
   await hydratedGoto(page, "/plan-your-trip");
   await expect(page.getByRole("heading", { name: "Plan Your Trip to Saba" })).toBeVisible();
