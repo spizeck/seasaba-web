@@ -124,7 +124,26 @@ export const legacyRedirects: LegacyRedirect[] = [
   { source: "/instagram", destination: "https://www.instagram.com/seasaba/", statusCode: 301, basePath: false },
   { source: "/tripadvisor", destination: "https://www.tripadvisor.com/Attraction_Review-g147337-d1206831-Reviews-Sea_Saba_Dive_Center-Windwardside_Saba.html", statusCode: 301, basePath: false },
 
+  // Pre-Wix static site URLs reported by Search Console (#133)
+  { source: "/Index.html", destination: "/", statusCode: 301 },
+  { source: "/index.html", destination: "/", statusCode: 301 },
+  { source: "/terms-conditions", destination: "/terms", statusCode: 301 },
+  { source: "/english_html/diving_sites.htm", destination: diveSites(), statusCode: 301 },
+  { source: "/dive_sites/diving_sites_23_big_rock_market.htm", destination: diveSites(diveSiteAnchors.windwardside), statusCode: 301 },
+  { source: "/topside-fun", destination: planYourTrip(planYourTripAnchors.experiences), statusCode: 301 },
+  { source: "/english_html/why_saba_topside.htm", destination: planYourTrip(planYourTripAnchors.experiences), statusCode: 301 },
+  { source: "/crew/vicky&aaron.htm", destination: "/about", statusCode: 301 },
+
   // --- Manual review (no suitable destination yet) ---
   // /post/oxe-marine-technician-training — leave as 404 pending a news/resources page
   // /dive-log — now a live route with an identical slug, so no redirect is needed.
+  //
+  // Search Console cleanup (#133): these legacy URLs were reviewed and are
+  // intentionally left as 404 — no genuine modern equivalent exists.
+  //   /the-island-of-saba/1000 — numeric sub-path with no verifiable content
+  //   /news/Newsletter/SUSOMNewsletterJun08.html — dated 2008 SUSOM newsletter
+  //   /TargetPages/ — old-site directory index
+  //   /TargetPages/Deutsch.htm — German page; no multilingual IA (see #134)
+  //   /cdn-cgi/l/email-protection — Cloudflare email-obfuscation artifact
+  //   /sabas-dive- — truncated slug, no definite referent
 ];
