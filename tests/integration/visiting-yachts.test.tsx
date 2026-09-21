@@ -187,4 +187,37 @@ describe("visiting yachts page", () => {
     const hrefs = screen.getAllByRole("link").map((a) => a.getAttribute("href") ?? "");
     expect(hrefs).toContain("https://sabapark.org/downloads/SCF%20Yacht%20Brochure.pdf");
   });
+
+  it("states no fixed mooring stay limit and defers duration to immigration status", () => {
+    const { container } = render(<VisitingYachtsPage />);
+    const text = container.textContent ?? "";
+    // The owner-confirmed correction: no 7-day (or any fixed) mooring maximum.
+    expect(text).not.toMatch(/(seven|7)\s*-?\s*days?/i);
+    expect(text).not.toMatch(/maximum stay of/i);
+    expect(text).toMatch(/no fixed maximum stay/i);
+    expect(text).toMatch(/immigration status/i);
+  });
+
+  it("explains red dive buoys: overnight use allowed, dive boats keep priority", () => {
+    const { container } = render(<VisitingYachtsPage />);
+    const text = container.textContent ?? "";
+    expect(text).toMatch(/red (dive )?buoys?/i);
+    expect(text).toMatch(/overnight/i);
+    expect(text).toMatch(/dive boat needs the buoy/i);
+    expect(text).toMatch(/no priority over dive operations/i);
+  });
+
+  it("warns against immobilizing a dinghy at Fort Bay, with the swell rationale", () => {
+    const { container } = render(<VisitingYachtsPage />);
+    const text = container.textContent ?? "";
+    expect(text).toMatch(/lock or chain/i);
+    expect(text).toMatch(/prevents it from being moved/i);
+    // Why it matters: swell enters the harbor, dinghies must be movable fast,
+    // and locked dinghies have sunk when nobody could move them or find the owner.
+    expect(text).toMatch(/swell/i);
+    expect(text).toMatch(/sink/i);
+    expect(text).toMatch(/locate/i);
+    // The note is about the dinghy's mobility, not leaving property unsecured.
+    expect(text).toMatch(/not your belongings|securing the outboard/i);
+  });
 });
