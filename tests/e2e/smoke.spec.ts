@@ -50,3 +50,22 @@ test("legacy URLs resolve with 301s and their destination anchors exist", async 
     if (hash) expect(await response.text(), destination).toContain(`id="${hash}"`);
   }
 });
+test("obsolete legacy URLs intentionally still return 404", async ({ request }) => {
+  // Reviewed in #133: these have no genuine modern equivalent, so they stay
+  // not-found instead of being redirected to an unrelated page. Redirects are
+  // followed so trailing-slash normalization (e.g. /TargetPages/) still lands
+  // on the real status rather than the intermediate 308.
+  const obsolete = [
+    "/the-island-of-saba/1000",
+    "/news/Newsletter/SUSOMNewsletterJun08.html",
+    "/TargetPages/",
+    "/TargetPages/Deutsch.htm",
+    "/cdn-cgi/l/email-protection",
+    "/sabas-dive-",
+    "/crew/vicky&aaron.htm",
+  ];
+  for (const path of obsolete) {
+    const response = await request.get(path);
+    expect(response.status(), path).toBe(404);
+  }
+});
