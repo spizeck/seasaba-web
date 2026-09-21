@@ -89,7 +89,10 @@ it("shifts only the closed launcher to its calibrated resting position", () => {
   )].map((m) => m[1]);
   const combined = bodies.join("\n");
   expect(combined).toContain("transform: translate(36px, 36px)");
+  // clip-path shrinks the transparent hit area to the circle's quarter.
+  expect(combined).toContain("clip-path: inset(25% 0 0 25%)");
   expect(combined).not.toContain("!important");
-  // The open conversation panel is never repositioned.
+  // The open conversation panel is never repositioned or clipped.
   expect(globalsCss).not.toMatch(/state="widgetOpen"\]\s*{[^}]*transform/);
+  expect(globalsCss).not.toMatch(/state="widgetOpen"\]\s*{[^}]*clip-path/);
 });
