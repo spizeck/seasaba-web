@@ -66,6 +66,24 @@ test("course inquiry customer: courses → open water info → message handoff",
   }
 });
 
+test("trip planner: homepage accommodations card deep-links to the where-to-stay section", async ({ page }) => {
+  await hydratedGoto(page, "/");
+
+  await page.getByRole("link", { name: "Explore accommodations" }).click();
+  await expect(page).toHaveURL(/\/plan-your-trip#where-to-stay$/);
+  // The section must land in view below the sticky header, not hidden under it.
+  const section = page.locator("#where-to-stay");
+  await expect(section).toBeInViewport();
+});
+
+test("dive explorer: homepage area teaser deep-links to its dive-sites section", async ({ page }) => {
+  await hydratedGoto(page, "/");
+
+  await page.getByRole("link", { name: "Explore The Pinnacles dive sites" }).click();
+  await expect(page).toHaveURL(/\/dive-sites#pinnacles$/);
+  await expect(page.locator("#pinnacles")).toBeInViewport();
+});
+
 test("yacht visitor: plan-your-trip → visiting yachts guide", async ({ page }) => {
   await hydratedGoto(page, "/plan-your-trip");
   await expect(page.getByRole("heading", { name: "Plan Your Trip to Saba" })).toBeVisible();

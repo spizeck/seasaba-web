@@ -1,15 +1,16 @@
 "use client";
 
 import { PageSectionNav } from "@/components/navigation/PageSectionNav";
+import { partnersAnchors } from "@/lib/anchors";
 
 const SECTIONS = [
-  { id: "where-to-stay", label: "Where to Stay" },
-  { id: "restaurants", label: "Restaurants" },
-  { id: "transportation", label: "Transportation" },
-  { id: "dive-partners", label: "Dive Partners" },
-  { id: "training-agencies", label: "Training Agencies" },
-  { id: "equipment-partners", label: "Equipment Partners" },
-  { id: "conservation-partners", label: "Conservation" },
+  { id: partnersAnchors.whereToStay, label: "Where to Stay" },
+  { id: partnersAnchors.restaurants, label: "Restaurants" },
+  { id: partnersAnchors.transportation, label: "Transportation" },
+  { id: partnersAnchors.divePartners, label: "Dive Partners" },
+  { id: partnersAnchors.trainingAgencies, label: "Training Agencies" },
+  { id: partnersAnchors.equipmentPartners, label: "Equipment Partners" },
+  { id: partnersAnchors.conservationPartners, label: "Conservation" },
 ];
 
 export function OnThisPageNav() {

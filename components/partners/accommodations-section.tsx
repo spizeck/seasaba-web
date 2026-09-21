@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ExternalLink, MapPin, Search, X } from "lucide-react";
 import { Pill } from "@/components/ui/pill";
 import { trackLinkClick } from "@/lib/analytics";
+import { partnersAnchors } from "@/lib/anchors";
 import type { Accommodation, AccommodationType } from "@/data/partners";
 
 interface AccommodationsSectionProps {
@@ -142,7 +143,7 @@ export function AccommodationsSection({ accommodations }: AccommodationsSectionP
   const hasActiveFilters = activeFilters.size > 0 || searchQuery.trim().length > 0;
 
   return (
-    <section id="where-to-stay" className="mt-14 scroll-mt-32">
+    <section id={partnersAnchors.whereToStay} className="mt-14 scroll-mt-32">
       <h2 className="text-xl font-semibold text-foreground">Where to Stay</h2>
       <p className="mt-1 text-sm text-muted-foreground">
         A curated selection of hotels, cottages, and villas on Saba.

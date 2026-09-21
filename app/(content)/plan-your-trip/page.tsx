@@ -488,7 +488,11 @@ export default function PlanYourTripPage() {
         </FeatureImage>
 
         <div className="mt-4 rounded-lg border border-border/40 bg-muted/20 px-5 py-4 text-sm text-muted-foreground">
-          Select a hotel above to view photos, amenities, and a quick overview. Need personalized advice? Our team is happy to recommend the perfect place to stay based on your budget, travel style, and diving plans.
+          Select a hotel above to view photos, amenities, and a quick overview. Need personalized advice?{" "}
+          <Link href="/contact?interest=general" className="font-medium text-primary hover:underline underline-offset-4">
+            Ask us
+          </Link>{" "}
+          — our team is happy to recommend the perfect place to stay based on your budget, travel style, and diving plans.
         </div>
       </section>
 

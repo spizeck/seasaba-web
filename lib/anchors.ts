@@ -58,3 +58,19 @@ export const visitingYachtsAnchors = {
   conditions: "conditions",
   contact: "contact",
 } as const;
+
+export const partnersAnchors = {
+  whereToStay: "where-to-stay",
+  restaurants: "restaurants",
+  transportation: "transportation",
+  localPartners: "local-partners",
+  divePartners: "dive-partners",
+  trainingAgencies: "training-agencies",
+  equipmentPartners: "equipment-partners",
+  travelPartners: "travel-partners",
+  conservationPartners: "conservation-partners",
+} as const;
+
+export const termsAnchors = {
+  scheduleChanges: "schedule-changes",
+} as const;

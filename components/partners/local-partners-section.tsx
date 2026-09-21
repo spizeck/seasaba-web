@@ -3,7 +3,13 @@
 import Link from "next/link";
 import { ExternalLink, MapPin, Plane, Ship, Helicopter } from "lucide-react";
 import { trackLinkClick } from "@/lib/analytics";
+import { partnersAnchors } from "@/lib/anchors";
 import type { Partner, PartnerSubcategory } from "@/data/partners";
+
+const SUBCATEGORY_ANCHORS: Record<PartnerSubcategory, string> = {
+  Restaurants: partnersAnchors.restaurants,
+  Transportation: partnersAnchors.transportation,
+};
 
 interface LocalPartnersSectionProps {
   partners: Partner[];
@@ -12,7 +18,7 @@ interface LocalPartnersSectionProps {
 
 export function LocalPartnersSection({ partners, subcategories }: LocalPartnersSectionProps) {
   return (
-    <section id="local-partners" className="mt-14 scroll-mt-32">
+    <section id={partnersAnchors.localPartners} className="mt-14 scroll-mt-32">
       <h2 className="text-xl font-semibold text-foreground">Local Partners</h2>
       <p className="mt-1 text-sm text-muted-foreground">
         Trusted restaurants and transportation we recommend while you are visiting Saba.
@@ -25,7 +31,7 @@ export function LocalPartnersSection({ partners, subcategories }: LocalPartnersS
 
           const isRestaurants = subcategory === "Restaurants";
           const isTransportation = subcategory === "Transportation";
-          const subcategoryId = subcategory.toLowerCase().replace(/\s+/g, "-");
+          const subcategoryId = SUBCATEGORY_ANCHORS[subcategory];
 
           return (
             <div key={subcategory} id={subcategoryId} className="scroll-mt-32">

@@ -100,7 +100,7 @@ export const legacyRedirects: LegacyRedirect[] = [
 
   // Plan your trip cluster
   { source: "/travelling-to-saba", destination: planYourTrip(planYourTripAnchors.gettingHere), statusCode: 301 },
-  { source: "/sailing-to-saba", destination: planYourTrip(planYourTripAnchors.gettingHere), statusCode: 301 },
+  { source: "/sailing-to-saba", destination: "/visiting-yachts", statusCode: 301 },
   { source: "/where-to-stay", destination: planYourTrip(planYourTripAnchors.whereToStay), statusCode: 301 },
   { source: "/cottage-andhouse-rentals", destination: planYourTrip(planYourTripAnchors.whereToStay), statusCode: 301 },
   { source: "/saba-restaurants", destination: planYourTrip(planYourTripAnchors.restaurants), statusCode: 301 },

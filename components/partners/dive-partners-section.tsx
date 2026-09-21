@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ExternalLink, MapPin } from "lucide-react";
 import { trackLinkClick } from "@/lib/analytics";
+import { partnersAnchors } from "@/lib/anchors";
 import type { Partner } from "@/data/partners";
 
 interface DivePartnersSectionProps {
@@ -11,7 +12,7 @@ interface DivePartnersSectionProps {
 
 export function DivePartnersSection({ partners }: DivePartnersSectionProps) {
   return (
-    <section id="dive-partners" className="mt-16 scroll-mt-32">
+    <section id={partnersAnchors.divePartners} className="mt-16 scroll-mt-32">
       <h2 className="text-xl font-semibold text-foreground">Caribbean Dive Partners</h2>
       <p className="mt-1 text-sm text-muted-foreground">
         Dive operators that regularly work with Sea Saba or complement trips to the island.
