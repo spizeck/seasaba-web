@@ -4,6 +4,7 @@ import Link from "next/link";
 import { MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { trackLinkClick } from "@/lib/analytics";
+import { partnersAnchors } from "@/lib/anchors";
 import type { Partner } from "@/data/partners";
 
 interface TravelPartnersSectionProps {
@@ -12,7 +13,7 @@ interface TravelPartnersSectionProps {
 
 export function TravelPartnersSection({ partners }: TravelPartnersSectionProps) {
   return (
-    <section id="travel-partners" className="mt-16 scroll-mt-24">
+    <section id={partnersAnchors.travelPartners} className="mt-16 scroll-mt-24">
       <h2 className="text-xl font-semibold text-foreground">Travel & Tour Operators</h2>
       <p className="mt-1 text-sm text-muted-foreground">
         Sea Saba works with travel agencies, wholesalers, and group organizers to make planning dive vacations easy.

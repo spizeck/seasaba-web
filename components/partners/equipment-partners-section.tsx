@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 import { trackLinkClick } from "@/lib/analytics";
+import { partnersAnchors } from "@/lib/anchors";
 import type { Partner } from "@/data/partners";
 
 interface EquipmentPartnersSectionProps {
@@ -11,7 +12,7 @@ interface EquipmentPartnersSectionProps {
 
 export function EquipmentPartnersSection({ partners }: EquipmentPartnersSectionProps) {
   return (
-    <section id="equipment-partners" className="mt-16 scroll-mt-32">
+    <section id={partnersAnchors.equipmentPartners} className="mt-16 scroll-mt-32">
       <h2 className="text-xl font-semibold text-foreground">Equipment Partners</h2>
       <p className="mt-1 text-sm text-muted-foreground">
         Manufacturers and brands we trust and use at Sea Saba.

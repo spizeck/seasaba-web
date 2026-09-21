@@ -5,7 +5,7 @@ import { PageHero } from "@/components/page-hero";
 import { FeatureImage } from "@/components/feature-image";
 import { DiveAreaSites } from "@/components/dive-area-sites";
 import { TrackedInternalButton } from "@/components/tracked-internal-button";
-import { diveSiteAnchors } from "@/lib/anchors";
+import { diveSiteAnchors, divingAnchors } from "@/lib/anchors";
 
 export const metadata = createMetadata({
   title: "Saba Dive Sites",
@@ -137,7 +137,7 @@ export default function DiveSitesPage() {
         </p>
         <div className="mt-6 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
           <Button asChild size="lg" className="text-base font-semibold">
-            <Link href="/diving">View Diving Options</Link>
+            <Link href={`/diving#${divingAnchors.options}`}>View Diving Options</Link>
           </Button>
           <TrackedInternalButton
             variant="outline"

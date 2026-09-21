@@ -1,5 +1,6 @@
 import { createMetadata } from "@/lib/metadata";
 import { InsuranceCTAs } from "@/components/insurance-ctas";
+import { termsAnchors } from "@/lib/anchors";
 
 export const metadata = createMetadata({
   title: "Terms & Conditions",
@@ -128,7 +129,7 @@ export default function TermsPage() {
           </ul>
         </section>
 
-        <section>
+        <section id={termsAnchors.scheduleChanges} className="scroll-mt-40">
           <h2 className="text-xl font-semibold text-foreground">Schedule Changes</h2>
           <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-relaxed text-muted-foreground">
             <li>Sea Saba reserves the right to substitute vessels, captains, instructors, divemasters, dive sites, itineraries, departure times, or trip durations whenever necessary due to weather, sea conditions, operational requirements, equipment availability, guest safety, or other circumstances beyond our reasonable control.</li>

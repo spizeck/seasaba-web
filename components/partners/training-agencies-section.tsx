@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 import { trackLinkClick } from "@/lib/analytics";
+import { partnersAnchors } from "@/lib/anchors";
 import type { Partner } from "@/data/partners";
 
 interface TrainingAgenciesSectionProps {
@@ -11,7 +12,7 @@ interface TrainingAgenciesSectionProps {
 
 export function TrainingAgenciesSection({ partners }: TrainingAgenciesSectionProps) {
   return (
-    <section id="training-agencies" className="mt-16 scroll-mt-32">
+    <section id={partnersAnchors.trainingAgencies} className="mt-16 scroll-mt-32">
       <h2 className="text-xl font-semibold text-foreground">Training Agencies</h2>
       <p className="mt-1 text-sm text-muted-foreground">
         Sea Saba teaches under the agencies that set the standard for recreational, technical, and public-safety diving.

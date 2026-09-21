@@ -2,16 +2,17 @@
 
 import Link from "next/link";
 import { CONTACT, SOCIAL_LINKS } from "@/lib/constants";
+import { planYourTripAnchors } from "@/lib/anchors";
 import { OPERATIONS } from "@/data/operations";
 import { trackLinkClick } from "@/lib/analytics";
 import { CookieSettingsButton } from "@/components/cookie-settings-button";
 
 const PLAN_LINKS = [
-  { label: "Where to Stay",  href: "/plan-your-trip#where-to-stay" },
-  { label: "Getting Here",   href: "/plan-your-trip#getting-here" },
-  { label: "When to Visit",  href: "/plan-your-trip#when-to-visit" },
-  { label: "What to Bring",  href: "/plan-your-trip#what-to-bring" },
-  { label: "Good to Know",   href: "/plan-your-trip#good-to-know" },
+  { label: "Where to Stay",  href: `/plan-your-trip#${planYourTripAnchors.whereToStay}` },
+  { label: "Getting Here",   href: `/plan-your-trip#${planYourTripAnchors.gettingHere}` },
+  { label: "When to Visit",  href: `/plan-your-trip#${planYourTripAnchors.whenToVisit}` },
+  { label: "What to Bring",  href: `/plan-your-trip#${planYourTripAnchors.whatToBring}` },
+  { label: "Good to Know",   href: `/plan-your-trip#${planYourTripAnchors.goodToKnow}` },
   { label: "Recommended Partners", href: "/partners" },
 ] as const;
 
@@ -37,7 +38,7 @@ const RESOURCE_LINKS: { label: string; href: string; external?: boolean; ariaLab
     external: true,
     ariaLabel: "Get short-term dive accident insurance through DAN, opens in a new tab",
   },
-  { label: "FAQ",                href: "/plan-your-trip#faq" },
+  { label: "FAQ",                href: `/plan-your-trip#${planYourTripAnchors.faq}` },
   { label: "Terms & Conditions", href: "/terms" },
   { label: "Privacy Policy",     href: "/privacy" },
   { label: "Cookie Policy",      href: "/cookie-policy" },

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 import { trackLinkClick } from "@/lib/analytics";
+import { partnersAnchors } from "@/lib/anchors";
 import type { Partner } from "@/data/partners";
 
 interface ConservationPartnersSectionProps {
@@ -11,7 +12,7 @@ interface ConservationPartnersSectionProps {
 
 export function ConservationPartnersSection({ partners }: ConservationPartnersSectionProps) {
   return (
-    <section id="conservation-partners" className="mt-16 scroll-mt-32">
+    <section id={partnersAnchors.conservationPartners} className="mt-16 scroll-mt-32">
       <h2 className="text-xl font-semibold text-foreground">Conservation & Community</h2>
       <p className="mt-1 text-sm text-muted-foreground">
         Organizations protecting and promoting the extraordinary marine and terrestrial environments around Saba.

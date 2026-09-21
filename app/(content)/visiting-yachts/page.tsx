@@ -8,7 +8,7 @@ import { PageSectionNav } from "@/components/navigation/PageSectionNav";
 import { TrackedInternalButton } from "@/components/tracked-internal-button";
 import { TrackedContactLink } from "@/components/tracked-contact-link";
 import { CONTACT } from "@/lib/constants";
-import { visitingYachtsAnchors, divingAnchors } from "@/lib/anchors";
+import { visitingYachtsAnchors, divingAnchors, termsAnchors } from "@/lib/anchors";
 import { DIVE_PRODUCTS, OPERATIONS, bookingHref } from "@/data/operations";
 
 export const metadata = createMetadata({
@@ -618,7 +618,7 @@ export default function VisitingYachtsPage() {
           parts. If weather changes your plans, contact us. We try to be flexible with
           rescheduling whenever we can, and we&apos;d rather help reduce the stress than add to
           it. Our{" "}
-          <Link href="/terms" className="font-medium text-primary hover:underline underline-offset-4">
+          <Link href={`/terms#${termsAnchors.scheduleChanges}`} className="font-medium text-primary hover:underline underline-offset-4">
             booking terms
           </Link>{" "}
           cover the details.

@@ -6,6 +6,7 @@ import { ImageCard } from "@/components/image-card";
 import { FeatureImage } from "@/components/feature-image";
 import { TrackedInternalButton } from "@/components/tracked-internal-button";
 import { createMetadata } from "@/lib/metadata";
+import { diveSiteAnchors, planYourTripAnchors } from "@/lib/anchors";
 
 const WHY_SABA_FEATURED = [
   {
@@ -48,7 +49,7 @@ const WHY_SABA_SECONDARY = [
 
 const DIVE_EXPERIENCES = [
   {
-    id: "pinnacles",
+    anchor: diveSiteAnchors.pinnacles,
     title: "The Pinnacles",
     subtitle: "The dives that made Saba famous.",
     image: "/images/optimized/diver-volcanic-pinnacle-saba.webp",
@@ -58,7 +59,7 @@ const DIVE_EXPERIENCES = [
     sites: ["Third Encounter", "Twilight Zone", "Outer Limits", "Mt. Michel", "Shark Shoals"],
   },
   {
-    id: "tent-reef",
+    anchor: diveSiteAnchors.tentReef,
     title: "Tent Reef",
     subtitle: "Something different on every dive.",
     image: "/images/optimized/green-turtle-tent-reef.webp",
@@ -68,7 +69,7 @@ const DIVE_EXPERIENCES = [
     sites: ["Tent Shallow", "Tent Deep", "Tent Reef", "Tent Boulders", "Tent Wall", "Tedran Wall"],
   },
   {
-    id: "ladder-bay",
+    anchor: diveSiteAnchors.ladderBay,
     title: "Ladder Bay",
     subtitle: "History meets volcanic geology.",
     image: "/images/optimized/nurse-shark-ladder-bay-saba.webp",
@@ -78,7 +79,7 @@ const DIVE_EXPERIENCES = [
     sites: ["Rays n\u2019 Anchors", "Ladder Labyrinth", "Hot Springs", "50/50", "Porites Point", "Customs House", "Babylon"],
   },
   {
-    id: "wells-bay",
+    anchor: diveSiteAnchors.wellsBay,
     title: "Wells Bay",
     subtitle: "Classic Caribbean reef diving.",
     image: "/images/optimized/wells-bay-dive-site-saba.webp",
@@ -88,7 +89,7 @@ const DIVE_EXPERIENCES = [
     sites: ["Otto's Limits", "Torrens Point", "Diamond Rock", "Man O'War Shoals"],
   },
   {
-    id: "windwardside",
+    anchor: diveSiteAnchors.windwardside,
     title: "Windwardside",
     subtitle: "A completely different side of Saba.",
     image: "/images/optimized/windwardside-dive-site-saba.webp",
@@ -209,6 +210,12 @@ export default function Home() {
                       </span>
                     ))}
                   </div>
+                  <Link
+                    href={`/dive-sites#${exp.anchor}`}
+                    className="mt-4 inline-block text-sm font-medium text-white underline underline-offset-4 transition-colors hover:text-white/80"
+                  >
+                    Explore {exp.title} dive sites →
+                  </Link>
                 </div>
               </FeatureImage>
             ))}
@@ -256,7 +263,7 @@ export default function Home() {
                   high-speed ferry. The journey is part of the adventure, and the views
                   are unforgettable.
                 </p>
-                <Link href="/plan-your-trip" className="mt-5 inline-block text-sm font-medium text-primary hover:underline">
+                <Link href={`/plan-your-trip#${planYourTripAnchors.gettingHere}`} className="mt-5 inline-block text-sm font-medium text-primary hover:underline">
                   Flights and Ferries →
                 </Link>
               </div>
@@ -273,7 +280,7 @@ export default function Home() {
                   From charming cottages to boutique hotels, Saba&apos;s accommodations
                   reflect the island&apos;s relaxed pace and welcoming spirit.
                 </p>
-                <Link href="/plan-your-trip" className="mt-5 inline-block text-sm font-medium text-primary hover:underline">
+                <Link href={`/plan-your-trip#${planYourTripAnchors.whereToStay}`} className="mt-5 inline-block text-sm font-medium text-primary hover:underline">
                   Explore accommodations →
                 </Link>
               </div>
@@ -292,7 +299,7 @@ export default function Home() {
                   visit Saba. Warm water, healthy reefs, and changing marine life make
                   every month rewarding.
                 </p>
-                <Link href="/plan-your-trip" className="mt-5 inline-block text-sm font-medium text-primary hover:underline">
+                <Link href={`/plan-your-trip#${planYourTripAnchors.whenToVisit}`} className="mt-5 inline-block text-sm font-medium text-primary hover:underline">
                   When to visit →
                 </Link>
               </div>
@@ -309,7 +316,7 @@ export default function Home() {
                   Safe villages, friendly people, and no crowds. Many visitors return
                   year after year, and some never really leave.
                 </p>
-                <Link href="/plan-your-trip" className="mt-5 inline-block text-sm font-medium text-primary hover:underline">
+                <Link href={`/plan-your-trip#${planYourTripAnchors.history}`} className="mt-5 inline-block text-sm font-medium text-primary hover:underline">
                   Discover Saba →
                 </Link>
               </div>

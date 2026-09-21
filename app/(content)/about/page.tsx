@@ -7,6 +7,7 @@ import { Anchor, Users, Shield, Ship, Bus, MapPin } from "lucide-react";
 import { TeamCarousel, OwnerFeature } from "@/components/about-page-client";
 import { TrackedInternalButton } from "@/components/tracked-internal-button";
 import { TrackedOutboundLink } from "@/components/tracked-outbound-link";
+import { divingAnchors } from "@/lib/anchors";
 import { OPERATIONS } from "@/data/operations";
 
 export const metadata = createMetadata({
@@ -245,7 +246,7 @@ export default function AboutPage() {
             Book Diving
           </TrackedInternalButton>
           <Button asChild variant="outline" size="lg" className="text-base font-semibold">
-            <Link href="/diving">View Diving Options</Link>
+            <Link href={`/diving#${divingAnchors.options}`}>View Diving Options</Link>
           </Button>
         </div>
       </section>
