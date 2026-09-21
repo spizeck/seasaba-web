@@ -220,4 +220,57 @@ describe("visiting yachts page", () => {
     // The note is about the dinghy's mobility, not leaving property unsecured.
     expect(text).toMatch(/not your belongings|securing the outboard/i);
   });
+
+  it("requires Sea Saba cylinders for any diving from a Sea Saba boat", () => {
+    const { container } = render(<VisitingYachtsPage />);
+    const text = container.textContent ?? "";
+    // Categorical rule covering scheduled trips and private charters alike.
+    expect(text).toMatch(/from a Sea Saba boat/i);
+    expect(text).toMatch(/dive with Sea Saba cylinders/i);
+    expect(text).toMatch(/scheduled trips? or a private charter/i);
+    // The reason is practical, not arbitrary: racks are configured for our
+    // own cylinders.
+    expect(text).toMatch(/tank racks/i);
+    expect(text).toMatch(/configured specifically for our own cylinders/i);
+    // Guest-owned cylinders are not a permitted substitute aboard our boats.
+    expect(text).toMatch(/guest-owned tanks? can.t be substituted/i);
+    expect(text).toMatch(/can.t be used for dives from our boats/i);
+    // Guests may still carry their own cylinders aboard their own yacht.
+    expect(text).toMatch(/aboard your own yacht/i);
+    expect(text).toMatch(/unaffected/i);
+    // The no-customer-cylinder-fills boundary remains stated.
+    expect(text).toMatch(/don.t fill customer-owned cylinders/i);
+  });
+
+  it("keeps private charter inclusions consistent with the cylinder rule", () => {
+    const { container } = render(<VisitingYachtsPage />);
+    const text = container.textContent ?? "";
+    // Cylinders remain part of the inclusive charter package.
+    expect(text).toMatch(/Charter pricing is inclusive/i);
+    expect(text).toMatch(/Sea Saba cylinders, weights/i);
+    // Charter guests cannot substitute customer-owned cylinders either.
+    expect(text).toMatch(/charter guests dive with Sea Saba cylinders/i);
+    expect(text).toMatch(/not with tanks brought/i);
+  });
+
+  it("warns that dinghy-dock stern-anchor clips are private, with alternatives", () => {
+    const { container } = render(<VisitingYachtsPage />);
+    const text = container.textContent ?? "";
+    // The clips/lines are private equipment, not public mooring points.
+    expect(text).toMatch(/stern-anchor (clips?|lines?)/i);
+    expect(text).toMatch(/private equipment/i);
+    expect(text).toMatch(/not communal/i);
+    // An unused-looking clip is still not available for temporary use.
+    expect(text).toMatch(/unused-looking/i);
+    expect(text).toMatch(/isn.t available for visitors/i);
+    // Visitors are told not to attach, and what happens if they do.
+    expect(text).toMatch(/don.t attach your dinghy/i);
+    expect(text).toMatch(/may be untied/i);
+    // The practical alternatives: your own stern anchor or the plastic jetty.
+    expect(text).toMatch(/your own stern anchor/i);
+    expect(text).toMatch(/plastic jetty/i);
+    // The movability guidance still stands alongside it.
+    expect(text).toMatch(/lock or chain/i);
+    expect(text).toMatch(/prevents it from being moved/i);
+  });
 });

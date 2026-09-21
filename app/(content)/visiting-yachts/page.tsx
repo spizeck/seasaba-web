@@ -341,6 +341,28 @@ export default function VisitingYachtsPage() {
           <div className="flex items-start gap-3">
             <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-600 dark:text-amber-500" />
             <div className="text-sm text-muted-foreground">
+              <h3 className="font-semibold text-foreground">The Stern-Anchor Clips at the Dinghy Dock Are Private</h3>
+              <p className="mt-2 leading-relaxed">
+                The stern-anchor clips and lines you&apos;ll see at Saba&apos;s dinghy docks
+                belong to individual owners; they&apos;re private equipment, not communal
+                mooring points, and an unused-looking clip still isn&apos;t available for
+                visitors. Please don&apos;t attach your dinghy to one. A dinghy left on a
+                private stern-anchor line may be untied so the owner can use their own
+                equipment.
+              </p>
+              <p className="mt-2 leading-relaxed">
+                Instead, bring and use your own stern anchor, or tie to the plastic jetty
+                where that&apos;s appropriate, and leave the dinghy movable just as the
+                note above describes.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-6 rounded-xl border border-amber-200/60 bg-amber-50/50 p-5 dark:border-amber-900/40 dark:bg-amber-950/20">
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-600 dark:text-amber-500" />
+            <div className="text-sm text-muted-foreground">
               <h3 className="font-semibold text-foreground">Dinghy &amp; Dive Boat Safety: Give Dive Boats Plenty of Room</h3>
               <p className="mt-2 leading-relaxed">
                 When passing a dive vessel, stay at least 150 meters to seaward, especially
@@ -372,14 +394,34 @@ export default function VisitingYachtsPage() {
         </div>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
           The standard approach is to leave the yacht on its mooring, dinghy into Fort Bay, and
-          join one of our scheduled boats. Bring your gear straight to the dive center. We can
-          store it between dive days, and backup equipment is close by if anything gives you
-          trouble. Our trips depart from and return to{" "}
+          join one of our scheduled boats. Bring your personal gear straight to the dive center.
+          We can store it between dive days, and backup equipment is close by if anything gives
+          you trouble. Our trips depart from and return to{" "}
           {OPERATIONS.harbor}, so there&apos;s no hotel pickup to coordinate. Just be at the dive
           center about 30 minutes before the boat leaves. Rental equipment is available, a dive
           computer is required on every dive (rentals available), and groups stay small at a
           maximum of {OPERATIONS.maxRecreationalDiversPerGuide} divers per guide.
         </p>
+
+        <div className="mt-5 rounded-lg border border-primary/20 bg-primary/5 px-5 py-4">
+          <div className="flex items-start gap-3">
+            <Wind className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+            <div className="text-sm text-muted-foreground">
+              <h3 className="font-semibold text-foreground">Dives From Our Boats Use Sea Saba Cylinders</h3>
+              <p className="mt-2 leading-relaxed">
+                Whenever your diving happens from a Sea Saba boat, on a scheduled trip or a
+                private charter, you dive with Sea Saba cylinders. Our boats and tank racks are
+                configured specifically for our own cylinders, so guest-owned tanks can&apos;t
+                be substituted aboard. What that means for cylinders you carry on your own
+                yacht is covered in{" "}
+                <Link href={`#${visitingYachtsAnchors.equipment}`} className="font-medium text-primary hover:underline underline-offset-4">
+                  Tanks, Fills &amp; Equipment
+                </Link>{" "}
+                below.
+              </p>
+            </div>
+          </div>
+        </div>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
           In some situations we can arrange a pickup from your vessel for the later dives of the
           day. It&apos;s not practical for the first dive, and it depends on your position, the
@@ -482,10 +524,12 @@ export default function VisitingYachtsPage() {
             </p>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
               Charter pricing is inclusive: the Sea Saba boat, crew and guide, the diving,
-              tanks, weights, normal rental equipment, {OPERATIONS.nitroxBlend} Nitrox for
-              certified divers, and the Marine Park and hyperbaric chamber contributions for
-              the diving are all covered. None of that appears as a per-diver charge on top of
-              the charter price.
+              Sea Saba cylinders, weights, normal rental equipment, {OPERATIONS.nitroxBlend}{" "}
+              Nitrox for certified divers, and the Marine Park and hyperbaric chamber
+              contributions for the diving are all covered. None of that appears as a per-diver
+              charge on top of the charter price. The cylinder rule is the same as on our
+              scheduled trips: charter guests dive with Sea Saba cylinders, not with tanks
+              brought over from the yacht.
             </p>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
               Vessel-related fees are a separate matter: yacht registration, mooring, harbor,
@@ -542,6 +586,16 @@ export default function VisitingYachtsPage() {
           computers are available. Sea Saba fills its own cylinders for our trips, both air and{" "}
           {OPERATIONS.nitroxBlend} Nitrox. Certified Nitrox divers get complimentary Nitrox on
           qualifying dives.
+        </p>
+        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          When the diving is from one of our boats, those tanks are always Sea Saba cylinders,
+          for a practical reason. The tank racks are configured specifically for our own
+          cylinders; even our aluminum 100s use dedicated racks under the camera table rather
+          than the standard racks, and steel cylinders or cylinders fitted with tank boots
+          don&apos;t rack securely at all. A properly racked cylinder keeps the assembled
+          equipment locked in place, which makes gearing up and getting into the water
+          noticeably smoother and safer. Cylinders aboard your own yacht are unaffected; they
+          simply can&apos;t be used for dives from our boats.
         </p>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
           For private yacht operations we can supply whatever the planned diving needs, including
