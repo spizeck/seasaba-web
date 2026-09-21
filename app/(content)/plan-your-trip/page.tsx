@@ -3,7 +3,7 @@ import Link from "next/link";
 import { PageHero } from "@/components/page-hero";
 import { FeatureImage } from "@/components/feature-image";
 import { Button } from "@/components/ui/button";
-import { Plane, PlaneTakeoff, Ship, Helicopter, Check, Droplets, Eye, Sun, Thermometer, Home, HelpCircle, Fish, Calendar, AlertTriangle, Bus, Ban, DollarSign, MessageCircle, Plug, Wifi, Timer, Utensils, Compass, Clock } from "lucide-react";
+import { Plane, PlaneTakeoff, Ship, Helicopter, Anchor, Check, Droplets, Eye, Sun, Thermometer, Home, HelpCircle, Fish, Calendar, AlertTriangle, Bus, Ban, DollarSign, MessageCircle, Plug, Wifi, Timer, Utensils, Compass, Clock } from "lucide-react";
 import { HotelPills } from "@/components/hotel-pills";
 import { InsuranceCTAs } from "@/components/insurance-ctas";
 import { TrackedOutboundButton } from "@/components/tracked-outbound-button";
@@ -313,18 +313,36 @@ export default function PlanYourTripPage() {
               Book SXM Airways ↗
             </TrackedOutboundButton>
           </div>
-        </div>
 
-        <div className="mt-6 flex items-start gap-3 rounded-lg border border-border/50 bg-muted/20 p-5">
-          <Ship className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
-          <p className="text-sm leading-relaxed text-muted-foreground">
-            Arriving on your own boat? Our{" "}
-            <Link href="/visiting-yachts" className="font-medium text-primary hover:underline underline-offset-4">
-              guide for yachts and sailboats
-            </Link>{" "}
-            covers Fort Bay clearance, Marine Park moorings, and how to dive with us while your
-            vessel is in Saba.
-          </p>
+          {/* Visiting Yachts */}
+          <div className="rounded-lg border border-border/60 bg-card p-6 sm:col-span-2">
+            <div className="sm:flex sm:items-center sm:justify-between sm:gap-8">
+              <div>
+                <div className="flex items-center gap-3">
+                  <div className="rounded-md bg-primary/10 p-2">
+                    <Anchor className="h-5 w-5 text-primary" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-foreground">Visiting by Yacht?</h3>
+                </div>
+                <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+                  <span aria-hidden="true">⛵</span>
+                  Arriving on Your Own Vessel
+                </div>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                  Cruising yachts and sailboats clear in at Fort Bay, a short walk from our dive
+                  center. The dedicated guide covers arrival and clearance, Marine Park moorings,
+                  coming ashore, and how to dive with Sea Saba while your vessel is in Saba.
+                </p>
+              </div>
+              <Button
+                asChild
+                variant="outline"
+                className="mt-6 w-full shrink-0 border-primary/60 text-primary hover:border-primary hover:bg-primary hover:text-white sm:mt-0 sm:w-auto"
+              >
+                <Link href="/visiting-yachts">Read the Yacht Guide &rarr;</Link>
+              </Button>
+            </div>
+          </div>
         </div>
       </section>
 
