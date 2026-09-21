@@ -315,48 +315,32 @@ export default function VisitingYachtsPage() {
           </div>
         </FeatureImage>
 
-        <div className="mt-6 rounded-xl border border-amber-200/60 bg-amber-50/50 p-5 dark:border-amber-900/40 dark:bg-amber-950/20">
-          <div className="flex items-start gap-3">
-            <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-600 dark:text-amber-500" />
-            <div className="text-sm text-muted-foreground">
-              <h3 className="font-semibold text-foreground">Keep Your Dinghy Movable at the Dock</h3>
-              <p className="mt-2 leading-relaxed">
-                When you tie your dinghy up at Fort Bay, don&apos;t lock or chain it to
-                the dock in a way that prevents it from being moved. Swell can enter
-                the harbor depending on conditions, and dinghies sometimes need to
-                be shifted quickly, for space or for their own protection. We&apos;ve
-                seen dinghies sink after conditions changed when nobody could move
-                the dinghy or locate its owner.
-              </p>
-              <p className="mt-2 leading-relaxed">
-                This is about the dinghy itself, not your belongings: securing the
-                outboard and your gear is still sensible, as long as the boat can
-                be moved when it needs to be.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-6 rounded-xl border border-amber-200/60 bg-amber-50/50 p-5 dark:border-amber-900/40 dark:bg-amber-950/20">
-          <div className="flex items-start gap-3">
-            <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-600 dark:text-amber-500" />
-            <div className="text-sm text-muted-foreground">
-              <h3 className="font-semibold text-foreground">The Stern-Anchor Clips at the Dinghy Dock Are Private</h3>
-              <p className="mt-2 leading-relaxed">
-                The stern-anchor clips and lines you&apos;ll see at Saba&apos;s dinghy docks
-                belong to individual owners; they&apos;re private equipment, not communal
-                mooring points, and an unused-looking clip still isn&apos;t available for
-                visitors. Please don&apos;t attach your dinghy to one. A dinghy left on a
-                private stern-anchor line may be untied so the owner can use their own
-                equipment.
-              </p>
-              <p className="mt-2 leading-relaxed">
-                Instead, bring and use your own stern anchor, or tie to the plastic jetty
-                where that&apos;s appropriate, and leave the dinghy movable just as the
-                note above describes.
-              </p>
-            </div>
-          </div>
+        <div className="mt-6 rounded-lg border border-border/40 bg-muted/20 p-5">
+          <h3 className="text-sm font-semibold text-foreground">At the Dinghy Dock</h3>
+          <ul className="mt-3 space-y-4 text-sm text-muted-foreground">
+            <li className="flex items-start gap-3">
+              <span className="mt-0.5 text-primary">✓</span>
+              <span>
+                <strong className="font-medium text-foreground">Keep it movable.</strong>{" "}
+                Don&apos;t lock or chain your dinghy to the dock in a way that prevents
+                it from being moved. Swell can enter Fort Bay, and dinghies sometimes
+                need to be shifted quickly; we&apos;ve seen them sink when nobody could
+                move the dinghy or locate its owner. Securing the outboard and your
+                belongings is still sensible.
+              </span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="mt-0.5 text-primary">✓</span>
+              <span>
+                <strong className="font-medium text-foreground">Bring your own stern anchor.</strong>{" "}
+                The stern-anchor clips and lines at Saba&apos;s dinghy docks are privately
+                owned, not communal mooring points, and even an unused-looking clip
+                isn&apos;t for visiting dinghies. A dinghy left on a private line may be
+                untied so the owner can use their equipment. Tie to the plastic jetty
+                where that&apos;s appropriate.
+              </span>
+            </li>
+          </ul>
         </div>
 
         <div className="mt-6 rounded-xl border border-amber-200/60 bg-amber-50/50 p-5 dark:border-amber-900/40 dark:bg-amber-950/20">
@@ -407,17 +391,12 @@ export default function VisitingYachtsPage() {
           <div className="flex items-start gap-3">
             <Wind className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
             <div className="text-sm text-muted-foreground">
-              <h3 className="font-semibold text-foreground">Dives From Our Boats Use Sea Saba Cylinders</h3>
+              <h3 className="font-semibold text-foreground">Sea Saba Tanks on Our Boats</h3>
               <p className="mt-2 leading-relaxed">
-                Whenever your diving happens from a Sea Saba boat, on a scheduled trip or a
-                private charter, you dive with Sea Saba cylinders. Our boats and tank racks are
-                configured specifically for our own cylinders, so guest-owned tanks can&apos;t
-                be substituted aboard. What that means for cylinders you carry on your own
-                yacht is covered in{" "}
-                <Link href={`#${visitingYachtsAnchors.equipment}`} className="font-medium text-primary hover:underline underline-offset-4">
-                  Tanks, Fills &amp; Equipment
-                </Link>{" "}
-                below.
+                If you&apos;re diving from a Sea Saba boat, we&apos;ll provide the tanks.
+                Our boats are set up for our own cylinders, so please leave your
+                yacht&apos;s tanks aboard. Tanks, Nitrox and weights are included in
+                your diving.
               </p>
             </div>
           </div>
@@ -593,9 +572,9 @@ export default function VisitingYachtsPage() {
           cylinders; even our aluminum 100s use dedicated racks under the camera table rather
           than the standard racks, and steel cylinders or cylinders fitted with tank boots
           don&apos;t rack securely at all. A properly racked cylinder keeps the assembled
-          equipment locked in place, which makes gearing up and getting into the water
-          noticeably smoother and safer. Cylinders aboard your own yacht are unaffected; they
-          simply can&apos;t be used for dives from our boats.
+          equipment secure and makes gearing up and water entry smoother. Cylinders aboard
+          your own yacht are unaffected; they simply can&apos;t be used for dives from our
+          boats.
         </p>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
           For private yacht operations we can supply whatever the planned diving needs, including

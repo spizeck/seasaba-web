@@ -221,25 +221,30 @@ describe("visiting yachts page", () => {
     expect(text).toMatch(/not your belongings|securing the outboard/i);
   });
 
-  it("requires Sea Saba cylinders for any diving from a Sea Saba boat", () => {
+  it("requires Sea Saba tanks for any diving from a Sea Saba boat", () => {
     const { container } = render(<VisitingYachtsPage />);
     const text = container.textContent ?? "";
-    // Categorical rule covering scheduled trips and private charters alike.
-    expect(text).toMatch(/from a Sea Saba boat/i);
-    expect(text).toMatch(/dive with Sea Saba cylinders/i);
-    expect(text).toMatch(/scheduled trips? or a private charter/i);
-    // The reason is practical, not arbitrary: racks are configured for our
-    // own cylinders.
-    expect(text).toMatch(/tank racks/i);
-    expect(text).toMatch(/configured specifically for our own cylinders/i);
-    // Guest-owned cylinders are not a permitted substitute aboard our boats.
-    expect(text).toMatch(/guest-owned tanks? can.t be substituted/i);
+    // The customer-facing rule: diving from a Sea Saba boat uses our tanks.
+    expect(text).toMatch(/Sea Saba Tanks on Our Boats/i);
+    expect(text).toMatch(/diving from a Sea Saba boat[^.]*provide the tanks/i);
+    // It applies to private charters the same as scheduled trips.
+    expect(text).toMatch(/charter guests dive with Sea Saba cylinders/i);
+    expect(text).toMatch(/same as on our scheduled trips/i);
+    // Guests do not bring the yacht's tanks onto our boat for the dive.
+    expect(text).toMatch(/leave your yacht.s tanks aboard/i);
     expect(text).toMatch(/can.t be used for dives from our boats/i);
-    // Guests may still carry their own cylinders aboard their own yacht.
+    // Customer-owned cylinders aboard the yacht itself are unaffected.
     expect(text).toMatch(/aboard your own yacht/i);
     expect(text).toMatch(/unaffected/i);
+    // The practical reason stays in the equipment section.
+    expect(text).toMatch(/tank racks/i);
+    expect(text).toMatch(/configured specifically for our own cylinders/i);
+    // Tanks are part of what's included in the diving.
+    expect(text).toMatch(/Tanks, Nitrox and weights are included/i);
     // The no-customer-cylinder-fills boundary remains stated.
     expect(text).toMatch(/don.t fill customer-owned cylinders/i);
+    // Owner direction: the fit argument is practical, not a safety claim.
+    expect(text).not.toMatch(/smoother and safer/i);
   });
 
   it("keeps private charter inclusions consistent with the cylinder rule", () => {
@@ -256,21 +261,31 @@ describe("visiting yachts page", () => {
   it("warns that dinghy-dock stern-anchor clips are private, with alternatives", () => {
     const { container } = render(<VisitingYachtsPage />);
     const text = container.textContent ?? "";
+    // Dock guidance is grouped under one compact card, not stacked warnings.
+    expect(text).toMatch(/At the Dinghy Dock/i);
     // The clips/lines are private equipment, not public mooring points.
     expect(text).toMatch(/stern-anchor (clips?|lines?)/i);
-    expect(text).toMatch(/private equipment/i);
+    expect(text).toMatch(/privately owned|private (equipment|line)/i);
     expect(text).toMatch(/not communal/i);
-    // An unused-looking clip is still not available for temporary use.
+    // An unused-looking clip is still not for visiting dinghies.
     expect(text).toMatch(/unused-looking/i);
-    expect(text).toMatch(/isn.t available for visitors/i);
-    // Visitors are told not to attach, and what happens if they do.
-    expect(text).toMatch(/don.t attach your dinghy/i);
+    expect(text).toMatch(/isn.t for visiting dinghies|not for visitors/i);
+    // What happens if a private line is used anyway.
     expect(text).toMatch(/may be untied/i);
     // The practical alternatives: your own stern anchor or the plastic jetty.
     expect(text).toMatch(/your own stern anchor/i);
     expect(text).toMatch(/plastic jetty/i);
-    // The movability guidance still stands alongside it.
+    // The movability guidance still stands in the same card.
     expect(text).toMatch(/lock or chain/i);
     expect(text).toMatch(/prevents it from being moved/i);
+  });
+
+  it("keeps routine dock guidance quieter than the dive-boat safety warning", () => {
+    const { container } = render(<VisitingYachtsPage />);
+    // Only one amber warning panel remains on the page: the dive-boat safety
+    // notice. Dock etiquette sits in a neutral card.
+    const amberPanels = container.querySelectorAll('[class*="bg-amber"]');
+    expect(amberPanels.length).toBe(1);
+    expect(amberPanels[0].textContent).toMatch(/Give Dive Boats Plenty of Room/i);
   });
 });
