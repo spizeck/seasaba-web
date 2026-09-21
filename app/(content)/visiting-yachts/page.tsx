@@ -185,8 +185,8 @@ export default function VisitingYachtsPage() {
             <ul className="mt-3 space-y-2.5 text-sm text-muted-foreground">
               <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Yellow moorings are for visiting yachts up to 20 m (66 ft) or 50 t</span></li>
               <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>First-come, first-served; they cannot be reserved</span></li>
-              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Maximum stay of seven days on a mooring</span></li>
-              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Red and white moorings are reserved for licensed dive vessels</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>No fixed maximum stay; how long you can keep the mooring follows your immigration status and any current authority requirements</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>White moorings are reserved for licensed dive vessels; red dive buoys may be used overnight, but dive boats keep priority</span></li>
             </ul>
           </div>
           <div className="rounded-lg border border-border/40 bg-muted/20 p-5">
@@ -233,6 +233,17 @@ export default function VisitingYachtsPage() {
                 have the shock absorption a yacht mooring has, they aren&apos;t intended for
                 leaving a boat unattended, and they aren&apos;t rated for most sailboats. An
                 apparently unused white-and-blue mooring is not a place to secure your yacht.
+              </span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="mt-0.5 text-primary">✓</span>
+              <span>
+                <strong className="font-medium text-foreground">Red buoys are the dive fleet&apos;s moorings</strong>,
+                intended for licensed dive vessels up to 32 m (105 ft). A visiting
+                yacht may use a red buoy overnight, but it stays a dive mooring:
+                when a dive boat needs the buoy for diving, the yacht has to move,
+                and overnight use gives no priority over dive operations. If being
+                asked to move would be a problem, stay on a yellow mooring.
               </span>
             </li>
           </ul>
@@ -303,6 +314,28 @@ export default function VisitingYachtsPage() {
             </p>
           </div>
         </FeatureImage>
+
+        <div className="mt-6 rounded-xl border border-amber-200/60 bg-amber-50/50 p-5 dark:border-amber-900/40 dark:bg-amber-950/20">
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-600 dark:text-amber-500" />
+            <div className="text-sm text-muted-foreground">
+              <h3 className="font-semibold text-foreground">Keep Your Dinghy Movable at the Dock</h3>
+              <p className="mt-2 leading-relaxed">
+                When you tie your dinghy up at Fort Bay, don&apos;t lock or chain it to
+                the dock in a way that prevents it from being moved. Swell can enter
+                the harbor depending on conditions, and dinghies sometimes need to
+                be shifted quickly, for space or for their own protection. We&apos;ve
+                seen dinghies sink after conditions changed when nobody could move
+                the dinghy or locate its owner.
+              </p>
+              <p className="mt-2 leading-relaxed">
+                This is about the dinghy itself, not your belongings: securing the
+                outboard and your gear is still sensible, as long as the boat can
+                be moved when it needs to be.
+              </p>
+            </div>
+          </div>
+        </div>
 
         <div className="mt-6 rounded-xl border border-amber-200/60 bg-amber-50/50 p-5 dark:border-amber-900/40 dark:bg-amber-950/20">
           <div className="flex items-start gap-3">
