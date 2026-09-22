@@ -13,7 +13,7 @@ export default defineConfig({
     coverage: {
       provider: "v8",
       reporter: ["text", "html", "lcov", "json-summary"],
-      include: ["lib/analytics.ts", "lib/metadata.ts", "lib/firestore/dive-log.ts", "lib/dive-log-export.ts", "lib/respond-io.ts", "data/operations.ts", "components/contact-form.tsx", "components/booking-widget.tsx", "components/dive-log-client.tsx", "components/respond-io-widget.tsx"],
+      include: ["lib/analytics.ts", "lib/metadata.ts", "lib/firestore/dive-log.ts", "lib/dive-log-export.ts", "lib/respond-io.ts", "data/operations.ts", "components/contact-form.tsx", "components/booking-widget.tsx", "components/dive-log-client.tsx", "components/respond-io-widget.tsx", "components/bottom-scroll-keeper.tsx"],
       thresholds: { statements: 85, lines: 85, functions: 80, branches: 75 },
     },
   },
