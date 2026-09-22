@@ -92,7 +92,7 @@ export interface TranslationReview {
   reviewedAt: string | null;
   /** English source file this module translates (for #152 freshness checks). */
   source: string;
-  /** sha1 of the English source file at translation time. */
+  /** sha1 of the English source file (LF-normalized) at translation time. */
   sourceHash: string;
 }
 
