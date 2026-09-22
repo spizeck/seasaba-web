@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { Anchor, Clock, Users, Fish, Waves } from "lucide-react";
 import { DIVE_PRODUCTS, OPERATIONS } from "@/data/operations";
+import { uiFor } from "@/content/ui";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/locale";
 
 type TimelineEntry =
   | { type: "step"; time: string; label: string; icon: React.ElementType }
@@ -14,73 +16,81 @@ type Experience = {
   entries: TimelineEntry[];
 };
 
-const EXPERIENCES: Experience[] = [
-  {
-    id: "classic",
-    label: "Classic 2-Tank",
-    entries: [
-      { type: "step", time: DIVE_PRODUCTS.classic.schedule.taxiPickup, icon: Users, label: "Be ready for taxi pickup" },
-      { type: "step", time: DIVE_PRODUCTS.classic.schedule.departure, icon: Anchor, label: `Boat departs ${OPERATIONS.harbor} for two relaxed dives in Saba's Marine Park (~70 ft / 21 m)` },
-      { type: "callout", variant: "warning", title: "Bring Your Own Lunch", description: "Lunch availability in Fort Bay Harbor isn't reliable, so pack something before you arrive. The trip runs through midday with no stop." },
-      { type: "step", time: DIVE_PRODUCTS.classic.schedule.returns, icon: Clock, label: `Return to ${OPERATIONS.harbor}` },
-    ],
-  },
-  {
-    id: "advanced",
-    label: "Advanced 2-Tank",
-    entries: [
-      { type: "step", time: DIVE_PRODUCTS.advanced.schedule.taxiPickup, icon: Users, label: "Be ready for taxi pickup" },
-      { type: "step", time: DIVE_PRODUCTS.advanced.schedule.departure, icon: Anchor, label: "Boat departs for two dives (Dive 1 to ~110 ft / 33 m, Dive 2 to ~70 ft / 21 m)" },
-      { type: "callout", variant: "info", title: "Want a Third Dive?", description: "Ask about upgrading to our Triple Tank option for an extended day. If you add the third dive, consider bringing a lunch — the day will run past typical lunch hours and harbor food isn't reliable." },
-      { type: "step", time: DIVE_PRODUCTS.advanced.schedule.returns, icon: Clock, label: `Return to ${OPERATIONS.harbor}` },
-    ],
-  },
-  {
-    id: "afternoon",
-    label: "Afternoon 1-Tank",
-    entries: [
-      { type: "step", time: DIVE_PRODUCTS.afternoon.schedule.taxiPickup, icon: Users, label: "Be ready for taxi pickup" },
-      { type: "step", time: DIVE_PRODUCTS.afternoon.schedule.departure, icon: Anchor, label: "Boat departs for a single dive to ~70 ft / 21 m" },
-      { type: "step", time: DIVE_PRODUCTS.afternoon.schedule.returns, icon: Clock, label: `Return to ${OPERATIONS.harbor}` },
-    ],
-  },
-  {
-    id: "snorkel",
-    label: "Afternoon Snorkel",
-    entries: [
-      { type: "step", time: DIVE_PRODUCTS.snorkel.schedule.taxiPickup, icon: Users, label: "Be ready for taxi pickup" },
-      { type: "step", time: DIVE_PRODUCTS.snorkel.schedule.departure, icon: Waves, label: "Boat departs; snorkel from the surface while divers explore below" },
-      { type: "step", time: DIVE_PRODUCTS.snorkel.schedule.returns, icon: Clock, label: `Return to ${OPERATIONS.harbor}` },
-    ],
-  },
-  {
-    id: "tryscuba",
-    label: "Try Scuba",
-    entries: [
-      { type: "step", time: "8:30 AM", icon: Users, label: "Be ready for taxi pickup" },
-      { type: "step", time: "9:00 AM", icon: Fish, label: `Theory and confined water session at ${OPERATIONS.harbor}` },
-      { type: "step", time: "11:30 AM", icon: Clock, label: "Lunch break" },
-      { type: "callout", variant: "warning", title: "Bring Your Own Lunch", description: "Lunch availability in Fort Bay Harbor isn't reliable, so pack something before you arrive." },
-      { type: "step", time: DIVE_PRODUCTS.afternoon.schedule.departure, icon: Anchor, label: "Joins the Afternoon boat for a supervised dive on the reef" },
-      { type: "step", time: DIVE_PRODUCTS.afternoon.schedule.returns, icon: Clock, label: `Return to ${OPERATIONS.harbor}` },
-    ],
-  },
-];
+function buildExperiences(locale: Locale): Experience[] {
+  const ui = uiFor(locale).experienceSelector;
+  const harbor = OPERATIONS.harbor;
+  const ret = `${ui.steps.returnTo}`.replace("{harbor}", harbor);
+  const taxi = ui.taxiPickup;
+  return [
+    {
+      id: "classic",
+      label: ui.pills.classic,
+      entries: [
+        { type: "step", time: DIVE_PRODUCTS.classic.schedule.taxiPickup, icon: Users, label: taxi },
+        { type: "step", time: DIVE_PRODUCTS.classic.schedule.departure, icon: Anchor, label: ui.steps.classicDeparture.replace("{harbor}", harbor) },
+        { type: "callout", variant: "warning", title: ui.bringLunchTitle, description: ui.bringLunchClassic },
+        { type: "step", time: DIVE_PRODUCTS.classic.schedule.returns, icon: Clock, label: ret },
+      ],
+    },
+    {
+      id: "advanced",
+      label: ui.pills.advanced,
+      entries: [
+        { type: "step", time: DIVE_PRODUCTS.advanced.schedule.taxiPickup, icon: Users, label: taxi },
+        { type: "step", time: DIVE_PRODUCTS.advanced.schedule.departure, icon: Anchor, label: ui.steps.advancedDeparture.replace("{harbor}", harbor) },
+        { type: "callout", variant: "info", title: ui.thirdDiveTitle, description: ui.thirdDiveBody },
+        { type: "step", time: DIVE_PRODUCTS.advanced.schedule.returns, icon: Clock, label: ret },
+      ],
+    },
+    {
+      id: "afternoon",
+      label: ui.pills.afternoon,
+      entries: [
+        { type: "step", time: DIVE_PRODUCTS.afternoon.schedule.taxiPickup, icon: Users, label: taxi },
+        { type: "step", time: DIVE_PRODUCTS.afternoon.schedule.departure, icon: Anchor, label: ui.steps.afternoonDeparture.replace("{harbor}", harbor) },
+        { type: "step", time: DIVE_PRODUCTS.afternoon.schedule.returns, icon: Clock, label: ret },
+      ],
+    },
+    {
+      id: "snorkel",
+      label: ui.pills.snorkel,
+      entries: [
+        { type: "step", time: DIVE_PRODUCTS.snorkel.schedule.taxiPickup, icon: Users, label: taxi },
+        { type: "step", time: DIVE_PRODUCTS.snorkel.schedule.departure, icon: Waves, label: ui.steps.snorkelDeparture.replace("{harbor}", harbor) },
+        { type: "step", time: DIVE_PRODUCTS.snorkel.schedule.returns, icon: Clock, label: ret },
+      ],
+    },
+    {
+      id: "tryscuba",
+      label: ui.pills.tryscuba,
+      entries: [
+        { type: "step", time: "8:30 AM", icon: Users, label: taxi },
+        { type: "step", time: "9:00 AM", icon: Fish, label: ui.steps.tryScubaTheory.replace("{harbor}", harbor) },
+        { type: "step", time: "11:30 AM", icon: Clock, label: ui.lunchBreak },
+        { type: "callout", variant: "warning", title: ui.bringLunchTitle, description: ui.bringLunchTryScuba },
+        { type: "step", time: DIVE_PRODUCTS.afternoon.schedule.departure, icon: Anchor, label: ui.steps.tryScubaDive },
+        { type: "step", time: DIVE_PRODUCTS.afternoon.schedule.returns, icon: Clock, label: ret },
+      ],
+    },
+  ];
+}
 
-export function ExperienceSelector() {
+export function ExperienceSelector({ locale = DEFAULT_LOCALE }: { locale?: Locale }) {
   const [selected, setSelected] = useState("classic");
+  const ui = uiFor(locale).experienceSelector;
+  const experiences = buildExperiences(locale);
 
-  const experience = EXPERIENCES.find((e) => e.id === selected)!;
+  const experience = experiences.find((e) => e.id === selected)!;
   const steps = experience.entries.filter((e) => e.type === "step") as Extract<TimelineEntry, { type: "step" }>[];
 
   return (
     <section className="mt-10">
-      <h2 className="text-xl font-semibold text-foreground">What to Expect</h2>
-      <p className="mt-1 text-sm text-muted-foreground">Select a dive option to see the day schedule.</p>
+      <h2 className="text-xl font-semibold text-foreground">{ui.heading}</h2>
+      <p className="mt-1 text-sm text-muted-foreground">{ui.subtext}</p>
 
       {/* Pills */}
       <div className="mt-4 flex flex-wrap gap-2">
-        {EXPERIENCES.map((exp) => (
+        {experiences.map((exp) => (
           <button
             key={exp.id}
             onClick={() => setSelected(exp.id)}
@@ -137,9 +147,7 @@ export function ExperienceSelector() {
           </div>
         </div>
         <p className="mt-4 text-xs italic text-muted-foreground">
-          Pickup times are when taxi pickups begin — please be ready; actual
-          arrival varies with the route. All times are approximate and may
-          vary depending on conditions.
+          {ui.footnote}
         </p>
       </div>
     </section>

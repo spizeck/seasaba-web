@@ -2,6 +2,8 @@
 
 import { usePathname, useSearchParams } from "next/navigation";
 import {
+  DRAFTED_ROUTES,
+  isDraftPreviewEnabled,
   isRoutePublished,
   LOCALES,
   localizedPath,
@@ -9,6 +11,7 @@ import {
   parsePathname,
   type Locale,
 } from "@/lib/locale";
+import { uiFor } from "@/content/ui";
 
 const LOCALE_COOKIE = "sea-saba-locale";
 
@@ -24,6 +27,11 @@ function persistLocaleChoice(locale: Locale) {
  * that does not exist (#151 owns Dutch content; the publication gate lives
  * in lib/locale.ts `PUBLISHED_ROUTES`).
  *
+ * In draft preview (development / NEXT_PUBLIC_DRAFT_LOCALE_PREVIEW=1 only)
+ * drafted-but-unpublished routes also appear, visibly marked "(draft)", so
+ * reviewers can navigate between source and translation. A production
+ * build can never reach that branch.
+ *
  * Selecting a language is an explicit user action: the choice is persisted
  * in a cookie for future use, but nothing reads that cookie to force a
  * redirect — a stored Dutch preference can never block visiting or sharing
@@ -33,9 +41,14 @@ export function LanguageSwitcher({ className }: { className?: string }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { locale: currentLocale, path } = parsePathname(pathname ?? "/");
+  const draftPreview = isDraftPreviewEnabled();
+  const ui = uiFor(currentLocale);
 
   const alternates = LOCALES.filter(
-    (l) => l !== currentLocale && isRoutePublished(l, path)
+    (l) =>
+      l !== currentLocale &&
+      (isRoutePublished(l, path) ||
+        (draftPreview && DRAFTED_ROUTES[l].includes(path)))
   );
   if (alternates.length === 0) return null;
 
@@ -43,7 +56,7 @@ export function LanguageSwitcher({ className }: { className?: string }) {
   const suffix = query ? `?${query}` : "";
 
   return (
-    <nav aria-label="Choose language" className={className}>
+    <nav aria-label={ui.footer.languageSwitcherLabel} className={className}>
       <ul className="flex items-center gap-4">
         <li aria-current="true" className="text-foreground">
           {LOCALE_NAMES[currentLocale]}
@@ -59,6 +72,9 @@ export function LanguageSwitcher({ className }: { className?: string }) {
               className="transition-colors hover:text-foreground"
             >
               {LOCALE_NAMES[locale]}
+              {!isRoutePublished(locale, path) && (
+                <span className="text-muted-foreground"> (draft)</span>
+              )}
             </a>
           </li>
         ))}

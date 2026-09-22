@@ -5,18 +5,19 @@ import { Button } from "@/components/ui/button";
 import { Mail, MailCheck, MessageCircle } from "lucide-react";
 import { trackEvent, trackLinkClick } from "@/lib/analytics";
 import { CONTACT } from "@/lib/constants";
-import { buildContactMailto, CONTACT_LIMITS, type InquiryDraft } from "@/lib/contact";
+import { buildContactMailto, CONTACT_LIMITS, inquiryCopy, type InquiryDraft } from "@/lib/contact";
 import {
   COURSE_INQUIRIES,
   GENERAL_INQUIRIES,
   inquiryFor,
   type ContactField,
 } from "@/data/operations";
-
-
+import { uiFor } from "@/content/ui";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/locale";
 
 interface ContactFormProps {
   initialInterest?: string;
+  locale?: Locale;
 }
 
 /** Payload key each contextual field maps to. */
@@ -28,15 +29,16 @@ const PAYLOAD_KEY: Record<ContactField, string> = {
   loggedDives: "loggedDives",
 };
 
-const FIELD_META: Record<ContactField, { id: string; label: string; type: string; placeholder: string; maxLength: number }> = {
-  whatsapp: { id: "whatsapp", label: "WhatsApp number", type: "tel", placeholder: "+1 234 567 8900", maxLength: CONTACT_LIMITS.whatsapp },
-  dates: { id: "dates", label: "Planned travel dates", type: "text", placeholder: "e.g. March 10 - 17, 2027", maxLength: CONTACT_LIMITS.dates },
-  partySize: { id: "students", label: "Number of people", type: "text", placeholder: "1", maxLength: CONTACT_LIMITS.students },
-  certification: { id: "certification", label: "Certification level", type: "text", placeholder: "e.g. Open Water, Advanced", maxLength: CONTACT_LIMITS.certification },
-  loggedDives: { id: "logged-dives", label: "Logged dives", type: "text", placeholder: "e.g. 25", maxLength: CONTACT_LIMITS.loggedDives },
+const FIELD_META: Record<ContactField, { id: string; type: string; maxLength: number }> = {
+  whatsapp: { id: "whatsapp", type: "tel", maxLength: CONTACT_LIMITS.whatsapp },
+  dates: { id: "dates", type: "text", maxLength: CONTACT_LIMITS.dates },
+  partySize: { id: "students", type: "text", maxLength: CONTACT_LIMITS.students },
+  certification: { id: "certification", type: "text", maxLength: CONTACT_LIMITS.certification },
+  loggedDives: { id: "logged-dives", type: "text", maxLength: CONTACT_LIMITS.loggedDives },
 };
 
-export function ContactForm({ initialInterest }: ContactFormProps) {
+export function ContactForm({ initialInterest, locale = DEFAULT_LOCALE }: ContactFormProps) {
+  const cf = uiFor(locale).contactForm;
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [inquiryType, setInquiryType] = useState(initialInterest && inquiryFor(initialInterest) ? initialInterest : "");
@@ -49,7 +51,7 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
   const [students, setStudents] = useState("");
   const [certification, setCertification] = useState("");
   const [loggedDives, setLoggedDives] = useState("");
-  const [message, setMessage] = useState(() => buildInitialMessage(initialInterest));
+  const [message, setMessage] = useState(() => buildInitialMessage(initialInterest, cf));
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   // The mailto: href built for the most recent handoff — rendered as a
@@ -89,16 +91,16 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
 
   const validate = useCallback(() => {
     const nextErrors: Record<string, string> = {};
-    if (!name.trim()) nextErrors.name = "Please enter your name.";
+    if (!name.trim()) nextErrors.name = cf.errors.name;
     if (!email.trim()) {
-      nextErrors.email = "Please enter your email address.";
+      nextErrors.email = cf.errors.emailRequired;
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      nextErrors.email = "Please enter a valid email address.";
+      nextErrors.email = cf.errors.emailInvalid;
     }
-    if (!inquiryType) nextErrors.inquiryType = "Please select an inquiry type.";
-    if (!message.trim()) nextErrors.message = "Please enter a message.";
+    if (!inquiryType) nextErrors.inquiryType = cf.errors.inquiryType;
+    if (!message.trim()) nextErrors.message = cf.errors.message;
     return nextErrors;
-  }, [name, email, inquiryType, message]);
+  }, [name, email, inquiryType, message, cf]);
 
   const handleBlur = useCallback(
     (field: string) => {
@@ -133,9 +135,9 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
     clear("certification", setCertification);
     clear("loggedDives", setLoggedDives);
     if (COURSE_INQUIRIES.some((c) => c.value === value)) {
-      setMessage(buildInitialMessage(value));
+      setMessage(buildInitialMessage(value, cf));
     }
-  }, []);
+  }, [cf]);
 
   const buildDraft = useCallback((): InquiryDraft => {
     // Only fields relevant to the selected inquiry go into the email;
@@ -161,19 +163,21 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
   }, [selectedInquiry, name, email, whatsapp, preferWhatsapp, dates, students, certification, loggedDives, inquiryType, message]);
 
   const buildWhatsAppMessage = useCallback(() => {
+    const m = cf.handoffMessage;
     const keep = new Set<ContactField>(selectedInquiry?.fields ?? []);
+    const dictInquiry = selectedInquiry && inquiryCopy(cf, selectedInquiry.value);
     const parts: string[] = [];
-    parts.push(`Hi Sea Saba, my name is ${name.trim()}.`);
-    if (selectedInquiry) parts.push(`I am interested in ${selectedInquiry.label}.`);
-    if (keep.has("dates") && dates.trim()) parts.push(`My planned travel dates are ${dates.trim()}.`);
+    parts.push(`${m.greeting} ${name.trim()}.`);
+    if (dictInquiry) parts.push(`${m.interestedIn} ${dictInquiry.label}.`);
+    if (keep.has("dates") && dates.trim()) parts.push(`${m.travelDates} ${dates.trim()}.`);
     if (keep.has("partySize") && students.trim()) {
-      parts.push(`${selectedInquiry?.partyLabel ?? "Group size"}: ${students.trim()}.`);
+      parts.push(`${dictInquiry?.partyLabel ?? cf.fields.partySize.label}: ${students.trim()}.`);
     }
-    if (keep.has("certification") && certification.trim()) parts.push(`My certification level is ${certification.trim()}.`);
-    if (keep.has("loggedDives") && loggedDives.trim()) parts.push(`I have ${loggedDives.trim()} logged dives.`);
+    if (keep.has("certification") && certification.trim()) parts.push(`${m.certificationIs} ${certification.trim()}.`);
+    if (keep.has("loggedDives") && loggedDives.trim()) parts.push(`${m.loggedDives} ${loggedDives.trim()} ${m.loggedDivesSuffix}.`);
     if (message.trim()) parts.push(message.trim());
     return parts.join(" ");
-  }, [name, selectedInquiry, dates, students, certification, loggedDives, message]);
+  }, [cf, name, selectedInquiry, dates, students, certification, loggedDives, message]);
 
   // Client-email handoff: build a structured inquiry and open it in the
   // visitor's own email app via mailto:. The visitor reviews and sends it
@@ -188,7 +192,7 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
     if (Date.now() - lastEmailAt.current < 1000) return;
     lastEmailAt.current = Date.now();
 
-    const href = buildContactMailto(buildDraft());
+    const href = buildContactMailto(buildDraft(), cf);
     const eventParams = { method: "email", inquiry_type: selectedInquiry?.label || "General", button_location: "contact_form" };
     // This is a handoff, not a confirmed send — tracked as an email click,
     // never as a submitted inquiry.
@@ -197,7 +201,7 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
     // "_self" delegates to the OS mail handler without opening a blank tab.
     window.open(href, "_self");
     requestAnimationFrame(() => handoffRef.current?.focus());
-  }, [validate, buildDraft, selectedInquiry]);
+  }, [validate, buildDraft, selectedInquiry, cf]);
 
   const handleWhatsApp = useCallback(() => {
     const validationErrors = validate();
@@ -220,7 +224,7 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
           <label htmlFor="name" className="text-sm font-medium text-foreground">
-            Name <span className="text-destructive">*</span>
+            {cf.name} <span className="text-destructive">*</span>
           </label>
           <input
             id="name"
@@ -233,7 +237,7 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
             aria-invalid={touched.name && !!errors.name}
             aria-describedby={touched.name && errors.name ? "name-error" : undefined}
             className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-            placeholder="Your full name"
+            placeholder={cf.namePlaceholder}
           />
           <p id="name-error" className={`min-h-5 text-xs text-destructive${touched.name && errors.name ? "" : " invisible"}`}>
             {touched.name && errors.name ? errors.name : " "}
@@ -242,7 +246,7 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
 
         <div className="space-y-1.5">
           <label htmlFor="email" className="text-sm font-medium text-foreground">
-            Email <span className="text-destructive">*</span>
+            {cf.email} <span className="text-destructive">*</span>
           </label>
           <input
             id="email"
@@ -255,7 +259,7 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
             aria-invalid={touched.email && !!errors.email}
             aria-describedby={touched.email && errors.email ? "email-error" : undefined}
             className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-            placeholder="you@example.com"
+            placeholder={cf.emailPlaceholder}
           />
           <p id="email-error" className={`min-h-5 text-xs text-destructive${touched.email && errors.email ? "" : " invisible"}`}>
             {touched.email && errors.email ? errors.email : " "}
@@ -265,7 +269,7 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
 
       <div className="space-y-1.5">
         <label htmlFor="inquiry-type" className="text-sm font-medium text-foreground">
-          Inquiry Type <span className="text-destructive">*</span>
+          {cf.inquiryType} <span className="text-destructive">*</span>
         </label>
         <select
           id="inquiry-type"
@@ -278,19 +282,19 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
           className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
         >
           <option value="" disabled>
-            Select an inquiry type
+            {cf.inquiryTypePlaceholder}
           </option>
-          <optgroup label="Courses">
+          <optgroup label={cf.groupCourses}>
             {COURSE_INQUIRIES.map((inquiry) => (
               <option key={inquiry.value} value={inquiry.value}>
-                {inquiry.label}
+                {inquiryCopy(cf, inquiry.value)?.label ?? inquiry.label}
               </option>
             ))}
           </optgroup>
-          <optgroup label="General">
+          <optgroup label={cf.groupGeneral}>
             {GENERAL_INQUIRIES.map((inquiry) => (
               <option key={inquiry.value} value={inquiry.value}>
-                {inquiry.label}
+                {inquiryCopy(cf, inquiry.value)?.label ?? inquiry.label}
               </option>
             ))}
           </optgroup>
@@ -306,13 +310,15 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
         <div className="grid gap-4 sm:grid-cols-2">
           {selectedInquiry.fields.map((field) => {
             const meta = FIELD_META[field];
+            const dictField = cf.fields[field];
             const errorKey = PAYLOAD_KEY[field];
             const error = errors[errorKey];
+            const dictInquiry = inquiryCopy(cf, selectedInquiry.value);
             return (
               <div key={field} className="space-y-1.5">
                 <label htmlFor={meta.id} className="text-sm font-medium text-foreground">
-                  {field === "partySize" ? (selectedInquiry.partyLabel ?? meta.label) : meta.label}{" "}
-                  <span className="font-normal text-muted-foreground">(optional)</span>
+                  {field === "partySize" ? (dictInquiry?.partyLabel ?? dictField.label) : dictField.label}{" "}
+                  <span className="font-normal text-muted-foreground">{cf.optional}</span>
                 </label>
                 <input
                   id={meta.id}
@@ -324,7 +330,7 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
                   aria-invalid={!!error}
                   aria-describedby={error ? `${meta.id}-error` : undefined}
                   className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-                  placeholder={meta.placeholder}
+                  placeholder={dictField.placeholder}
                 />
                 {field === "whatsapp" && (
                   <label
@@ -339,7 +345,7 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
                       onChange={(e) => setPreferWhatsapp(e.target.checked)}
                       className="h-4 w-4 shrink-0 rounded border-border accent-primary focus:ring-1 focus:ring-primary"
                     />
-                    I prefer to be contacted on WhatsApp
+                    {cf.preferWhatsapp}
                   </label>
                 )}
                 <p id={`${meta.id}-error`} className={`min-h-5 text-xs text-destructive${error ? "" : " invisible"}`}>
@@ -353,7 +359,7 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
 
       <div className="space-y-1.5">
         <label htmlFor="message" className="text-sm font-medium text-foreground">
-          Message <span className="text-destructive">*</span>
+          {cf.message} <span className="text-destructive">*</span>
         </label>
         <textarea
           id="message"
@@ -366,7 +372,7 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
           aria-invalid={touched.message && !!errors.message}
           aria-describedby={touched.message && errors.message ? "message-error" : "message-limit"}
           className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-          placeholder="Tell us about your plans, questions, or anything we should know."
+          placeholder={cf.messagePlaceholder}
         />
         <div className="flex items-baseline justify-between gap-3">
           <p id="message-error" className={`min-h-5 text-xs text-destructive${touched.message && errors.message ? "" : " invisible"}`}>
@@ -389,19 +395,18 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
             <MailCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
             <div>
               <p className="text-sm font-medium text-foreground">
-                Your email app should open with your inquiry ready to send.
+                {cf.handoff.title}
               </p>
               <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                Review it and press Send — it goes to {CONTACT.email} from your own email address. If
-                nothing opened,{" "}
+                {cf.handoff.bodyA} {CONTACT.email} {cf.handoff.bodyB}{" "}
                 <a href={handoffHref} className="font-medium text-primary underline-offset-2 hover:underline">
-                  try opening it again
+                  {cf.handoff.tryAgain}
                 </a>{" "}
-                or email us directly at{" "}
+                {cf.handoff.bodyC}{" "}
                 <a href={`mailto:${CONTACT.email}`} className="font-medium text-primary underline-offset-2 hover:underline">
                   {CONTACT.email}
                 </a>
-                . You can edit anything above first — your changes are kept.
+                {cf.handoff.bodyD}
               </p>
             </div>
           </div>
@@ -412,33 +417,34 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
         <Button
           type="submit"
           className="w-full sm:w-auto"
-          aria-label="Continue to email"
+          aria-label={cf.continueToEmailAria}
         >
           <Mail className="h-4 w-4" />
-          Continue to Email
+          {cf.continueToEmail}
         </Button>
         <Button
           type="button"
           variant="outline"
           onClick={handleWhatsApp}
           className="w-full border-green-700 text-green-700 hover:bg-green-50 hover:text-green-800 sm:w-auto"
-          aria-label="Send inquiry by WhatsApp"
+          aria-label={cf.whatsappAria}
         >
           <MessageCircle className="h-4 w-4" />
-          WhatsApp Sea Saba
+          {cf.whatsappCta}
         </Button>
       </div>
 
       <p className="text-xs text-muted-foreground">
-        This opens your email app with the inquiry ready to send — we reply by email, typically within a day.
-        WhatsApp is great for quick questions.
+        {cf.handoff.footnote}
       </p>
     </form>
   );
 }
 
-function buildInitialMessage(interest?: string): string {
+function buildInitialMessage(interest: string | undefined, cf: ReturnType<typeof uiFor>["contactForm"]): string {
   const inquiry = COURSE_INQUIRIES.find((i) => i.value === interest);
   if (!inquiry) return "";
-  return `Hi Sea Saba, I am interested in ${inquiry.label}. Please send me more information about availability, schedule, and pricing.`;
+  const m = cf.handoffMessage;
+  const label = inquiryCopy(cf, inquiry.value)?.label ?? inquiry.label;
+  return `${m.interestedIn} ${label}. ${m.coursePrefill}`;
 }

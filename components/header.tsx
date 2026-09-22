@@ -7,12 +7,15 @@ import { Menu, X } from "lucide-react";
 import { NAV_ITEMS } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import { trackBookingClick } from "@/lib/analytics";
+import { uiFor } from "@/content/ui";
+import { DEFAULT_LOCALE, localeHref, type Locale } from "@/lib/locale";
 
-export function Header() {
+export function Header({ locale = DEFAULT_LOCALE }: { locale?: Locale }) {
+  const ui = uiFor(locale);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
-  const isHome = pathname === "/";
+  const isHome = pathname === localeHref(locale, "/");
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 48);
@@ -31,6 +34,10 @@ export function Header() {
   }, [mobileOpen]);
 
   const transparent = isHome && !scrolled && !mobileOpen;
+  const navItems = NAV_ITEMS.map((item) => ({
+    label: ui.nav.items[item.href as keyof typeof ui.nav.items],
+    href: localeHref(locale, item.href),
+  }));
 
   return (
     <header
@@ -42,13 +49,13 @@ export function Header() {
     >
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link
-          href="/"
+          href={localeHref(locale, "/")}
           className="relative flex items-center transition-opacity hover:opacity-90"
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={transparent ? "/images/White SEA SABA logo transparent.png" : "/images/Full color SEA SABA logo transparent.png"}
-            alt="Sea Saba logo"
+            alt={ui.nav.logoAlt}
             width={180}
             height={40}
             className="h-10 w-auto"
@@ -56,8 +63,8 @@ export function Header() {
         </Link>
 
         {/* Desktop nav */}
-        <nav aria-label="Primary" className="hidden items-center gap-8 md:flex">
-          {NAV_ITEMS.map((item) => (
+        <nav aria-label={ui.nav.primaryLabel} className="hidden items-center gap-8 md:flex">
+          {navItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
@@ -76,7 +83,7 @@ export function Header() {
             className="bg-[#9D2235] text-white hover:bg-[#8a1e2e]"
             onClick={() => trackBookingClick("/book", "Book Now", "header_desktop")}
           >
-            <Link href="/book">Book Now</Link>
+            <Link href={localeHref(locale, "/book")}>{ui.nav.bookNow}</Link>
           </Button>
         </nav>
 
@@ -86,7 +93,7 @@ export function Header() {
             transparent ? "text-white" : "text-muted-foreground"
           }`}
           onClick={() => setMobileOpen(!mobileOpen)}
-          aria-label={mobileOpen ? "Close menu" : "Open menu"}
+          aria-label={mobileOpen ? ui.nav.closeMenu : ui.nav.openMenu}
           aria-expanded={mobileOpen}
           aria-controls="mobile-navigation"
         >
@@ -106,14 +113,14 @@ export function Header() {
       {/* Mobile nav — always mounted, animated in/out */}
       <nav
         id="mobile-navigation"
-        aria-label="Mobile"
+        aria-label={ui.nav.mobileLabel}
         inert={!mobileOpen}
         className={`overflow-hidden border-t border-border/40 bg-background transition-all duration-500 ease-in-out md:hidden ${
           mobileOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
         }`}
       >
         <div className="flex flex-col gap-3 px-4 pb-4 pt-2">
-          {NAV_ITEMS.map((item) => (
+          {navItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
@@ -129,7 +136,7 @@ export function Header() {
             className="mt-2 w-full bg-[#9D2235] text-white hover:bg-[#8a1e2e]"
             onClick={() => trackBookingClick("/book", "Book Now", "header_mobile")}
           >
-            <Link href="/book" onClick={() => setMobileOpen(false)}>Book Now</Link>
+            <Link href={localeHref(locale, "/book")} onClick={() => setMobileOpen(false)}>{ui.nav.bookNow}</Link>
           </Button>
         </div>
       </nav>

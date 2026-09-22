@@ -54,6 +54,67 @@ export function isRoutePublished(locale: Locale, routePath: string): boolean {
 }
 
 /**
+ * Routes for which a translated content module exists, per locale (#151).
+ * Draft modules may exist long before approval — this list feeds only
+ * draft-preview routing and switcher visibility in development; production
+ * visibility still requires `PUBLISHED_ROUTES` + approval (see
+ * `content/nl/index.ts` `canServeNlRoute`). A unit test asserts every listed
+ * route actually has a content module.
+ */
+export const DRAFTED_ROUTES: Record<Locale, readonly string[]> = {
+  en: [],
+  nl: ["/", "/diving", "/plan-your-trip", "/courses", "/contact", "/book"],
+};
+
+/**
+ * Draft translations are browsable only outside production builds: `next dev`
+ * and test renders show them; `next build` output never does. A hosted
+ * preview can opt in with NEXT_PUBLIC_DRAFT_LOCALE_PREVIEW=1 — that variable
+ * must never be set on the production environment.
+ */
+export function isDraftPreviewEnabled(): boolean {
+  return (
+    process.env.NODE_ENV !== "production" ||
+    process.env.NEXT_PUBLIC_DRAFT_LOCALE_PREVIEW === "1"
+  );
+}
+
+/**
+ * Human-review state of a translated module (#151/#152). Approval is a hard
+ * release gate: `status` must be "approved" and `reviewedBy`/`reviewedAt`
+ * set by a named human before the route may enter `PUBLISHED_ROUTES`.
+ */
+export interface TranslationReview {
+  status: "draft" | "approved";
+  /** Name of the human reviewer; null while unreviewed. */
+  reviewedBy: string | null;
+  /** ISO date of the human review; null while unreviewed. */
+  reviewedAt: string | null;
+  /** English source file this module translates (for #152 freshness checks). */
+  source: string;
+  /** sha1 of the English source file at translation time. */
+  sourceHash: string;
+}
+
+/**
+ * URL for `canonicalPath` under `locale`, falling back to the unprefixed
+ * English URL when the route has no published translation (or, in draft
+ * preview, no drafted module). Preserves query strings and fragments.
+ */
+export function localeHref(
+  locale: Locale,
+  canonicalPath: string,
+): string {
+  const [pathAndQuery, hash] = canonicalPath.split("#");
+  const [path, query] = pathAndQuery.split("?");
+  const eligible =
+    isRoutePublished(locale, path) ||
+    (isDraftPreviewEnabled() && DRAFTED_ROUTES[locale].includes(path));
+  const base = eligible ? localizedPath(locale, path) : localizedPath(DEFAULT_LOCALE, path);
+  return `${base}${query ? `?${query}` : ""}${hash ? `#${hash}` : ""}`;
+}
+
+/**
  * URL for `path` under `locale`. The default locale stays unprefixed so
  * existing English URLs are externally unchanged; other locales get
  * `/nl`-style prefixes.
