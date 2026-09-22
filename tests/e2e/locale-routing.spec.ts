@@ -39,9 +39,10 @@ test.describe("locale routing foundation (#150)", () => {
     page,
     monitor,
   }) => {
+    const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     for (const path of ["/nl", "/nl/diving", "/nl/plan-your-trip", "/xx", "/xx/diving", "/en", "/en/diving"]) {
-      monitor.allowRequestFailure(new RegExp(path.replace(/\//g, "\\/")));
-      monitor.allowConsoleError(new RegExp(path.replace(/\//g, "\\/")));
+      monitor.allowRequestFailure(new RegExp(escapeRegExp(path)));
+      monitor.allowConsoleError(new RegExp(escapeRegExp(path)));
       const response = await page.goto(path);
       expect(response?.status(), path).toBe(404);
       // Styled 404 inside the site shell — not Next's bare default page.
