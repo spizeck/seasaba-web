@@ -100,34 +100,57 @@ function rect(top: number, height: number): DOMRect {
   } as DOMRect;
 }
 
-// A content paragraph that the keeper can pick as its landmark. `chrome`
-// (optional) is a sticky/fixed element occupying y < chromeBottom, like the
-// site header or wrapped pill nav. Returns handles so tests can simulate the
-// element drifting (or being hidden) when the layout reflows.
-function useLandmark(top: number, chrome?: { el: Element; bottom: () => number }) {
+// Live landmark elements. Their viewport position follows scrollY like a
+// real element (docTop stays fixed; rect.top = docTop - scrollY), and the
+// hit-test only reports an element where the scan point is inside it.
+const landmarkBoxes: { el: HTMLElement; docTop: number; height: number }[] = [];
+
+// A content paragraph that the keeper can pick as its landmark. Returns
+// handles so tests can simulate the element drifting (or being hidden) when
+// the layout reflows.
+function useLandmark(top: number) {
   const el = document.createElement("p");
-  const box = { top, height: 24 };
-  el.getBoundingClientRect = () => rect(box.top, box.height);
+  const box = { el, docTop: top + geometry.y, height: 24 };
+  landmarkBoxes.push(box);
+  el.getBoundingClientRect = () =>
+    rect(box.docTop - geometry.y, box.height);
   document.body.appendChild(el);
-  elementsFromPointSpy.mockImplementation((_x: number, y: number) => {
-    if (chrome && y < chrome.bottom()) return [chrome.el];
-    return [el];
-  });
   return {
     el,
+    // Reflow moved the element to this viewport top at the current scrollY.
     moveTo: (newTop: number) => {
-      box.top = newTop;
+      box.docTop = newTop + geometry.y;
     },
     hide: () => {
       box.height = 0;
     },
-    remove: () => el.remove(),
+    remove: () => {
+      el.remove();
+      landmarkBoxes.splice(landmarkBoxes.indexOf(box), 1);
+    },
   };
+}
+
+// A sticky top chrome bar (e.g. the site header or pill nav) whose height
+// can change across the simulated breakpoint.
+function useChrome(bottomRef: { current: number }) {
+  const nav = document.createElement("nav");
+  nav.className = "sticky top-16";
+  nav.getBoundingClientRect = () => rect(64, bottomRef.current - 64);
+  document.body.appendChild(nav);
+  return nav;
 }
 
 beforeEach(() => {
   vi.useFakeTimers();
-  scrollToSpy = vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+  // Simulate the browser actually scrolling (with clamping at the document
+  // edges) so per-frame corrections converge instead of repeating.
+  scrollToSpy = vi
+    .spyOn(window, "scrollTo")
+    .mockImplementation((...args: unknown[]) => {
+      const y = typeof args[1] === "number" ? args[1] : 0;
+      geometry.y = Math.max(0, Math.min(y, geometry.docH - VIEWPORT));
+    });
   Object.defineProperty(window, "innerHeight", {
     configurable: true,
     value: VIEWPORT,
@@ -139,7 +162,16 @@ beforeEach(() => {
     configurable: true,
     value: visualViewport,
   });
-  elementsFromPointSpy = vi.fn(() => [] as Element[]);
+  landmarkBoxes.length = 0;
+  elementsFromPointSpy = vi.fn((_x: number, y: number) => {
+    for (const box of landmarkBoxes) {
+      const top = box.docTop - geometry.y;
+      if (y >= top && y < top + box.height) return [box.el];
+    }
+    // A real hit-test always returns something (at least html/body) — gaps
+    // and padding just aren't content elements, so the scan continues.
+    return [document.documentElement];
+  });
   Object.defineProperty(document, "elementsFromPoint", {
     configurable: true,
     value: elementsFromPointSpy,
@@ -154,7 +186,8 @@ beforeEach(() => {
 
 afterEach(() => {
   footer.remove();
-  document.body.querySelectorAll("p").forEach((p) => p.remove());
+  landmarkBoxes.length = 0;
+  document.body.querySelectorAll("p,nav").forEach((el) => el.remove());
 });
 
 it("restores distance-from-bottom after the document grows on resize", () => {
@@ -197,7 +230,7 @@ it("freezes the pre-reflow distance even when reflow fires scroll events", () =>
 });
 
 it("re-anchors to a deliberate scroll jump made mid-reflow", () => {
-  const lm = useLandmark(200);
+  useLandmark(200);
   render(<ScrollPositionKeeper />);
   setScrollY(geometry.docH - VIEWPORT); // was at the bottom when resize began
 
@@ -206,29 +239,38 @@ it("re-anchors to a deliberate scroll jump made mid-reflow", () => {
   // them back down; their new spot is preserved instead.
   geometry.docH = 16000;
   resize();
-  setScrollY(3000);
-  lm.moveTo(1400); // reflow keeps pushing their new content down
+  // The visitor lands at 3000 where different content now sits at the
+  // reading line; the scroll event re-anchors the frozen target there.
+  geometry.y = 3000;
+  const lm2 = useLandmark(200);
+  fireEvent.scroll(window);
+  act(() => vi.advanceTimersByTime(20));
+  lm2.moveTo(1400); // reflow keeps pushing their new content down
   docStillChanging();
   settle();
 
-  expect(scrollToSpy).toHaveBeenCalledWith(0, 3000 + (1400 - 200));
+  expect(scrollToSpy).toHaveBeenLastCalledWith(0, 3000 + (1400 - 200));
 });
 
-it("waits out the reflow tail before correcting", () => {
+it("keeps tracking the bottom while the document is still reflowing", () => {
   render(<ScrollPositionKeeper />);
   setScrollY(geometry.docH - VIEWPORT);
 
+  // Width changed; the document reflows in steps while the burst is open.
+  // Each growth step is corrected on the next frame — the visitor stays at
+  // the bottom throughout instead of watching the footer drift away.
   geometry.docH = 13000;
   resize();
-  act(() => vi.advanceTimersByTime(SETTLE_MS - 30));
+  act(() => vi.advanceTimersByTime(20));
+  expect(scrollToSpy).toHaveBeenLastCalledWith(0, 13000 - VIEWPORT);
+
   docStillChanging(); // layout still growing — settle window restarts
   geometry.docH = 16000;
-  act(() => vi.advanceTimersByTime(SETTLE_MS - 30));
-  expect(scrollToSpy).not.toHaveBeenCalled();
+  act(() => vi.advanceTimersByTime(20));
+  expect(scrollToSpy).toHaveBeenLastCalledWith(0, 16000 - VIEWPORT);
 
   settle();
-  // Correction lands against the final document height, not a mid-reflow one.
-  expect(scrollToSpy).toHaveBeenCalledWith(0, 16000 - VIEWPORT);
+  expect(scrollToSpy).toHaveBeenLastCalledWith(0, 16000 - VIEWPORT);
 });
 
 it("does nothing on mount and without a resize", () => {
@@ -239,20 +281,21 @@ it("does nothing on mount and without a resize", () => {
   expect(scrollToSpy).not.toHaveBeenCalled();
 });
 
-it("debounces a drag into a single correction per settle", () => {
+it("pins the bottom through a stepped drag instead of one late snap", () => {
   render(<ScrollPositionKeeper />);
   setScrollY(geometry.docH - VIEWPORT);
 
-  // Continuous drag: resize events keep arriving inside the settle window.
+  // Continuous drag: resize events keep arriving inside the settle window
+  // while each narrower breakpoint grows the document further. After every
+  // step the correction has already landed — no 150ms of displacement.
   for (let i = 0; i < 5; i++) {
     geometry.docH += 1000;
     resize(WIDTH - 200 - i * 40); // each drag step narrows further
-    act(() => vi.advanceTimersByTime(SETTLE_MS - 20));
+    act(() => vi.advanceTimersByTime(20));
+    expect(scrollToSpy).toHaveBeenLastCalledWith(0, geometry.docH - VIEWPORT);
   }
-  expect(scrollToSpy).not.toHaveBeenCalled();
   settle();
-  expect(scrollToSpy).toHaveBeenCalledTimes(1);
-  expect(scrollToSpy).toHaveBeenCalledWith(0, 15000 - VIEWPORT);
+  expect(scrollToSpy).toHaveBeenLastCalledWith(0, 15000 - VIEWPORT);
 });
 
 it.each([
@@ -267,9 +310,14 @@ it.each([
   geometry.docH = 16000;
   resize();
   escape();
+  // The synchronous correction at the resize event may already have landed;
+  // nothing may fire after the visitor takes over.
+  const callsAtEscape = scrollToSpy.mock.calls.length;
+  geometry.docH = 18000; // reflow continues — must not pull them further
+  docStillChanging();
   settle();
 
-  expect(scrollToSpy).not.toHaveBeenCalled();
+  expect(scrollToSpy).toHaveBeenCalledTimes(callsAtEscape);
 });
 
 it("falls back to a viewport-height threshold when no footer exists", () => {
@@ -329,9 +377,9 @@ it("ignores height-only resizes for a footer visitor", () => {
 });
 
 it("ignores height-only resizes for a mid-page visitor", () => {
+  geometry.y = 4000;
   const lm = useLandmark(200);
   render(<ScrollPositionKeeper />);
-  setScrollY(4000);
 
   heightResize(1200);
   lm.moveTo(1200); // would drift, but no width change means no correction
@@ -395,9 +443,9 @@ it("stops listening after unmount", () => {
 // --- Landmark-relative preservation for ordinary page content ---
 
 it("restores a mid-page landmark's viewport position after reflow", () => {
+  geometry.y = 4000; // 5200px above bottom — outside the footer region
   const lm = useLandmark(200); // paragraph 200px below the viewport top
   render(<ScrollPositionKeeper />);
-  setScrollY(4000); // 5200px above bottom — outside the footer region
 
   geometry.docH = 16000;
   lm.moveTo(1400); // reflow pushed the element 1200px down the document
@@ -408,9 +456,9 @@ it("restores a mid-page landmark's viewport position after reflow", () => {
 });
 
 it("freezes the pre-reflow landmark even when reflow fires scroll events", () => {
+  geometry.y = 4000;
   const lm = useLandmark(200);
   render(<ScrollPositionKeeper />);
-  setScrollY(4000);
 
   geometry.docH = 16000;
   lm.moveTo(1400);
@@ -425,18 +473,16 @@ it("freezes the pre-reflow landmark even when reflow fires scroll events", () =>
 });
 
 it("keeps the landmark the same distance below sticky chrome that grew", () => {
-  const nav = document.createElement("nav");
-  nav.className = "sticky top-16";
-  document.body.appendChild(nav);
-  let chromeBottom = 130; // header + one row of pills
-  const lm = useLandmark(200, { el: nav, bottom: () => chromeBottom });
+  const chrome = { current: 130 }; // header + one row of pills
+  const nav = useChrome(chrome);
+  geometry.y = 4000;
+  const lm = useLandmark(200);
 
   render(<ScrollPositionKeeper />);
-  setScrollY(4000);
 
   // The pill nav wraps to a second row: chrome grows by 40px and content
   // above the landmark also reflows.
-  chromeBottom = 170;
+  chrome.current = 170;
   geometry.docH = 16000;
   lm.moveTo(1400);
   resize();
@@ -445,6 +491,22 @@ it("keeps the landmark the same distance below sticky chrome that grew", () => {
   // gap was 200 - 130 = 70; the element must sit at 170 + 70 = 240.
   expect(scrollToSpy).toHaveBeenCalledWith(0, 4000 + (1400 - 240));
   nav.remove();
+});
+
+it("corrects incrementally during the burst, not only at settle", () => {
+  geometry.y = 4000;
+  const lm = useLandmark(200);
+  render(<ScrollPositionKeeper />);
+
+  // Reflow pushes the landmark 1200px down.
+  geometry.docH = 16000;
+  lm.moveTo(1400);
+  resize();
+
+  // One frame into the burst — well before the settle window — the drift is
+  // already corrected, so the displacement is never painted.
+  act(() => vi.advanceTimersByTime(20));
+  expect(scrollToSpy).toHaveBeenCalledWith(0, 4000 + (1400 - 200));
 });
 
 it("leaves mid-page position alone when no landmark resolves", () => {
@@ -459,9 +521,9 @@ it("leaves mid-page position alone when no landmark resolves", () => {
 });
 
 it("does not correct when the landmark is hidden at the new breakpoint", () => {
+  geometry.y = 4000;
   const lm = useLandmark(200);
   render(<ScrollPositionKeeper />);
-  setScrollY(4000);
 
   geometry.docH = 16000;
   lm.hide(); // responsive markup hid this element (display:none)
@@ -472,9 +534,9 @@ it("does not correct when the landmark is hidden at the new breakpoint", () => {
 });
 
 it("does not correct when the landmark was removed from the document", () => {
+  geometry.y = 4000;
   const lm = useLandmark(200);
   render(<ScrollPositionKeeper />);
-  setScrollY(4000);
 
   geometry.docH = 16000;
   lm.remove();
@@ -485,9 +547,9 @@ it("does not correct when the landmark was removed from the document", () => {
 });
 
 it("keeps the bottom region on bottom-distance even with a landmark", () => {
+  geometry.y = geometry.docH - VIEWPORT - 300; // inside the footer region
   const lm = useLandmark(200);
   render(<ScrollPositionKeeper />);
-  setScrollY(geometry.docH - VIEWPORT - 300); // inside the footer region
 
   geometry.docH = 16000;
   lm.moveTo(1400);

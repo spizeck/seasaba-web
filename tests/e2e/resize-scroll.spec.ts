@@ -8,11 +8,14 @@ import { test, expect, hydratedGoto, clickNavLink } from "./fixtures";
 // scrollY and ended up ~6100px above the bottom (~61% down); a visitor reading
 // the Mixed Groups section of /diving kept scrollY and was displaced ~1400px
 // up into the Dive Day / Certification sections as the sticky pill nav wrapped
-// and content above reflowed. The fix restores the recorded
-// distance-from-bottom for footer-region visitors and the viewport position
-// of the topmost content element for everyone else — so assertions here are
-// geometric (distance-from-bottom, landmark position, visible section),
-// never pixel-position matches.
+// and content above reflowed.
+//
+// The keeper pins the recorded position *during* the reflow — every frame of
+// the resize burst — rather than correcting once after a settle delay (the
+// first revision visibly displaced content ~1400–4500px for ~180ms before
+// snapping back). Assertions here are geometric (distance-from-bottom,
+// landmark position, visible section, transient drift), never pixel-position
+// matches.
 
 type Geo = {
   docH: number;
@@ -66,13 +69,17 @@ const CHROME_SEL = '[class*="sticky"], [class*="fixed"]';
 // below it (the same element the keeper anchors on).
 const probeFns = `(() => {
   const x = window.innerWidth / 2;
+  // Same cheap measurement the keeper uses: bottom edge of full-width
+  // top-pinned sticky/fixed chrome.
   let chromeBottom = 0;
-  const chromeLimit = Math.min(window.innerHeight, 480);
-  for (let y = 0; y < chromeLimit; y += 4) {
-    const el = document.elementsFromPoint(x, y)[0];
-    if (!el || !el.closest(${JSON.stringify(CHROME_SEL)})) {
-      chromeBottom = y;
-      break;
+  for (const el of document.querySelectorAll(${JSON.stringify(CHROME_SEL)})) {
+    const r = el.getBoundingClientRect();
+    if (
+      r.width >= window.innerWidth * 0.8 &&
+      r.top <= window.innerHeight * 0.25 &&
+      r.bottom <= window.innerHeight * 0.75
+    ) {
+      chromeBottom = Math.max(chromeBottom, r.bottom);
     }
   }
   let landmark = null;
@@ -128,8 +135,36 @@ async function verifyLandmark(page: import("@playwright/test").Page) {
   })()`) as Promise<Reading>;
 }
 
-// The keeper debounces one correction 150ms after the last resize event;
-// 600ms covers settle + correction + the scroll event it fires.
+// Sample the tagged landmark's viewport top on every frame while stepping
+// through the given widths — measures the transient "move away, snap back"
+// displacement the UX criterion forbids. Returns the sampled tops.
+async function traceLandmarkDuring(
+  page: import("@playwright/test").Page,
+  widths: number[]
+): Promise<number[]> {
+  await page.evaluate(() => {
+    const lm = document.querySelector("[data-probe-landmark]");
+    (window as unknown as { __lmTrace: number[] }).__lmTrace = [];
+    if (!lm) return;
+    const trace = (window as unknown as { __lmTrace: number[] }).__lmTrace;
+    const sample = () => {
+      if (lm.isConnected) trace.push(lm.getBoundingClientRect().top);
+      requestAnimationFrame(sample);
+    };
+    requestAnimationFrame(sample);
+  });
+  for (const w of widths) {
+    await page.setViewportSize({ width: w, height: 800 });
+    await page.waitForTimeout(30);
+  }
+  await page.waitForTimeout(SETTLE_WAIT);
+  return page.evaluate(
+    () => (window as unknown as { __lmTrace: number[] }).__lmTrace
+  );
+}
+
+// The keeper's burst settles 150ms after the last resize/ReflowObserver
+// event; 600ms covers settle + the final correction + the scroll it fires.
 const SETTLE_WAIT = 600;
 // Sub-pixel rounding and reflow jitter around the exact restored distance.
 const BOTTOM_TOLERANCE = 24;
@@ -138,6 +173,12 @@ const BOTTOM_TOLERANCE = 24;
 const LANDMARK_TOLERANCE = 60;
 // Well clear of the footer region (footer is ~460px tall at desktop widths).
 const FOOTER_THRESHOLD_HINT = 1500;
+// UX budget for transient landmark drift during a stepped resize. The
+// keeper pins per frame, so the only legitimate movement is sticky-chrome
+// growth (~34px for a wrapped pill nav) plus a frame of jitter. The previous
+// settle-then-correct design displaced content ~1400–4500px for ~180ms —
+// this bound catches that regression while allowing real chrome reflow.
+const TRANSIENT_TOLERANCE = 150;
 
 test.describe("bottom preservation", () => {
   for (const path of ["/plan-your-trip", "/diving"]) {
@@ -374,6 +415,113 @@ test.describe("content landmark preservation", () => {
     expect(
       Math.abs((after.landmarkGap ?? 0) - (before.landmarkGap ?? 0))
     ).toBeLessThanOrEqual(LANDMARK_TOLERANCE);
+  });
+
+  // The failure mode the first revision shipped: content visibly drifted
+  // ~1400px for ~180ms while the settle timer ran, then snapped back. Final
+  // geometry was correct but the interaction was not. This asserts the
+  // landmark never leaves a small band around its reading position while
+  // the stepped resize is still in flight.
+  test("the landmark never visibly drifts away during a stepped resize", async ({
+    page,
+    isMobile,
+  }) => {
+    test.skip(!!isMobile, "desktop window-resize scenario");
+
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await hydratedGoto(page, "/diving");
+    await scrollIntoMixedGroups(page);
+    await page.waitForTimeout(150);
+    const before = await tagLandmark(page);
+    expect(before.landmarkTop).not.toBeNull();
+
+    const widths = [1216, 1152, 1088, 1024, 960, 896, 832, 768];
+    const tops = await traceLandmarkDuring(page, widths);
+    expect(tops.length).toBeGreaterThan(3);
+
+    const drift = Math.max(
+      ...tops.map((t) => Math.abs(t - before.landmarkTop!))
+    );
+    expect(drift).toBeLessThanOrEqual(TRANSIENT_TOLERANCE);
+
+    // And it still ends on the same content.
+    const after = await verifyLandmark(page);
+    expect(after.section).toBe("mixed-experience");
+    expect(
+      Math.abs((after.landmarkGap ?? 0) - (before.landmarkGap ?? 0))
+    ).toBeLessThanOrEqual(LANDMARK_TOLERANCE);
+  });
+});
+
+// The homepage has a different semantic structure than the content pages —
+// hero, image cards, feature grids — and produced two distinct failures in
+// manual testing: landmark positions that drifted and snapped back, and a
+// visitor just above the (pre-resize) footer being pinned to the bottom
+// because the threshold was measured against the taller post-reflow footer.
+test.describe("homepage landmark preservation", () => {
+  // Reading positions covering a heading, the responsive image-card grid,
+  // and content just above the footer (577px from the end at 1280 — inside
+  // the post-reflow 758px footer but outside the 462px pre-reflow one).
+  // `frac` is a fraction of max scroll; negative means px above the bottom.
+  const positions = [
+    { label: "upper sections", frac: 0.25 },
+    { label: "image-card grid", frac: 0.66 },
+    { label: "just above footer", frac: -577 },
+  ];
+
+  for (const { label, frac } of positions) {
+    test(`keeps ${label} in view 1280→768`, async ({ page, isMobile }) => {
+      test.skip(!!isMobile, "desktop window-resize scenario");
+
+      await page.setViewportSize({ width: 1280, height: 800 });
+      await hydratedGoto(page, "/");
+      await page.evaluate((f) => {
+        const max =
+          document.documentElement.scrollHeight - window.innerHeight;
+        window.scrollTo(0, f >= 0 ? max * f : max + f);
+      }, frac);
+      await page.waitForTimeout(150);
+      const before = await tagLandmark(page);
+      expect(before.landmarkTop).not.toBeNull();
+
+      await page.setViewportSize({ width: 768, height: 800 });
+      await page.waitForTimeout(SETTLE_WAIT);
+      const after = await verifyLandmark(page);
+
+      // Same element, same gap below the chrome — the visitor never left
+      // their content and was not pinned toward the footer.
+      expect(after.landmarkTop).not.toBeNull();
+      expect(
+        Math.abs((after.landmarkGap ?? 0) - (before.landmarkGap ?? 0))
+      ).toBeLessThanOrEqual(LANDMARK_TOLERANCE);
+      const geo = await measure(page);
+      expect(geo.fromBottom).toBeGreaterThan(FOOTER_THRESHOLD_HINT);
+    });
+  }
+
+  test("no visible displacement while stepping through breakpoints", async ({
+    page,
+    isMobile,
+  }) => {
+    test.skip(!!isMobile, "desktop window-resize scenario");
+
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await hydratedGoto(page, "/");
+    await page.evaluate(() =>
+      window.scrollTo(
+        0,
+        (document.documentElement.scrollHeight - window.innerHeight) * 0.66
+      )
+    );
+    await page.waitForTimeout(150);
+    const before = await tagLandmark(page);
+    expect(before.landmarkTop).not.toBeNull();
+
+    const tops = await traceLandmarkDuring(page, [1152, 1024, 896, 768]);
+    const drift = Math.max(
+      ...tops.map((t) => Math.abs(t - before.landmarkTop!))
+    );
+    expect(drift).toBeLessThanOrEqual(TRANSIENT_TOLERANCE);
   });
 });
 

@@ -20,23 +20,29 @@ import { useEffect } from "react";
  *   item, media) at the top of the visible reading area, plus its offset
  *   below the sticky chrome (site header, section pill nav).
  *
- * When a viewport resize starts, both samples are frozen — scroll events
- * fired *during* reflow (browsers emit them as the scroll offset is clamped
- * or anchor-adjusted step by step) must not overwrite them, since they
- * already describe the broken post-reflow position. Once the document has
- * been stable for one settle window, exactly one instant correction runs:
+ * When a layout-width change starts a resize burst, both samples are
+ * frozen — scroll events fired *during* reflow (browsers emit them as the
+ * scroll offset is clamped or anchor-adjusted step by step) must not
+ * overwrite them, since they already describe the broken post-reflow
+ * position.
  *
- * - Footer region (frozen distance within one footer-height of the end, a
- *   self-calibrating ~460px desktop / ~1.3kpx mobile threshold): restore
- *   the same distance from the bottom.
- * - Anywhere else: scroll so the landmark element sits the same distance
- *   below the (possibly resized) sticky chrome as before. Preserving the
- *   gap below the chrome — rather than the raw viewport coordinate —
- *   keeps the topmost readable line visible even when the section pills
- *   wrap and the sticky nav grows a row. The element's top is preserved,
- *   not snapped: a visitor halfway through a paragraph stays halfway
- *   through it. If the landmark was hidden by the new breakpoint
- *   (display:none) or removed, no correction runs.
+ * While the burst is active a rAF loop corrects the residual drift every
+ * frame, so the displacement caused by the reflow is never painted — the
+ * pinned content simply stays put instead of visibly moving away and
+ * snapping back after a settle delay (the failure mode of a
+ * settle-then-correct design, measured at ~180ms of >1400px displacement).
+ * A final correction runs once the document has been stable for one settle
+ * window, then the loop stops.
+ *
+ * Which correction runs:
+ * - Footer region (frozen distance within one footer-height of the end,
+ *   measured *before* the reflow since the footer itself changes height):
+ *   keep the same distance from the bottom.
+ * - Anywhere else: keep the landmark element at its recorded gap below the
+ *   sticky chrome — so a pill nav wrapping to a second row can't cover or
+ *   displace the topmost readable line, and mid-paragraph position is
+ *   preserved rather than snapping to a section top. If the landmark is
+ *   hidden or removed by the new breakpoint, no correction runs.
  *
  * Deliberate constraints:
  * - Bursts start only on a layout-width change. Height-only viewport
@@ -48,38 +54,31 @@ import { useEffect } from "react";
  *   pinch-zoom and chrome/keyboard changes that are not responsive
  *   reflows, and `window.resize` already covers every width transition
  *   (verified in Chromium and WebKit).
- * - Debounced to one correction per settle so dragging a window edge
- *   never produces repeated snapping. A ResizeObserver restarts the
- *   settle window while the document keeps resizing, so the correction
- *   waits out the whole reflow tail — and bursts only ever start from a
- *   real viewport resize, never from content growth (navigation, lazy
- *   media, fonts).
- * - Landmarks are existing semantic elements discovered geometrically via
- *   `elementsFromPoint`; no markup changes, no hardcoded heights or
- *   breakpoints, and the URL/hash is never touched.
+ * - The correction loop runs only during a burst — one
+ *   `getBoundingClientRect` plus a small chrome scan per frame — and stops
+ *   150ms after the last document-size change. A ResizeObserver can extend
+ *   a burst but never open one, so content growth (navigation, lazy
+ *   media, fonts) can't start corrections.
+ * - A deliberate scroll jump during a burst (>300px / half a viewport —
+ *   anchor nav, scrollbar drag, programmatic scroll; reflow noise is
+ *   ~6px/event) re-anchors the frozen target to the visitor's new
+ *   position instead of dragging them back to the stale one.
+ * - Landmarks are existing semantic elements discovered geometrically; no
+ *   markup changes, no hardcoded heights or breakpoints, no URL/hash
+ *   mutation.
  * - Instant `scrollTo` — never animated.
  * - Explicit scroll input (wheel, touch, scroll keys, pointer) during the
- *   burst cancels the pending correction, so it never fights the visitor.
+ *   burst cancels corrections, so it never fights the visitor.
  * - Fragment navigation, back/forward restoration, and initial load are
  *   untouched: without a resize event nothing happens at all.
  */
 
 // Long enough to span the incremental reflow steps that follow a breakpoint
-// jump; short enough that the correction still reads as part of the resize.
+// jump; the correction loop stops once the document has been quiet this long.
 const RESIZE_SETTLE_MS = 150;
 
-// A scroll delta beyond this during an active burst is a deliberate move —
-// anchor navigation, a scrollbar drag, or a programmatic scroll — not
-// reflow noise (measured ~6px per event). The frozen target is re-anchored
-// to the visitor's new position so the correction preserves where they are
-// *now*, not where they were when the resize began.
-function deliberateScrollThreshold() {
-  return Math.max(300, window.innerHeight / 2);
-}
-
-// How far below the viewport top to look for sticky chrome and for the
-// first usable content element.
-const CHROME_SCAN_LIMIT = 480;
+// How far below the viewport top to look for the first usable content
+// element when a landmark must be (re)selected.
 const LANDMARK_SCAN_LIMIT = 480;
 const SCAN_STEP = 4;
 
@@ -128,16 +127,23 @@ function nearBottomThreshold() {
     : window.innerHeight;
 }
 
-// First viewport y not covered by top-pinned chrome (sticky site header,
-// sticky section pill nav, ...). Discovered geometrically: the pill nav
-// wraps to a second row on narrow viewports, so no height is hardcoded.
-function topChromeBottom(x: number) {
-  const limit = Math.min(window.innerHeight, CHROME_SCAN_LIMIT);
-  for (let y = 0; y < limit; y += SCAN_STEP) {
-    const el = document.elementsFromPoint(x, y)[0];
-    if (!el || !el.closest(CHROME_SELECTOR)) return y;
+// Bottom edge of the top-pinned chrome (sticky site header, sticky section
+// pill nav, ...). Measured from the few sticky/fixed candidates rather than
+// hit-testing every 4px — cheap enough to run per frame during a burst,
+// and exact when the pill nav wraps to a second row on narrow viewports.
+function topChromeBottom() {
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  let bottom = 0;
+  for (const el of document.querySelectorAll(CHROME_SELECTOR)) {
+    const r = el.getBoundingClientRect();
+    // A full-width bar pinned in the top region. Excludes corner launchers
+    // (not wide) and full-screen overlays (taller than the region).
+    if (r.width >= vw * 0.8 && r.top <= vh * 0.25 && r.bottom <= vh * 0.75) {
+      bottom = Math.max(bottom, r.bottom);
+    }
   }
-  return limit;
+  return bottom;
 }
 
 // The semantic content element at the top of the visible reading area.
@@ -170,12 +176,26 @@ function pickLandmark(chromeBottom: number): Landmark | null {
   return null;
 }
 
+// A scroll delta beyond this during an active burst is a deliberate move —
+// anchor navigation, a scrollbar drag, or a programmatic scroll — not
+// reflow noise (measured ~6px per event). The frozen target is re-anchored
+// to the visitor's new position so the correction preserves where they are
+// *now*, not where they were when the resize began.
+function deliberateScrollThreshold() {
+  return Math.max(300, window.innerHeight / 2);
+}
+
 export function ScrollPositionKeeper() {
   useEffect(() => {
     if (!("ResizeObserver" in window)) return;
 
     let recorded = distanceFromBottom();
-    let chromeBottom = topChromeBottom(window.innerWidth / 2);
+    // Footer height must come from the pre-reflow sample: by the time a
+    // resize event fires the layout has often already reflowed, so a live
+    // read would classify a visitor just *above* a footer that grew as
+    // being *inside* it and pin them to the bottom.
+    let recordedThreshold = nearBottomThreshold();
+    let chromeBottom = topChromeBottom();
     let landmark: Landmark | null = pickLandmark(chromeBottom);
     // Chrome height changes only on reflow; the width-guard sets this so the
     // next sample rescans instead of reusing a stale edge.
@@ -184,19 +204,21 @@ export function ScrollPositionKeeper() {
     let burstActive = false;
     let escaped = false;
     let frozenDistance = 0;
+    let frozenThreshold = 0;
     let frozenLandmark: Landmark | null = null;
-    let frame = 0;
+    let sampleFrame = 0;
+    let tickFrame = 0;
+    let reanchorPending = false;
     let settleTimer: ReturnType<typeof setTimeout> | undefined;
 
-    // Cheap path per scroll frame: while the landmark still overlaps the
-    // reading line, only its gap needs updating — no hit-test scan. The full
-    // scan runs when the element leaves the line or chrome may have moved.
+    // Cheap path per scroll frame: while the landmark still sits inside the
+    // scan window, only its gap needs updating — no hit-test scan. The full
+    // scan runs when the element leaves the window or chrome may have moved.
     const sample = () => {
       recorded = distanceFromBottom();
+      recordedThreshold = nearBottomThreshold();
       if (!chromeDirty && landmark && landmark.el.isConnected) {
         const r = landmark.el.getBoundingClientRect();
-        // Still inside the landmark scan window (at or near the top of the
-        // reading area)? If it drifted off, rescan for the new topmost one.
         if (
           r.height > 0 &&
           r.bottom > chromeBottom &&
@@ -206,46 +228,82 @@ export function ScrollPositionKeeper() {
           return;
         }
       }
-      chromeBottom = topChromeBottom(window.innerWidth / 2);
+      chromeBottom = topChromeBottom();
       landmark = pickLandmark(chromeBottom);
       chromeDirty = false;
     };
 
     const onScroll = () => {
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(() => {
-        const delta = Math.abs(window.scrollY - lastY);
+      // A deliberate jump is detected synchronously in the event: a queued
+      // correction tick could otherwise run first and drag the visitor back
+      // to the stale target for a frame. Reflow noise (~6px/event) stays
+      // below the threshold and is ignored.
+      if (
+        burstActive &&
+        Math.abs(window.scrollY - lastY) > deliberateScrollThreshold()
+      ) {
+        frozenDistance = distanceFromBottom();
+        frozenThreshold = recordedThreshold;
+        frozenLandmark = null; // resampled for the new position below
+        reanchorPending = true;
+        lastY = window.scrollY;
+      }
+      cancelAnimationFrame(sampleFrame);
+      sampleFrame = requestAnimationFrame(() => {
+        sampleFrame = 0;
         sample();
         lastY = window.scrollY;
-        if (burstActive && delta > deliberateScrollThreshold()) {
-          frozenDistance = recorded;
+        if (reanchorPending) {
+          reanchorPending = false;
           frozenLandmark = landmark;
         }
       });
     };
 
-    const endBurst = () => {
-      burstActive = false;
-      if (escaped) return;
-      if (frozenDistance <= nearBottomThreshold()) {
+    // Pin the frozen target every frame while the burst runs: reflow
+    // displacement is corrected before it is painted, so the visitor sees
+    // stable content instead of a move-then-snap.
+    const correct = () => {
+      const y = window.scrollY;
+      if (frozenDistance <= frozenThreshold) {
         const target = Math.max(
           0,
           documentHeight() - window.innerHeight - frozenDistance
         );
-        if (Math.abs(target - window.scrollY) > 1) window.scrollTo(0, target);
+        if (Math.abs(y - target) > 1) {
+          window.scrollTo(0, target);
+          lastY = target;
+        }
         return;
       }
       const lm = frozenLandmark;
       if (!lm || !lm.el.isConnected) return;
       const rect = lm.el.getBoundingClientRect();
       if (rect.height === 0) return; // display:none at the new breakpoint
-      const desiredTop = topChromeBottom(window.innerWidth / 2) + lm.gap;
+      const desiredTop = topChromeBottom() + lm.gap;
       const delta = rect.top - desiredTop;
-      if (Math.abs(delta) > 1) window.scrollTo(0, window.scrollY + delta);
+      if (Math.abs(delta) > 1) {
+        window.scrollTo(0, y + delta);
+        lastY = y + delta;
+      }
+    };
+
+    const tick = () => {
+      tickFrame = 0;
+      // Escaped means the visitor took over scrolling — stop pinning for
+      // the rest of this burst.
+      if (!burstActive || escaped) return;
+      correct();
+      tickFrame = requestAnimationFrame(tick);
+    };
+
+    const endBurst = () => {
+      burstActive = false;
+      if (!escaped) correct();
     };
 
     // A layout-width change freezes the pre-reflow position and opens the
-    // settle window. Height-only resizes return early: with the width
+    // correction window. Height-only resizes return early: with the width
     // unchanged, the document cannot reflow responsively, so any correction
     // would only fight unrelated viewport changes. ResizeObserver
     // notifications only extend that window while the document is still
@@ -264,8 +322,13 @@ export function ScrollPositionKeeper() {
         burstActive = true;
         escaped = false;
         frozenDistance = recorded;
+        frozenThreshold = recordedThreshold;
         frozenLandmark = landmark;
+        if (!tickFrame) tickFrame = requestAnimationFrame(tick);
       }
+      // Post-resize layout is already readable at event time — correcting
+      // here keeps even the first reflowed frame from painting displaced.
+      if (!escaped) correct();
       clearTimeout(settleTimer);
       settleTimer = setTimeout(endBurst, RESIZE_SETTLE_MS);
     };
@@ -304,7 +367,8 @@ export function ScrollPositionKeeper() {
       window.removeEventListener("touchmove", onEscape);
       window.removeEventListener("pointerdown", onEscape);
       window.removeEventListener("keydown", onKeyDown);
-      cancelAnimationFrame(frame);
+      cancelAnimationFrame(sampleFrame);
+      cancelAnimationFrame(tickFrame);
       clearTimeout(settleTimer);
     };
   }, []);
