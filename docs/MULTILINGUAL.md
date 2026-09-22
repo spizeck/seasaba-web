@@ -1,19 +1,23 @@
 # Multilingual Site & International SEO Audit
 
-> **Status: Audit and recommendation** — no localized routes are implemented.
-> Audited against `master` @ `9cc8ab2` (post-#108 SEO/discoverability work).
-> Decision record for whether, which, and how Sea Saba should localize.
+> **Status: Decision made — Dutch Phase 1 approved.** No localized routes are
+> implemented. Audited against `master` @ `9cc8ab2` (post-#108
+> SEO/discoverability work); updated after the owner's business decision to
+> proceed with Dutch (GA4/GSC downgraded from gate to baseline measurement).
 
 ## Recommendation in brief
 
-**Proceed with Dutch only, as a small staged pilot — after the owner confirms
-two data points.** Dutch nationals are ~48% of Saba's air visitors (CBS), but
-Netherlands English proficiency is the highest in the world (EF EPI), so Dutch
-localization is a conversion/welcome improvement, not an access fix. French and
-Spanish should be deferred: French visitors are a steady ~4–5% and Spanish
-nationality shares are in the low single digits. See the evidence table below —
-the honest answer to "is multilingual worth doing now" is *probably, for Dutch
-only, and only if the pilot stays small*.
+**Decided: proceed with a small staged Dutch pilot.** Dutch nationals are ~48%
+of Saba's air visitors (CBS), and the owner reports from direct experience with
+Dutch dive customers that they tend to prefer a dive operator whose website is
+also available in Dutch — owner business/customer knowledge, not measured
+analytics. Netherlands English proficiency is the highest in the world (EF
+EPI), so Dutch localization is a conversion/welcome improvement, not an access
+fix. French and Spanish remain deferred: French visitors are a steady ~4–5% and
+Spanish nationality shares are in the low single digits. GA4 and Search
+Console are not a go/no-go gate for Dutch — they are the baseline and
+post-launch measurement for adoption, conversion, and whether French should
+follow.
 
 ## 1. Current architecture — what localization touches
 
@@ -66,7 +70,15 @@ only, and only if the pilot stays small*.
   islands exist, but Spanish-nationality/LatAm tourist share to Saba is minimal
   in CBS data.
 
-**Unknown — owner must check before implementation:**
+**Owner-provided business knowledge (decision input, not measured data):**
+
+- Dutch customers tend to prefer a dive operator that also provides its
+  website in Dutch. Combined with the ~48% market share above, this is the
+  basis for the Dutch Phase 1 decision. It is directional customer insight
+  from the owner — not a quantified conversion rate or external study.
+
+**Measurement — owner should pull before launch as the baseline (not a
+go/no-go gate):**
 
 - GA4: sessions by browser language and by country (esp. NL, FR/BE, ES/LatAm).
 - GSC: impressions/queries in Dutch/French/Spanish (e.g. "duiken Saba").
@@ -77,11 +89,15 @@ only, and only if the pilot stays small*.
   French, and Spanish — in-house review exists for all three, but who owns
   ongoing review?
 
+These baselines become the post-launch comparison for Dutch adoption and the
+inputs for deciding whether to expand Dutch coverage and whether French
+follows (§10).
+
 ## 3. Language priority
 
 | Language | Market evidence | Search/SEO value | Review capacity | Verdict |
 |---|---|---|---|---|
-| **Dutch** | ~48% of air arrivals (incl. ~20 pts Caribbean-resident Dutch) | Real NL search demand for "duiken Saba" likely; Saba is NL territory | Crew listed as Dutch-speaking | **Phase 1** — pilot, small page set |
+| **Dutch** | ~48% of air arrivals (incl. ~20 pts Caribbean-resident Dutch) + owner-reported customer preference for a Dutch-language operator site | Real NL search demand for "duiken Saba" likely; Saba is NL territory | Crew listed as Dutch-speaking | **Phase 1 — decided** |
 | **French** | ~4–5% steady; French Antilles adjacency via SXM | Modest; FR speakers benefit more per capita (lower EN proficiency) | One crew member lists French | **Phase 2** — revisit after Dutch pilot data |
 | **Spanish** | Low single digits (Colombian ~2–3%, Dominican ~2%) | Low | One crew member lists Spanish | **Defer** — no evidence of demand |
 
@@ -260,22 +276,28 @@ freshness overhead per language.
 
 Created from this audit (independently reviewable, in dependency order):
 
-1. **Localization foundation** — `[locale]` subtree, locale config,
-   `lang`/`hreflang`/canonical plumbing, language switcher, `x-default`.
+1. **Localization foundation (#150)** — locale config with hard allowlist,
+   `[locale]` routing, the English-URL invariant, `<html lang>`, switcher
+   foundation with persisted explicit choice, metadata plumbing #153
+   consumes. Explicitly does *not* own the final SEO pass.
 2. **Dutch Phase 1 pages** — the §4 page set + shared UI dictionary +
    glossary.
 3. **Translation freshness check** — `sourceHash`/`lastReviewed` +
    `check-translations` script wired into `npm run check`.
-4. **i18n SEO pass** — sitemap alternates, JSON-LD `inLanguage`,
-   localized OG/metadata, GSC verification notes. (Can fold into #1 if the
-   implementer prefers; split because it's separately reviewable.)
+4. **i18n SEO pass (#153)** — sitemap alternates, full reciprocal hreflang
+   verification, JSON-LD `inLanguage`, final localized SEO validation, GSC
+   international verification, the final `llms.txt` localization note.
+   Runs after localized content exists; the foundation issue (#150) builds
+   the metadata plumbing it consumes but does not own the SEO completion.
 
 Deferred without issues: French (revisit with `/nl` data), Spanish.
 
 ## 14. Owner decisions needed before implementation
 
-1. Confirm demand: GA4 language/geo report + GSC Dutch queries (§2
-   "unknowns").
+The Dutch go/no-go is **decided** (§2, owner business knowledge). What
+remains for the owner:
+
+1. Pull the GA4/GSC/booking baselines in §2 — for measurement, not gating.
 2. Confirm a named Dutch reviewer and ongoing review bandwidth.
 3. Checkfront account language support; whether a Dutch booking flow is
    configurable.
