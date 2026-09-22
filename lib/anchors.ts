@@ -40,6 +40,7 @@ export const planYourTripAnchors = {
   restaurants: "restaurants",
   history: "history",
   hiking: "hiking",
+  snorkeling: "snorkeling",
   experiences: "experiences",
   faq: "faq",
 } as const;
