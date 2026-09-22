@@ -3,13 +3,15 @@ import Link from "next/link";
 import { PageHero } from "@/components/page-hero";
 import { FeatureImage } from "@/components/feature-image";
 import { Button } from "@/components/ui/button";
-import { Plane, PlaneTakeoff, Ship, Helicopter, Anchor, Check, Droplets, Eye, Sun, Thermometer, Home, HelpCircle, Fish, Calendar, AlertTriangle, Bus, Ban, DollarSign, MessageCircle, Plug, Wifi, Timer, Utensils, Compass, Clock } from "lucide-react";
+import { Plane, PlaneTakeoff, Ship, Helicopter, Anchor, Check, Droplets, Eye, Sun, Thermometer, Home, HelpCircle, Fish, Calendar, AlertTriangle, Bus, Ban, DollarSign, MessageCircle, Plug, Wifi, Timer, Utensils, Compass, Clock, CloudSun, Users } from "lucide-react";
 import { HotelPills } from "@/components/hotel-pills";
 import { InsuranceCTAs } from "@/components/insurance-ctas";
 import { TrackedOutboundButton } from "@/components/tracked-outbound-button";
 import { TrackedInternalButton } from "@/components/tracked-internal-button";
+import { TrackedContactLink } from "@/components/tracked-contact-link";
 import { PageSectionNav } from "@/components/navigation/PageSectionNav";
-import { planYourTripAnchors } from "@/lib/anchors";
+import { planYourTripAnchors, termsAnchors } from "@/lib/anchors";
+import { CONTACT } from "@/lib/constants";
 import { OPERATIONS, bookingHref } from "@/data/operations";
 
 export const metadata = createMetadata({
@@ -344,6 +346,44 @@ export default function PlanYourTripPage() {
             </div>
           </div>
         </div>
+
+        {/* Travel disruptions */}
+        <div className="mt-6 rounded-lg border border-border/40 bg-muted/20 p-5">
+          <div className="flex items-center gap-2">
+            <CloudSun className="h-4 w-4 shrink-0 text-primary" />
+            <h3 className="text-sm font-semibold text-foreground">If Your Travel Plans Change</h3>
+          </div>
+          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+            Flights and ferries between St. Maarten and Saba run reliably, but weather and
+            connections occasionally shift schedules — a normal part of reaching a small
+            island. If your flight is delayed, the ferry is disrupted, or you&apos;ll arrive
+            later than expected,{" "}
+            <Link href="/contact?interest=general" className="font-medium text-primary hover:underline underline-offset-4">
+              contact us
+            </Link>{" "}
+            or message us on{" "}
+            <TrackedContactLink
+              href={CONTACT.whatsappHref}
+              eventName="whatsapp_click"
+              buttonText="WhatsApp — plan your trip travel disruption"
+              external
+              className="font-medium text-primary hover:underline underline-offset-4"
+            >
+              WhatsApp
+            </TrackedContactLink>{" "}
+            as soon as you know.
+          </p>
+          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+            If sea conditions require us to change a trip, we&apos;ll work with you to
+            reschedule or refund the affected portion. Travel insurance covering trip
+            delays is strongly recommended (see When to Visit), and our cancellation and
+            rescheduling policies are on the{" "}
+            <Link href={`/terms#${termsAnchors.scheduleChanges}`} className="font-medium text-primary hover:underline underline-offset-4">
+              Terms page
+            </Link>
+            .
+          </p>
+        </div>
       </section>
 
       {/* When to Visit */}
@@ -647,6 +687,31 @@ export default function PlanYourTripPage() {
           Saba offers far more than world-class diving. Spend a day hiking through cloud forests, exploring local art galleries, snorkeling crystal-clear waters, enjoying a sunset cruise, or discovering one of the Caribbean&apos;s most unique island communities.
         </p>
 
+        <div className="mt-5 rounded-lg border border-border/40 bg-muted/20 p-5">
+          <div className="flex items-center gap-2">
+            <Users className="h-4 w-4 shrink-0 text-primary" />
+            <h3 className="text-sm font-semibold text-foreground">Traveling with a Non-Diver?</h3>
+          </div>
+          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+            Saba is a rewarding destination even if you never put on a tank. While you dive,
+            your companion can join the{" "}
+            <Link href={`#${planYourTripAnchors.snorkeling}`} className="font-medium text-primary hover:underline underline-offset-4">
+              afternoon snorkel trip
+            </Link>{" "}
+            — it shares the boat with the afternoon dive, so you can still spend the day on
+            the water together. On land, the{" "}
+            <Link href={`#${planYourTripAnchors.hiking}`} className="font-medium text-primary hover:underline underline-offset-4">
+              trail network
+            </Link>
+            , village cafés, galleries, and craft shops fill a day easily, and a sunset
+            cruise is an evening out everyone can share. For more ideas, browse our{" "}
+            <Link href="/partners" className="font-medium text-primary hover:underline underline-offset-4">
+              recommended partners
+            </Link>
+            .
+          </p>
+        </div>
+
         <div className="mt-8 flex flex-col gap-16 lg:gap-20 object-cover brightness-110 contrast-105 saturate-110">
           <FeatureImage
             src="/images/optimized/saba-sunset-cruise.webp"
@@ -705,6 +770,7 @@ export default function PlanYourTripPage() {
           </FeatureImage>
 
           <FeatureImage
+            id={planYourTripAnchors.snorkeling}
             src="/images/optimized/saba-snorkeling.webp"
             alt="Sea turtle swimming at the surface while snorkeling on Saba"
             imageRight

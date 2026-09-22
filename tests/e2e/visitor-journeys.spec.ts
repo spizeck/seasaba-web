@@ -94,6 +94,22 @@ test("yacht visitor: plan-your-trip → visiting yachts guide", async ({ page })
   await expect(page.getByRole("heading", { name: "Visiting Saba by Yacht" })).toBeVisible();
 });
 
+test("disrupted traveler: plan-your-trip → schedule-change terms", async ({ page }) => {
+  await hydratedGoto(page, "/plan-your-trip");
+  await expect(page.getByRole("heading", { name: "Plan Your Trip to Saba" })).toBeVisible();
+
+  // The disruption guidance lives with the arrival options in Getting to Saba.
+  const gettingHere = page.locator("#getting-here");
+  await expect(gettingHere.getByText(/travel plans change/i)).toBeVisible();
+
+  await gettingHere.getByRole("link", { name: "Terms page" }).click();
+  await expect(page).toHaveURL(/\/terms#schedule-changes$/);
+  await expect(page.locator("#schedule-changes")).toBeInViewport();
+  await expect(
+    page.getByRole("heading", { name: "Schedule Changes" })
+  ).toBeVisible();
+});
+
 test("trip planner: plan-your-trip → generic booking page with fallback", async ({ page }) => {
   await hydratedGoto(page, "/plan-your-trip");
   await expect(page.getByRole("heading", { name: "Plan Your Trip to Saba" })).toBeVisible();
