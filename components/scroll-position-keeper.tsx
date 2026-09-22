@@ -209,6 +209,9 @@ export function ScrollPositionKeeper() {
     let sampleFrame = 0;
     let tickFrame = 0;
     let reanchorPending = false;
+    // True while the keeper itself is inside window.scrollTo — external
+    // programmatic scrolls are detected by wrapping the API below.
+    let internalWrite = false;
     let settleTimer: ReturnType<typeof setTimeout> | undefined;
 
     // Cheap path per scroll frame: while the landmark still sits inside the
@@ -233,6 +236,18 @@ export function ScrollPositionKeeper() {
       chromeDirty = false;
     };
 
+    // The visitor took the scroll position somewhere else — anchor clicks,
+    // scrollbar drags, programmatic scrolls. Refreeze the cheap targets
+    // immediately so a queued tick can't drag them back to the stale
+    // position; the landmark is resampled on the next scroll frame.
+    const markExternalScroll = () => {
+      frozenDistance = distanceFromBottom();
+      frozenThreshold = recordedThreshold;
+      frozenLandmark = null;
+      reanchorPending = true;
+      lastY = window.scrollY;
+    };
+
     const onScroll = () => {
       // A deliberate jump is detected synchronously in the event: a queued
       // correction tick could otherwise run first and drag the visitor back
@@ -242,11 +257,7 @@ export function ScrollPositionKeeper() {
         burstActive &&
         Math.abs(window.scrollY - lastY) > deliberateScrollThreshold()
       ) {
-        frozenDistance = distanceFromBottom();
-        frozenThreshold = recordedThreshold;
-        frozenLandmark = null; // resampled for the new position below
-        reanchorPending = true;
-        lastY = window.scrollY;
+        markExternalScroll();
       }
       cancelAnimationFrame(sampleFrame);
       sampleFrame = requestAnimationFrame(() => {
@@ -271,7 +282,9 @@ export function ScrollPositionKeeper() {
           documentHeight() - window.innerHeight - frozenDistance
         );
         if (Math.abs(y - target) > 1) {
+          internalWrite = true;
           window.scrollTo(0, target);
+          internalWrite = false;
           lastY = target;
         }
         return;
@@ -283,7 +296,9 @@ export function ScrollPositionKeeper() {
       const desiredTop = topChromeBottom() + lm.gap;
       const delta = rect.top - desiredTop;
       if (Math.abs(delta) > 1) {
+        internalWrite = true;
         window.scrollTo(0, y + delta);
+        internalWrite = false;
         lastY = y + delta;
       }
     };
@@ -353,6 +368,31 @@ export function ScrollPositionKeeper() {
     observer.observe(document.documentElement);
     if (document.body) observer.observe(document.body);
 
+    // Programmatic scrolls from outside the keeper (deep links, app code,
+    // scrollbar APIs) emit no input events, so the escape listeners can't
+    // see them. Wrap the scroll APIs for the life of the effect: an external
+    // call during a burst re-anchors to wherever it lands instead of being
+    // superseded by the correction loop — without this, per-frame writes can
+    // starve a pending scrollTo before it ever commits. Scrolls landing
+    // without going through these APIs (element.scrollTop, hash navigation)
+    // still re-anchor via the large-delta check in the scroll handler.
+    const scrollApis = (["scrollTo", "scroll", "scrollBy"] as const).filter(
+      (key) => typeof window[key] === "function"
+    );
+    const natives = scrollApis.map(
+      (key) => window[key].bind(window) as (...args: unknown[]) => void
+    );
+    const wrapped = scrollApis.map(
+      (key, i) =>
+        function (this: Window, ...args: unknown[]) {
+          if (burstActive && !internalWrite) markExternalScroll();
+          return natives[i](...args);
+        } as typeof window.scrollTo
+    );
+    scrollApis.forEach((key, i) => {
+      window[key] = wrapped[i];
+    });
+
     window.addEventListener("resize", onResize);
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("wheel", onEscape, { passive: true });
@@ -367,6 +407,10 @@ export function ScrollPositionKeeper() {
       window.removeEventListener("touchmove", onEscape);
       window.removeEventListener("pointerdown", onEscape);
       window.removeEventListener("keydown", onKeyDown);
+      // Restore the scroll APIs — but only if nothing else re-wrapped them.
+      scrollApis.forEach((key, i) => {
+        if (window[key] === wrapped[i]) window[key] = natives[i];
+      });
       cancelAnimationFrame(sampleFrame);
       cancelAnimationFrame(tickFrame);
       clearTimeout(settleTimer);
