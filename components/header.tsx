@@ -7,12 +7,15 @@ import { Menu, X } from "lucide-react";
 import { NAV_ITEMS } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import { trackBookingClick } from "@/lib/analytics";
+import { uiFor } from "@/content/ui";
+import { DEFAULT_LOCALE, localeHref, type Locale } from "@/lib/locale";
 
-export function Header() {
+export function Header({ locale = DEFAULT_LOCALE }: { locale?: Locale }) {
+  const ui = uiFor(locale);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
-  const isHome = pathname === "/";
+  const isHome = pathname === localeHref(locale, "/");
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 48);
@@ -39,6 +42,10 @@ export function Header() {
   // deterministic point — a single boolean flip means no flicker, no
   // per-frame measurement, and no competing thresholds.
   const compact = !isHome || scrolled;
+  const navItems = NAV_ITEMS.map((item) => ({
+    label: ui.nav.items[item.href as keyof typeof ui.nav.items],
+    href: localeHref(locale, item.href),
+  }));
 
   return (
     // On the homepage the sticky band is zero-height: the pill overlays the
@@ -82,7 +89,7 @@ export function Header() {
           }`}
         >
           <Link
-            href="/"
+            href={localeHref(locale, "/")}
             className={`relative flex items-center rounded-md transition-opacity hover:opacity-90 ${
               transparent ? "focus-ring-light" : "focus-ring"
             }`}
@@ -90,7 +97,7 @@ export function Header() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={transparent ? "/images/White SEA SABA logo transparent.png" : "/images/Full color SEA SABA logo transparent.png"}
-              alt="Sea Saba logo"
+              alt={ui.nav.logoAlt}
               width={180}
               height={40}
               className={`w-auto transition-[height] duration-200 motion-reduce:transition-none ${
@@ -100,8 +107,8 @@ export function Header() {
           </Link>
 
           {/* Desktop nav */}
-          <nav aria-label="Primary" className="hidden items-center gap-6 lg:flex xl:gap-8">
-            {NAV_ITEMS.map((item) => (
+          <nav aria-label={ui.nav.primaryLabel} className="hidden items-center gap-6 lg:flex xl:gap-8">
+            {navItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
@@ -120,7 +127,7 @@ export function Header() {
               className="rounded-full bg-[#9D2235] text-white hover:bg-[#8a1e2e]"
               onClick={() => trackBookingClick("/book", "Book Now", "header_desktop")}
             >
-              <Link href="/book">Book Now</Link>
+              <Link href={localeHref(locale, "/book")}>{ui.nav.bookNow}</Link>
             </Button>
           </nav>
 
@@ -138,7 +145,7 @@ export function Header() {
                 : "text-primary hover:bg-primary/10 focus-ring"
             }`}
             onClick={() => setMobileOpen(!mobileOpen)}
-            aria-label={mobileOpen ? "Close menu" : "Open menu"}
+            aria-label={mobileOpen ? ui.nav.closeMenu : ui.nav.openMenu}
             aria-expanded={mobileOpen}
             aria-controls="mobile-navigation"
           >
@@ -174,7 +181,7 @@ export function Header() {
             very short viewports. */}
         <nav
           id="mobile-navigation"
-          aria-label="Mobile"
+          aria-label={ui.nav.mobileLabel}
           inert={!mobileOpen}
           className={`absolute inset-x-0 top-full mt-2 max-h-[calc(100dvh-7rem)] overflow-y-auto rounded-3xl bg-background/95 shadow-md ring-1 ring-border/50 backdrop-blur transition-[opacity,translate,visibility] ease-out motion-reduce:transition-none supports-backdrop-filter:bg-background/70 lg:hidden ${
             mobileOpen
@@ -186,7 +193,7 @@ export function Header() {
               between items, so the menu stays dense while remaining
               comfortable to hit. */}
           <div className="flex flex-col px-5 py-3 sm:px-6">
-            {NAV_ITEMS.map((item) => (
+            {navItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
@@ -202,7 +209,7 @@ export function Header() {
               className="mt-2 w-full bg-[#9D2235] text-white hover:bg-[#8a1e2e]"
               onClick={() => trackBookingClick("/book", "Book Now", "header_mobile")}
             >
-              <Link href="/book" onClick={() => setMobileOpen(false)}>Book Now</Link>
+              <Link href={localeHref(locale, "/book")} onClick={() => setMobileOpen(false)}>{ui.nav.bookNow}</Link>
             </Button>
           </div>
         </nav>
