@@ -16,7 +16,10 @@ import { expect, it } from "vitest";
 const read = (rel: string) =>
   readFileSync(path.join(process.cwd(), rel), "utf8");
 
-const layout = read("app/layout.tsx");
+// Fonts are configured once in lib/fonts.ts and applied by each locale root
+// layout (#150); check the shared module plus the English layout that mounts it.
+const fonts = read("lib/fonts.ts");
+const layout = read("app/(en)/layout.tsx");
 const globals = read("app/globals.css");
 
 it("defines both next/font variables on <html>, not <body>", () => {
@@ -48,6 +51,6 @@ it("keeps the body stack on the loaded Open Sans variable", () => {
 });
 
 it("configures Jost through next/font/google", () => {
-  expect(layout).toMatch(/Jost\s*\(\s*\{[^}]*variable:\s*"--font-jost"/);
-  expect(layout).toMatch(/import\s*\{[^}]*Jost[^}]*\}\s*from\s*"next\/font\/google"/);
+  expect(fonts).toMatch(/Jost\s*\(\s*\{[^}]*variable:\s*"--font-jost"/);
+  expect(fonts).toMatch(/import\s*\{[^}]*Jost[^}]*\}\s*from\s*"next\/font\/google"/);
 });

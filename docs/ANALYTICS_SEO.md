@@ -14,7 +14,7 @@
 
 ## Implemented Tools
 
-- **Vercel Analytics** — `@vercel/analytics/next` in `app/layout.tsx`, operating independently.
+- **Vercel Analytics** — `@vercel/analytics/next` in `app/(en)/layout.tsx`, operating independently.
 - **Google Tag Manager** — loaded via `AnalyticsLoader` only when `NEXT_PUBLIC_GTM_ID` is set; includes the `<noscript>` iframe fallback.
 - **Google Analytics 4** — configured and loaded exclusively inside GTM. The application does not load GA4 or call `window.gtag()` directly.
 - **Unified event utility** — `lib/analytics.ts` pushes each business event once to the GTM data layer and separately sends it to Vercel Analytics.

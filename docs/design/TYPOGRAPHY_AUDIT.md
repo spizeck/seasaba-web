@@ -58,7 +58,7 @@ From `app/globals.css` (`@theme`) and `docs/design/THEME_UX_GUIDE.md`:
 | Heading line-height | 1.25 |
 
 Base rules apply `--font-heading` + `line-height: 1.25` to `h1–h6` and set
-`body` to 18px/1.5. `app/(content)/layout.tsx` additionally wraps every
+`body` to 18px/1.5. `app/(en)/(content)/layout.tsx` additionally wraps every
 content page in `prose prose-slate` (Tailwind Typography plugin), which
 carries its own independent type scale (see §4.3).
 
@@ -68,7 +68,7 @@ carries its own independent type scale (see §4.3).
 
 ### 3.1 Open Sans is fetched but unused — *RESOLVED in #115*
 
-`app/layout.tsx` loads Open Sans via `next/font/google` (variable, weights
+`app/(en)/layout.tsx` loads Open Sans via `next/font/google` (variable, weights
 300–800, latin, `display: swap`) and puts the `--font-open-sans` CSS variable
 on `<body>`. The font file itself is fetched — the audit's network capture
 shows the woff2 downloaded on the homepage, and `document.fonts` (after
@@ -93,7 +93,7 @@ The only places Open Sans actually applies are the three explicit
 `font-sans` utilities in `components/experience-selector.tsx`.
 
 **Fix applied in #115:** `openSans.variable` moved from `<body>` to `<html>`
-in `app/layout.tsx`. Post-fix computed evidence in §11.
+in `app/(en)/layout.tsx`. Post-fix computed evidence in §11.
 
 ### 3.2 The heading stack is non-deterministic — *RESOLVED in #115*
 
@@ -183,7 +183,7 @@ micro-labels.
 
 ### 4.3 The `.prose` scale (a third system)
 
-`app/(content)/layout.tsx` wraps all content pages in `prose prose-slate`.
+`app/(en)/(content)/layout.tsx` wraps all content pages in `prose prose-slate`.
 Inside `.prose`, un-classed elements get the plugin's own scale: body 16px/
 1.75, h2 1.5em, h3 1.25em, h4 1em, plus slate-palette colors. Because these
 are `em`-based, they **compound with sized ancestors**: a bare `<h3>` inside
@@ -478,7 +478,7 @@ in §5–§7 are unchanged and still open.
 
 ### What changed
 
-- `app/layout.tsx`: `openSans.variable` moved from `<body>` to `<html>`;
+- `app/(en)/layout.tsx`: `openSans.variable` moved from `<body>` to `<html>`;
   added `jost.variable` on `<html>`. `Jost` loaded via `next/font/google`
   (variable font, weights 100–900, `latin` subset, normal + italic styles,
   `display: swap`).

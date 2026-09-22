@@ -22,8 +22,8 @@ Cookiebot script itself is deployed through GTM, not through Next.js.
 | `next.config.ts` | Added Cookiebot domains (`consent.cookiebot.com`, `consentcdn.cookiebot.com`) to `script-src`, `script-src-elem`, `connect-src`, and `style-src`. All existing directives/domains preserved. |
 | `components/cookie-settings-button.tsx` | New shared button component that calls `window.Cookiebot.renew()` to reopen the preference dialog. Guards against `Cookiebot` being undefined. |
 | `components/footer.tsx` | Added a "Cookie Settings" button (bottom bar) and a "Cookie Policy" link (Resources column), both using the new component/route. |
-| `app/(content)/cookie-policy/page.tsx` | New `/cookie-policy` page: explains categories, embeds Cookiebot's auto-generated cookie declaration script (`https://consent.cookiebot.com/{CBID}/cd.js`), links to `/privacy`, and includes the Cookie Settings button. |
-| `app/(content)/privacy/page.tsx` | Added a link from the existing "Cookies and Analytics" section to `/cookie-policy`. |
+| `app/(en)/(content)/cookie-policy/page.tsx` | New `/cookie-policy` page: explains categories, embeds Cookiebot's auto-generated cookie declaration script (`https://consent.cookiebot.com/{CBID}/cd.js`), links to `/privacy`, and includes the Cookie Settings button. |
+| `app/(en)/(content)/privacy/page.tsx` | Added a link from the existing "Cookies and Analytics" section to `/cookie-policy`. |
 
 **No changes were made to:** `components/analytics-loader.tsx`, `lib/analytics.ts`,
 or any other tracking code. GTM remains the single source of truth for GA4,
@@ -473,7 +473,7 @@ GTM Preview, or breaks an existing conversion tag):
 4. If a full code rollback is also desired, revert the commit(s) that
    introduced `.env.example`'s `NEXT_PUBLIC_COOKIEBOT_CBID` entry, the CSP
    additions in `next.config.ts`, `components/cookie-settings-button.tsx`,
-   `app/(content)/cookie-policy/page.tsx`, and the footer/privacy-page links.
+   `app/(en)/(content)/cookie-policy/page.tsx`, and the footer/privacy-page links.
    None of these changes touch `analytics-loader.tsx` or `lib/analytics.ts`,
    so existing tracking is unaffected either way.
 5. Re-enable the paused GTM tags only after the root cause is fixed and

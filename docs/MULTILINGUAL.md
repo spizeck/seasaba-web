@@ -23,8 +23,8 @@ follow.
 
 | Area | Today | Locale impact |
 |---|---|---|
-| Routes | `app/(content)/*` pages, `app/book`, `app/page.tsx`; English copy is **inline JSX**, not key-based | Largest cost: page prose must move into per-locale content modules, or localized pages must duplicate the JSX structure. Shared layout/components stay common. |
-| `app/layout.tsx` | `<html lang="en">` hardcoded; `og:locale: "en_US"` | `lang` must become dynamic per locale; `og:locale` per page. |
+| Routes | `app/(content)/*` pages, `app/(en)/book`, `app/(en)/page.tsx`; English copy is **inline JSX**, not key-based | Largest cost: page prose must move into per-locale content modules, or localized pages must duplicate the JSX structure. Shared layout/components stay common. |
+| `app/(en)/layout.tsx` | `<html lang="en">` hardcoded; `og:locale: "en_US"` | `lang` must become dynamic per locale; `og:locale` per page. |
 | `lib/metadata.ts` (`createMetadata`) | canonical + OG + Twitter + conditional `noindex` | Add `alternates.languages` (hreflang) + `x-default`; canonical stays self-referential per locale. Central helper makes this a one-place change. |
 | `app/sitemap.ts` | route table, no `lastModified` (#108) | Emit each canonical route × locale with `alternates.languages`. English unprefixed stays in the table as today. |
 | `app/robots.ts` | wildcard allow + sitemap | No change needed. |
@@ -124,26 +124,30 @@ Phase 1 = ~6 routes. That is deliberately the smallest set that answers
 
 ## 5. URL and routing architecture
 
-**Recommended: move all routes under `app/[locale]/`; middleware rewrites
-unprefixed URLs to `/en/*` internally, so English keeps every existing
-public URL while `/nl/*` (later `/fr`, `/es`) get prefixes.**
+**Implemented (#150): two top-level locale subtrees — `app/(en)` route
+group serving all existing unprefixed English URLs, and a literal `app/nl/`
+segment for Dutch.** This differs from the audit's original
+`app/[locale]` + middleware-rewrite proposal; the implemented shape is
+simpler and safer:
 
-Why this shape: in App Router only the *root* layout renders `<html>`.
-Keeping English at `app/(content)` and adding a sibling `app/[locale]`
-subtree would leave no static way to set `<html lang>` on localized pages
-(the root layout can't see `[locale]` params; reading a middleware header
-via `headers()` would force dynamic rendering site-wide). The documented
-pattern is:
-
-- All pages live under `app/[locale]/` — `app/[locale]/layout.tsx` becomes
-  the root layout and renders `<html lang={locale}>` correctly, statically.
-- `generateStaticParams` returns `["en", "nl"]` (later `fr`, `es`) —
-  constrained, so unknown prefixes still 404.
-- `middleware.ts` **rewrites** (not redirects) `/`, `/diving`, … →
-  `/en`, `/en/diving`, … External URLs are unchanged: English stays
-  unprefixed and canonical; Dutch URLs are `/nl/...`.
-- next.config `redirects()` run before middleware and stay English-only —
-  no change to `data/redirects.ts`.
+- No middleware/proxy layer at all — nothing intercepts requests, so the
+  English-URL invariant holds by construction rather than by rewrite rules.
+- Each subtree owns a root layout (`app/(en)/layout.tsx` renders
+  `<html lang="en">`, `app/nl/layout.tsx` renders `<html lang="nl">`) —
+  multiple root layouts are a supported App Router feature; `app/(en)/layout.tsx`
+  is gone. The shared body chrome lives in `components/site-shell.tsx`.
+- The literal `nl` directory *is* the hard locale allowlist — `/xx/...`
+  can never resolve as a locale because no such segment exists. Adding
+  `fr` later means adding a sibling subtree under `app/` (same shell, tiny
+  boilerplate).
+- Unmatched URLs render `app/global-not-found.tsx`
+  (`experimental.globalNotFound`), a styled English 404 with the site
+  shell — required because multiple root layouts cannot compose a
+  single-layout global 404.
+- English URLs are real static routes, not rewrite targets — zero runtime
+  routing behavior change for the existing site.
+- next.config `redirects()` stay English-only — no change to
+  `data/redirects.ts`.
 - Localized pages reuse the same components and data; page prose comes
   from `content/<locale>/<page>.tsx` modules that export a React tree —
   not giant string-key JSON (see §7).
@@ -270,16 +274,17 @@ freshness overhead per language.
   not translating URLs' path segments — `/nl/plan-your-trip`, not
   `/nl/plan-je-reis` (translated slugs double the redirect/test matrix and
   complicate switcher mapping for no measurable benefit).
-- Route explosion: constrained `[locale]` + phased pages keeps it bounded.
+- Route explosion: literal `nl` segment + phased pages keeps it bounded.
 
 ## 13. Follow-up issues
 
 Created from this audit (independently reviewable, in dependency order):
 
-1. **Localization foundation (#150)** — locale config with hard allowlist,
-   `[locale]` routing, the English-URL invariant, `<html lang>`, switcher
-   foundation with persisted explicit choice, metadata plumbing #153
-   consumes. Explicitly does *not* own the final SEO pass.
+1. **Localization foundation (#150) — implemented.** Per-locale root-layout
+   subtrees (`app/(en)` unprefixed, `app/nl/` prefixed), literal-segment
+   locale allowlist, `<html lang>` per subtree, switcher foundation with
+   persisted explicit choice, locale-aware metadata plumbing #153 consumes,
+   `global-not-found` for unmatched URLs, `PUBLISHED_ROUTES` gate.
 2. **Dutch Phase 1 pages** — the §4 page set + shared UI dictionary +
    glossary.
 3. **Translation freshness check** — `sourceHash`/`lastReviewed` +

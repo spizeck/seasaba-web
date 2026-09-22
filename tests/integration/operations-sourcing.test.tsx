@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
-import DivingPage from "@/app/(content)/diving/page";
+import DivingPage from "@/app/(en)/(content)/diving/page";
 import { divingAnchors } from "@/lib/anchors";
 import { DIVE_PRODUCTS, OPERATIONS, bookingHref, type BookableProduct } from "@/data/operations";
 

@@ -1,11 +1,13 @@
 "use client";
 
+import { Suspense } from "react";
 import Link from "next/link";
 import { CONTACT, SOCIAL_LINKS } from "@/lib/constants";
 import { planYourTripAnchors } from "@/lib/anchors";
 import { OPERATIONS } from "@/data/operations";
 import { trackLinkClick } from "@/lib/analytics";
 import { CookieSettingsButton } from "@/components/cookie-settings-button";
+import { LanguageSwitcher } from "@/components/language-switcher";
 
 const PLAN_LINKS = [
   { label: "Where to Stay",  href: `/plan-your-trip#${planYourTripAnchors.whereToStay}` },
@@ -147,6 +149,10 @@ export function Footer() {
               &copy; {OPERATIONS.establishedYear}&ndash;2026 Sea Saba, NV &bull; The Bottom, Saba, Caribbean Netherlands
             </p>
             <div className="flex flex-wrap items-center justify-center gap-5 sm:justify-end">
+              {/* Renders only when the current route has a published translation */}
+              <Suspense fallback={null}>
+                <LanguageSwitcher className="text-xs text-muted-foreground" />
+              </Suspense>
               <CookieSettingsButton className="text-xs text-muted-foreground transition-colors hover:text-foreground" />
               {SOCIAL_LINKS.map((link) => (
                 <a
