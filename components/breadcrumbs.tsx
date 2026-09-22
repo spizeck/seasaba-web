@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronRight } from "lucide-react";
+import { BreadcrumbListJsonLd } from "@/components/structured-data";
 
 export function Breadcrumbs() {
   const pathname = usePathname();
@@ -21,7 +22,14 @@ export function Breadcrumbs() {
   });
 
   return (
-    <nav aria-label="Breadcrumb" className="mb-6 text-sm text-muted-foreground">
+    <>
+      <BreadcrumbListJsonLd
+        items={[
+          { name: "Home", path: "/" },
+          ...crumbs.map((c) => ({ name: c.label, path: c.href })),
+        ]}
+      />
+      <nav aria-label="Breadcrumb" className="mb-6 text-sm text-muted-foreground">
       <ol className="flex items-center gap-1.5">
         <li>
           <Link href="/" className="transition-colors hover:text-foreground">
@@ -43,6 +51,7 @@ export function Breadcrumbs() {
           </li>
         ))}
       </ol>
-    </nav>
+      </nav>
+    </>
   );
 }

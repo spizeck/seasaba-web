@@ -8,10 +8,27 @@ import {
 } from "@/lib/constants";
 import { OPERATIONS } from "@/data/operations";
 
+/** Stable entity identifier — lets other schema nodes reference the business. */
+export const BUSINESS_ID = `${SITE_URL}/#business`;
+
+/**
+ * Render a JSON-LD block. `data` is a plain schema.org object; callers pass
+ * `@context` themselves so each block is self-contained.
+ */
+export function JsonLd({ data }: { data: Record<string, unknown> }) {
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+    />
+  );
+}
+
 export function LocalBusinessJsonLd() {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": ["LocalBusiness", "SportsActivityLocation"],
+    "@id": BUSINESS_ID,
     name: SITE_NAME,
     description: SITE_DESCRIPTION,
     url: SITE_URL,
@@ -35,10 +52,29 @@ export function LocalBusinessJsonLd() {
     sameAs: SOCIAL_LINKS.map((link) => link.href),
   };
 
-  return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-    />
-  );
+  return <JsonLd data={jsonLd} />;
+}
+
+/**
+ * BreadcrumbList matching the visible <Breadcrumbs> trail. Emitted only when
+ * the trail has at least one page segment (content pages), so the schema
+ * always mirrors what the visitor sees.
+ */
+export function BreadcrumbListJsonLd({
+  items,
+}: {
+  items: { name: string; path: string }[];
+}) {
+  if (items.length === 0) return null;
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: item.name,
+      item: `${SITE_URL}${item.path}`,
+    })),
+  };
+  return <JsonLd data={jsonLd} />;
 }

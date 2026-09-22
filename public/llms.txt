@@ -1,0 +1,28 @@
+# Sea Saba
+
+> Sea Saba is a professional scuba diving operation at Fort Bay Harbor on Saba,
+> Caribbean Netherlands. Operating continuously since 1985, Sea Saba is
+> currently Saba's only operating dive center. It offers guided boat diving in
+> the Saba Marine Park, SDI/TDI training, snorkel trips, and sunset cruises.
+
+Use the canonical pages below rather than duplicating content. Core
+informational pages are server-rendered HTML and readable without JavaScript.
+
+## Core pages
+
+- [Diving with Sea Saba](https://www.seasaba.com/diving): dive products, schedule, certification requirements, free Nitrox, Marine Park rules
+- [Saba Dive Sites](https://www.seasaba.com/dive-sites): the island's dive areas and sites, organized by region
+- [Scuba Courses & Certifications](https://www.seasaba.com/courses): SDI and TDI courses from Try Scuba to Divemaster
+- [Plan Your Trip](https://www.seasaba.com/plan-your-trip): getting to Saba, accommodation, seasons, packing, restaurants, non-diving activities
+- [Visiting Saba by Yacht](https://www.seasaba.com/visiting-yachts): arrival, clearance, moorings, and diving from your own vessel
+- [About Sea Saba](https://www.seasaba.com/about): history, crew, and operation since 1985
+- [Contact](https://www.seasaba.com/contact): inquiries, bookings, WhatsApp, and location
+- [Book](https://www.seasaba.com/book): online reservation for dives, courses, and trips
+- [Recommended Partners](https://www.seasaba.com/partners): accommodations, restaurants, transportation, and local services
+- [Sea Saba Dive Log](https://www.seasaba.com/dive-log): recent dives and sightings from Sea Saba boats
+
+## Policies
+
+- [Terms & Conditions](https://www.seasaba.com/terms): booking, cancellation, rescheduling, and insurance policy
+- [Privacy Policy](https://www.seasaba.com/privacy)
+- [Cookie Policy](https://www.seasaba.com/cookie-policy)

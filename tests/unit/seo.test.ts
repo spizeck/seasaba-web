@@ -1,8 +1,27 @@
-import { expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { createMetadata } from "@/lib/metadata";
 import { legacyRedirects } from "@/data/redirects";
 import sitemap from "@/app/sitemap";
 import robots from "@/app/robots";
+
+const CANONICAL_ROUTES = [
+  "/",
+  "/diving",
+  "/dive-sites",
+  "/book",
+  "/plan-your-trip",
+  "/courses",
+  "/dive-log",
+  "/visiting-yachts",
+  "/about",
+  "/contact",
+  "/partners",
+  "/terms",
+  "/privacy",
+  "/cookie-policy",
+];
 
 it("creates canonical website metadata without query parameters", () => {
   const result = createMetadata({ title: "Book", path: "/book", searchParams: { item: "classic" } });
@@ -24,9 +43,58 @@ it("preserves unique single-hop permanent legacy redirects", () => {
     expect(sources).not.toContain(redirect.destination.split(/[?#]/)[0]);
   }
 });
-it("advertises production-critical pages on the correct domain", () => {
-  const urls = sitemap().map((entry) => entry.url);
-  for (const path of ["", "/diving", "/book", "/contact", "/dive-log", "/courses", "/plan-your-trip", "/visiting-yachts"]) expect(urls).toContain(`https://www.seasaba.com${path}`);
-  expect(new Set(urls).size).toBe(urls.length);
-  expect(robots().sitemap).toBe("https://www.seasaba.com/sitemap.xml");
+
+describe("sitemap", () => {
+  it("lists exactly the canonical public routes on the canonical host", () => {
+    const urls = sitemap().map((entry) => entry.url);
+    expect([...urls].sort()).toEqual(
+      CANONICAL_ROUTES.map((p) => `https://www.seasaba.com${p}`).sort()
+    );
+    expect(new Set(urls).size).toBe(urls.length);
+  });
+
+  it("never includes a legacy redirect source or a query variant", () => {
+    const urls = sitemap().map((entry) => entry.url);
+    const paths = urls.map((u) => new URL(u).pathname);
+    for (const r of legacyRedirects) {
+      expect(paths, `redirect source ${r.source} must not be in the sitemap`).not.toContain(r.source);
+    }
+    expect(urls.every((u) => !u.includes("?"))).toBe(true);
+  });
+
+  it("does not emit a mechanically generated lastModified", () => {
+    // Issue #108: build/request-time `new Date()` is a fake freshness signal;
+    // the field stays absent until a real content-modification source exists.
+    for (const entry of sitemap()) {
+      expect(entry.lastModified).toBeUndefined();
+    }
+  });
+});
+
+describe("robots", () => {
+  it("allows all crawlers via the wildcard and references the sitemap", () => {
+    const r = robots();
+    const rules = Array.isArray(r.rules) ? r.rules : [r.rules];
+    expect(rules).toContainEqual({ userAgent: "*", allow: "/" });
+    expect(r.sitemap).toBe("https://www.seasaba.com/sitemap.xml");
+  });
+});
+
+describe("llms.txt", () => {
+  const llms = () =>
+    readFileSync(join(__dirname, "../../public/llms.txt"), "utf8");
+
+  it("exists and links every canonical indexable page on the canonical host", () => {
+    const text = llms();
+    for (const path of CANONICAL_ROUTES) {
+      expect(text).toContain(`https://www.seasaba.com${path === "/" ? "" : path}`);
+    }
+  });
+
+  it("is a concise index, not duplicated page content", () => {
+    const text = llms();
+    // Link-only index: under ~4KB and every non-heading line points at a URL.
+    expect(text.length).toBeLessThan(4096);
+    expect(text).not.toContain("llms-full");
+  });
 });
