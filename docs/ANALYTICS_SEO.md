@@ -67,25 +67,72 @@ diagnostic-only variables) and what each one does.
 
 ## Sitemap Inclusions
 
-`app/sitemap.ts` includes all public, indexable routes:
+`app/sitemap.ts` lists every canonical public route — `/`, `/diving`,
+`/dive-sites`, `/book`, `/plan-your-trip`, `/courses`, `/dive-log`,
+`/visiting-yachts`, `/about`, `/contact`, `/partners`, `/terms`, `/privacy`,
+`/cookie-policy` — driven by the `SITEMAP_ROUTES` table. It deliberately
+omits `lastModified`: no trustworthy content-modification date exists, and a
+build-time timestamp is a fake freshness signal crawlers discount. Add new
+public pages to the table; `tests/unit/seo.test.ts` guards the list.
 
-- `/`
-- `/diving`
-- `/dive-sites`
-- `/plan-your-trip`
-- `/courses`
-- `/about`
-- `/contact`
-- `/partners`
-- `/dive-log`
-- `/book`
-- `/terms`
-- `/privacy`
+## Discoverability (SEO & AI crawlers)
 
-`/cookie-policy` (added later, for the Cookiebot consent work) is indexable
-but not currently listed in `app/sitemap.ts`; it is reachable via the footer
-and `/privacy`. Add it to the sitemap if it should be a crawlable landing
-page.
+Canonical host is `https://www.seasaba.com` (`SITE_URL` in
+`lib/constants.ts`). The apex domain and `http:` both 308-redirect to the
+canonical https+www origin; trailing slashes 308 to the clean path; legacy
+Wix URLs 301 in a single hop via `data/redirects.ts`.
+
+**Crawler policy.** `app/robots.ts` emits `User-agent: * / Allow: /` plus the
+sitemap reference. The wildcard intentionally permits the major AI
+user-agents — this is a marketing site and AI-search visibility is desirable:
+
+| Agent | Purpose | Status |
+|-------|---------|--------|
+| Googlebot / Bingbot | Search indexing | allowed |
+| OAI-SearchBot | ChatGPT search surfacing ([docs](https://developers.openai.com/api/docs/bots)) | allowed |
+| GPTBot | OpenAI model training | allowed |
+| ChatGPT-User | user-triggered fetch (may not obey robots) | allowed |
+| ClaudeBot / Claude-SearchBot / Claude-User | Anthropic training / search / user fetch ([docs](https://support.claude.com/en/articles/8896518)) | allowed |
+| Google-Extended | Gemini training control — a product token, not a crawler; does not affect Search ([docs](https://blog.google/innovation-and-ai/products/an-update-on-web-publisher-controls/)) | allowed |
+
+There are no per-crawler rules because the wildcard already expresses the
+intended policy; add explicit `Disallow` blocks only if the business decides
+to opt out of AI training or AI-search surfacing.
+
+**`/llms.txt`** (`public/llms.txt`) is a concise markdown index of the
+canonical pages for LLM agents. Caveat: it is a community proposal, not a
+standard — no major crawler is documented to fetch it proactively, and
+Google does not use it for Search/AI Overviews. It exists because agents
+pointed at a site (e.g., docs-browsing assistants) do consume it, and the
+cost is one small file listing stable routes. No `/llms-full.txt` — full
+content duplication is not maintainable and the HTML is already
+server-rendered.
+
+**Structured data.** One `LocalBusiness`/`SportsActivityLocation` JSON-LD
+entity (`@id: <site>/#business`) sits in the root layout — the single Sea
+Saba entity declaration. Content pages add: `BreadcrumbList` (emitted inside
+`components/breadcrumbs.tsx` so schema mirrors the visible crumbs),
+`Course` `ItemList` on `/courses` (derived from the `COURSES` table), and
+`FAQPage` on `/plan-your-trip` (derived from the `FAQS` array — Google's FAQ
+rich result is now limited to government/health sites, but the markup is
+accurate machine-readable content for AI retrieval). Deliberately not added:
+per-dive-site schema (content is section-level, not per-site pages),
+`AggregateRating`/`Review` (no on-site review corpus), and `WebSite`
+sitelinks searchbox (no site search).
+
+**Crawlability.** All canonical pages are server-rendered; factual content
+(products, courses, sites, policies, yacht guidance) is in the initial HTML.
+Known limitation: `/dive-log` renders its Firestore dive list client-side —
+the page shell and metadata are crawlable but the dive entries are not
+(drive-by design; the Firestore SDK is client-only). `/book` shows the
+Checkfront widget via client-side embed; the page itself is indexable.
+
+**Webmaster tooling.** Sitemap is at `https://www.seasaba.com/sitemap.xml`
+(already declared in robots.txt). Google Search Console and Bing Webmaster
+Tools verification/submission require owner access to those accounts —
+verification tokens are intentionally not in the repo. Submit the sitemap
+URL in each console and verify indexing of the canonical routes above.
+
 
 ## Indexing Exclusions
 

@@ -6,6 +6,8 @@ import { TrackedInternalButton } from "@/components/tracked-internal-button";
 import { Award, Users, CheckCircle, Ship, MapPin, Wrench, Car, ShieldCheck, Compass } from "lucide-react";
 import { coursesAnchors } from "@/lib/anchors";
 import { OPERATIONS } from "@/data/operations";
+import { JsonLd, BUSINESS_ID } from "@/components/structured-data";
+import { SITE_NAME, SITE_URL } from "@/lib/constants";
 
 export const metadata = createMetadata({
   title: "Scuba Courses & Certifications",
@@ -183,6 +185,23 @@ export default function CoursesPage() {
         title="Learn to Dive with Sea Saba"
         subtitle="SDI and TDI training in one of the Caribbean's most unique marine parks"
         imageClassName="object-[80%_center] md:object-[75%_center] lg:object-center"
+      />
+
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          itemListElement: COURSES.map((course, i) => ({
+            "@type": "ListItem",
+            position: i + 1,
+            item: {
+              "@type": "Course",
+              name: course.name,
+              description: course.description,
+              provider: { "@id": BUSINESS_ID, "@type": "Organization", name: SITE_NAME, sameAs: SITE_URL },
+            },
+          })),
+        }}
       />
 
       <p className="text-base leading-relaxed text-muted-foreground">

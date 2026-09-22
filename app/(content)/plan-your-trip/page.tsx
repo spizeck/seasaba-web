@@ -10,6 +10,7 @@ import { TrackedOutboundButton } from "@/components/tracked-outbound-button";
 import { TrackedInternalButton } from "@/components/tracked-internal-button";
 import { TrackedContactLink } from "@/components/tracked-contact-link";
 import { PageSectionNav } from "@/components/navigation/PageSectionNav";
+import { JsonLd } from "@/components/structured-data";
 import { planYourTripAnchors, termsAnchors } from "@/lib/anchors";
 import { CONTACT } from "@/lib/constants";
 import { OPERATIONS, bookingHref } from "@/data/operations";
@@ -942,6 +943,17 @@ export default function PlanYourTripPage() {
 
       {/* FAQ */}
       <section id={planYourTripAnchors.faq} className="mt-12 scroll-mt-40">
+        <JsonLd
+          data={{
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: FAQS.map((faq) => ({
+              "@type": "Question",
+              name: faq.question,
+              acceptedAnswer: { "@type": "Answer", text: faq.answer },
+            })),
+          }}
+        />
         <h2 className="text-xl font-semibold text-foreground">Frequently Asked Questions</h2>
 
         <div className="mt-6 grid gap-4 sm:grid-cols-2">

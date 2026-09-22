@@ -1,85 +1,42 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/constants";
 
+/**
+ * Canonical public routes only. Excludes: legacy redirect sources
+ * (data/redirects.ts), query-param variants (`/book?item=…`,
+ * `/contact?interest=…` — noindexed by createMetadata), and technical
+ * endpoints. Keep this table in sync when a public page is added or
+ * removed; tests/unit/seo.test.ts guards the list.
+ *
+ * `lastModified` is deliberately omitted: there is no trustworthy source of
+ * content modification dates in this repo, and a build-time `new Date()`
+ * would emit a fake freshness signal that search engines discount anyway.
+ */
+const SITEMAP_ROUTES: {
+  path: string;
+  changeFrequency: "weekly" | "monthly" | "yearly";
+  priority: number;
+}[] = [
+  { path: "/", changeFrequency: "weekly", priority: 1 },
+  { path: "/diving", changeFrequency: "weekly", priority: 0.9 },
+  { path: "/dive-sites", changeFrequency: "monthly", priority: 0.9 },
+  { path: "/book", changeFrequency: "weekly", priority: 0.9 },
+  { path: "/plan-your-trip", changeFrequency: "monthly", priority: 0.85 },
+  { path: "/courses", changeFrequency: "monthly", priority: 0.8 },
+  { path: "/dive-log", changeFrequency: "weekly", priority: 0.7 },
+  { path: "/visiting-yachts", changeFrequency: "monthly", priority: 0.7 },
+  { path: "/about", changeFrequency: "monthly", priority: 0.7 },
+  { path: "/contact", changeFrequency: "monthly", priority: 0.6 },
+  { path: "/partners", changeFrequency: "monthly", priority: 0.6 },
+  { path: "/terms", changeFrequency: "yearly", priority: 0.3 },
+  { path: "/privacy", changeFrequency: "yearly", priority: 0.3 },
+  { path: "/cookie-policy", changeFrequency: "yearly", priority: 0.3 },
+];
+
 export default function sitemap(): MetadataRoute.Sitemap {
-  return [
-    {
-      url: SITE_URL,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 1,
-    },
-    {
-      url: `${SITE_URL}/diving`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.9,
-    },
-    {
-      url: `${SITE_URL}/dive-sites`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.9,
-    },
-    {
-      url: `${SITE_URL}/plan-your-trip`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.85,
-    },
-    {
-      url: `${SITE_URL}/visiting-yachts`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
-    {
-      url: `${SITE_URL}/courses`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: `${SITE_URL}/about`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
-    {
-      url: `${SITE_URL}/contact`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.6,
-    },
-    {
-      url: `${SITE_URL}/partners`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.6,
-    },
-    {
-      url: `${SITE_URL}/dive-log`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.7,
-    },
-    {
-      url: `${SITE_URL}/book`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.9,
-    },
-    {
-      url: `${SITE_URL}/terms`,
-      lastModified: new Date(),
-      changeFrequency: "yearly",
-      priority: 0.3,
-    },
-    {
-      url: `${SITE_URL}/privacy`,
-      lastModified: new Date(),
-      changeFrequency: "yearly",
-      priority: 0.3,
-    },
-  ];
+  return SITEMAP_ROUTES.map(({ path, changeFrequency, priority }) => ({
+    url: `${SITE_URL}${path}`,
+    changeFrequency,
+    priority,
+  }));
 }
