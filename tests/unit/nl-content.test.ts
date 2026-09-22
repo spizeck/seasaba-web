@@ -17,8 +17,13 @@ const REPO_ROOT = path.resolve(__dirname, "..", "..");
 const NL_DIR = path.join(REPO_ROOT, "content", "nl");
 const APP_NL_DIR = path.join(REPO_ROOT, "app", "nl");
 
+// sha1 of the file with line endings normalized to LF — checkout eol differs
+// between Windows (CRLF working tree) and CI (LF), so the recorded hash must
+// be platform-independent.
 const sha1 = (file: string) =>
-  createHash("sha1").update(readFileSync(file)).digest("hex");
+  createHash("sha1")
+    .update(readFileSync(file).toString("utf8").replace(/\r\n/g, "\n"))
+    .digest("hex");
 
 function nlModuleSource(file: string): string {
   return readFileSync(path.join(NL_DIR, file), "utf8");
