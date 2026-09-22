@@ -6,6 +6,7 @@ import { SITE_NAME, SITE_DESCRIPTION, SITE_URL, OG_IMAGE } from "@/lib/constants
 import { LocalBusinessJsonLd } from "@/components/structured-data";
 import { Analytics } from "@vercel/analytics/next";
 import { AnalyticsLoader } from "@/components/analytics-loader";
+import { ScrollPositionKeeper } from "@/components/scroll-position-keeper";
 import { RespondIoWidget } from "@/components/respond-io-widget";
 import "./globals.css";
 
@@ -89,6 +90,7 @@ export default function RootLayout({
         <Header />
         <main id="main-content">{children}</main>
         <FooterWrapper />
+        <ScrollPositionKeeper />
         <LocalBusinessJsonLd />
         <RespondIoWidget />
         <Analytics />

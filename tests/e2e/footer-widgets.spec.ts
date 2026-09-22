@@ -36,12 +36,26 @@ async function injectLaunchers(page: import("@playwright/test").Page) {
   });
 }
 
+// WebKit commits programmatic scrolls asynchronously — measuring right after
+// scrollTo can read the pre-scroll position. Wait until the bottom actually
+// lands before asserting footer geometry.
+async function scrollToBottomSettled(page: import("@playwright/test").Page) {
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  await page.waitForFunction(
+    () =>
+      document.documentElement.scrollHeight -
+        window.scrollY -
+        window.innerHeight <=
+      4
+  );
+}
+
 test("footer bottom bar clears both floating launchers at every width", async ({ page }) => {
   await hydratedGoto(page, "/diving");
   for (const width of WIDTHS) {
     await page.setViewportSize({ width, height: 800 });
     await injectLaunchers(page);
-    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+    await scrollToBottomSettled(page);
 
     const m = await page.evaluate(() => {
       const rf = document
@@ -105,7 +119,7 @@ test("Google Reviews stays clickable above the launcher", async ({ page }) => {
   await hydratedGoto(page, "/diving");
   await page.setViewportSize({ width: 1024, height: 800 });
   await injectLaunchers(page);
-  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  await scrollToBottomSettled(page);
   // Resolves to the link itself only if no overlay (e.g. the chat iframe)
   // intercepts the click point.
   await page.getByRole("link", { name: "Google Reviews" }).click({ trial: true });
