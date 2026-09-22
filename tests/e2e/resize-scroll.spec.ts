@@ -1,14 +1,18 @@
 import { test, expect, hydratedGoto, clickNavLink } from "./fixtures";
 
-// Bottom-distance preservation on viewport resize (issue #140).
+// Logical scroll-position preservation on viewport resize (issue #140).
 //
 // Browsers preserve the absolute scrollY offset when a responsive reflow makes
 // the document taller. Measured on master (production build, Chromium and
 // WebKit): a visitor at the footer of /plan-your-trip resizing 1280→768 kept
-// scrollY and ended up ~6100px above the bottom (~61% down). The fix restores
-// the recorded distance-from-bottom after the resize settles — only for
-// visitors inside the footer region — so these assertions are geometric
-// (distance-from-bottom, landmark visibility), never pixel-position matches.
+// scrollY and ended up ~6100px above the bottom (~61% down); a visitor reading
+// the Mixed Groups section of /diving kept scrollY and was displaced ~1400px
+// up into the Dive Day / Certification sections as the sticky pill nav wrapped
+// and content above reflowed. The fix restores the recorded
+// distance-from-bottom for footer-region visitors and the viewport position
+// of the topmost content element for everyone else — so assertions here are
+// geometric (distance-from-bottom, landmark position, visible section),
+// never pixel-position matches.
 
 type Geo = {
   docH: number;
@@ -42,11 +46,98 @@ async function scrollToBottom(page: import("@playwright/test").Page) {
   );
 }
 
+type Reading = {
+  chromeBottom: number;
+  /** Viewport top of the tagged landmark (see tagLandmark). */
+  landmarkTop: number | null;
+  /** landmarkTop - chromeBottom: the offset the keeper preserves. */
+  landmarkGap: number | null;
+  /** The section containing the reading line just below the chrome. */
+  section: string | null;
+  navH: number;
+  y: number;
+};
+
+const CONTENT_SEL = "h1,h2,h3,h4,h5,h6,p,li,figure,img,blockquote,td,th";
+const CHROME_SEL = '[class*="sticky"], [class*="fixed"]';
+
+// Replicates the keeper's geometric scan in-page: the bottom edge of
+// top-pinned sticky/fixed chrome, then the first semantic content element
+// below it (the same element the keeper anchors on).
+const probeFns = `(() => {
+  const x = window.innerWidth / 2;
+  let chromeBottom = 0;
+  const chromeLimit = Math.min(window.innerHeight, 480);
+  for (let y = 0; y < chromeLimit; y += 4) {
+    const el = document.elementsFromPoint(x, y)[0];
+    if (!el || !el.closest(${JSON.stringify(CHROME_SEL)})) {
+      chromeBottom = y;
+      break;
+    }
+  }
+  let landmark = null;
+  const limit = Math.min(window.innerHeight * 0.75, chromeBottom + 480);
+  for (let y = chromeBottom + 4; y < limit; y += 4) {
+    const stack = document.elementsFromPoint(x, y);
+    const top = stack[0];
+    if (!top) break;
+    if (top.closest(${JSON.stringify(CHROME_SEL)})) continue;
+    const hit = stack.find((el) => el.matches(${JSON.stringify(CONTENT_SEL)}))
+      ?? top.closest(${JSON.stringify(CONTENT_SEL)});
+    if (!(hit instanceof HTMLElement)) continue;
+    const r = hit.getBoundingClientRect();
+    if (r.height === 0) continue;
+    if (r.height > window.innerHeight * 2 && !hit.matches("img,figure")) continue;
+    landmark = hit;
+    break;
+  }
+  let section = null;
+  for (const s of document.querySelectorAll("main section[id]")) {
+    const sr = s.getBoundingClientRect();
+    if (sr.top > chromeBottom + 40) break;
+    if (sr.bottom > chromeBottom + 40) section = s.id;
+  }
+  const nav = document.querySelector('nav[aria-label="On this page"]');
+  return { landmark, chromeBottom, section,
+    navH: nav ? nav.getBoundingClientRect().height : 0,
+    y: window.scrollY };
+})()`;
+
+// Tag the element the keeper would anchor on, then read its position.
+async function tagLandmark(page: import("@playwright/test").Page) {
+  return page.evaluate(`(() => {
+    const { landmark, chromeBottom, section, navH, y } = ${probeFns};
+    document.querySelectorAll("[data-probe-landmark]").forEach((el) =>
+      el.removeAttribute("data-probe-landmark")
+    );
+    if (!landmark) return { chromeBottom, landmarkTop: null, landmarkGap: null, section, navH, y };
+    landmark.setAttribute("data-probe-landmark", "1");
+    const top = landmark.getBoundingClientRect().top;
+    return { chromeBottom, landmarkTop: top, landmarkGap: top - chromeBottom, section, navH, y };
+  })()`) as Promise<Reading>;
+}
+
+// After the resize, find the tagged element and re-measure.
+async function verifyLandmark(page: import("@playwright/test").Page) {
+  return page.evaluate(`(() => {
+    const { chromeBottom, section, navH, y } = ${probeFns};
+    const landmark = document.querySelector("[data-probe-landmark]");
+    if (!landmark) return { chromeBottom, landmarkTop: null, landmarkGap: null, section, navH, y };
+    const top = landmark.getBoundingClientRect().top;
+    return { chromeBottom, landmarkTop: top, landmarkGap: top - chromeBottom, section, navH, y };
+  })()`) as Promise<Reading>;
+}
+
 // The keeper debounces one correction 150ms after the last resize event;
 // 600ms covers settle + correction + the scroll event it fires.
 const SETTLE_WAIT = 600;
 // Sub-pixel rounding and reflow jitter around the exact restored distance.
 const BOTTOM_TOLERANCE = 24;
+// The keeper restores a landmark's gap below the chrome exactly; this covers
+// font-load shifts and sub-pixel rounding in re-measurement.
+const LANDMARK_TOLERANCE = 60;
+// Well clear of the footer region (footer is ~460px tall at desktop widths).
+const FOOTER_THRESHOLD_HINT = 1500;
 
 test.describe("bottom preservation", () => {
   for (const path of ["/plan-your-trip", "/diving"]) {
@@ -161,7 +252,7 @@ test.describe("bottom preservation", () => {
     expect(Math.abs(after.y - before.y)).toBeLessThanOrEqual(2);
   });
 
-  test("no correction for a visitor reading mid-page", async ({
+  test("a mid-page visitor keeps the same content in view", async ({
     page,
     isMobile,
   }) => {
@@ -175,16 +266,114 @@ test.describe("bottom preservation", () => {
         (document.documentElement.scrollHeight - window.innerHeight) / 2
       )
     );
-    const before = await measure(page);
+    const before = await tagLandmark(page);
+    expect(before.landmarkTop).not.toBeNull();
 
     await page.setViewportSize({ width: 768, height: 800 });
     await page.waitForTimeout(SETTLE_WAIT);
-    const after = await measure(page);
+    const after = await verifyLandmark(page);
+    const geo = await measure(page);
 
-    // Not pulled toward the bottom: still far above the footer region, and
-    // the scroll offset moved only as much as native reflow/anchoring allows.
-    expect(after.fromBottom).toBeGreaterThan(before.fromBottom);
-    expect(Math.abs(after.y - before.y)).toBeLessThan(1500);
+    // The same element is still at the top of the reading area — the scroll
+    // offset may move by the full reflow delta, but the visible content must
+    // not change. And the visitor was not pulled toward the bottom.
+    expect(after.landmarkTop).not.toBeNull();
+    expect(
+      Math.abs((after.landmarkGap ?? 0) - (before.landmarkGap ?? 0))
+    ).toBeLessThanOrEqual(LANDMARK_TOLERANCE);
+    expect(geo.fromBottom).toBeGreaterThan(FOOTER_THRESHOLD_HINT);
+  });
+});
+
+// The manual failure that widened issue #140's scope: on /diving, resizing
+// 1280→768 wraps the sticky section pills to a second row and reflows the
+// taller Certification section above — a visitor reading Mixed Groups ends
+// up staring at Dive Day / Certification content (measured: the Mixed Groups
+// heading drifted ~1400px below its prior viewport position).
+test.describe("content landmark preservation", () => {
+  // Scroll so a mid-section element of Mixed Groups sits just below the
+  // sticky chrome — a visitor halfway through the section, not aligned to
+  // its heading.
+  async function scrollIntoMixedGroups(
+    page: import("@playwright/test").Page
+  ) {
+    await page.evaluate(() => {
+      const sec = document.getElementById("mixed-experience");
+      const target = sec?.querySelector("ul li:nth-of-type(2)") ?? sec;
+      if (!target) return;
+      const docTop = target.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo(0, docTop - 200);
+    });
+  }
+
+  for (const [from, to] of [
+    [1280, 768],
+    [768, 1280],
+  ] as const) {
+    test(`Mixed Groups keeps its reading position ${from}→${to}`, async ({
+      page,
+      isMobile,
+    }) => {
+      test.skip(!!isMobile, "desktop window-resize scenario");
+
+      await page.setViewportSize({ width: from, height: 800 });
+      await hydratedGoto(page, "/diving");
+      const url = page.url();
+      await scrollIntoMixedGroups(page);
+      await page.waitForTimeout(150); // let the keeper sample the landmark
+      const before = await tagLandmark(page);
+      expect(before.section).toBe("mixed-experience");
+      expect(before.landmarkTop).not.toBeNull();
+
+      await page.setViewportSize({ width: to, height: 800 });
+      await page.waitForTimeout(SETTLE_WAIT);
+      const after = await verifyLandmark(page);
+
+      // The sticky pill nav really did reflow — the scenario under test.
+      expect(after.navH).not.toBe(before.navH);
+      // The visitor is still reading Mixed Groups, not the previous section.
+      expect(after.section).toBe("mixed-experience");
+      expect(after.landmarkTop).not.toBeNull();
+      // Same element, approximately the same viewport position relative to
+      // the (resized) chrome — no snapping to the section top.
+      expect(
+        Math.abs((after.landmarkGap ?? 0) - (before.landmarkGap ?? 0))
+      ).toBeLessThanOrEqual(LANDMARK_TOLERANCE);
+      // Resize must not mutate the URL.
+      expect(page.url()).toBe(url);
+    });
+  }
+
+  test("a visitor partway through a section keeps that paragraph", async ({
+    page,
+    isMobile,
+  }) => {
+    test.skip(!!isMobile, "desktop window-resize scenario");
+
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await hydratedGoto(page, "/diving");
+    // Deep inside Certification: the long "Not certified yet" card.
+    await page.evaluate(() => {
+      const el = document
+        .getElementById("certification")
+        ?.querySelector('a[href="/courses"]');
+      if (!el) return;
+      const docTop = el.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo(0, docTop - 200);
+    });
+    await page.waitForTimeout(150);
+    const before = await tagLandmark(page);
+    expect(before.section).toBe("certification");
+
+    await page.setViewportSize({ width: 768, height: 800 });
+    await page.waitForTimeout(SETTLE_WAIT);
+    const after = await verifyLandmark(page);
+
+    expect(after.section).toBe("certification");
+    expect(after.landmarkTop).not.toBeNull();
+    expect(
+      Math.abs((after.landmarkGap ?? 0) - (before.landmarkGap ?? 0))
+    ).toBeLessThanOrEqual(LANDMARK_TOLERANCE);
   });
 });
 
