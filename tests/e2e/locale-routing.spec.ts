@@ -47,8 +47,15 @@ test.describe("locale routing foundation (#150)", () => {
       monitor.allowConsoleError(new RegExp(escapeRegExp(path)));
       const response = await page.goto(path);
       expect(response?.status(), path).toBe(404);
-      await expect(page.locator("html")).toHaveAttribute("lang", "nl");
+      // The Dutch 404 copy ships in the initial HTML.
       await expect(page.getByText("Pagina niet gevonden")).toBeVisible();
+      // Next serves not-found responses inside its `<html id="__next_error__">`
+      // shell, which carries no lang attribute; the nl layout's lang="nl" is
+      // only applied when hydration mounts the real document. Hydration can
+      // lag on slower engines, so give it more than the default 5s.
+      await expect(page.locator("html")).toHaveAttribute("lang", "nl", {
+        timeout: 20000,
+      });
     }
   });
 
