@@ -1,12 +1,12 @@
 # Sea Saba
 
 > Sea Saba is a professional scuba diving operation at Fort Bay Harbor on Saba,
-> Caribbean Netherlands — the island's only continuously operating dive center.
-> It offers guided boat diving in the Saba Marine Park, SDI/TDI training,
-> snorkel trips, and sunset cruises.
+> Caribbean Netherlands. Operating continuously since 1985, Sea Saba is
+> currently Saba's only operating dive center. It offers guided boat diving in
+> the Saba Marine Park, SDI/TDI training, snorkel trips, and sunset cruises.
 
-Use the canonical pages below rather than duplicating content. All pages are
-server-rendered HTML and readable without JavaScript.
+Use the canonical pages below rather than duplicating content. Core
+informational pages are server-rendered HTML and readable without JavaScript.
 
 ## Core pages
 
