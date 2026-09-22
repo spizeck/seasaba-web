@@ -202,7 +202,7 @@ Lightweight, sized for this team:
 - Each `content/<locale>/<page>.tsx` records `export const sourceHash =
   "<sha1 of the English source file>"` and `export const lastReviewed =
   "YYYY-MM-DD"`.
-- A `scripts/check-translations.mjs` CI step (added to `npm run check`)
+- A proposed `check-translations` script (added to `npm run check`)
   hashes the English source and **warns** (non-blocking for PRs that only
   touch English? — decide: blocking is safer, warning fits team size;
   recommendation: warn in CI output + `# stale` marker in the PR diff) when
@@ -265,7 +265,7 @@ Created from this audit (independently reviewable, in dependency order):
 2. **Dutch Phase 1 pages** — the §4 page set + shared UI dictionary +
    glossary.
 3. **Translation freshness check** — `sourceHash`/`lastReviewed` +
-   `check-translations.mjs` wired into `npm run check`.
+   `check-translations` script wired into `npm run check`.
 4. **i18n SEO pass** — sitemap alternates, JSON-LD `inLanguage`,
    localized OG/metadata, GSC verification notes. (Can fold into #1 if the
    implementer prefers; split because it's separately reviewable.)
