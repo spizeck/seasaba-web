@@ -123,6 +123,44 @@ test.describe("bottom preservation", () => {
     expect(after.hOverflow).toBeLessThanOrEqual(0);
   });
 
+  test("a height-only resize never repositions a footer visitor", async ({
+    page,
+  }) => {
+    // Mobile chrome collapse, software keyboards and desktop height drags all
+    // fire resize without a layout-width change — the document cannot reflow
+    // responsively, so the keeper must leave the scroll offset alone.
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await hydratedGoto(page, "/plan-your-trip");
+    await scrollToBottom(page);
+    const before = await measure(page);
+    expect(before.fromBottom).toBeLessThanOrEqual(BOTTOM_TOLERANCE);
+
+    await page.setViewportSize({ width: 1280, height: 500 });
+    await page.waitForTimeout(SETTLE_WAIT);
+    const after = await measure(page);
+
+    // No correction: same scroll offset (±sub-pixel rounding), document
+    // height unchanged, the visitor just sees less of the page end.
+    expect(Math.abs(after.docH - before.docH)).toBeLessThanOrEqual(4);
+    expect(Math.abs(after.y - before.y)).toBeLessThanOrEqual(2);
+    expect(after.fromBottom).toBeGreaterThan(150);
+  });
+
+  test("a height-only resize never repositions a mid-page visitor", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await hydratedGoto(page, "/diving");
+    await page.evaluate(() => window.scrollTo(0, 4000));
+    const before = await measure(page);
+
+    await page.setViewportSize({ width: 1280, height: 1100 });
+    await page.waitForTimeout(SETTLE_WAIT);
+    const after = await measure(page);
+
+    expect(Math.abs(after.y - before.y)).toBeLessThanOrEqual(2);
+  });
+
   test("no correction for a visitor reading mid-page", async ({
     page,
     isMobile,

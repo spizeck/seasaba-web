@@ -23,6 +23,14 @@ import { useEffect } from "react";
  * Visitors further up keep native scroll behavior untouched.
  *
  * Deliberate constraints:
+ * - Bursts start only on a layout-width change. Height-only viewport changes
+ *   (mobile browser chrome collapsing, software keyboards, window height
+ *   drags) never reflow the document's width-dependent layout, so correcting
+ *   there would fight the browser — e.g. yanking a footer visitor downward
+ *   when the keyboard shrinks the visible area. `visualViewport.resize` is
+ *   deliberately unused: it fires for pinch-zoom and chrome/keyboard changes
+ *   that are not responsive reflows, and `window.resize` already covers every
+ *   width transition (verified in Chromium and WebKit).
  * - Debounced to one correction per settle so dragging a window edge never
  *   produces repeated snapping. A ResizeObserver restarts the settle window
  *   while the document keeps resizing, so the correction waits out the whole
@@ -91,10 +99,19 @@ export function BottomScrollKeeper() {
       if (Math.abs(target - window.scrollY) > 1) window.scrollTo(0, target);
     };
 
-    // A viewport resize freezes the pre-reflow distance and opens the settle
-    // window. ResizeObserver notifications only extend that window while the
-    // document is still changing size — they never open one themselves, so
-    // ordinary content growth can't trigger a correction.
+    // A layout-width change freezes the pre-reflow distance and opens the
+    // settle window. Height-only resizes return early: with the width
+    // unchanged, the document cannot reflow responsively, so any correction
+    // would only fight unrelated viewport changes. ResizeObserver
+    // notifications only extend that window while the document is still
+    // changing size — they never open one themselves, so ordinary content
+    // growth can't trigger a correction.
+    let lastWidth = window.innerWidth;
+    const onResize = () => {
+      if (window.innerWidth === lastWidth) return;
+      lastWidth = window.innerWidth;
+      beginBurst();
+    };
     const beginBurst = () => {
       if (!burstActive) {
         burstActive = true;
@@ -121,8 +138,7 @@ export function BottomScrollKeeper() {
     observer.observe(document.documentElement);
     if (document.body) observer.observe(document.body);
 
-    window.addEventListener("resize", beginBurst);
-    window.visualViewport?.addEventListener("resize", beginBurst);
+    window.addEventListener("resize", onResize);
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("wheel", onEscape, { passive: true });
     window.addEventListener("touchmove", onEscape, { passive: true });
@@ -130,8 +146,7 @@ export function BottomScrollKeeper() {
     window.addEventListener("keydown", onKeyDown);
     return () => {
       observer.disconnect();
-      window.removeEventListener("resize", beginBurst);
-      window.visualViewport?.removeEventListener("resize", beginBurst);
+      window.removeEventListener("resize", onResize);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("wheel", onEscape);
       window.removeEventListener("touchmove", onEscape);

@@ -10,13 +10,15 @@ import { BottomScrollKeeper } from "@/components/bottom-scroll-keeper";
 // component under test is real — only browser geometry is replaced.
 
 const VIEWPORT = 800;
+const WIDTH = 1280;
 const FOOTER_H = 500;
 const SETTLE_MS = 150;
 
 let scrollToSpy: ReturnType<typeof vi.spyOn>;
 let footer: HTMLElement;
 let roCallback: ResizeObserverCallback;
-let geometry = { docH: 10000, y: 0 };
+let visualViewport: EventTarget;
+let geometry = { docH: 10000, y: 0, w: WIDTH };
 
 class ResizeObserverStub {
   cb: ResizeObserverCallback;
@@ -43,6 +45,10 @@ function applyGeometry() {
     configurable: true,
     get: () => geometry.y,
   });
+  Object.defineProperty(window, "innerWidth", {
+    configurable: true,
+    get: () => geometry.w,
+  });
 }
 
 function setScrollY(y: number) {
@@ -52,7 +58,19 @@ function setScrollY(y: number) {
   act(() => vi.advanceTimersByTime(20));
 }
 
-function resize() {
+// A real responsive resize: the layout width changes.
+function resize(newWidth = WIDTH - 200) {
+  geometry.w = newWidth;
+  fireEvent(window, new Event("resize"));
+}
+
+// A resize event where only the viewport height changed — e.g. a desktop
+// height drag, collapsing mobile browser chrome, or a software keyboard.
+function heightResize(newHeight: number) {
+  Object.defineProperty(window, "innerHeight", {
+    configurable: true,
+    value: newHeight,
+  });
   fireEvent(window, new Event("resize"));
 }
 
@@ -72,8 +90,13 @@ beforeEach(() => {
     configurable: true,
     value: VIEWPORT,
   });
-  geometry = { docH: 10000, y: 0 };
+  geometry = { docH: 10000, y: 0, w: WIDTH };
   applyGeometry();
+  visualViewport = new EventTarget();
+  Object.defineProperty(window, "visualViewport", {
+    configurable: true,
+    value: visualViewport,
+  });
   footer = document.createElement("footer");
   Object.defineProperty(footer, "offsetHeight", {
     configurable: true,
@@ -167,7 +190,7 @@ it("debounces a drag into a single correction per settle", () => {
   // Continuous drag: resize events keep arriving inside the settle window.
   for (let i = 0; i < 5; i++) {
     geometry.docH += 1000;
-    resize();
+    resize(WIDTH - 200 - i * 40); // each drag step narrows further
     act(() => vi.advanceTimersByTime(SETTLE_MS - 20));
   }
   expect(scrollToSpy).not.toHaveBeenCalled();
@@ -228,11 +251,63 @@ it("keeps correcting to the bottom on subsequent resize bursts", () => {
   setScrollY(16000 - VIEWPORT); // the correction lands (real scroll follows)
 
   geometry.docH = 22000;
-  resize();
+  resize(WIDTH - 400); // a second burst needs a further width change
   settle();
 
   expect(scrollToSpy).toHaveBeenLastCalledWith(0, 22000 - VIEWPORT);
   expect(scrollToSpy).toHaveBeenCalledTimes(2);
+});
+
+// --- Issue #140 revision: only layout-width changes may open a burst ---
+
+it("ignores height-only resizes for a footer visitor", () => {
+  render(<BottomScrollKeeper />);
+  setScrollY(geometry.docH - VIEWPORT);
+
+  // The visible area shrank (e.g. software keyboard, collapsing browser
+  // chrome) but the layout width — and thus the document — is unchanged.
+  heightResize(500);
+  settle();
+
+  expect(scrollToSpy).not.toHaveBeenCalled();
+});
+
+it("ignores height-only resizes for a mid-page visitor", () => {
+  render(<BottomScrollKeeper />);
+  setScrollY(4000);
+
+  heightResize(1200);
+  settle();
+
+  expect(scrollToSpy).not.toHaveBeenCalled();
+});
+
+it("ignores visualViewport-only events (keyboard/pinch-zoom surface)", () => {
+  render(<BottomScrollKeeper />);
+  setScrollY(geometry.docH - VIEWPORT);
+
+  // Mobile keyboards and pinch-zoom surface on visualViewport without a
+  // layout-width change; the keeper does not listen there at all.
+  act(() => visualViewport.dispatchEvent(new Event("resize")));
+  heightResize(500);
+  settle();
+
+  expect(scrollToSpy).not.toHaveBeenCalled();
+});
+
+it("still corrects after a height-only resize once the width changes", () => {
+  render(<BottomScrollKeeper />);
+  setScrollY(geometry.docH - VIEWPORT);
+
+  heightResize(500);
+  settle();
+  expect(scrollToSpy).not.toHaveBeenCalled();
+
+  // A genuine responsive reflow later still preserves the bottom position.
+  geometry.docH = 16000;
+  resize();
+  settle();
+  expect(scrollToSpy).toHaveBeenCalledWith(0, 16000 - 500);
 });
 
 it("clamps the target at the document top after a large shrink", () => {
