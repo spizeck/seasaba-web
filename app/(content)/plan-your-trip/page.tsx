@@ -371,8 +371,7 @@ export default function PlanYourTripPage() {
             >
               WhatsApp
             </TrackedContactLink>{" "}
-            as soon as you know. The earlier we hear from you, the more flexibility we have
-            to adjust your diving schedule.
+            as soon as you know.
           </p>
           <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
             If sea conditions require us to change a trip, we&apos;ll work with you to
