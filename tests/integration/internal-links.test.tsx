@@ -1,13 +1,13 @@
 import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-import HomePage from "@/app/page";
-import AboutPage from "@/app/(content)/about/page";
-import DiveSitesPage from "@/app/(content)/dive-sites/page";
-import CoursesPage from "@/app/(content)/courses/page";
-import PlanYourTripPage from "@/app/(content)/plan-your-trip/page";
-import VisitingYachtsPage from "@/app/(content)/visiting-yachts/page";
-import TermsPage from "@/app/(content)/terms/page";
-import PartnersPage from "@/app/(content)/partners/page";
+import HomePage from "@/app/(en)/page";
+import AboutPage from "@/app/(en)/(content)/about/page";
+import DiveSitesPage from "@/app/(en)/(content)/dive-sites/page";
+import CoursesPage from "@/app/(en)/(content)/courses/page";
+import PlanYourTripPage from "@/app/(en)/(content)/plan-your-trip/page";
+import VisitingYachtsPage from "@/app/(en)/(content)/visiting-yachts/page";
+import TermsPage from "@/app/(en)/(content)/terms/page";
+import PartnersPage from "@/app/(en)/(content)/partners/page";
 import { Footer } from "@/components/footer";
 import {
   coursesAnchors,

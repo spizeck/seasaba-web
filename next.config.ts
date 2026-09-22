@@ -128,6 +128,12 @@ const cspDirectives: [string, string[]][] = [
 const csp = cspDirectives.map(([k, v]) => [k, ...v].join(" ")).join("; ");
 
 const nextConfig: NextConfig = {
+  // Required for app/global-not-found.tsx — the site uses multiple root
+  // layouts (per-locale subtrees), so there is no single root layout to
+  // compose a global 404 from (#150).
+  experimental: {
+    globalNotFound: true,
+  },
   async redirects() {
     return legacyRedirects;
   },

@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
-export default function NotFound() {
+/** Shared 404 body used by each locale subtree's not-found boundary. */
+export function NotFoundContent() {
   return (
     <div className="flex min-h-[60vh] flex-col items-center justify-center px-4 text-center">
       <h1 className="text-6xl font-bold tracking-tight text-primary">404</h1>

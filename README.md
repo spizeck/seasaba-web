@@ -173,7 +173,7 @@ Do not introduce additional layouts unless explicitly requested.
 
 ## Homepage Rules (Critical)
 
-The homepage (`app/page.tsx`) currently follows this structure:
+The homepage (`app/(en)/page.tsx`) currently follows this structure:
 
 1. **Hero (Static Image)**
 2. **Why Saba** — supporting static destination section

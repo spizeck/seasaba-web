@@ -2,8 +2,8 @@ import { describe, expect, it, vi } from "vitest";
 import { render } from "@testing-library/react";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { LocalBusinessJsonLd, BUSINESS_ID } from "@/components/structured-data";
-import CoursesPage from "@/app/(content)/courses/page";
-import PlanYourTripPage from "@/app/(content)/plan-your-trip/page";
+import CoursesPage from "@/app/(en)/(content)/courses/page";
+import PlanYourTripPage from "@/app/(en)/(content)/plan-your-trip/page";
 
 // Breadcrumbs is a client component reading the current route.
 let mockPathname = "/diving";

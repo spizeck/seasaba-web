@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { render, screen, within } from "@testing-library/react";
-import PlanYourTripPage from "@/app/(content)/plan-your-trip/page";
+import PlanYourTripPage from "@/app/(en)/(content)/plan-your-trip/page";
 import { planYourTripAnchors, termsAnchors } from "@/lib/anchors";
 import { inquiryFor } from "@/data/operations";
 

@@ -134,7 +134,7 @@ The homepage should be concise but still provide enough semantic content for sea
 ---
 
 ## Homepage Section Order (Strict)
-The implemented homepage (`app/page.tsx`) follows this order of major
+The implemented homepage (`app/(en)/page.tsx`) follows this order of major
 sections — keep changes consistent with it:
 
 1. **Hero (Static Image)**
