@@ -26,6 +26,7 @@
     "test:ci": "npm run check && npm run lint && npm run typecheck && npm run test:coverage && npm run build:test && npm run test:e2e"
   },
   "dependencies": {
+    "@sentry/nextjs": "^10.74.0",
     "@tailwindcss/typography": "^0.5.20",
     "@vercel/analytics": "^2.0.1",
     "class-variance-authority": "^0.7.1",

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { createMetadata } from "@/lib/metadata";
 import { legacyRedirects } from "@/data/redirects";
@@ -75,8 +75,58 @@ describe("robots", () => {
   it("allows all crawlers via the wildcard and references the sitemap", () => {
     const r = robots();
     const rules = Array.isArray(r.rules) ? r.rules : [r.rules];
-    expect(rules).toContainEqual({ userAgent: "*", allow: "/" });
+    expect(rules).toContainEqual({
+      userAgent: "*",
+      allow: "/",
+      disallow: "/sentry-check",
+    });
     expect(r.sitemap).toBe("https://www.seasaba.com/sitemap.xml");
+  });
+});
+
+// #129: /sentry-check is an operational surface, not website content. It must
+// stay undiscoverable — this pins every discovery channel shut.
+describe("/sentry-check stays undiscoverable", () => {
+  it("is absent from the sitemap", () => {
+    const urls = sitemap().map((entry) => entry.url);
+    expect(urls.some((u) => u.includes("sentry-check"))).toBe(false);
+  });
+
+  it("is absent from llms.txt", () => {
+    const text = readFileSync(join(__dirname, "../../public/llms.txt"), "utf8");
+    expect(text).not.toContain("sentry-check");
+  });
+
+  it("is absent from navigation, header and footer", () => {
+    const sources = [
+      "../../lib/constants.ts",
+      "../../components/header.tsx",
+      "../../components/footer.tsx",
+      "../../components/footer-wrapper.tsx",
+      "../../components/site-shell.tsx",
+    ].map((p) => readFileSync(join(__dirname, p), "utf8"));
+    for (const text of sources) {
+      expect(text).not.toContain("sentry-check");
+    }
+  });
+
+  it("is disallowed in robots.txt", () => {
+    const r = robots();
+    const rules = Array.isArray(r.rules) ? r.rules : [r.rules];
+    const disallow = rules.flatMap((rule) =>
+      Array.isArray(rule.disallow) ? rule.disallow : [rule.disallow]
+    );
+    expect(disallow).toContain("/sentry-check");
+  });
+
+  it("has no Dutch variant and no hreflang publication", async () => {
+    // The page lives outside app/nl, and the route can never be published
+    // for nl via the PUBLISHED_ROUTES gate.
+    const { isRoutePublished } = await import("@/lib/locale");
+    expect(isRoutePublished("nl", "/sentry-check")).toBe(false);
+    expect(
+      existsSync(join(__dirname, "../../app/nl/sentry-check"))
+    ).toBe(false);
   });
 });
 

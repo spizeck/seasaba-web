@@ -147,6 +147,59 @@ describe("Content-Security-Policy", () => {
     expect(connectSrc.some((s) => s.startsWith("wss://"))).toBe(false);
   });
 
+  it("adds exactly the configured Sentry ingest origin to connect-src — and nothing else", async () => {
+    vi.stubEnv(
+      "NEXT_PUBLIC_SENTRY_DSN",
+      "https://abcdef@o4512345.ingest.us.sentry.io/4512345"
+    );
+    vi.resetModules();
+    try {
+      const config = (await import("@/next.config")).default;
+      const rules = await config.headers?.();
+      const csp = parseCsp(
+        rules!
+          .find((r) => r.source === "/:path*")!
+          .headers.find((h) => h.key === "Content-Security-Policy")!.value
+      );
+      const connectSrc = csp.get("connect-src") ?? [];
+      // The exact origin from the DSN — present.
+      expect(connectSrc).toContain("https://o4512345.ingest.us.sentry.io");
+      // No broad sentry.io allowances anywhere in the policy.
+      for (const [, sources] of csp) {
+        expect(sources).not.toContain("https://*.sentry.io");
+        expect(sources).not.toContain("https://sentry.io");
+        expect(sources).not.toContain("*.sentry.io");
+      }
+      // Only connect-src gains a sentry origin — never script/frame/img.
+      for (const directive of ["script-src", "frame-src", "img-src"]) {
+        const sources = csp.get(directive) ?? [];
+        expect(
+          sources.some((s) => s.includes("sentry.io")),
+          directive
+        ).toBe(false);
+      }
+    } finally {
+      vi.unstubAllEnvs();
+      vi.resetModules();
+    }
+  });
+
+  it("allows no Sentry origin at all when no DSN is configured", async () => {
+    vi.stubEnv("NEXT_PUBLIC_SENTRY_DSN", "");
+    vi.resetModules();
+    try {
+      const config = (await import("@/next.config")).default;
+      const rules = await config.headers?.();
+      const csp = rules!
+        .find((r) => r.source === "/:path*")!
+        .headers.find((h) => h.key === "Content-Security-Policy")!.value;
+      expect(csp).not.toContain("sentry.io");
+    } finally {
+      vi.unstubAllEnvs();
+      vi.resetModules();
+    }
+  });
+
   it("omits 'unsafe-eval' from the production policy", async () => {
     vi.stubEnv("NODE_ENV", "production");
     vi.resetModules();

@@ -9,6 +9,7 @@ A fast, SEO-first, destination-led marketing website for Sea Saba, a professiona
 | [docs/TESTING.md](docs/TESTING.md) | Test pyramid, commands, CI gates, accessibility and production smoke suites, performance budgets |
 | [docs/ANALYTICS_SEO.md](docs/ANALYTICS_SEO.md) | Analytics/GTM/consent architecture, tracked events, sitemap and indexing rules |
 | [docs/COOKIEBOT_CONSENT_SETUP.md](docs/COOKIEBOT_CONSENT_SETUP.md) | Cookiebot CMP + GTM consent-mode runbook |
+| [docs/SENTRY.md](docs/SENTRY.md) | Sentry error-monitoring baseline: activation gate, privacy posture, `/sentry-check` verification |
 | [docs/OPERATIONS.md](docs/OPERATIONS.md) | Source of truth for operational facts (schedules, requirements, contact, Checkfront boundary) |
 | [docs/DEPENDENCIES.md](docs/DEPENDENCIES.md) | Dependabot update policy, dependency groups, and the major-version migration workflow |
 | [docs/design/THEME_UX_GUIDE.md](docs/design/THEME_UX_GUIDE.md) | Brand colors, typography, spacing, imagery and UX rules |
@@ -281,6 +282,16 @@ NEXT_PUBLIC_GTM_ID
 NEXT_PUBLIC_COOKIEBOT_CBID
 ```
 
+**Production environment only** (Sentry error monitoring — see
+[docs/SENTRY.md](docs/SENTRY.md); leaving these unset elsewhere keeps Sentry
+inert):
+
+```
+NEXT_PUBLIC_SENTRY_DSN
+SENTRY_CHECK_TOKEN
+SENTRY_ORG
+```
+
 The canonical site URL is **not** an environment variable — it is the
 `SITE_URL` constant in `lib/constants.ts` (used by metadata, sitemap, robots
 and structured data). If the domain ever changes, update that constant.
@@ -304,6 +315,9 @@ These operational settings live outside the repository and must already exist
   `docs/COOKIEBOT_CONSENT_SETUP.md`.
 - **Checkfront account** (`seasaba.checkfront.com`) — booking inventory,
   checkout and its own GTM integration are vendor-managed.
+- **Sentry project** (`sea-saba-web`) — error monitoring target; the DSN and
+  the `/sentry-check` access token are set as Production-only env vars
+  (see `docs/SENTRY.md`).
 
 ### Firestore Security Rules
 
