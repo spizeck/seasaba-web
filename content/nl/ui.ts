@@ -15,6 +15,7 @@ export const ui: UiDictionary = {
     closeMenu: "Menu sluiten",
     logoAlt: "Sea Saba-logo",
     bookNow: "Boek nu",
+    languageSwitcherLabel: "Kies je taal",
     items: {
       "/diving": "Duiken",
       "/dive-sites": "Duikstekken",
@@ -67,7 +68,6 @@ export const ui: UiDictionary = {
     whatsappAria: "Neem contact op met Sea Saba via WhatsApp, opent in een nieuw tabblad",
     cookieSettings: "Cookie-instellingen",
     copyrightSuffix: "Sea Saba, NV • The Bottom, Saba, Caribisch Nederland",
-    languageSwitcherLabel: "Kies je taal",
   },
   hero: {
     headline: "Duik in het buitengewone.",

@@ -16,6 +16,7 @@ export const ui = {
     closeMenu: "Close menu",
     logoAlt: "Sea Saba logo",
     bookNow: "Book Now",
+    languageSwitcherLabel: "Choose language",
     items: {
       "/diving": "Diving",
       "/dive-sites": "Dive Sites",
@@ -68,7 +69,6 @@ export const ui = {
     whatsappAria: "Contact Sea Saba on WhatsApp, opens in a new tab",
     cookieSettings: "Cookie Settings",
     copyrightSuffix: "Sea Saba, NV • The Bottom, Saba, Caribbean Netherlands",
-    languageSwitcherLabel: "Choose language",
   },
   hero: {
     headline: "Dive the Extraordinary.",

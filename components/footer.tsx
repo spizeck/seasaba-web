@@ -1,13 +1,11 @@
 "use client";
 
-import { Suspense } from "react";
 import Link from "next/link";
 import { CONTACT, SOCIAL_LINKS } from "@/lib/constants";
 import { planYourTripAnchors } from "@/lib/anchors";
 import { OPERATIONS } from "@/data/operations";
 import { trackLinkClick } from "@/lib/analytics";
 import { CookieSettingsButton } from "@/components/cookie-settings-button";
-import { LanguageSwitcher } from "@/components/language-switcher";
 import { uiFor } from "@/content/ui";
 import type { UiDictionary } from "@/content/en/ui";
 import { DEFAULT_LOCALE, localeHref, type Locale } from "@/lib/locale";
@@ -156,10 +154,6 @@ export function Footer({ locale = DEFAULT_LOCALE }: { locale?: Locale }) {
               &copy; {OPERATIONS.establishedYear}&ndash;2026 {ui.footer.copyrightSuffix}
             </p>
             <div className="flex flex-wrap items-center justify-center gap-5 sm:justify-end">
-              {/* Renders only when the current route has a published translation */}
-              <Suspense fallback={null}>
-                <LanguageSwitcher className="text-xs text-muted-foreground" />
-              </Suspense>
               <CookieSettingsButton label={ui.footer.cookieSettings} className="text-xs text-muted-foreground transition-colors hover:text-foreground" />
               {SOCIAL_LINKS.map((link) => (
                 <a

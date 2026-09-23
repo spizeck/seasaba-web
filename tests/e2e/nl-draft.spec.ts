@@ -51,6 +51,45 @@ test.describe("Dutch draft pages (#151)", () => {
     }
   });
 
+  test("language selection lives in the header, drafts clearly marked (#156)", async ({
+    page,
+    request,
+    isMobile,
+  }) => {
+    const probe = await request.get("/nl");
+    test.skip(probe.status() === 404, "draft preview disabled");
+
+    await hydratedGoto(page, "/diving", "#main-content");
+    if (isMobile) {
+      // Mobile: inside the hamburger menu, below the Book Now CTA.
+      await page.getByRole("button", { name: "Open menu" }).click();
+      const mobileNav = page.getByRole("navigation", { name: "Mobile" });
+      const group = mobileNav.getByRole("navigation", { name: "Choose language" });
+      await expect(group).toBeVisible();
+      await expect(group.getByText("English")).toBeVisible();
+      await expect(
+        group.getByRole("link", { name: /Nederlands \(draft\)/ })
+      ).toHaveAttribute("href", "/nl/diving");
+    } else {
+      // Desktop: compact disclosure beside the primary nav / Book Now.
+      const button = page
+        .getByRole("navigation", { name: "Primary" })
+        .getByRole("button", { name: "Choose language" });
+      await expect(button).toHaveAttribute("aria-expanded", "false");
+      await button.click();
+      await expect(button).toHaveAttribute("aria-expanded", "true");
+      const menu = page.getByRole("navigation", { name: "Choose language" });
+      await expect(menu.getByText("English")).toBeVisible();
+      const nl = menu.getByRole("link", { name: /Nederlands \(draft\)/ });
+      await expect(nl).toHaveAttribute("href", "/nl/diving");
+      await expect(nl).toHaveAttribute("hreflang", "nl");
+      // Keyboard: Escape closes and focus returns to the trigger.
+      await page.keyboard.press("Escape");
+      await expect(menu).toBeHidden();
+      await expect(button).toBeFocused();
+    }
+  });
+
   test("Dutch contact form preserves query-param and inquiry behavior", async ({
     page,
     request,

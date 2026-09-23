@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { NAV_ITEMS } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
+import { LanguageLinks, LanguageMenu } from "@/components/language-switcher";
 import { trackBookingClick } from "@/lib/analytics";
 import { uiFor } from "@/content/ui";
 import { DEFAULT_LOCALE, localeHref, type Locale } from "@/lib/locale";
@@ -63,7 +64,7 @@ export function Header({ locale = DEFAULT_LOCALE }: { locale?: Locale }) {
         </Link>
 
         {/* Desktop nav */}
-        <nav aria-label={ui.nav.primaryLabel} className="hidden items-center gap-8 md:flex">
+        <nav aria-label={ui.nav.primaryLabel} className="hidden items-center gap-5 md:flex lg:gap-8">
           {navItems.map((item) => (
             <Link
               key={item.href}
@@ -77,14 +78,21 @@ export function Header({ locale = DEFAULT_LOCALE }: { locale?: Locale }) {
               {item.label}
             </Link>
           ))}
-          <Button
-            asChild
-            size="sm"
-            className="bg-[#9D2235] text-white hover:bg-[#8a1e2e]"
-            onClick={() => trackBookingClick("/book", "Book Now", "header_desktop")}
-          >
-            <Link href={localeHref(locale, "/book")}>{ui.nav.bookNow}</Link>
-          </Button>
+          <div className="flex items-center gap-3">
+            <Button
+              asChild
+              size="sm"
+              className="bg-[#9D2235] text-white hover:bg-[#8a1e2e]"
+              onClick={() => trackBookingClick("/book", "Book Now", "header_desktop")}
+            >
+              <Link href={localeHref(locale, "/book")}>{ui.nav.bookNow}</Link>
+            </Button>
+            {/* Compact language disclosure — renders only when the current
+                route has an eligible alternate (publication gate). */}
+            <Suspense fallback={null}>
+              <LanguageMenu transparent={transparent} />
+            </Suspense>
+          </div>
         </nav>
 
         {/* Mobile toggle */}
@@ -138,6 +146,11 @@ export function Header({ locale = DEFAULT_LOCALE }: { locale?: Locale }) {
           >
             <Link href={localeHref(locale, "/book")} onClick={() => setMobileOpen(false)}>{ui.nav.bookNow}</Link>
           </Button>
+          {/* Language selection lives inside the hamburger menu, below the
+              Book Now CTA — nothing appears unless an alternate is eligible. */}
+          <Suspense fallback={null}>
+            <LanguageLinks onNavigate={() => setMobileOpen(false)} />
+          </Suspense>
         </div>
       </nav>
     </header>
