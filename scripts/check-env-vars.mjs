@@ -34,6 +34,10 @@ const TOOLING_ALLOWLIST = new Set([
   "SMOKE_BASE_URL",
   "NEXT_TELEMETRY_DISABLED",
   "NODE_ENV",
+  // Supplied by the Next.js runtime / Vercel platform, not app config.
+  "NEXT_RUNTIME",
+  "VERCEL_ENV",
+  "NEXT_PUBLIC_VERCEL_ENV",
 ]);
 
 // Names allowed in .env.example without a code reference (e.g. a variable the

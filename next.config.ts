@@ -1,8 +1,25 @@
 import type { NextConfig } from "next";
+import { withSentryConfig } from "@sentry/nextjs/config";
 import { legacyRedirects } from "./data/redirects";
 
 // Next.js dev tooling (HMR / dev overlays) evaluates code; production does not.
 const isDev = process.env.NODE_ENV !== "production";
+
+// Sentry browser SDK posts envelopes to the DSN's ingest origin. Deriving the
+// origin from the configured DSN (rather than writing a wildcard) means the
+// CSP only ever allows the exact ingest host this project uses — and none at
+// all where no DSN is configured (local dev, tests). Non-HTTPS DSNs fail
+// closed to null.
+const sentryIngestOrigin = (() => {
+  const dsn = process.env.NEXT_PUBLIC_SENTRY_DSN;
+  if (!dsn) return null;
+  try {
+    const { protocol, origin } = new URL(dsn);
+    return protocol === "https:" ? origin : null;
+  } catch {
+    return null;
+  }
+})();
 
 // Content Security Policy — every origin below is confirmed by observed
 // production traffic (Playwright network capture) or maps to a confirmed
@@ -92,6 +109,9 @@ const cspDirectives: [string, string[]][] = [
       // APIs, WebSocket, fonts and assets all run inside its iframe and
       // are governed by that document's own CSP.
       "https://service.respond.io",
+      // Sentry ingest — exactly the origin of NEXT_PUBLIC_SENTRY_DSN, added
+      // only when a DSN is configured (#129). No *.sentry.io wildcard.
+      ...(sentryIngestOrigin ? [sentryIngestOrigin] : []),
     ],
   ],
   [
@@ -183,4 +203,14 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+// Sentry build integration (#129): wires the framework's error
+// instrumentation for App Router surfaces. Source-map upload, release
+// identity and SENTRY_AUTH_TOKEN are deliberately out of scope — they belong
+// to #130 — so sourcemaps are disabled and no auth token is referenced.
+export default withSentryConfig(nextConfig, {
+  org: process.env.SENTRY_ORG,
+  project: "sea-saba-web",
+  silent: !process.env.CI,
+  telemetry: false,
+  sourcemaps: { disable: true },
+});

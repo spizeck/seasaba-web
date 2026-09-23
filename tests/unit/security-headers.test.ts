@@ -19,6 +19,50 @@ async function siteWideHeaders() {
   return new Map(rule!.headers.map((h) => [h.key, h.value]));
 }
 
+/**
+ * Structural hostname extraction for a CSP source entry. Sources may be
+ * keywords ('self', 'unsafe-inline'), schemes (data:, https:), wildcards,
+ * bare hosts or full origins — normalize to a URL and return the hostname,
+ * or null for non-host sources. Substring checks like
+ * s.includes("sentry.io") are unsafe: lookalike hosts (evil-sentry.io,
+ * sentry.io.example.com) would match them.
+ */
+function cspSourceHostname(source: string): string | null {
+  if (source.startsWith("'") || source.endsWith(":")) return null;
+  try {
+    const url = new URL(source.includes("://") ? source : `https://${source}`);
+    return url.hostname || null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * True only for real sentry.io hostnames — the apex or a subdomain.
+ * "evil-sentry.io" and "sentry.io.example.com" correctly return false
+ * because the suffix must start at a label boundary (a dot).
+ */
+function isSentryHostname(hostname: string): boolean {
+  return hostname === "sentry.io" || hostname.endsWith(".sentry.io");
+}
+
+/** Re-import next.config with a given DSN and return its parsed CSP. */
+async function cspForDsn(dsn: string): Promise<CspMap> {
+  vi.stubEnv("NEXT_PUBLIC_SENTRY_DSN", dsn);
+  vi.resetModules();
+  try {
+    const config = (await import("@/next.config")).default;
+    const rules = await config.headers?.();
+    const header = rules!
+      .find((r) => r.source === "/:path*")!
+      .headers.find((h) => h.key === "Content-Security-Policy")!.value;
+    return parseCsp(header);
+  } finally {
+    vi.unstubAllEnvs();
+    vi.resetModules();
+  }
+}
+
 const requiredHeaders = [
   "Strict-Transport-Security",
   "X-Frame-Options",
@@ -145,6 +189,82 @@ describe("Content-Security-Policy", () => {
     expect(connectSrc).not.toContain("https://google.com");
     expect(connectSrc).not.toContain("https://*.respond.io");
     expect(connectSrc.some((s) => s.startsWith("wss://"))).toBe(false);
+  });
+
+  it("adds exactly the configured Sentry ingest origin to connect-src — and nothing else", async () => {
+    const dsn = "https://abcdef@o4512345.ingest.us.sentry.io/4512345";
+    // The expected CSP entry is the origin parsed out of the DSN — never a
+    // hardcoded sentry.io pattern.
+    const expectedOrigin = new URL(dsn).origin;
+    expect(expectedOrigin).toBe("https://o4512345.ingest.us.sentry.io");
+
+    const csp = await cspForDsn(dsn);
+    expect(csp.get("connect-src")).toContain(expectedOrigin);
+
+    // Across every directive, the ONLY Sentry host allowed is that exact
+    // origin. Hostnames are compared structurally, so this fails for
+    // wildcards (*.sentry.io), other sentry.io hosts, Sentry origins in
+    // script/frame/img-src — and can never be satisfied by lookalikes such
+    // as evil-sentry.io or sentry.io.example.com.
+    for (const [directive, sources] of csp) {
+      for (const source of sources) {
+        const host = cspSourceHostname(source);
+        if (host === null || !isSentryHostname(host)) continue;
+        expect(directive, `${directive}: ${source}`).toBe("connect-src");
+        expect(source, `${directive}: ${source}`).toBe(expectedOrigin);
+      }
+    }
+  });
+
+  it("yields exactly one Sentry source — the DSN origin itself", async () => {
+    const dsn = "https://abcdef@o4512345.ingest.us.sentry.io/4512345";
+    const csp = await cspForDsn(dsn);
+    const sentrySources = (csp.get("connect-src") ?? []).filter((s) => {
+      const host = cspSourceHostname(s);
+      return host !== null && isSentryHostname(host);
+    });
+    expect(sentrySources).toEqual([new URL(dsn).origin]);
+  });
+
+  it("recognizes Sentry hosts structurally — never by substring", () => {
+    // A "sentry.io" substring inside an attacker-controlled hostname must
+    // not count as a Sentry endpoint.
+    for (const host of [
+      "sentry.io.example.com",
+      "evil-sentry.io",
+      "notsentry.io",
+      "sentry.io.evil.example.com",
+      "*.not-sentry.io",
+    ]) {
+      expect(isSentryHostname(host), host).toBe(false);
+    }
+    for (const host of [
+      "sentry.io",
+      "o123.ingest.us.sentry.io",
+      "o456.ingest.de.sentry.io",
+    ]) {
+      expect(isSentryHostname(host), host).toBe(true);
+    }
+  });
+
+  it("adds no Sentry origin for missing, malformed or non-HTTPS DSNs", async () => {
+    for (const dsn of [
+      "",
+      "not-a-url",
+      "http://o123.ingest.us.sentry.io/123",
+      "://broken",
+    ]) {
+      const csp = await cspForDsn(dsn);
+      for (const [directive, sources] of csp) {
+        for (const source of sources) {
+          const host = cspSourceHostname(source);
+          expect(
+            host === null || !isSentryHostname(host),
+            `${directive}: ${source} (dsn=${JSON.stringify(dsn)})`
+          ).toBe(true);
+        }
+      }
+    }
   });
 
   it("omits 'unsafe-eval' from the production policy", async () => {
