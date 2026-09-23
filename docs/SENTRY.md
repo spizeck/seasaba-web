@@ -142,6 +142,34 @@ Run once after the first production deploy carrying this change:
 Do not run uncontrolled or destructive production testing — the two test
 buttons are the entire verification surface.
 
+## Dependency licensing note — `@sentry/cli` (reviewed 2026-09-23)
+
+`@sentry/nextjs@10.74.0` pulls in `@sentry/cli@2.58.6` (plus eight optional
+platform-binary packages, same version) as a **regular transitive dependency**
+of `@sentry/bundler-plugin-core` / `@sentry/bundler-plugins`, which power
+`withSentryConfig`. It is not separately removable: the bundler plugins declare
+it as a normal dependency, so the supported SDK ships it. In this repository
+it is never invoked — source-map upload and release management are disabled
+(#130 scope) and no `SENTRY_AUTH_TOKEN` is configured.
+
+License: **FSL-1.1-MIT** (Functional Source License v1.1, MIT future license),
+per the `LICENSE` shipped in the package and `getsentry/sentry-cli`. It grants
+use, copy, modification and redistribution for any purpose other than a
+"Competing Use" (offering the software itself, or substantially similar
+functionality, as a commercial product/service), and converts to plain MIT two
+years after each release. Sentry explains the model at
+`https://open.sentry.io/licensing/` and in its "Introducing the Functional
+Source License" blog post.
+
+Our use — Sentry's own build tooling inside the vendor-supported SDK
+integration, on a commercial marketing site — is a Permitted Purpose: Sea Saba
+does not sell, redistribute, or host the CLI or anything like it. Trivy flags
+`FSL-1.1-MIT` only because its license database does not classify it; the
+license was manually reviewed and accepted here rather than suppressed in
+scanner config. Re-review if the CLI ever gets invoked for release/source-map
+work in #130 (still covered — same usage class) or if the licensing model
+changes upstream.
+
 ## Deferred work
 
 - **#130** — release identity, Git SHA association, `SENTRY_AUTH_TOKEN`,
