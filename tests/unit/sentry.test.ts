@@ -221,7 +221,6 @@ describe("Sentry init files stay an error-only, no-PII baseline", () => {
     for (const file of [
       "app/sentry-check/layout.tsx",
       "app/sentry-check/page.tsx",
-      "components/sentry-check-auth-form.tsx",
       "components/sentry-check-controls.tsx",
     ]) {
       const text = readFileSync(join(__dirname, "../../", file), "utf8");

@@ -288,7 +288,6 @@ inert):
 
 ```
 NEXT_PUBLIC_SENTRY_DSN
-SENTRY_CHECK_TOKEN
 SENTRY_ORG
 ```
 
@@ -315,9 +314,8 @@ These operational settings live outside the repository and must already exist
   `docs/COOKIEBOT_CONSENT_SETUP.md`.
 - **Checkfront account** (`seasaba.checkfront.com`) — booking inventory,
   checkout and its own GTM integration are vendor-managed.
-- **Sentry project** (`sea-saba-web`) — error monitoring target; the DSN and
-  the `/sentry-check` access token are set as Production-only env vars
-  (see `docs/SENTRY.md`).
+- **Sentry project** (`sea-saba-web`) — error monitoring target; the DSN is
+  set as a Production-only env var (see `docs/SENTRY.md`).
 
 ### Firestore Security Rules
 

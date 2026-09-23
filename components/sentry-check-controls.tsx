@@ -4,24 +4,24 @@ import { useState } from "react";
 import { isSentryActive } from "@/lib/sentry";
 
 /**
- * The two verification actions on /sentry-check (#129), rendered only after
- * server-side authorization. Each action reports explicit local state so the
- * operator knows what happened; no stack traces, tokens or event contents
- * are ever shown, and nothing here touches GA4/GTM/Vercel Analytics.
+ * The two verification actions on /sentry-check (#129). Each action reports
+ * explicit local state so the operator knows what happened; no stack traces
+ * or event contents are ever shown, and nothing here touches GA4/GTM/Vercel
+ * Analytics.
  *
  * The browser test goes through the client SDK (instrumentation-client.ts);
  * the server test POSTs to the /sentry-check/server-error route handler so
- * the event genuinely traverses the Node.js SDK path.
+ * the event genuinely traverses the Node.js SDK path. Both are guarded by
+ * the shared production-only gate — anywhere else they report inactivity
+ * instead of emitting.
  */
-type Status = "idle" | "sending" | "sent" | "inactive" | "denied" | "limited" | "failed";
+type Status = "idle" | "sending" | "sent" | "inactive" | "failed";
 
 const STATUS_TEXT: Record<Status, string> = {
   idle: "",
   sending: "Sending…",
   sent: "Test event sent — check the sea-saba-web Sentry project.",
   inactive: "Sentry is inactive in this deployment (not Vercel Production or no DSN).",
-  denied: "Session expired — authorize again below.",
-  limited: "Rate limited — wait a minute and try again.",
   failed: "The test action failed before reaching Sentry.",
 };
 
@@ -58,8 +58,6 @@ export function SentryCheckControls() {
         reason?: string;
       };
       if (response.ok && body.sent) setServerStatus("sent");
-      else if (response.status === 401) setServerStatus("denied");
-      else if (response.status === 429) setServerStatus("limited");
       else if (body.reason === "sentry_inactive") setServerStatus("inactive");
       else setServerStatus("failed");
     } catch {

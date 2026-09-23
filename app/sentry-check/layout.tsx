@@ -1,9 +1,9 @@
 import "../globals.css";
 
 /**
- * Operational root layout for /sentry-check (#129). Deliberately NOT the
- * marketing SiteShell: no header, footer, analytics, chat widget or
- * structured data. This is an English-only ops page outside both locale
+ * Bare root layout for /sentry-check (#129). Deliberately NOT the marketing
+ * SiteShell: no header, footer, analytics, chat widget or structured data.
+ * This is an English-only temporary verification page outside both locale
  * subtrees — it gets no /nl variant and no hreflang alternates.
  */
 export default function SentryCheckLayout({

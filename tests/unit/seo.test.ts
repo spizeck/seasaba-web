@@ -84,8 +84,9 @@ describe("robots", () => {
   });
 });
 
-// #129: /sentry-check is an operational surface, not website content. It must
-// stay undiscoverable — this pins every discovery channel shut.
+// #129: /sentry-check is a temporary verification surface, not website
+// content. It must stay undiscoverable — this pins every discovery channel
+// shut for its short lifetime.
 describe("/sentry-check stays undiscoverable", () => {
   it("is absent from the sitemap", () => {
     const urls = sitemap().map((entry) => entry.url);

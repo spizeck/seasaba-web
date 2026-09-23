@@ -47,8 +47,7 @@ uses `VERCEL_ENV`, which Vercel always sets, and would keep working.
 
 | Variable | Scope | Secret? | Purpose |
 |---|---|---|---|
-| `NEXT_PUBLIC_SENTRY_DSN` | Vercel Production only | No — a DSN only permits event ingestion | Browser + server event destination. Set **only** in the Production env so Preview inherits nothing. |
-| `SENTRY_CHECK_TOKEN` | Vercel Production only | **Yes — server-only, never `NEXT_PUBLIC_`** | Owner access token for `/sentry-check`. Unset → the page fails closed. Generate e.g. `openssl rand -hex 32`. |
+| `NEXT_PUBLIC_SENTRY_DSN` | Vercel Production only | No — a DSN only permits event ingestion | Browser + server event destination. Set **only** in the Production env so Preview inherits nothing. This is the **only** env var #129 requires. |
 | `SENTRY_ORG` | optional | No — identifier | Org slug for the build plugin; needed when #130 adds release/source-map upload. |
 | `VERCEL_ENV` / `NEXT_PUBLIC_VERCEL_ENV` | platform-supplied | No | Deployment context; no manual setup on Vercel. |
 
@@ -83,61 +82,55 @@ useful minimum for debugging a marketing site.
 Sentry origin at all. No `*.sentry.io` wildcard is used anywhere. Unit tests
 pin both behaviors.
 
-## `/sentry-check` — production verification surface
+## `/sentry-check` — temporary verification page
 
-Operational page at `/sentry-check` for verifying the integration after a
-production deploy. English-only, `noindex`/`nofollow`, absent from the
-sitemap, `llms.txt`, navigation, footer and the Dutch subtree, and
-`Disallow`ed in `robots.txt`.
+`/sentry-check` is **temporary deployment-verification tooling**, not a
+permanent operations surface. It exists to prove browser and server capture
+once, immediately after the first production deploy carrying #129, and is
+then removed in a follow-up cleanup PR. Because of that lifecycle it carries
+no authentication layer: anyone who knows the exact URL can reach the page
+during the short verification window — that is accepted and intentional.
 
-### Protection model
+The page is undiscoverable regardless: English-only, `noindex`/`nofollow`,
+absent from the sitemap, `llms.txt`, navigation, footer and the Dutch
+subtree, and `Disallow`ed in `robots.txt`.
 
-- Owner sets `SENTRY_CHECK_TOKEN` (server-only env var) in Vercel Production.
-- The page shows a token form. Submitting it POSTs the token to
-  `POST /sentry-check/session`, which compares it against the env var with a
-  constant-time digest comparison.
-- On success the response sets an **HttpOnly, SameSite=Strict, Secure,
-  `Path=/sentry-check`** cookie holding an HMAC-signed expiry (1 hour). The
-  token itself is never stored, never placed in a URL, and never shipped in
-  client JavaScript.
-- Both the authorize endpoint (10/min/IP) and the test endpoint (5/min/IP)
-  are rate limited per client IP — in-memory per serverless instance, which
-  is the realistic burst-abuse path.
-- Fail closed everywhere: no `SENTRY_CHECK_TOKEN` → no session can ever
-  verify → the actions cannot be reached or invoked.
+It offers exactly two actions:
 
-### Using it
+- **Send Browser Test Error** — captures a controlled exception through the
+  browser SDK (`instrumentation-client.ts`), tagged
+  `source: sentry-check`, `surface: browser`.
+- **Send Server Test Error** — POSTs to `POST /sentry-check/server-error`, a
+  route handler that captures a controlled exception through the Node.js
+  server SDK, tagged `source: sentry-check`, `surface: server`, then flushes
+  so the event survives serverless teardown.
 
-1. In Vercel → project → Settings → Environment Variables, set
-   `SENTRY_CHECK_TOKEN` (Production) and `NEXT_PUBLIC_SENTRY_DSN` (Production).
-2. Deploy to production.
-3. Open `https://www.seasaba.com/sentry-check`, paste the token, Authorize.
-4. **Send Browser Test Error** → a controlled event tagged
-   `source: sentry-check`, `surface: browser` appears in `sea-saba-web`.
-5. **Send Server Test Error** → a controlled event tagged
-   `source: sentry-check`, `surface: server` appears separately.
-
-The buttons report local state (sent / inactive / unauthorized / rate
-limited). No stack traces or secrets are shown.
+Both actions are guarded by the same `isSentryActive()` production gate as
+the rest of the integration: outside Vercel Production (or without a DSN)
+they report "Sentry is inactive in this deployment" and emit nothing.
 
 ## Production verification procedure
 
-Run once after the first production deploy carrying this change:
+Run once, immediately after the first production deploy carrying #129:
 
-1. Confirm `NEXT_PUBLIC_SENTRY_DSN` and `SENTRY_CHECK_TOKEN` are set for the
-   **Production** environment only in Vercel.
-2. Open `/sentry-check`, authorize with the token.
-3. Trigger **Send Browser Test Error**; confirm the recognizable event
-   (`Sea Saba Sentry browser check …`) appears in `sea-saba-web`.
-4. Trigger **Send Server Test Error**; confirm the separate server event
-   (`Sea Saba Sentry server check …`) appears.
+1. Confirm `NEXT_PUBLIC_SENTRY_DSN` is set for the **Production**
+   environment only in Vercel.
+2. Open `https://www.seasaba.com/sentry-check`.
+3. Click **Send Browser Test Error**; confirm the event
+   (`Sea Saba Sentry browser check …`, tags `source: sentry-check`,
+   `surface: browser`) appears in `sea-saba-web`.
+4. Click **Send Server Test Error**; confirm the separate server event
+   (`Sea Saba Sentry server check …`, `surface: server`) appears.
 5. Open both events in Sentry and inspect payloads: no query strings, no
    cookies, no request bodies, no `user` fields, no sensitive headers.
 6. Browse several normal production pages and confirm no unexpected
    integration-generated errors appear.
-7. Open a Vercel Preview deployment, open `/sentry-check`, and confirm the
-   test actions report "Sentry is inactive in this deployment" and no events
+7. Open a Vercel Preview deployment, open `/sentry-check`, and confirm both
+   actions report "Sentry is inactive in this deployment" and no events
    reach `sea-saba-web`.
+8. **Remove the page**: an immediate cleanup PR deletes `app/sentry-check/`,
+   `components/sentry-check-controls.tsx`, the associated tests, and this
+   section of the documentation.
 
 Do not run uncontrolled or destructive production testing — the two test
 buttons are the entire verification surface.

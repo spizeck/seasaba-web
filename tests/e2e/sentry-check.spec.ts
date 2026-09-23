@@ -1,46 +1,48 @@
 import { test, expect, waitForHydration } from "./fixtures";
 
 /**
- * #129: the /sentry-check ops page must exist but stay locked down and
- * undiscoverable. The test build never configures SENTRY_CHECK_TOKEN, so the
- * gate is exercised in its fail-closed state — exactly what Preview and any
- * environment without the token get.
+ * #129: /sentry-check is temporary verification tooling — reachable by exact
+ * URL only, noindexed, unlinked, and guarded by the production-only Sentry
+ * activation itself. The test build is never a Vercel Production deployment,
+ * so both actions must report inactivity rather than emit a real event.
  */
-test("sentry-check is token-gated, noindexed and unlinked", async ({
+test("sentry-check renders both test actions, stays noindexed and fails closed", async ({
   page,
   monitor,
 }) => {
-  // A denied authorize attempt returns 401 — an expected response the
-  // browser still logs as a resource error and a failed request.
-  monitor.allowConsoleError(/sentry-check\/session/);
-  monitor.allowRequestFailure(/sentry-check\/session/);
+  // The server test answers 503 (sentry_inactive) in this build — an
+  // expected response the browser logs as a failed request/console error.
+  monitor.allowConsoleError(/sentry-check\/server-error/);
+  monitor.allowRequestFailure(/sentry-check\/server-error/);
 
   const response = await page.goto("/sentry-check");
   expect(response?.status()).toBe(200);
 
-  // Operational page — never indexable.
+  // Temporary verification page — never indexable.
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
     "content",
     /noindex/
   );
 
-  // The gate renders; the test actions never do without a session.
-  await waitForHydration(page, "#sentry-token");
-  await expect(page.getByLabel(/access token/i)).toBeVisible();
-  await expect(
-    page.getByRole("button", { name: /send browser test error/i })
-  ).toHaveCount(0);
-  await expect(
-    page.getByRole("button", { name: /send server test error/i })
-  ).toHaveCount(0);
+  const browserButton = page.getByRole("button", {
+    name: /send browser test error/i,
+  });
+  const serverButton = page.getByRole("button", {
+    name: /send server test error/i,
+  });
+  await expect(browserButton).toBeVisible();
+  await expect(serverButton).toBeVisible();
+  // No token/session gate remains.
+  await expect(page.getByLabel(/token/i)).toHaveCount(0);
 
-  // A wrong token is refused in place and never reveals controls.
-  await page.getByLabel(/access token/i).fill("definitely-wrong");
-  await page.getByRole("button", { name: /authorize/i }).click();
-  await expect(page.getByText(/token was not accepted/i)).toBeVisible();
-  await expect(
-    page.getByRole("button", { name: /send browser test error/i })
-  ).toHaveCount(0);
+  // Outside Vercel Production each action reports inactivity instead of
+  // pretending to send — one status line per action.
+  await waitForHydration(page, "button");
+  const statuses = page.getByText(/inactive in this deployment/i);
+  await browserButton.click();
+  await expect(statuses).toHaveCount(1);
+  await serverButton.click();
+  await expect(statuses).toHaveCount(2);
 });
 
 test("sentry-check is not linked anywhere on the public site", async ({
