@@ -4,9 +4,8 @@ import type { Breadcrumb, ErrorEvent } from "@sentry/nextjs";
  * Centralized Sentry activation + privacy decisions (#129).
  *
  * One authoritative gate — `isSentryActive()` — is used by the browser init
- * (instrumentation-client.ts), the Node init (sentry.server.config.ts) and the
- * /sentry-check operational endpoints, so every surface agrees on whether
- * Sentry may emit events.
+ * (instrumentation-client.ts) and the Node init (sentry.server.config.ts), so
+ * every surface agrees on whether Sentry may emit events.
  *
  * Hard rule: Sentry is active ONLY on real Vercel Production deployments with
  * a configured DSN. Vercel Preview builds also run `NODE_ENV=production`
