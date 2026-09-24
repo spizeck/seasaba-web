@@ -9,7 +9,7 @@ A fast, SEO-first, destination-led marketing website for Sea Saba, a professiona
 | [docs/TESTING.md](docs/TESTING.md) | Test pyramid, commands, CI gates, accessibility and production smoke suites, performance budgets |
 | [docs/ANALYTICS_SEO.md](docs/ANALYTICS_SEO.md) | Analytics/GTM/consent architecture, tracked events, sitemap and indexing rules |
 | [docs/COOKIEBOT_CONSENT_SETUP.md](docs/COOKIEBOT_CONSENT_SETUP.md) | Cookiebot CMP + GTM consent-mode runbook |
-| [docs/SENTRY.md](docs/SENTRY.md) | Sentry error-monitoring baseline: activation gate, privacy posture, `/sentry-check` verification |
+| [docs/SENTRY.md](docs/SENTRY.md) | Sentry error-monitoring baseline: activation gate, privacy posture, production verification |
 | [docs/OPERATIONS.md](docs/OPERATIONS.md) | Source of truth for operational facts (schedules, requirements, contact, Checkfront boundary) |
 | [docs/DEPENDENCIES.md](docs/DEPENDENCIES.md) | Dependabot update policy, dependency groups, and the major-version migration workflow |
 | [docs/design/THEME_UX_GUIDE.md](docs/design/THEME_UX_GUIDE.md) | Brand colors, typography, spacing, imagery and UX rules |

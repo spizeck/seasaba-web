@@ -82,58 +82,33 @@ useful minimum for debugging a marketing site.
 Sentry origin at all. No `*.sentry.io` wildcard is used anywhere. Unit tests
 pin both behaviors.
 
-## `/sentry-check` — temporary verification page
+## Production verification — completed 2026-09-23
 
-`/sentry-check` is **temporary deployment-verification tooling**, not a
-permanent operations surface. It exists to prove browser and server capture
-once, immediately after the first production deploy carrying #129, and is
-then removed in a follow-up cleanup PR. Because of that lifecycle it carries
-no authentication layer: anyone who knows the exact URL can reach the page
-during the short verification window — that is accepted and intentional.
+Initial production verification ran against the first production deploy
+carrying #129 via the temporary `/sentry-check` page (removed once
+verification succeeded — it was never a permanent surface):
 
-The page is undiscoverable regardless: English-only, `noindex`/`nofollow`,
-absent from the sitemap, `llms.txt`, navigation, footer and the Dutch
-subtree, and `Disallow`ed in `robots.txt`.
+- **Browser capture** verified: controlled exception tagged
+  `source: sentry-check`, `surface: browser` arrived in `sea-saba-web` with
+  `environment: production`.
+- **Server capture** verified: controlled exception tagged
+  `source: sentry-check`, `surface: server` arrived separately
+  (`platform: node`, Node 24, Vercel server environment).
+- **Production-only operation** verified: no events from Preview or other
+  environments.
+- **Sanitization** manually inspected on both events: no unexpected customer
+  PII, no query strings/cookies/request bodies/user fields.
+- Tracing remained unsampled; both stacks were intentionally
+  **unsymbolicated** (source maps are #130).
 
-It offers exactly two actions:
-
-- **Send Browser Test Error** — captures a controlled exception through the
-  browser SDK (`instrumentation-client.ts`), tagged
-  `source: sentry-check`, `surface: browser`.
-- **Send Server Test Error** — POSTs to `POST /sentry-check/server-error`, a
-  route handler that captures a controlled exception through the Node.js
-  server SDK, tagged `source: sentry-check`, `surface: server`, then flushes
-  so the event survives serverless teardown.
-
-Both actions are guarded by the same `isSentryActive()` production gate as
-the rest of the integration: outside Vercel Production (or without a DSN)
-they report "Sentry is inactive in this deployment" and emit nothing.
-
-## Production verification procedure
-
-Run once, immediately after the first production deploy carrying #129:
-
-1. Confirm `NEXT_PUBLIC_SENTRY_DSN` is set for the **Production**
-   environment only in Vercel.
-2. Open `https://www.seasaba.com/sentry-check`.
-3. Click **Send Browser Test Error**; confirm the event
-   (`Sea Saba Sentry browser check …`, tags `source: sentry-check`,
-   `surface: browser`) appears in `sea-saba-web`.
-4. Click **Send Server Test Error**; confirm the separate server event
-   (`Sea Saba Sentry server check …`, `surface: server`) appears.
-5. Open both events in Sentry and inspect payloads: no query strings, no
-   cookies, no request bodies, no `user` fields, no sensitive headers.
-6. Browse several normal production pages and confirm no unexpected
-   integration-generated errors appear.
-7. Open a Vercel Preview deployment, open `/sentry-check`, and confirm both
-   actions report "Sentry is inactive in this deployment" and no events
-   reach `sea-saba-web`.
-8. **Remove the page**: an immediate cleanup PR deletes `app/sentry-check/`,
-   `components/sentry-check-controls.tsx`, the associated tests, and this
-   section of the documentation.
-
-Do not run uncontrolled or destructive production testing — the two test
-buttons are the entire verification surface.
+**For #130:** both events already carried the release identity
+`d26e83a760ab2fd6c503a8e10da2333b46649f65` — the deployment's Git SHA,
+auto-populated by the SDK (no explicit release config exists yet). #130
+should inspect how that SHA is populated before adding explicit release
+configuration. Sentry reported `js_no_source`/missing source for both
+stacks: browser frames referenced a production `_next/static/...` chunk,
+server frames a production `_next/server/...` chunk — exactly what
+source-map upload in #130 is for.
 
 ## Dependency licensing note — `@sentry/cli` (reviewed 2026-09-23)
 

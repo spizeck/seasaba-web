@@ -214,19 +214,4 @@ describe("Sentry init files stay an error-only, no-PII baseline", () => {
       expect(text, file).toContain("enabled: isSentryActive()");
     }
   });
-
-  it("keeps the /sentry-check surface free of business analytics", () => {
-    // Sentry check actions are operational telemetry — they must never flow
-    // into GA4/GTM/Vercel Analytics as pseudo-conversions.
-    for (const file of [
-      "app/sentry-check/layout.tsx",
-      "app/sentry-check/page.tsx",
-      "components/sentry-check-controls.tsx",
-    ]) {
-      const text = readFileSync(join(__dirname, "../../", file), "utf8");
-      expect(text, file).not.toMatch(
-        /trackEvent|trackLinkClick|trackBookingClick|@vercel\/analytics|dataLayer|googletagmanager/i
-      );
-    }
-  });
 });

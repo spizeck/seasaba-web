@@ -78,16 +78,22 @@ describe("robots", () => {
     expect(rules).toContainEqual({
       userAgent: "*",
       allow: "/",
-      disallow: "/sentry-check",
     });
     expect(r.sitemap).toBe("https://www.seasaba.com/sitemap.xml");
   });
 });
 
-// #129: /sentry-check is a temporary verification surface, not website
-// content. It must stay undiscoverable — this pins every discovery channel
-// shut for its short lifetime.
-describe("/sentry-check stays undiscoverable", () => {
+// #129 follow-up: /sentry-check was temporary verification tooling, removed
+// after production verification succeeded. These guards pin every channel
+// so no remnant of it can creep back into discovery surfaces.
+describe("/sentry-check leaves no remnants", () => {
+  it("has no app route or Dutch variant", () => {
+    expect(existsSync(join(__dirname, "../../app/sentry-check"))).toBe(false);
+    expect(
+      existsSync(join(__dirname, "../../app/nl/sentry-check"))
+    ).toBe(false);
+  });
+
   it("is absent from the sitemap", () => {
     const urls = sitemap().map((entry) => entry.url);
     expect(urls.some((u) => u.includes("sentry-check"))).toBe(false);
@@ -111,23 +117,13 @@ describe("/sentry-check stays undiscoverable", () => {
     }
   });
 
-  it("is disallowed in robots.txt", () => {
+  it("has no robots.txt disallow entry — the route no longer exists", () => {
     const r = robots();
     const rules = Array.isArray(r.rules) ? r.rules : [r.rules];
     const disallow = rules.flatMap((rule) =>
       Array.isArray(rule.disallow) ? rule.disallow : [rule.disallow]
     );
-    expect(disallow).toContain("/sentry-check");
-  });
-
-  it("has no Dutch variant and no hreflang publication", async () => {
-    // The page lives outside app/nl, and the route can never be published
-    // for nl via the PUBLISHED_ROUTES gate.
-    const { isRoutePublished } = await import("@/lib/locale");
-    expect(isRoutePublished("nl", "/sentry-check")).toBe(false);
-    expect(
-      existsSync(join(__dirname, "../../app/nl/sentry-check"))
-    ).toBe(false);
+    expect(disallow.some((d) => d?.includes("sentry-check"))).toBe(false);
   });
 });
 
