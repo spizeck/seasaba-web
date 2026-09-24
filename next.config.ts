@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 import { withSentryConfig } from "@sentry/nextjs/config";
 import { legacyRedirects } from "./data/redirects";
+import { sentryBuildOptions } from "./lib/sentry-build";
 
 // Next.js dev tooling (HMR / dev overlays) evaluates code; production does not.
 const isDev = process.env.NODE_ENV !== "production";
@@ -203,14 +204,17 @@ const nextConfig: NextConfig = {
   },
 };
 
-// Sentry build integration (#129): wires the framework's error
-// instrumentation for App Router surfaces. Source-map upload, release
-// identity and SENTRY_AUTH_TOKEN are deliberately out of scope — they belong
-// to #130 — so sourcemaps are disabled and no auth token is referenced.
+// Sentry build integration (#129 runtime, #130 releases + source maps).
+// org/authToken are env-wired here; the release/source-map/failure policy
+// lives in lib/sentry-build.ts so it is unit-testable.
+//
+// Release identity is deliberately NOT set: the SDK resolves it from
+// VERCEL_GIT_COMMIT_SHA on Vercel (then git HEAD) and injects it into the
+// bundles as `_sentryRelease`, so the event release, the uploaded source
+// maps and the deployed commit are the same SHA. SENTRY_AUTH_TOKEN is a
+// build-time secret only — never NEXT_PUBLIC_*.
 export default withSentryConfig(nextConfig, {
   org: process.env.SENTRY_ORG,
-  project: "sea-saba-web",
-  silent: !process.env.CI,
-  telemetry: false,
-  sourcemaps: { disable: true },
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+  ...sentryBuildOptions(),
 });

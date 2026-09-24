@@ -6,6 +6,11 @@ const result = spawnSync(process.execPath, ["node_modules/next/dist/bin/next", "
   stdio: "inherit",
   env: {
     ...process.env,
+    // Force the Sentry build-time path fully off (#130): without these, a dev
+    // shell exporting VERCEL_ENV=production + a token could make the test
+    // build attempt a real source-map upload.
+    VERCEL_ENV: "",
+    SENTRY_AUTH_TOKEN: "",
     NEXT_PUBLIC_FIREBASE_API_KEY: "test-only-api-key",
     NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: "demo-seasaba-tests.firebaseapp.com",
     NEXT_PUBLIC_FIREBASE_PROJECT_ID: "demo-seasaba-tests",
