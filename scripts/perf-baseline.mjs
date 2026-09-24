@@ -23,6 +23,7 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import os from "node:os";
 import lighthouse from "lighthouse";
+import { checkBudgets, median, synthesizeMedianRun } from "./perf-metrics.mjs";
 
 const args = process.argv.slice(2);
 const arg = (name, fallback) => {
@@ -247,51 +248,9 @@ function extract(lhr) {
   };
 }
 
-const median = (values) => {
-  const sorted = [...values].sort((x, y) => x - y);
-  return sorted[Math.floor(sorted.length / 2)];
-};
-
 // --- Budgets -------------------------------------------------------------------
-
-// metric -> { get(run), higherIsBetter }
-const METRICS = {
-  score: { get: (r) => r.score, better: "high" },
-  fcpMs: { get: (r) => r.fcp, better: "low" },
-  lcpMs: { get: (r) => r.lcp, better: "low" },
-  cls: { get: (r) => r.cls, better: "low" },
-  tbtMs: { get: (r) => r.tbt, better: "low" },
-  ttfbMs: { get: (r) => r.ttfb, better: "low" },
-  jsBytes: { get: (r) => r.bytes.script, better: "low" },
-  imageBytes: { get: (r) => r.bytes.image, better: "low" },
-  totalBytes: { get: (r) => r.bytes.total, better: "low" },
-  thirdPartyBytes: { get: (r) => r.bytes.thirdParty, better: "low" },
-};
-
-function checkBudgets(medianByRoute, budgets) {
-  const failures = [];
-  const warnings = [];
-  for (const [route, medianRun] of medianByRoute) {
-    const budget = { ...(budgets["*"] ?? {}), ...(budgets[route] ?? {}) };
-    for (const [metric, rule] of Object.entries(budget)) {
-      const m = METRICS[metric];
-      if (!m) continue;
-      const value = m.get(medianRun);
-      if (value === undefined || value === null) continue;
-      const breaches = (limit) =>
-        m.better === "low" ? value > limit : value < limit;
-      if (rule.error !== undefined && breaches(rule.error)) {
-        failures.push(`${route}: ${metric}=${fmtMetric(metric, value)} exceeds error budget ${fmtMetric(metric, rule.error)}`);
-      } else if (rule.warn !== undefined && breaches(rule.warn)) {
-        warnings.push(`${route}: ${metric}=${fmtMetric(metric, value)} exceeds warn budget ${fmtMetric(metric, rule.warn)}`);
-      }
-    }
-  }
-  return { failures, warnings };
-}
-
-const fmtMetric = (metric, v) =>
-  metric === "score" ? v.toFixed(2) : metric === "cls" ? v.toFixed(3) : metric.endsWith("Bytes") ? `${(v / 1024).toFixed(0)}KB` : `${Math.round(v)}ms`;
+// Metric/budget logic lives in perf-metrics.mjs so unit tests can pin that
+// enforcement uses the same per-metric median the summary prints (#163).
 
 // --- Main ----------------------------------------------------------------------
 
@@ -309,14 +268,24 @@ try {
     const url = `${BASE_URL}${route}`;
     const runs = [];
     for (let i = 0; i < RUNS; i++) {
-      const result = await lighthouse(url, {
-        port,
-        output: ["json", "html"],
-        logLevel: "error",
-        ...(blockVendors ? { blockedUrlPatterns: BLOCKED_PATTERNS } : {}),
-        ...profile,
-      });
-      if (!result?.lhr) throw new Error(`Lighthouse returned no result for ${url}`);
+      let result;
+      for (let attempt = 0; attempt < 2; attempt++) {
+        result = await lighthouse(url, {
+          port,
+          output: ["json", "html"],
+          logLevel: "error",
+          ...(blockVendors ? { blockedUrlPatterns: BLOCKED_PATTERNS } : {}),
+          ...profile,
+        });
+        if (!result?.lhr) throw new Error(`Lighthouse returned no result for ${url}`);
+        // A Lighthouse infrastructure error (e.g. NO_NAVSTART trace failure)
+        // is not a measurement: retry once, then fail loudly. Aggregating it
+        // would feed NaN into the median and could silently mask a breach.
+        if (!result.lhr.runtimeError) break;
+        if (attempt === 1) {
+          throw new Error(`Lighthouse could not measure ${url}: ${result.lhr.runtimeError.code} — ${result.lhr.runtimeError.message}`);
+        }
+      }
       const safe = route === "/" ? "index" : route.slice(1).replaceAll("/", "-");
       writeFileSync(path.join(OUT_DIR, `${safe}-run${i + 1}.json`), JSON.stringify(result.lhr));
       if (i === Math.floor(RUNS / 2)) {
@@ -329,8 +298,12 @@ try {
     console.log(`${route.padEnd(18)} score=${(median(runs.map((r) => r.score)) * 100).toFixed(0).padStart(3)}  LCP=${Math.round(median(l))}ms  CLS=${median(runs.map((r) => r.cls)).toFixed(3)}  TBT=${Math.round(median(runs.map((r) => r.tbt)))}ms  TTFB=${Math.round(median(runs.map((r) => r.ttfb)))}ms  JS=${(median(runs.map((r) => r.bytes.script)) / 1024).toFixed(0)}KB  img=${(median(runs.map((r) => r.bytes.image)) / 1024).toFixed(0)}KB  total=${(median(runs.map((r) => r.bytes.total)) / 1024).toFixed(0)}KB`);
   }
 
+  // Enforcement evaluates the same statistic the summary line prints: the
+  // per-metric median across runs — NOT a positional run (#163 found the
+  // old runs[1] pick could pass a 4.9s median or fail a 3.3s one depending
+  // on run ordering).
   const medianByRoute = new Map(
-    [...resultsByRoute].map(([route, runs]) => [route, runs[Math.floor(runs.length / 2)]])
+    [...resultsByRoute].map(([route, runs]) => [route, synthesizeMedianRun(runs)])
   );
 
   writeFileSync(
