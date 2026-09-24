@@ -260,10 +260,12 @@ describe("auth-token secrecy", () => {
       .filter(Boolean);
   }
 
-  it("no NEXT_PUBLIC_SENTRY_AUTH_TOKEN exists anywhere in tracked files", () => {
+  it("the public env-var form of the token name appears in no tracked file", () => {
+    // Assembled so this file does not contain the forbidden name itself.
+    const publicTokenName = "NEXT_PUBLIC_" + "SENTRY_AUTH_TOKEN";
     for (const file of trackedFiles()) {
       const text = readFileSync(join(process.cwd(), file), "utf8");
-      expect(text, file).not.toContain("NEXT_PUBLIC_SENTRY_AUTH_TOKEN");
+      expect(text, file).not.toContain(publicTokenName);
     }
   });
 
