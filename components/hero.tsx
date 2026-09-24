@@ -44,12 +44,16 @@ export function Hero() {
     >
       {/* Background image — next/image so the LCP resource is preloaded,
           fetch-prioritised, and served responsively instead of as a
-          full-resolution CSS background. */}
+          full-resolution CSS background. Next 16's `priority` emits the
+          preload but no longer sets fetchpriority=high (#163: Lighthouse
+          lcp-discovery flags priorityHinted=false), so it is set
+          explicitly. */}
       <Image
         src="/images/optimized/divers-above-reef-saba.webp"
         alt=""
         fill
         priority
+        fetchPriority="high"
         sizes="100vw"
         className="object-cover"
       />

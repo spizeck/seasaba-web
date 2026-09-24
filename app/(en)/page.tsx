@@ -132,7 +132,7 @@ export default function Home() {
 
           {/* Featured three — photo-backed cards */}
           <div className="grid gap-6 sm:grid-cols-3">
-            {WHY_SABA_FEATURED.map((item, i) => (
+            {WHY_SABA_FEATURED.map((item) => (
               <ImageCard
                 key={item.heading}
                 src={item.image}
@@ -140,7 +140,6 @@ export default function Home() {
                 heading={item.heading}
                 body={item.body}
                 objectPosition={item.bgPosition}
-                priority={i === 0}
               />
             ))}
           </div>
