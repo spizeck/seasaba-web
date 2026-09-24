@@ -12,6 +12,23 @@ custom events, Checkfront).
 configuration — it cannot be expressed as application source code, since the
 Cookiebot script itself is deployed through GTM, not through Next.js.
 
+> **Status (confirmed by production audit, #167):** the Cookiebot CMP tag and
+> Consent Mode defaults below ARE deployed and working — denied defaults are
+> established at Consent Initialization before any tag runs, and GA4/Google
+> Ads correctly send only denied pings with no `_ga`/`_gcl_au` cookies until
+> consent. **However, the Section 2.4–2.7 per-tag consent checks were never
+> applied to the published container:** the compiled live container contains
+> no `consent` metadata on any tag. As a result Clarity (`__cvt_MQDKZ`,
+> project `xq4re63wsc`, Initialization trigger), the UET base tag
+> (`__baut`, tag `187264257`, All Pages) and the Meta Pixel custom-HTML tag
+> (All Pages) all fire before consent, writing `_clck`, `_clsk`,
+> `_uetsid`, `_uetvid` (with real identifiers, not `null|…` placeholders),
+> `MUID`, `CLID`, `fr` and sending telemetry. Declining afterwards cannot
+> undo already-sent telemetry or remove third-party cookies — the gates must
+> stop the tags from loading. Apply the checklist in §2.4–§2.7 verbatim, then
+> verify with `node scripts/consent-audit.mjs` (three consent states,
+> fresh contexts).
+
 ---
 
 ## 1. Code Changes Made in This Repo
@@ -152,7 +169,7 @@ mix both.
 Microsoft's dashboard currently reports **"UET Consent Mode Status: Need
 attention."** Fix with three GTM tags:
 
-**Tag 1 — `Microsoft UET - Consent Default`**
+**Tag 1 — `Microsoft UET - Consent Default`** — **required, do not skip.**
 ```js
 window.uetq = window.uetq || [];
 window.uetq.push("consent", "default", {
@@ -161,6 +178,15 @@ window.uetq.push("consent", "default", {
 ```
 - Trigger: **Consent Initialization - All Pages**
 - Must fire before the UET base tag.
+- Verified needed: without this tag, `bat.js` initializes unrestricted and
+  writes **real** `_uetsid`/`_uetvid` identifiers pre-consent. The `__baut`
+  template's own `gtm_default` consent source reads `dataLayer` consent
+  entries, but the Cookiebot template sets its defaults via the sandbox
+  `setDefaultConsentState` API — which produces no `dataLayer` entry — so
+  the template's inherited default never materializes. With this explicit
+  denied push queued before `bat.js` loads, Microsoft runs its documented
+  cookieless mode (placeholder `null|…` cookie values at most, `asc=D` on
+  beacons) instead of real identifiers.
 
 **Tag 2 — `Microsoft UET - Consent Granted`**
 ```js
@@ -204,11 +230,18 @@ untouched.
 
 ### 2.6 Microsoft Clarity Consent
 
-Preferred: if the currently installed Clarity tag/snippet version supports
-consuming Google Consent Mode natively, no separate Clarity API calls are
-needed beyond the `analytics_storage` Additional Consent Check in 2.4 —
-verify this against the exact Clarity snippet version installed before
-adding anything else.
+Verified against the live container (#167): the installed Clarity GTM
+template tag (`__cvt_MQDKZ`, project `xq4re63wsc`) has **no** Consent Mode
+awareness — it injects `clarity.ms/tag/xq4re63wsc` whenever it fires. The
+`analytics_storage` Additional Consent Check in §2.4 is therefore the whole
+fix: the tag never executes pre-consent, so `clarity.js`, `_clck`/`_clsk`,
+`*.clarity.ms/collect`, the Microsoft cookie-sync pixels and Clarity's own
+`clarity.ms/tag/uet/187264257` loader are all suppressed together. When
+Statistics consent is granted, the tag fires normally.
+
+Only if a future requirement changes to "load Clarity but run cookieless
+pre-consent" would the Consent API v2 path below apply — it is documented
+for completeness, not part of the remediation.
 
 If the installed Clarity tag does **not** honor Consent Mode automatically
 and Clarity Consent API v2 calls are required, add tags with triggers on
@@ -379,7 +412,14 @@ running each case against the live GTM Preview + production deployment.
 
 ## 7. Validation Tools
 
-1. **GTM Preview / Tag Assistant** — Consent tab: confirm defaults at Consent
+1. **`node scripts/consent-audit.mjs`** — deterministic production replay of
+   the three consent states (fresh Playwright contexts; add `webkit` arg for
+   WebKit). Prints every tracker request, cookie and storage key per state.
+   Manual use only — it loads the real GTM container and generates real
+   vendor hits. GTM's production configuration cannot be exercised in CI
+   (the local suite mocks vendors; the production smoke suite blocks all
+   tracker hosts by design), so this script is the repeatable verification.
+2. **GTM Preview / Tag Assistant** — Consent tab: confirm defaults at Consent
    Initialization and updates after each user choice; confirm each tag's
    listed consent state matches Section 2.4.
 2. **Browser DevTools → Application → Cookies** — inspect before/after each
