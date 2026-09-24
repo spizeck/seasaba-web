@@ -143,6 +143,75 @@ export async function hydratedGoto(page: Page, url: string, hydrateProbe?: strin
   return response;
 }
 
+// Programmatic scrolls commit asynchronously (WebKit especially — a read
+// right after scrollTo can return the pre-scroll position), and a responsive
+// reflow keeps moving scrollY for several frames while ScrollPositionKeeper
+// corrects drift. Resolves once scrollY, document height, and viewport width
+// have been identical across `frames` consecutive animation frames — i.e.
+// the browser has nothing left to move. Use after scrollTo/setViewportSize
+// instead of a fixed sleep whenever the next step asserts measured geometry.
+export async function waitForStableScroll(page: Page, frames = 4) {
+  await page.waitForFunction(
+    (n) =>
+      new Promise<boolean>((resolve) => {
+        let lastY = NaN;
+        let lastH = NaN;
+        let lastW = NaN;
+        let stable = 0;
+        const sample = () => {
+          const y = window.scrollY;
+          const h = document.documentElement.scrollHeight;
+          const w = window.innerWidth;
+          stable = y === lastY && h === lastH && w === lastW ? stable + 1 : 0;
+          lastY = y;
+          lastH = h;
+          lastW = w;
+          if (stable >= n) resolve(true);
+          else requestAnimationFrame(sample);
+        };
+        requestAnimationFrame(sample);
+      }),
+    frames
+  );
+}
+
+// Scrolls to the document bottom and resolves only once the browser has
+// actually committed there. Two failure modes of a one-shot
+// "scrollTo then check distance-from-bottom" that this avoids:
+// - scrollTo(0, scrollHeight) reads a snapshot of the document height; a
+//   mid-reflow value can land the scroll short of the eventual bottom.
+// - a transient reflow collapse clamps scrollY to 0 while scrollHeight
+//   ≈ innerHeight, so a distance check passes vacuously on an unscrolled
+//   page.
+// The scroll is re-requested while "at bottom" does not hold, and the wait
+// succeeds only after it has held across three consecutive frames.
+// Callers must be on a scrollable page (doc taller than the viewport).
+export async function scrollToBottomSettled(page: Page) {
+  await page.waitForFunction(
+    () =>
+      new Promise<boolean>((resolve) => {
+        let streak = 0;
+        let lastScroll = 0;
+        const check = () => {
+          const doc = document.documentElement;
+          const fromBottom =
+            doc.scrollHeight - window.scrollY - window.innerHeight;
+          if (window.scrollY > 0 && fromBottom <= 4) {
+            if (++streak >= 3) return resolve(true);
+          } else {
+            streak = 0;
+            if (performance.now() - lastScroll > 100) {
+              lastScroll = performance.now();
+              window.scrollTo(0, doc.scrollHeight);
+            }
+          }
+          requestAnimationFrame(check);
+        };
+        check();
+      })
+  );
+}
+
 // Clicks a named primary-nav destination, opening the mobile menu first when
 // the project runs a mobile device profile.
 export async function clickNavLink(page: Page, name: string, isMobile?: boolean) {

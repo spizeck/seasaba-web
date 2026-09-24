@@ -1,4 +1,9 @@
-import { test, expect, hydratedGoto } from "./fixtures";
+import {
+  test,
+  expect,
+  hydratedGoto,
+  scrollToBottomSettled,
+} from "./fixtures";
 
 // Footer clearance above the fixed bottom-corner launchers (issue #127).
 //
@@ -34,20 +39,6 @@ async function injectLaunchers(page: import("@playwright/test").Page) {
       "position:fixed;left:10px;bottom:11px;width:48px;height:48px;z-index:9999";
     document.body.appendChild(c);
   });
-}
-
-// WebKit commits programmatic scrolls asynchronously — measuring right after
-// scrollTo can read the pre-scroll position. Wait until the bottom actually
-// lands before asserting footer geometry.
-async function scrollToBottomSettled(page: import("@playwright/test").Page) {
-  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-  await page.waitForFunction(
-    () =>
-      document.documentElement.scrollHeight -
-        window.scrollY -
-        window.innerHeight <=
-      4
-  );
 }
 
 test("footer bottom bar clears both floating launchers at every width", async ({ page }) => {
