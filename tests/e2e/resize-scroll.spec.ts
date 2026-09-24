@@ -312,6 +312,7 @@ test.describe("bottom preservation", () => {
         (document.documentElement.scrollHeight - window.innerHeight) / 2
       )
     );
+    await waitForStableScroll(page);
     const before = await tagLandmark(page);
     expect(before.landmarkTop).not.toBeNull();
 
