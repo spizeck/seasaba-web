@@ -1,4 +1,11 @@
-import { test, expect, hydratedGoto, clickNavLink } from "./fixtures";
+import {
+  test,
+  expect,
+  hydratedGoto,
+  clickNavLink,
+  waitForStableScroll,
+  scrollToBottomSettled,
+} from "./fixtures";
 
 // Logical scroll-position preservation on viewport resize (issue #140).
 //
@@ -41,12 +48,6 @@ async function measure(page: import("@playwright/test").Page): Promise<Geo> {
       hOverflow: doc.scrollWidth - doc.clientWidth,
     };
   });
-}
-
-async function scrollToBottom(page: import("@playwright/test").Page) {
-  await page.evaluate(() =>
-    window.scrollTo(0, document.documentElement.scrollHeight)
-  );
 }
 
 type Reading = {
@@ -157,7 +158,7 @@ async function traceLandmarkDuring(
     await page.setViewportSize({ width: w, height: 800 });
     await page.waitForTimeout(30);
   }
-  await page.waitForTimeout(SETTLE_WAIT);
+  await waitForStableScroll(page);
   return page.evaluate(
     () => (window as unknown as { __lmTrace: number[] }).__lmTrace
   );
@@ -190,13 +191,13 @@ test.describe("bottom preservation", () => {
 
       await page.setViewportSize({ width: 1280, height: 800 });
       await hydratedGoto(page, path);
-      await scrollToBottom(page);
+      await scrollToBottomSettled(page);
       const before = await measure(page);
       expect(before.fromBottom).toBeLessThanOrEqual(BOTTOM_TOLERANCE);
 
       // 1280→768 crosses lg/md and reflows grids to taller stacks.
       await page.setViewportSize({ width: 768, height: 800 });
-      await page.waitForTimeout(SETTLE_WAIT);
+      await waitForStableScroll(page);
       const after = await measure(page);
 
       expect(
@@ -223,11 +224,12 @@ test.describe("bottom preservation", () => {
         document.documentElement.scrollHeight - window.innerHeight - 200
       )
     );
+    await waitForStableScroll(page);
     const before = await measure(page);
     expect(before.fromBottom).toBeGreaterThan(150);
 
     await page.setViewportSize({ width: 768, height: 800 });
-    await page.waitForTimeout(SETTLE_WAIT);
+    await waitForStableScroll(page);
     const after = await measure(page);
 
     // Same distance from the bottom restored — not 0, not the old scrollY.
@@ -244,10 +246,10 @@ test.describe("bottom preservation", () => {
 
     await page.setViewportSize({ width: 768, height: 800 });
     await hydratedGoto(page, "/diving");
-    await scrollToBottom(page);
+    await scrollToBottomSettled(page);
 
     await page.setViewportSize({ width: 1280, height: 800 });
-    await page.waitForTimeout(SETTLE_WAIT);
+    await waitForStableScroll(page);
     const after = await measure(page);
 
     expect(after.fromBottom).toBeLessThanOrEqual(BOTTOM_TOLERANCE);
@@ -263,12 +265,13 @@ test.describe("bottom preservation", () => {
     // responsively, so the keeper must leave the scroll offset alone.
     await page.setViewportSize({ width: 1280, height: 800 });
     await hydratedGoto(page, "/plan-your-trip");
-    await scrollToBottom(page);
+    await scrollToBottomSettled(page);
     const before = await measure(page);
     expect(before.fromBottom).toBeLessThanOrEqual(BOTTOM_TOLERANCE);
 
     await page.setViewportSize({ width: 1280, height: 500 });
     await page.waitForTimeout(SETTLE_WAIT);
+    await waitForStableScroll(page);
     const after = await measure(page);
 
     // No correction: same scroll offset (±sub-pixel rounding), document
@@ -284,10 +287,12 @@ test.describe("bottom preservation", () => {
     await page.setViewportSize({ width: 1280, height: 800 });
     await hydratedGoto(page, "/diving");
     await page.evaluate(() => window.scrollTo(0, 4000));
+    await waitForStableScroll(page);
     const before = await measure(page);
 
     await page.setViewportSize({ width: 1280, height: 1100 });
     await page.waitForTimeout(SETTLE_WAIT);
+    await waitForStableScroll(page);
     const after = await measure(page);
 
     expect(Math.abs(after.y - before.y)).toBeLessThanOrEqual(2);
@@ -307,11 +312,12 @@ test.describe("bottom preservation", () => {
         (document.documentElement.scrollHeight - window.innerHeight) / 2
       )
     );
+    await waitForStableScroll(page);
     const before = await tagLandmark(page);
     expect(before.landmarkTop).not.toBeNull();
 
     await page.setViewportSize({ width: 768, height: 800 });
-    await page.waitForTimeout(SETTLE_WAIT);
+    await waitForStableScroll(page);
     const after = await verifyLandmark(page);
     const geo = await measure(page);
 
@@ -361,13 +367,14 @@ test.describe("content landmark preservation", () => {
       await hydratedGoto(page, "/diving");
       const url = page.url();
       await scrollIntoMixedGroups(page);
-      await page.waitForTimeout(150); // let the keeper sample the landmark
+      // Let the scroll commit and the keeper sample the landmark.
+      await waitForStableScroll(page);
       const before = await tagLandmark(page);
       expect(before.section).toBe("mixed-experience");
       expect(before.landmarkTop).not.toBeNull();
 
       await page.setViewportSize({ width: to, height: 800 });
-      await page.waitForTimeout(SETTLE_WAIT);
+      await waitForStableScroll(page);
       const after = await verifyLandmark(page);
 
       // The sticky pill nav really did reflow — the scenario under test.
@@ -402,12 +409,12 @@ test.describe("content landmark preservation", () => {
       const docTop = el.getBoundingClientRect().top + window.scrollY;
       window.scrollTo(0, docTop - 200);
     });
-    await page.waitForTimeout(150);
+    await waitForStableScroll(page);
     const before = await tagLandmark(page);
     expect(before.section).toBe("certification");
 
     await page.setViewportSize({ width: 768, height: 800 });
-    await page.waitForTimeout(SETTLE_WAIT);
+    await waitForStableScroll(page);
     const after = await verifyLandmark(page);
 
     expect(after.section).toBe("certification");
@@ -431,7 +438,7 @@ test.describe("content landmark preservation", () => {
     await page.setViewportSize({ width: 1280, height: 800 });
     await hydratedGoto(page, "/diving");
     await scrollIntoMixedGroups(page);
-    await page.waitForTimeout(150);
+    await waitForStableScroll(page);
     const before = await tagLandmark(page);
     expect(before.landmarkTop).not.toBeNull();
 
@@ -480,12 +487,12 @@ test.describe("homepage landmark preservation", () => {
           document.documentElement.scrollHeight - window.innerHeight;
         window.scrollTo(0, f >= 0 ? max * f : max + f);
       }, frac);
-      await page.waitForTimeout(150);
+      await waitForStableScroll(page);
       const before = await tagLandmark(page);
       expect(before.landmarkTop).not.toBeNull();
 
       await page.setViewportSize({ width: 768, height: 800 });
-      await page.waitForTimeout(SETTLE_WAIT);
+      await waitForStableScroll(page);
       const after = await verifyLandmark(page);
 
       // Same element, same gap below the chrome — the visitor never left
@@ -513,7 +520,7 @@ test.describe("homepage landmark preservation", () => {
         (document.documentElement.scrollHeight - window.innerHeight) * 0.66
       )
     );
-    await page.waitForTimeout(150);
+    await waitForStableScroll(page);
     const before = await tagLandmark(page);
     expect(before.landmarkTop).not.toBeNull();
 
@@ -542,7 +549,7 @@ test("fragment deep links still land on their section", async ({
   // Resizing while a deep-linked section is on screen must not snap the
   // visitor to the bottom: #where-to-stay sits far above the footer.
   await page.setViewportSize({ width: 768, height: 800 });
-  await page.waitForTimeout(SETTLE_WAIT);
+  await waitForStableScroll(page);
   const geo = await measure(page);
   expect(geo.fromBottom).toBeGreaterThan(1500);
 });
@@ -553,6 +560,9 @@ test("back/forward scroll restoration still works", async ({
 }) => {
   await hydratedGoto(page, "/diving");
   await page.evaluate(() => window.scrollTo(0, 4000));
+  // WebKit commits programmatic scrolls asynchronously — wait for the
+  // commit before sampling `before`, or the baseline itself is wrong.
+  await waitForStableScroll(page);
   const before = await measure(page);
   expect(before.y).toBeGreaterThan(3000);
 
@@ -566,9 +576,12 @@ test("back/forward scroll restoration still works", async ({
     page.getByRole("heading", { name: "Diving with Sea Saba" })
   ).toBeVisible();
   // Browser restores the prior offset; the keeper never runs (no resize).
+  // Restoration commits asynchronously — under CPU contention the first
+  // reading past 3000 is mid-flight, so poll the real contract (restored
+  // ≈ recorded) instead of sampling once after a threshold crossing.
   await expect
-    .poll(async () => (await measure(page)).y)
-    .toBeGreaterThan(3000);
-  const restored = await measure(page);
-  expect(Math.abs(restored.y - before.y)).toBeLessThan(800);
+    .poll(async () =>
+      Math.abs((await measure(page)).y - before.y)
+    )
+    .toBeLessThan(800);
 });

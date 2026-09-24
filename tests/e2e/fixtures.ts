@@ -143,6 +143,93 @@ export async function hydratedGoto(page: Page, url: string, hydrateProbe?: strin
   return response;
 }
 
+// Programmatic scrolls commit asynchronously (WebKit especially — a read
+// right after scrollTo can return the pre-scroll position), and a responsive
+// reflow keeps moving scrollY while ScrollPositionKeeper corrects drift.
+// The keeper's burst also schedules a final correction 150ms after the last
+// document-size change, so frame-count stability is not enough: geometry can
+// sit unchanged for a few frames while that correction is still pending.
+// Resolves only once scrollY, document height, and viewport width have been
+// unchanged for `quietMs` of real time (default 200ms > the keeper's 150ms
+// settle window, so its final correction has already run). Use after
+// scrollTo/setViewportSize instead of a fixed sleep whenever the next step
+// asserts measured geometry.
+export async function waitForStableScroll(page: Page, quietMs = 200) {
+  await page.waitForFunction(
+    (quiet) =>
+      new Promise<boolean>((resolve) => {
+        let lastY = NaN;
+        let lastH = NaN;
+        let lastW = NaN;
+        let lastChange = performance.now();
+        const sample = () => {
+          const y = window.scrollY;
+          const h = document.documentElement.scrollHeight;
+          const w = window.innerWidth;
+          if (y !== lastY || h !== lastH || w !== lastW) {
+            lastY = y;
+            lastH = h;
+            lastW = w;
+            lastChange = performance.now();
+          }
+          if (performance.now() - lastChange >= quiet) resolve(true);
+          else requestAnimationFrame(sample);
+        };
+        requestAnimationFrame(sample);
+      }),
+    quietMs
+  );
+}
+
+// Scrolls to the document bottom and resolves only once the browser has
+// actually committed there. Three failure modes of a one-shot
+// "scrollTo then check distance-from-bottom" that this avoids:
+// - scrollTo(0, scrollHeight) reads a snapshot of the document height; a
+//   mid-reflow value can land the scroll short of the eventual bottom.
+// - a transient reflow collapse clamps scrollY to 0 while scrollHeight
+//   ≈ innerHeight, so a distance check passes vacuously on an unscrolled
+//   page.
+// - the document can keep growing after the bottom is first reached, so a
+//   frame streak alone can pass above the final bottom.
+// The scroll is re-requested while "at bottom" does not hold, and the wait
+// succeeds only once scrollY > 0, the offset is at the bottom, and both
+// scrollY and document height have been unchanged for `quietMs` — the same
+// stability window waitForStableScroll uses, covering the keeper's 150ms
+// post-reflow settle.
+// Callers must be on a scrollable page (doc taller than the viewport).
+export async function scrollToBottomSettled(page: Page, quietMs = 200) {
+  await page.waitForFunction(
+    (quiet) =>
+      new Promise<boolean>((resolve) => {
+        let lastY = NaN;
+        let lastH = NaN;
+        let lastChange = performance.now();
+        let lastScroll = 0;
+        const check = () => {
+          const doc = document.documentElement;
+          const y = window.scrollY;
+          const h = doc.scrollHeight;
+          if (y !== lastY || h !== lastH) {
+            lastY = y;
+            lastH = h;
+            lastChange = performance.now();
+          }
+          const atBottom = y > 0 && h - y - window.innerHeight <= 4;
+          if (atBottom && performance.now() - lastChange >= quiet) {
+            return resolve(true);
+          }
+          if (!atBottom && performance.now() - lastScroll > 100) {
+            lastScroll = performance.now();
+            window.scrollTo(0, h);
+          }
+          requestAnimationFrame(check);
+        };
+        check();
+      }),
+    quietMs
+  );
+}
+
 // Clicks a named primary-nav destination, opening the mobile menu first when
 // the project runs a mobile device profile.
 export async function clickNavLink(page: Page, name: string, isMobile?: boolean) {
