@@ -25,6 +25,7 @@ const EXPLORE_LINKS = [
   { label: "Courses",     href: "/courses" },
   { label: "About",       href: "/about" },
   { label: "Contact",     href: "/contact" },
+  { label: "Support Saba", href: "/donate" },
 ] as const;
 
 const RESOURCE_LINKS: { label: string; href: string; external?: boolean; ariaLabel?: string }[] = [

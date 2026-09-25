@@ -30,6 +30,7 @@ const PUBLIC_PAGES = [
   { path: "/dive-sites", name: "dive sites" },
   { path: "/about", name: "about" },
   { path: "/dive-log", name: "dive log" },
+  { path: "/donate", name: "support saba" },
 ];
 
 const MOBILE_SCAN_PAGES = ["/", "/contact", "/book"];

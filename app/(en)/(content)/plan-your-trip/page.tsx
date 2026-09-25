@@ -939,6 +939,12 @@ export default function PlanYourTripPage() {
             </ul>
           </div>
         </div>
+        <p className="mt-8 text-sm text-muted-foreground">
+          Many visitors leave asking how they can give something back to the island.{" "}
+          <Link href="/donate" className="font-medium text-primary underline-offset-4 hover:underline">
+            See ways to support Saba
+          </Link>.
+        </p>
       </section>
 
       {/* FAQ */}
