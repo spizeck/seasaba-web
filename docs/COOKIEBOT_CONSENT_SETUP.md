@@ -12,6 +12,49 @@ custom events, Checkfront).
 configuration — it cannot be expressed as application source code, since the
 Cookiebot script itself is deployed through GTM, not through Next.js.
 
+> **Deployed architecture (verified against the live container, #167):**
+> consent is enforced in **four independent layers**, not one:
+>
+> 1. **Cookiebot CMP → Google Consent Mode** (Consent Initialization):
+>    `ad_storage`, `ad_user_data`, `ad_personalization`, `analytics_storage`
+>    default to denied; updates fire on `cookie_consent_update`.
+> 2. **GTM Additional Consent Checks** — hard gates that prevent the tag
+>    from executing at all: the Clarity template tag requires
+>    `analytics_storage`; the Meta Pixel tag requires `ad_storage`.
+> 3. **Microsoft UET Advanced Consent Mode** — the UET base tag deliberately
+>    stays ungated so Microsoft receives consent-state signals, but an
+>    explicit `uetq consent default {ad_storage: denied}` tag runs at
+>    Consent Initialization (before `bat.js`) and GTM consent updates are
+>    forwarded. Denied-state beacons (`evt=consent`, `asc=D`) and `null|…`
+>    placeholder `_uetsid`/`_uetvid` values are legitimate; real identifiers
+>    pre-consent are a defect.
+> 4. **Clarity Consent API v2** — a `clarity("consentv2", {ad_Storage:
+>    denied, analytics_Storage: denied})` command queues at Consent
+>    Initialization, and a sync tag on `cookie_consent_update` maps the GTM
+>    consent state into `ad_Storage`/`analytics_Storage`, so Clarity's own
+>    consent model stays aligned once `clarity.js` is allowed to load. The
+>    Clarity project's **Cookies** setting is OFF.
+>
+> Repository-side, `connect-src` must also permit `https://bat.bing.net` —
+> UET posts its consent default/update there (`/actionp`) — added in #169.
+>
+> **Residual issue (audit-verified):** `bat.js` still loads its
+> **UET-Insights Clarity sidecar** — `clarity.ms/tag/uet/187264257` →
+> `clarity.js` → `*.clarity.ms/collect` + `CLID`/`MUID` — in every consent
+> state (blocking `bat.bing.com` removes all `clarity.ms` traffic; the gated
+> Clarity GTM tag itself is correctly suppressed). No first-party
+> `_clck`/`_clsk` are written and `consentv2` reports denied/denied, but
+> session telemetry still flows pre-consent. The UET-Insights toggle must
+> be disabled at its source (Microsoft Ads / Clarity integration settings)
+> and the dashboard state re-verified — `scripts/consent-audit.mjs` fails
+> until `clarity.ms/tag/uet` stops loading in denied states.
+>
+> Verified behavior: denied/no-choice → Clarity denied/denied, no
+> `_clck`/`_clsk`, no Meta requests; Allow All → Clarity granted/granted
+> and normal cookies appear. Re-verify any change with
+> `node scripts/consent-audit.mjs` (three consent states, fresh contexts —
+> it distinguishes denied-state signaling from consented tracking).
+
 ---
 
 ## 1. Code Changes Made in This Repo
@@ -134,10 +177,10 @@ added when a tag has no native awareness of Consent Mode.
 | GA4 Configuration / GA4 Event tags | `analytics_storage` | — |
 | Google Ads Conversion | `ad_storage`, `ad_user_data`, `ad_personalization` | — |
 | Google Ads Remarketing | `ad_storage`, `ad_user_data`, `ad_personalization` | — |
-| Microsoft UET Base tag | none natively | See Section 2.5 (Advanced Consent Mode pattern) |
-| Microsoft UET Custom Purchase Conversion | none natively | `ad_storage` |
-| Microsoft Clarity | none natively | `analytics_storage` (documented choice — see note below) |
-| Meta Pixel | none natively (unless using Meta's official GTM template with consent support) | `ad_storage` |
+| Microsoft UET Base tag | `__baut` template reads/forwards GTM consent to `uetq` | **None — intentionally ungated** (Advanced Consent Mode, §2.5); denied state travels via `uetq`, not tag suppression |
+| Microsoft UET custom-event + purchase tags | same `uetq` channel | **None** — events are sent denied (`asc=D`) until consent updates `uetq` |
+| Microsoft Clarity | none natively | `analytics_storage` (documented choice — see note below) — **deployed** |
+| Meta Pixel | none natively (unless using Meta's official GTM template with consent support) | `ad_storage` — **deployed** |
 | Custom click/form event tags (dataLayer-based) | N/A — these fire regardless of marketing/statistics consent since they only push to `dataLayer`, they do not themselves set third-party cookies | No consent check needed on the *push*; the check belongs on whichever downstream tag consumes the event |
 | Checkfront booking tracking (native Checkfront GTM beta) | N/A — necessary functional tracking | Do not gate; see Section 2.7 |
 
@@ -149,10 +192,11 @@ mix both.
 
 ### 2.5 Microsoft UET — Advanced Consent Mode
 
-Microsoft's dashboard currently reports **"UET Consent Mode Status: Need
-attention."** Fix with three GTM tags:
+UET runs Microsoft's **Advanced Consent Mode**: the base tag loads in every
+consent state so Microsoft still receives consent-state signals, but all
+cookie/identifier use is governed by `uetq consent` commands. Deployed as:
 
-**Tag 1 — `Microsoft UET - Consent Default`**
+**Tag 1 — `Microsoft UET - Consent Default`** — **required, do not skip.**
 ```js
 window.uetq = window.uetq || [];
 window.uetq.push("consent", "default", {
@@ -161,85 +205,87 @@ window.uetq.push("consent", "default", {
 ```
 - Trigger: **Consent Initialization - All Pages**
 - Must fire before the UET base tag.
+- Verified needed: without this tag, `bat.js` initializes unrestricted and
+  writes **real** `_uetsid`/`_uetvid` identifiers pre-consent. The `__baut`
+  template's own `gtm_default` consent source reads `dataLayer` consent
+  entries, but the Cookiebot template sets its defaults via the sandbox
+  `setDefaultConsentState` API — which produces no `dataLayer` entry — so
+  the template's inherited default never materializes. With this explicit
+  denied push queued before `bat.js` loads, Microsoft runs its documented
+  cookieless mode (placeholder `null|…` cookie values at most, `asc=D` on
+  beacons) instead of real identifiers.
 
-**Tag 2 — `Microsoft UET - Consent Granted`**
-```js
-window.uetq = window.uetq || [];
-window.uetq.push("consent", "update", {
-  ad_storage: "granted"
-});
-```
-- Trigger: Cookiebot marketing-consent-granted trigger (the Cookiebot
-  template exposes a consent-update event/variable — use it rather than
-  polling the DOM or banner text).
-
-**Tag 3 — `Microsoft UET - Consent Denied`**
-```js
-window.uetq = window.uetq || [];
-window.uetq.push("consent", "update", {
-  ad_storage: "denied"
-});
-```
-- Trigger: Cookiebot consent-update event where marketing = false (covers
-  both an explicit "Reject" and a later withdrawal via "Cookie Settings").
+**Consent updates — handled by the UET template itself.** The deployed
+`__baut` base tag has GTM consent integration enabled: it forwards GTM
+consent updates to `uetq` automatically (observed as
+`evt=consent&src=update&asc=G` and `evt=gtmConsent` beacons to
+`bat.bing.com`/`bat.bing.net` after Allow All). No separate
+`uetq.push('consent','update',…)` tags exist in the container — add them
+only if the template's integration is ever disabled, in which case mirror
+the default-tag pattern with granted/denied updates on the
+`cookie_consent_update` event.
 
 **Important:** Per Microsoft's Advanced Consent Mode model, the **UET base
-tag itself should still load** (it does not need to be blocked by a
-marketing-consent trigger) — it just needs to receive the `denied` default
-from Tag 1 before it initializes, so it can still send cookieless
-conversion-modeling signals. Blocking the base tag entirely would prevent
-Microsoft from receiving any consent-state signal at all, which is what
-triggers "Need attention" in the first place.
+tag itself should still load** — it is intentionally *not* gated by a
+marketing-consent check, so it can send cookieless denied-state signals.
+Blocking it entirely would prevent Microsoft from receiving any
+consent-state signal at all (the "Need attention" dashboard condition).
+Likewise the UET custom-event and purchase tags carry no additional
+consent check — they push through `uetq`, which already carries the denied
+state, so their events are sent denied (`asc=D`) rather than suppressed.
 
-**Existing Microsoft purchase tag:** do not change unless testing in Section
-4 reveals a problem. It should continue to fire with:
-- `EventAction: purchase`
-- Revenue: Checkfront revenue variable
-- Currency: `USD`
-- Transaction ID: Checkfront booking ID
+**UET Insights sidecar — residual issue.** `bat.js` still requests
+`clarity.ms/tag/uet/187264257?conversions=1` in every consent state
+(verified: blocking `bat.bing.com` removes *all* `clarity.ms` traffic),
+which pulls `clarity.js`, `*.clarity.ms/collect` telemetry and `CLID`/`MUID`
+cookies. The UET-Insights toggle was switched off in the dashboard but the
+sidecar still loads — re-verify the toggle location (Microsoft Ads ⇄
+Clarity integration settings) and propagation. `scripts/consent-audit.mjs`
+fails denied states until this request disappears.
 
-Add the `ad_storage` Additional Consent Check from the table in 2.4 to this
-tag so it respects denied consent, but leave its trigger and other fields
-untouched.
+**Existing Microsoft purchase tag:** fires with `EventAction: purchase`,
+Checkfront revenue, `USD`, booking transaction ID — unchanged; its events
+now flow through the denied-then-granted `uetq` state like the rest.
 
 ### 2.6 Microsoft Clarity Consent
 
-Preferred: if the currently installed Clarity tag/snippet version supports
-consuming Google Consent Mode natively, no separate Clarity API calls are
-needed beyond the `analytics_storage` Additional Consent Check in 2.4 —
-verify this against the exact Clarity snippet version installed before
-adding anything else.
+Deployed as **three complementary controls** (verified in the live
+container, #167):
 
-If the installed Clarity tag does **not** honor Consent Mode automatically
-and Clarity Consent API v2 calls are required, add tags with triggers on
-Cookiebot's statistics/marketing consent-update events:
+**A. Tag gate (primary).** The Clarity GTM template tag
+(`__cvt_MQDKZ`, project `xq4re63wsc`) has no Consent Mode awareness — it
+injects `clarity.ms/tag/xq4re63wsc` whenever it fires — so it carries the
+`analytics_storage` Additional Consent Check from §2.4. Denied → the tag
+never executes: no `clarity.js`, no `_clck`/`_clsk`, no
+`*.clarity.ms/collect`, no cookie-sync pixels, and no
+`clarity.ms/tag/uet/…` loader. Granted → the tag fires normally.
 
-```js
-// Statistics granted only
-clarity("consentv2", {
-  ad_Storage: "denied",
-  analytics_Storage: "granted"
-});
+**B. Clarity Consent API v2 tags.** Even with the tag gated, explicit
+`consentv2` commands keep Clarity's own consent model aligned with
+Cookiebot/GCM (defense in depth — it also covers any future path that
+loads Clarity outside the gated tag):
 
-// Statistics + Marketing granted
-clarity("consentv2", {
-  ad_Storage: "granted",
-  analytics_Storage: "granted"
-});
+- `Clarity Consent Default` (custom HTML, **Consent Initialization – All
+  Pages**): creates the queue stub and pushes denied defaults.
+  ```js
+  window.clarity = window.clarity || function(){(window.clarity.q=window.clarity.q||[]).push(arguments)};
+  window.clarity("consentv2", { ad_Storage: "denied", analytics_Storage: "denied" });
+  ```
+- `Clarity Consent Sync` (custom HTML, **Custom Event:
+  `cookie_consent_update`**): reads the GTM consent state
+  (`window.google_tag_data.ics.entries`) and pushes the mapped values —
+  `ad_Storage` ← `ad_storage`, `analytics_Storage` ← `analytics_storage` —
+  so an Allow-All maps to granted/granted and a withdrawal maps back to
+  denied/denied.
 
-// Denied / withdrawn
-clarity("consentv2", {
-  ad_Storage: "denied",
-  analytics_Storage: "denied"
-});
-```
+**C. Project-level settings.** In the Clarity dashboard: **Cookies OFF**
+(so even a loaded `clarity.js` cannot persist identifiers without consent)
+and **UET Insights disabled** — intended to remove the
+`clarity.ms/tag/uet` sidecar, though the audit still observes it loading
+via `bat.js` (see §2.5 residual issue).
 
-Verify exact casing (`ad_Storage`, `analytics_Storage`) and method name
-against Clarity's current documentation before shipping — Microsoft has
-changed this API's shape between versions. **Do not** ship both the Consent
-Mode integration and duplicate manual `clarity("consentv2", ...)` calls
-unless testing shows Consent Mode alone isn't reaching Clarity (i.e., pick
-one method, not both).
+Verified: denied → Clarity reports denied/denied and `_clck`/`_clsk` stay
+absent; Allow All → granted/granted and normal cookies appear.
 
 ### 2.7 Meta Pixel Consent
 
@@ -287,6 +333,11 @@ fresh profile, load the site with the real Cookiebot CMP tag live in GTM, and
 confirm no CSP violations appear for any Cookiebot-related request** — if a
 host is missing from the table above, add only that specific host, not a
 wildcard.
+
+**Non-Cookiebot consent-path CSP (#169):** `connect-src` must also include
+`https://bat.bing.net` — `bat.js` posts UET consent defaults/updates to
+`bat.bing.net/actionp`, a sibling of the `bat.bing.com` beacon host. Both
+exact origins are required; neither is a wildcard.
 
 ---
 
@@ -379,7 +430,19 @@ running each case against the live GTM Preview + production deployment.
 
 ## 7. Validation Tools
 
-1. **GTM Preview / Tag Assistant** — Consent tab: confirm defaults at Consent
+1. **`node scripts/consent-audit.mjs`** — deterministic production replay of
+   the three consent states (fresh Playwright contexts; add `webkit` arg for
+   WebKit). Classifies traffic against the deployed architecture: any
+   `clarity.ms`/Facebook request, real `_clck`/`_clsk`/`_ga`/`MUID`/`CLID`/`fr`
+   cookie, real (non-`null|`) `_uetsid`/`_uetvid` value, or `asc=G` UET signal
+   in a denied state is reported as a violation — while denied-mode artifacts
+   (UET `evt=consent`/`asc=D` beacons, `null|` placeholders, GA `gcs=G1x0`
+   pings, fraud-prevention cookies) are reported as expected. Manual use
+   only — it loads the real GTM container and generates real vendor hits.
+   GTM's production configuration cannot be exercised in CI (the local suite
+   mocks vendors; the production smoke suite blocks all tracker hosts by
+   design), so this script is the repeatable verification.
+2. **GTM Preview / Tag Assistant** — Consent tab: confirm defaults at Consent
    Initialization and updates after each user choice; confirm each tag's
    listed consent state matches Section 2.4.
 2. **Browser DevTools → Application → Cookies** — inspect before/after each

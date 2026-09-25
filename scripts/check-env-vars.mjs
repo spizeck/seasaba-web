@@ -32,6 +32,7 @@ const TOOLING_ALLOWLIST = new Set([
   "CHROME_PATH",
   "PLAYWRIGHT_BROWSERS_PATH",
   "SMOKE_BASE_URL",
+  "CONSENT_AUDIT_URL",
   "NEXT_TELEMETRY_DISABLED",
   "NODE_ENV",
   // Supplied by the Next.js runtime / Vercel platform, not app config.
