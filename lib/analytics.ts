@@ -13,6 +13,8 @@ export type AnalyticsEvent =
   | "whatsapp_click"
   | "directions_click"
   | "donation_click"
+  | "donation_request_started"
+  | "donation_request_submitted"
   | "ferry_link_click"
   | "social_click"
   | "pdf_download"

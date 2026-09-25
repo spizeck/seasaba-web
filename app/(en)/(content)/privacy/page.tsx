@@ -22,7 +22,7 @@ export default function PrivacyPage() {
       </p>
 
       <p className="mt-2 text-sm text-muted-foreground">
-        Last updated: August 2026
+        Last updated: September 2026
       </p>
 
       <div className="mt-10 space-y-10">
@@ -38,6 +38,7 @@ export default function PrivacyPage() {
             <li>Travel dates and booking details</li>
             <li>Certification level and dive experience</li>
             <li>Information submitted through reservation forms</li>
+            <li>Donation, sponsorship, or community-support request details you send us</li>
             <li>Information submitted through liability waivers or medical questionnaires, when applicable</li>
             <li>Messages and inquiries</li>
             <li>Payment and transaction information necessary to process reservations</li>
@@ -131,9 +132,9 @@ export default function PrivacyPage() {
             If you contact Sea Saba through email, WhatsApp, website chat, or website forms, we may retain those communications to provide customer service and assist with future inquiries.
           </p>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-            Our website contact form does not transmit your message to us directly — it opens a
-            pre-filled email in your own email application, and the message is sent from your email
-            account when you choose to send it.
+            Our website contact and support-request forms do not transmit your message to us
+            directly — they open a pre-filled email in your own email application, and the message
+            is sent from your email account when you choose to send it.
           </p>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
             The website chat widget is provided by Respond.io. When you open the chat and submit the

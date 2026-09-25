@@ -33,7 +33,7 @@ const PUBLIC_PAGES = [
   { path: "/donate", name: "support saba" },
 ];
 
-const MOBILE_SCAN_PAGES = ["/", "/contact", "/book"];
+const MOBILE_SCAN_PAGES = ["/", "/contact", "/book", "/donate"];
 
 test.describe("automated axe scans", () => {
   for (const { path, name } of PUBLIC_PAGES) {
@@ -70,6 +70,16 @@ test.describe("automated axe scans", () => {
     // Error text is always mounted but `invisible` until the field is touched.
     await expect(page.locator("#name-error")).not.toHaveClass(/invisible/);
     await expect(page.locator("#email-error")).not.toHaveClass(/invisible/);
+    await expectNoAxeViolations(page);
+  });
+
+  test("donate request form with validation errors shown has no accessibility violations", async ({ page, isMobile, browserName }) => {
+    test.skip(isMobile || browserName !== "chromium", "representative scan on desktop-chromium");
+    await hydratedGoto(page, "/donate", "#sr-name");
+    await page.getByRole("button", { name: "Continue to email" }).click();
+    // Error text is always mounted but `invisible` until the field is touched.
+    await expect(page.locator("#sr-name-error")).not.toHaveClass(/invisible/);
+    await expect(page.locator("#sr-email-error")).not.toHaveClass(/invisible/);
     await expectNoAxeViolations(page);
   });
 

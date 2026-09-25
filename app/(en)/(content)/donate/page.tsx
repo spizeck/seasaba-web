@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createMetadata } from "@/lib/metadata";
 import { PageHero } from "@/components/page-hero";
 import { DonationsSection } from "@/components/donations/donations-section";
+import { CommunitySupportSection } from "@/components/donations/community-support-section";
 import { DONATION_RECIPIENTS } from "@/data/donations";
 import { OPERATIONS } from "@/data/operations";
 import { divingAnchors } from "@/lib/anchors";
@@ -9,7 +10,7 @@ import { divingAnchors } from "@/lib/anchors";
 export const metadata = createMetadata({
   title: "Support Saba",
   description:
-    "Ways to support Saba beyond your visit — island conservation and community organizations you can donate to directly. Sea Saba never collects or processes donations.",
+    "Ways to support Saba beyond your visit — and how island organizations, projects, and events can request a donation or sponsorship from Sea Saba.",
   path: "/donate",
 });
 
@@ -20,19 +21,27 @@ export default function DonatePage() {
         src="/images/optimized/windwardside-village-saba.webp"
         alt="Colorful red-roofed cottages of Windwardside village on the green hillside of Saba"
         title="Support Saba"
-        subtitle="Ways to give back to the island beyond your visit"
+        subtitle="Giving back to the island — and asking us to help"
       />
 
       <p className="text-base leading-relaxed text-muted-foreground">
         Visitors fall for Saba quickly — the reefs, the trails, the quiet
         villages, and the people who keep it all running. Many guests ask how
-        they can give something back once they&apos;re home, and this page is
-        our answer.
+        they can give something back once they&apos;re home. And on the island
+        itself, community groups, teams, and projects regularly need a hand.
+        This page is for both.
       </p>
       <p className="mt-3 text-base leading-relaxed text-muted-foreground">
-        The most meaningful support goes straight to the island organizations
-        doing the work — the people protecting the marine park, caring for the
-        community, and keeping Saba the place you remember.
+        If you&apos;re a visitor, the most meaningful support goes straight to
+        the island organizations doing the work. If you&apos;re on Saba and
+        looking for a donation or sponsorship from Sea Saba, scroll down to{" "}
+        <Link
+          href="/donate#request-support"
+          className="font-medium text-primary underline-offset-4 hover:underline"
+        >
+          Request Support from Sea Saba
+        </Link>
+        .
       </p>
 
       {/* Your Visit Already Helps */}
@@ -82,6 +91,12 @@ export default function DonatePage() {
           donated funds — each organization manages its own gifts and receipts.
         </p>
       </section>
+
+      {/* Request Support from Sea Saba — the other half of the page: local
+          organizations and project leads asking Sea Saba for help. All policy
+          content renders from data/community-support.ts (DRAFT pending owner
+          review). */}
+      <CommunitySupportSection />
     </>
   );
 }
