@@ -75,6 +75,7 @@ async function audit(scenario) {
   await page.waitForTimeout(9000);
 
   let action = "none";
+  let actionError = null;
   if (scenario !== "none") {
     const selectors =
       scenario === "decline"
@@ -91,6 +92,9 @@ async function audit(scenario) {
         action = s;
         break;
       }
+    }
+    if (action === "none") {
+      actionError = `${scenario}: no Cookiebot control was clickable — banner missing or selectors changed`;
     }
     await page.waitForTimeout(6000);
   }
@@ -130,6 +134,19 @@ async function audit(scenario) {
       : null
   );
 
+  // Fail loudly when the requested consent action never took effect —
+  // otherwise a missing banner or renamed selector silently produces a
+  // report for a scenario that never actually ran.
+  if (scenario !== "none" && !actionError) {
+    const expected =
+      scenario === "decline"
+        ? cb?.hasResponse === true && cb.statistics === false && cb.marketing === false
+        : cb?.hasResponse === true && cb.statistics === true && cb.marketing === true;
+    if (!expected) {
+      actionError = `${scenario}: clicked "${action}" but Cookiebot state is ${JSON.stringify(cb)} — the ${scenario} scenario did not actually run`;
+    }
+  }
+
   const denied = scenario !== "accept";
   const violations = [];
   if (denied) {
@@ -154,6 +171,7 @@ async function audit(scenario) {
   console.log("UET cookies — real:", uetReal.join(", ") || "(none)", "| placeholders:", uetPlaceholder.join(", ") || "(none)");
   console.log("UET localStorage:", Object.keys(storage).join(", ") || "(none)", uetLsReal.length ? (denied ? "(real values — VIOLATION)" : "(real values — expected after consent)") : "");
   console.log("info (fraud-prevention carve-out):", info3p.join(", ") || "(none)");
+  if (actionError) console.log("ACTION FAILED:", actionError);
   if (denied) {
     console.log(violations.length ? `VIOLATIONS: ${violations.length}` : "PASS — no consented tracking");
     for (const v of violations) console.log("   ", v);
@@ -162,7 +180,7 @@ async function audit(scenario) {
   }
 
   await browser.close();
-  return { scenario, violations: denied ? violations.length : null };
+  return { scenario, violations: denied ? violations.length : null, actionError };
 }
 
 const results = [];
@@ -172,7 +190,14 @@ for (const scenario of ["none", "decline", "accept"]) {
 console.log("\n===== summary =====");
 let failed = false;
 for (const r of results) {
-  console.log(`${r.scenario}: ${r.violations === null ? "informational" : r.violations === 0 ? "PASS" : `FAIL (${r.violations} violations)`}`);
-  if (r.violations) failed = true;
+  const status = r.actionError
+    ? `FAIL (action never ran: ${r.actionError})`
+    : r.violations === null
+      ? "informational"
+      : r.violations === 0
+        ? "PASS"
+        : `FAIL (${r.violations} violations)`;
+  console.log(`${r.scenario}: ${status}`);
+  if (r.violations || r.actionError) failed = true;
 }
 process.exit(failed ? 1 : 0);
