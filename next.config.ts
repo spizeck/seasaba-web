@@ -100,6 +100,10 @@ const cspDirectives: [string, string[]][] = [
       "https://www.google.com",
       "https://*.clarity.ms",
       "https://bat.bing.com",
+      // UET consent/beacon endpoint: bat.js posts consent defaults and
+      // updates to bat.bing.net/actionp, a sibling host to bat.bing.com
+      // (#169). Exact origin only — no *.bing.net wildcard.
+      "https://bat.bing.net",
       "https://connect.facebook.net",
       "https://www.facebook.com",
       "https://consent.cookiebot.com",
