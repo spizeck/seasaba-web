@@ -36,6 +36,9 @@
 | `phone_click` | Footer and contact page | Page parameters, link parameters, and legacy aliases |
 | `whatsapp_click` | Footer and contact form/page | Page parameters, sanitized link parameters, and legacy aliases |
 | `directions_click` | FindSeaSaba map card/tooltip | Page parameters, link parameters, and legacy aliases |
+| `donation_click` | `/donate` recipient "Donate directly" CTAs — outbound links to each organization's own donation page | Page parameters, link parameters, and legacy aliases |
+| `donation_request_started` | `/donate` "Request Support" form — first field focus | Page parameters and `button_location` only — **never** names, emails, request contents, amounts, or any field values |
+| `donation_request_submitted` | `/donate` "Request Support" form — a completed form continuing to the visitor's email app or WhatsApp (`method` distinguishes them). A handoff, not a confirmed send | Page parameters, `method`, `button_location` only — **never** request details |
 | `ferry_link_click` | Plan-your-trip and local partner ferry links | Page parameters, link parameters, and legacy aliases |
 | `social_click` | Social, partner, accommodation, and outbound resource links | Page parameters, link parameters, `partner_name` where applicable, and legacy aliases |
 | `pdf_download` | Dive-log PDF export | Page parameters, `dive_count`, `unit_system` |
@@ -69,8 +72,8 @@ diagnostic-only variables) and what each one does.
 
 `app/sitemap.ts` lists every canonical public route — `/`, `/diving`,
 `/dive-sites`, `/book`, `/plan-your-trip`, `/courses`, `/dive-log`,
-`/visiting-yachts`, `/about`, `/contact`, `/partners`, `/terms`, `/privacy`,
-`/cookie-policy` — driven by the `SITEMAP_ROUTES` table. It deliberately
+`/visiting-yachts`, `/about`, `/contact`, `/partners`, `/donate`, `/terms`,
+`/privacy`, `/cookie-policy` — driven by the `SITEMAP_ROUTES` table. It deliberately
 omits `lastModified`: no trustworthy content-modification date exists, and a
 build-time timestamp is a fake freshness signal crawlers discount. Add new
 public pages to the table; `tests/unit/seo.test.ts` guards the list.

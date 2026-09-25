@@ -1,7 +1,7 @@
 import { test, expect } from "./fixtures";
 import { legacyRedirects } from "../../data/redirects";
 
-const routes = ["/", "/diving", "/dive-sites", "/courses", "/plan-your-trip", "/about", "/contact", "/book", "/dive-log", "/partners", "/terms", "/privacy", "/cookie-policy"];
+const routes = ["/", "/diving", "/dive-sites", "/courses", "/plan-your-trip", "/about", "/contact", "/book", "/dive-log", "/partners", "/donate", "/terms", "/privacy", "/cookie-policy"];
 for (const path of routes) {
   test(`@smoke public page ${path} renders without authentication`, async ({ page }) => {
     const response = await page.goto(path);

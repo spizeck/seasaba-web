@@ -8,6 +8,7 @@ import PlanYourTripPage from "@/app/(en)/(content)/plan-your-trip/page";
 import VisitingYachtsPage from "@/app/(en)/(content)/visiting-yachts/page";
 import TermsPage from "@/app/(en)/(content)/terms/page";
 import PartnersPage from "@/app/(en)/(content)/partners/page";
+import DonatePage from "@/app/(en)/(content)/donate/page";
 import { Footer } from "@/components/footer";
 import {
   coursesAnchors,
@@ -76,6 +77,7 @@ describe("canonical anchors resolve to real section ids", () => {
   // /diving anchors are already covered by operations-sourcing.test.tsx.
   const idCheckCases: [string, React.ReactElement][] = [
     ["/", <HomePage key="home" />],
+    ["/donate", <DonatePage key="d" />],
     ...cases.map(([path, element]) => [path, element] as [string, React.ReactElement]),
   ];
 
@@ -152,6 +154,41 @@ describe("specific-purpose links carry canonical fragments", () => {
       );
       expect(link, `missing footer link for #${anchor}`).toBeTruthy();
     }
+  });
+
+  it("donate entry points resolve: footer, partners, and plan-your-trip", () => {
+    render(<Footer />);
+    expect(
+      screen.getByRole("link", { name: "Support Saba" }).getAttribute("href")
+    ).toBe("/donate");
+  });
+
+  it("partners conservation section and plan-your-trip island section link to /donate", () => {
+    const { container: partners } = render(<PartnersPage key="p" />);
+    const conservation = partners.querySelector(`#${partnersAnchors.conservationPartners}`);
+    expect(
+      Array.from(conservation?.querySelectorAll("a") ?? []).some(
+        (a) => a.getAttribute("href") === "/donate"
+      ),
+      "missing /donate link in partners conservation section"
+    ).toBe(true);
+
+    const { container: pyt } = render(<PlanYourTripPage key="pyt" />);
+    const history = pyt.querySelector(`#${planYourTripAnchors.history}`);
+    expect(
+      Array.from(history?.querySelectorAll("a") ?? []).some(
+        (a) => a.getAttribute("href") === "/donate"
+      ),
+      "missing /donate link in plan-your-trip island section"
+    ).toBe(true);
+  });
+
+  it("the donate page's internal links resolve", () => {
+    render(<DonatePage />);
+    expect(
+      hrefOf(/how the saba marine park works/i)
+    ).toBe(`/diving#${divingAnchors.marinePark}`);
+    expect(hrefOf(/^ask us$/i)).toBe("/contact");
   });
 
   it("where-to-stay on plan-your-trip offers a contact path", () => {
