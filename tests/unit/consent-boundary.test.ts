@@ -18,6 +18,8 @@ import { join } from "node:path";
 const TRACKER_PATTERNS = [
   "clarity.ms",
   "bat.bing.com",
+  "bat.bing.net",
+  "c.bing.com",
   "connect.facebook.net",
   "fbevents",
   "facebook.com/tr",
@@ -72,10 +74,12 @@ describe("consent boundary: trackers enter only via GTM", () => {
 
   it("the consent-gated tracker CSP allowances still exist (post-consent path)", () => {
     const text = readFileSync(join(process.cwd(), "next.config.ts"), "utf8");
-    // Clarity/UET are reached through GTM after consent — the CSP must still
-    // permit them or the granted-consent path breaks.
+    // Clarity/UET are reached through GTM — the CSP must still permit them
+    // or both the denied-state signaling (bat.bing.net consent posts, #169)
+    // and the granted-consent path break.
     expect(text).toContain("https://*.clarity.ms");
     expect(text).toContain("https://bat.bing.com");
+    expect(text).toContain("https://bat.bing.net");
     expect(text).toContain("https://consent.cookiebot.com");
   });
 });
