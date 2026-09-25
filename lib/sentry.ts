@@ -56,7 +56,53 @@ function isBreadcrumbList(value: unknown): value is Breadcrumb[] {
 }
 
 /**
+ * Detect the injected-mediafilter DataCloneError (#174).
+ *
+ * Some visitors' browsers run injected software — an extension, content
+ * filter, or AV web shield — that monkey-patches iframe property getters
+ * (`contentWindow`, `contentDocument`). Its `mediafilter.debugMessage` path
+ * calls `postMessage()` with the HTMLIFrameElement itself in the payload,
+ * which structured clone rejects, throwing inside the injected code. The
+ * files (`src/mediafilter.generic-wrapper.min.js`, `src/setup.js`) exist
+ * nowhere in this repo or the deployed bundle — production serves 404 for
+ * both — and the signature does not reproduce in a clean Chromium/WebKit.
+ * Respond.io and Clarity only trigger the wrapped getter; nothing on our
+ * side passes a DOM element to postMessage.
+ *
+ * The match is deliberately conjunctional so no legitimate error is hidden:
+ * BOTH the exact clone-failure message AND a `mediafilter` frame must be
+ * present. An app-side or vendor-side `postMessage` DataCloneError without
+ * the injected frames still reports, as does any other error type.
+ */
+export function isInjectedMediaFilterError(event: ErrorEvent): boolean {
+  for (const exception of event.exception?.values ?? []) {
+    const isIframeCloneFailure =
+      exception.type === "DataCloneError" &&
+      typeof exception.value === "string" &&
+      exception.value.includes("postMessage") &&
+      exception.value.includes("HTMLIFrameElement") &&
+      exception.value.includes("could not be cloned");
+    if (!isIframeCloneFailure) continue;
+
+    const hasMediafilterFrame = (exception.stacktrace?.frames ?? []).some(
+      (frame) =>
+        (typeof frame.filename === "string" &&
+          frame.filename.includes("mediafilter")) ||
+        (typeof frame.function === "string" &&
+          frame.function.includes("mediafilter"))
+    );
+    if (hasMediafilterFrame) return true;
+  }
+  return false;
+}
+
+/**
  * Centralized `beforeSend` sanitizer, shared by browser and server events.
+ *
+ * Returns `null` only for events matching the injected-mediafilter signature
+ * (#174) — foreign code running inside the visitor's browser that the site
+ * cannot fix and that is pure telemetry noise. Everything else is returned
+ * sanitized.
  *
  * Defense in depth on top of `dataCollection`/`sendDefaultPii` init options —
  * this runs for EVERY event regardless of which integration produced it, so
@@ -65,7 +111,9 @@ function isBreadcrumbList(value: unknown): value is Breadcrumb[] {
  * URLs. What it never keeps: query strings, fragments, request bodies,
  * cookies, headers (incl. Referer/Authorization), user context.
  */
-export function sanitizeSentryEvent(event: ErrorEvent): ErrorEvent {
+export function sanitizeSentryEvent(event: ErrorEvent): ErrorEvent | null {
+  if (isInjectedMediaFilterError(event)) return null;
+
   // No user context — ever. Redundant with dataCollection.userInfo:false, but
   // guarantees nothing downstream can re-attach identity.
   delete event.user;
