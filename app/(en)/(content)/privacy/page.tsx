@@ -133,7 +133,7 @@ export default function PrivacyPage() {
           </p>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
             Our website contact and support-request forms do not transmit your message to us
-            directly — they open a pre-filled email in your own email application, and the message
+            directly. They open a pre-filled email in your own email application, and the message
             is sent from your email account when you choose to send it.
           </p>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">

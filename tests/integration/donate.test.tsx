@@ -118,6 +118,15 @@ describe("donate page", () => {
     expect(text).not.toMatch(/within \d+ (business )?(days|hours|weeks)/i);
   });
 
+  it("uses no em or en dashes in customer-facing copy", () => {
+    // Owner style rule: no em dashes in website copy. Rendering the whole
+    // page covers page prose, community-support policy data, form labels and
+    // helper text, and the recipients empty state in one check.
+    const { container } = render(<DonatePage />);
+    expect(container.textContent ?? "").not.toMatch(/[—–]/);
+    expect(String(metadata.description ?? "")).not.toMatch(/[—–]/);
+  });
+
   it("has canonical metadata naming the program for both audiences", () => {
     expect(metadata.title).toBe("Support Saba");
     expect(metadata.alternates?.canonical).toBe("https://www.seasaba.com/donate");

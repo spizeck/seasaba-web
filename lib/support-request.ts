@@ -125,7 +125,7 @@ const stripNewlines = (s: string) => s.replace(/[\r\n]+/g, " ").trim();
 export function supportRequestSubject(draft: SupportRequestDraft): string {
   const who =
     stripNewlines(draft.organization) || stripNewlines(draft.name) || "";
-  return ("Community Support Request" + (who ? ` — ${who}` : "")).slice(0, 200);
+  return ("Community Support Request" + (who ? `: ${who}` : "")).slice(0, 200);
 }
 
 /**

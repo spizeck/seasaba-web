@@ -106,10 +106,10 @@ describe("validateSupportRequest", () => {
 describe("supportRequestSubject", () => {
   it("prefers the organization, falls back to the requester's name", () => {
     expect(supportRequestSubject(VALID)).toBe(
-      "Community Support Request — Saba Youth Football"
+      "Community Support Request: Saba Youth Football"
     );
     expect(supportRequestSubject({ ...VALID, organization: "" })).toBe(
-      "Community Support Request — Alice Johnson"
+      "Community Support Request: Alice Johnson"
     );
   });
 
@@ -174,7 +174,7 @@ describe("handoff URLs", () => {
     const url = new URL(href);
     expect(`${url.protocol}${url.pathname}`).toBe(`mailto:${CONTACT.email}`);
     expect(url.searchParams.get("subject")).toBe(
-      "Community Support Request — Saba Youth Football"
+      "Community Support Request: Saba Youth Football"
     );
     const body = url.searchParams.get("body") ?? "";
     expect(body).toContain("Name: Alice Johnson");

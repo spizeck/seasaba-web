@@ -22,12 +22,12 @@ export function CommunitySupportSection() {
       </h2>
       <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
         Sea Saba has been part of this island since 1985, and giving back is part
-        of how we operate — a raffle prize for a school fundraiser, air fills for
+        of how we operate: a raffle prize for a school fundraiser, air fills for
         a beach cleanup, sponsorship for a youth team. If you&apos;re working on
         something worthwhile on Saba, we&apos;d like to hear about it.
       </p>
       <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-        We&apos;re a small local business, so we keep a few clear ground rules —
+        We&apos;re a small local business, so we keep a few clear ground rules,
         not to make asking harder, but so we can keep saying yes to good
         projects and know our support lands where it&apos;s meant to.
       </p>
@@ -40,9 +40,9 @@ export function CommunitySupportSection() {
         ))}
       </ul>
       <p className="mt-3 text-sm text-muted-foreground">
-        Requests we see most often fall into a few areas —{" "}
-        {SUPPORT_REQUEST_CATEGORIES.map((c) => c.label).join(", ").replace(/, ([^,]*)$/, " or $1")}{" "}
-        — but anything that benefits the island is worth asking about.
+        Requests we see most often fall into a few areas (
+        {SUPPORT_REQUEST_CATEGORIES.map((c) => c.label).join(", ").replace(/, ([^,]*)$/, " or $1")}
+        ), but anything that benefits the island is worth asking about.
       </p>
 
       {/* What support can look like */}
@@ -99,7 +99,7 @@ export function CommunitySupportSection() {
       <h3 className="mt-8 text-base font-semibold text-foreground">Send a request</h3>
       <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
         This gives us what we need to evaluate your request fairly. It&apos;s
-        not a grant application — short, honest answers are perfect.
+        not a grant application. Short, honest answers are perfect.
       </p>
       <div className="mt-4 rounded-lg border border-border/60 bg-card p-6">
         <SupportRequestForm />

@@ -38,9 +38,10 @@ const inputClass =
 const labelClass = "text-sm font-medium text-foreground";
 
 function FieldError({ id, message }: { id: string; message?: string }) {
+  if (!message) return null;
   return (
-    <p id={id} className={`min-h-5 text-xs text-destructive${message ? "" : " invisible"}`}>
-      {message || " "}
+    <p id={id} className="text-xs text-destructive">
+      {message}
     </p>
   );
 }
@@ -215,7 +216,6 @@ export function SupportRequestForm() {
             className={inputClass}
             placeholder="e.g. Saba youth football club"
           />
-          <FieldError id="sr-organization-error" />
         </div>
       </div>
 
@@ -255,7 +255,6 @@ export function SupportRequestForm() {
             className={inputClass}
             placeholder="+599 416 0000"
           />
-          <FieldError id="sr-phone-error" />
         </div>
       </div>
 
@@ -337,7 +336,7 @@ export function SupportRequestForm() {
           placeholder="e.g. USD 250, or two sets of snorkel gear"
         />
         <p id="sr-amount-hint" className="text-xs text-muted-foreground">
-          Required when asking for a financial contribution — a rough figure is fine.
+          Required when asking for a financial contribution. A rough figure is fine.
         </p>
         <FieldError id="sr-amount-error" message={touched.amount ? errors.amount : undefined} />
       </div>
@@ -383,7 +382,7 @@ export function SupportRequestForm() {
         />
         <div className="flex items-baseline justify-between gap-3">
           <FieldError id="sr-description-error" message={touched.description ? errors.description : undefined} />
-          <p id="sr-description-limit" className="shrink-0 text-xs text-muted-foreground">
+          <p id="sr-description-limit" className="ml-auto shrink-0 text-xs text-muted-foreground">
             {draft.description.length} / {SUPPORT_REQUEST_LIMITS.description}
           </p>
         </div>
@@ -447,125 +446,128 @@ export function SupportRequestForm() {
           aria-invalid={touched.useOfSupport && !!errors.useOfSupport}
           aria-describedby={touched.useOfSupport && errors.useOfSupport ? "sr-use-error" : undefined}
           className={inputClass}
-          placeholder="e.g. Uniforms and league fees for the season — quote available"
+          placeholder="e.g. Uniforms and league fees for the season (quote available)"
         />
         <FieldError id="sr-use-error" message={touched.useOfSupport ? errors.useOfSupport : undefined} />
       </div>
 
-      <div className="space-y-3 rounded-lg border border-border/60 bg-muted/20 p-4">
-        <label htmlFor="sr-vendor" className="flex items-start gap-2 text-sm text-foreground">
-          <input
-            id="sr-vendor"
-            name="sr-vendor"
-            type="checkbox"
-            checked={draft.vendorPayment}
-            onChange={(e) => setField("vendorPayment", e.target.checked)}
-            className="mt-0.5 h-4 w-4 shrink-0 rounded border-border accent-primary focus:ring-1 focus:ring-primary"
-          />
-          <span>
-            Sea Saba may pay a supplier directly or purchase the needed goods{" "}
-            <span className="text-muted-foreground">
-              — often the simplest way for us to help, and it keeps everything accountable.
+      {/* Options and send — a looser step than the field rows above. */}
+      <div className="space-y-4 pt-3">
+        <div className="space-y-3 rounded-lg border border-border/60 bg-muted/20 p-4">
+          <label htmlFor="sr-vendor" className="flex items-start gap-2 text-sm text-foreground">
+            <input
+              id="sr-vendor"
+              name="sr-vendor"
+              type="checkbox"
+              checked={draft.vendorPayment}
+              onChange={(e) => setField("vendorPayment", e.target.checked)}
+              className="mt-0.5 h-4 w-4 shrink-0 rounded border-border accent-primary focus:ring-1 focus:ring-primary"
+            />
+            <span>
+              Sea Saba may pay a supplier directly or purchase the needed goods{" "}
+              <span className="text-muted-foreground">
+                (often the simplest way for us to help, and it keeps everything accountable)
+              </span>
             </span>
-          </span>
-        </label>
-
-        <div className="space-y-1.5">
-          <label htmlFor="sr-url" className={labelClass}>
-            Link to more info{" "}
-            <span className="font-normal text-muted-foreground">(optional)</span>
           </label>
-          <input
-            id="sr-url"
-            name="sr-url"
-            type="url"
-            value={draft.referenceUrl}
-            maxLength={SUPPORT_REQUEST_LIMITS.referenceUrl}
-            onChange={(e) => setField("referenceUrl", e.target.value)}
-            onBlur={() => handleBlur("referenceUrl")}
-            aria-invalid={touched.referenceUrl && !!errors.referenceUrl}
-            aria-describedby={touched.referenceUrl && errors.referenceUrl ? "sr-url-error" : undefined}
-            className={inputClass}
-            placeholder="https://… event page, club site, or social post"
-          />
-          <FieldError id="sr-url-error" message={touched.referenceUrl ? errors.referenceUrl : undefined} />
-        </div>
-      </div>
-
-      <div className="space-y-1.5">
-        <label htmlFor="sr-ack" className="flex items-start gap-2 text-sm text-foreground">
-          <input
-            id="sr-ack"
-            name="sr-ack"
-            type="checkbox"
-            checked={draft.acknowledged}
-            onChange={(e) => setField("acknowledged", e.target.checked)}
-            onBlur={() => handleBlur("acknowledged")}
-            aria-invalid={touched.acknowledged && !!errors.acknowledged}
-            aria-describedby={touched.acknowledged && errors.acknowledged ? "sr-ack-error" : undefined}
-            className="mt-0.5 h-4 w-4 shrink-0 rounded border-border accent-primary focus:ring-1 focus:ring-primary"
-          />
-          <span>
-            The information above is accurate, and I understand Sea Saba may ask
-            for supporting information before deciding.{" "}
-            <span className="text-destructive">*</span>
-          </span>
-        </label>
-        <FieldError id="sr-ack-error" message={touched.acknowledged ? errors.acknowledged : undefined} />
-      </div>
-
-      {handoffHref && (
-        <div
-          ref={handoffRef}
-          tabIndex={-1}
-          role="status"
-          className="rounded-md border border-primary/30 bg-primary/5 p-4 outline-none"
-        >
-          <div className="flex items-start gap-3">
-            <MailCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-            <div>
-              <p className="text-sm font-medium text-foreground">
-                Your email app should open with your request ready to send.
-              </p>
-              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                Review it and press Send — it goes to {CONTACT.email} from your own email address. If
-                nothing opened,{" "}
-                <a href={handoffHref} className="font-medium text-primary underline-offset-2 hover:underline">
-                  try opening it again
-                </a>{" "}
-                or email us directly at{" "}
-                <a href={`mailto:${CONTACT.email}`} className="font-medium text-primary underline-offset-2 hover:underline">
-                  {CONTACT.email}
-                </a>
-                . You can edit anything above first — your entries are kept.
-              </p>
-            </div>
+  
+          <div className="space-y-1.5">
+            <label htmlFor="sr-url" className={labelClass}>
+              Link to more info{" "}
+              <span className="font-normal text-muted-foreground">(optional)</span>
+            </label>
+            <input
+              id="sr-url"
+              name="sr-url"
+              type="url"
+              value={draft.referenceUrl}
+              maxLength={SUPPORT_REQUEST_LIMITS.referenceUrl}
+              onChange={(e) => setField("referenceUrl", e.target.value)}
+              onBlur={() => handleBlur("referenceUrl")}
+              aria-invalid={touched.referenceUrl && !!errors.referenceUrl}
+              aria-describedby={touched.referenceUrl && errors.referenceUrl ? "sr-url-error" : undefined}
+              className={inputClass}
+              placeholder="https://… event page, club site, or social post"
+            />
+            <FieldError id="sr-url-error" message={touched.referenceUrl ? errors.referenceUrl : undefined} />
           </div>
         </div>
-      )}
-
-      <div className="flex flex-col gap-3 pt-1 sm:flex-row">
-        <Button type="submit" className="w-full sm:w-auto" aria-label="Continue to email">
-          <Mail className="h-4 w-4" />
-          Continue to Email
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          onClick={handleWhatsApp}
-          className="w-full border-green-700 text-green-700 hover:bg-green-50 hover:text-green-800 sm:w-auto"
-          aria-label="Send request by WhatsApp"
-        >
-          <MessageCircle className="h-4 w-4" />
-          WhatsApp Sea Saba
-        </Button>
+  
+        <div className="space-y-1.5">
+          <label htmlFor="sr-ack" className="flex items-start gap-2 text-sm text-foreground">
+            <input
+              id="sr-ack"
+              name="sr-ack"
+              type="checkbox"
+              checked={draft.acknowledged}
+              onChange={(e) => setField("acknowledged", e.target.checked)}
+              onBlur={() => handleBlur("acknowledged")}
+              aria-invalid={touched.acknowledged && !!errors.acknowledged}
+              aria-describedby={touched.acknowledged && errors.acknowledged ? "sr-ack-error" : undefined}
+              className="mt-0.5 h-4 w-4 shrink-0 rounded border-border accent-primary focus:ring-1 focus:ring-primary"
+            />
+            <span>
+              The information above is accurate, and I understand Sea Saba may ask
+              for supporting information before deciding.{" "}
+              <span className="text-destructive">*</span>
+            </span>
+          </label>
+          <FieldError id="sr-ack-error" message={touched.acknowledged ? errors.acknowledged : undefined} />
+        </div>
+  
+        {handoffHref && (
+          <div
+            ref={handoffRef}
+            tabIndex={-1}
+            role="status"
+            className="rounded-md border border-primary/30 bg-primary/5 p-4 outline-none"
+          >
+            <div className="flex items-start gap-3">
+              <MailCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+              <div>
+                <p className="text-sm font-medium text-foreground">
+                  Your email app should open with your request ready to send.
+                </p>
+                <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                  Review it and press Send. It goes to {CONTACT.email} from your own email address. If
+                  nothing opened,{" "}
+                  <a href={handoffHref} className="font-medium text-primary underline-offset-2 hover:underline">
+                    try opening it again
+                  </a>{" "}
+                  or email us directly at{" "}
+                  <a href={`mailto:${CONTACT.email}`} className="font-medium text-primary underline-offset-2 hover:underline">
+                    {CONTACT.email}
+                  </a>
+                  . You can edit anything above first. Your entries are kept.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+  
+        <div className="flex flex-col gap-3 pt-1 sm:flex-row">
+          <Button type="submit" className="w-full sm:w-auto" aria-label="Continue to email">
+            <Mail className="h-4 w-4" />
+            Continue to Email
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleWhatsApp}
+            className="w-full border-green-700 text-green-700 hover:bg-green-50 hover:text-green-800 sm:w-auto"
+            aria-label="Send request by WhatsApp"
+          >
+            <MessageCircle className="h-4 w-4" />
+            WhatsApp Sea Saba
+          </Button>
+        </div>
+  
+        <p className="text-xs text-muted-foreground">
+          The form opens your email app (or WhatsApp) with the request ready to send. Nothing is
+          stored on this website, and you can attach supporting documents in your email app before
+          sending. Prefer to just talk it through? Reach us on WhatsApp or at {CONTACT.email}.
+        </p>
       </div>
-
-      <p className="text-xs text-muted-foreground">
-        The form opens your email app (or WhatsApp) with the request ready to send — nothing is
-        stored on this website, and you can attach supporting documents in your email app before
-        sending. Prefer to just talk it through? Reach us on WhatsApp or at {CONTACT.email}.
-      </p>
     </form>
   );
 }

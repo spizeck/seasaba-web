@@ -38,7 +38,7 @@ export function DonationsSection({ recipients }: DonationsSectionProps) {
           >
             ask us
           </Link>
-          {" "}— we live here, and we&apos;re happy to point you at a cause that fits.
+          . We live here, and we&apos;re happy to point you at a cause that fits.
         </p>
       </div>
     );

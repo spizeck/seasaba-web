@@ -10,7 +10,7 @@ import { divingAnchors } from "@/lib/anchors";
 export const metadata = createMetadata({
   title: "Support Saba",
   description:
-    "Ways to support Saba beyond your visit — and how island organizations, projects, and events can request a donation or sponsorship from Sea Saba.",
+    "Ways to support Saba beyond your visit, and how island organizations, projects, and events can request a donation or sponsorship from Sea Saba.",
   path: "/donate",
 });
 
@@ -21,11 +21,11 @@ export default function DonatePage() {
         src="/images/optimized/windwardside-village-saba.webp"
         alt="Colorful red-roofed cottages of Windwardside village on the green hillside of Saba"
         title="Support Saba"
-        subtitle="Giving back to the island — and asking us to help"
+        subtitle="Giving back to the island and asking us to help"
       />
 
       <p className="text-base leading-relaxed text-muted-foreground">
-        Visitors fall for Saba quickly — the reefs, the trails, the quiet
+        Visitors fall for Saba quickly: the reefs, the trails, the quiet
         villages, and the people who keep it all running. Many guests ask how
         they can give something back once they&apos;re home. And on the island
         itself, community groups, teams, and projects regularly need a hand.
@@ -53,7 +53,7 @@ export default function DonatePage() {
           Everything we dive sits inside the Saba National Marine Park, and
           every dive carries a conservation contribution of{" "}
           ${OPERATIONS.conservationFees.marineParkPerDiveUsd + OPERATIONS.conservationFees.chamberContributionPerDiveUsd}{" "}
-          per diver — ${OPERATIONS.conservationFees.marineParkPerDiveUsd} to the
+          per diver: ${OPERATIONS.conservationFees.marineParkPerDiveUsd} to the
           Marine Park and ${OPERATIONS.conservationFees.chamberContributionPerDiveUsd}{" "}
           to the island&apos;s hyperbaric chamber fund. Snorkel trips contribute{" "}
           ${OPERATIONS.conservationFees.snorkelParkPerPersonUsd} per person.
@@ -79,7 +79,7 @@ export default function DonatePage() {
         <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
           When you&apos;re ready to do more, a number of island organizations
           welcome direct support. Every card below links out to the
-          organization&apos;s own website — your donation goes to them, not
+          organization&apos;s own website. Your donation goes to them, not
           through us.
         </p>
 
@@ -88,7 +88,7 @@ export default function DonatePage() {
         <p className="mt-6 text-xs leading-relaxed text-muted-foreground">
           Any donation link on this page opens the organization&apos;s own
           website in a new tab. Sea Saba never collects, processes, or retains
-          donated funds — each organization manages its own gifts and receipts.
+          donated funds. Each organization manages its own gifts and receipts.
         </p>
       </section>
 

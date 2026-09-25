@@ -19,7 +19,7 @@ informational pages are server-rendered HTML and readable without JavaScript.
 - [Contact](https://www.seasaba.com/contact): inquiries, bookings, WhatsApp, and location
 - [Book](https://www.seasaba.com/book): online reservation for dives, courses, and trips
 - [Recommended Partners](https://www.seasaba.com/partners): accommodations, restaurants, transportation, and local services
-- [Support Saba](https://www.seasaba.com/donate): Sea Saba's community-giving page — ways for visitors to support island organizations directly, and how Saba groups can request a donation or sponsorship from Sea Saba
+- [Support Saba](https://www.seasaba.com/donate): Sea Saba's community-giving page, covering ways for visitors to support island organizations directly and how Saba groups can request a donation or sponsorship from Sea Saba
 - [Sea Saba Dive Log](https://www.seasaba.com/dive-log): recent dives and sightings from Sea Saba boats
 
 ## Policies

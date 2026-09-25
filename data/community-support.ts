@@ -109,7 +109,7 @@ export const SUPPORT_STANDARDS: readonly SupportStandard[] = [
   {
     title: "A clear benefit to Saba",
     description:
-      "The request should benefit the island — its people, environment, youth, culture, events, or community organizations.",
+      "The request should benefit the island: its people, environment, youth, culture, events, or community organizations.",
   },
   {
     title: "Someone responsible we can reach",
@@ -124,12 +124,12 @@ export const SUPPORT_STANDARDS: readonly SupportStandard[] = [
   {
     title: "We can see where support goes",
     description:
-      "For monetary requests we need to understand where the money goes. Depending on the request we may ask for a budget, a quote or invoice, organization details, or proof the project or event exists — proportionate to what's being asked.",
+      "For monetary requests we need to understand where the money goes. Depending on the request we may ask for a budget, a quote or invoice, organization details, or proof the project or event exists, proportionate to what's being asked.",
   },
   {
     title: "Projects, not personal cash gifts",
     description:
-      "We generally don't provide unrestricted cash gifts to individuals for personal use. Individuals are welcome to lead community projects — we just need to see the project and how the support will be used.",
+      "We generally don't provide unrestricted cash gifts to individuals for personal use. Individuals are welcome to lead community projects. We just need to see the project and how the support will be used.",
   },
   {
     title: "Direct support where it's cleaner",
@@ -139,15 +139,15 @@ export const SUPPORT_STANDARDS: readonly SupportStandard[] = [
   {
     title: "A quick follow-up afterward",
     description:
-      "We may ask for a receipt, a photo, or a short update once support is used — small requests, small follow-ups.",
+      "We may ask for a receipt, a photo, or a short update once support is used. Small requests, small follow-ups.",
   },
 ];
 
 /** How a request moves through the program. */
 export const SUPPORT_REQUEST_STEPS: readonly string[] = [
-  "Send your request using the form below — email and WhatsApp work too if that's easier.",
+  "Send your request using the form below. Email and WhatsApp work too if that's easier.",
   "We read every request against the ground rules and may come back with a follow-up question or two.",
-  "If it's a fit, we coordinate the support — often directly with a supplier or organizer.",
+  "If it's a fit, we coordinate the support, often directly with a supplier or organizer.",
   "Afterward we may ask for a quick confirmation: a receipt, a photo, or a short update.",
 ];
 
@@ -156,4 +156,4 @@ export const SUPPORT_REQUEST_STEPS: readonly string[] = [
  * promise, and do not add quotas or deadlines without owner approval.
  */
 export const SUPPORT_REQUEST_NO_GUARANTEE =
-  "We'd love to say yes to everything, but we can't — submitting a request doesn't guarantee funding or support. If we're unable to help, we'll still try to point you in a useful direction.";
+  "We'd love to say yes to everything, but we can't. Submitting a request doesn't guarantee funding or support. If we're unable to help, we'll still try to point you in a useful direction.";
