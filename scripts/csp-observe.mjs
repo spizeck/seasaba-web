@@ -20,7 +20,7 @@ const NEW_CSP = [
   "style-src 'self' 'unsafe-inline' https://consentcdn.cookiebot.com",
   "img-src 'self' data: https:",
   "font-src 'self'",
-  "connect-src 'self' seasaba.checkfront.com https://firestore.googleapis.com https://www.googletagmanager.com https://www.google-analytics.com https://*.google-analytics.com https://analytics.google.com https://region1.google-analytics.com https://www.googleadservices.com https://pagead2.googlesyndication.com https://*.doubleclick.net https://www.google.com https://*.clarity.ms https://bat.bing.com https://connect.facebook.net https://www.facebook.com https://consent.cookiebot.com https://consentcdn.cookiebot.com https://service.respond.io",
+  "connect-src 'self' seasaba.checkfront.com https://firestore.googleapis.com https://www.googletagmanager.com https://www.google-analytics.com https://*.google-analytics.com https://analytics.google.com https://region1.google-analytics.com https://www.googleadservices.com https://pagead2.googlesyndication.com https://*.doubleclick.net https://www.google.com https://*.clarity.ms https://bat.bing.com https://bat.bing.net https://connect.facebook.net https://www.facebook.com https://consent.cookiebot.com https://consentcdn.cookiebot.com https://service.respond.io",
   "frame-src 'self' seasaba.checkfront.com https://www.googletagmanager.com https://www.youtube.com https://www.google.com https://*.doubleclick.net https://consentcdn.cookiebot.com https://cdn.respond.io",
   "media-src 'self'",
   "object-src 'none'",

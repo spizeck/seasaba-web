@@ -180,6 +180,13 @@ describe("Content-Security-Policy", () => {
     ).get("connect-src")!;
     expect(connectSrc).toContain("https://firestore.googleapis.com");
     expect(connectSrc).toContain("seasaba.checkfront.com");
+    // Microsoft UET endpoints (#169): bat.js loads + beacons on .com, and
+    // posts consent defaults/updates to bat.bing.net/actionp. Both exact
+    // origins required — never a bing wildcard.
+    expect(connectSrc).toContain("https://bat.bing.com");
+    expect(connectSrc).toContain("https://bat.bing.net");
+    expect(connectSrc).not.toContain("https://*.bing.com");
+    expect(connectSrc).not.toContain("https://*.bing.net");
     // Respond.io remote-config fetch — the only top-frame call the widget
     // makes. The chat WebSocket/APIs live inside the vendor iframe and are
     // governed by that document's own CSP, so they must not appear here.
