@@ -84,25 +84,99 @@ export function isInjectedMediaFilterError(event: ErrorEvent): boolean {
       exception.value.includes("could not be cloned");
     if (!isIframeCloneFailure) continue;
 
-    const hasMediafilterFrame = (exception.stacktrace?.frames ?? []).some(
-      (frame) =>
-        (typeof frame.filename === "string" &&
-          frame.filename.includes("mediafilter")) ||
-        (typeof frame.function === "string" &&
-          frame.function.includes("mediafilter"))
-    );
-    if (hasMediafilterFrame) return true;
+    if (stackContains(exception, "mediafilter")) return true;
   }
   return false;
 }
 
 /**
+ * Microsoft Clarity's known ICU crash (#176): `clarity.js` invokes
+ * `Intl.DateTimeFormat` during startup and the browser's ICU data throws
+ * `RangeError: Internal error. Icu error.` — a vendor/browser-runtime
+ * defect (degraded or minimal ICU builds), not a Sea Saba code path. The
+ * filter requires the conjunction of the exact ICU message, a `clarity.js`
+ * frame AND an `Intl.DateTimeFormat` frame, so a same-message RangeError
+ * outside Clarity and any other Clarity exception still report.
+ */
+export function isClarityIcuError(event: ErrorEvent): boolean {
+  for (const exception of event.exception?.values ?? []) {
+    const isIcuRangeError =
+      exception.type === "RangeError" &&
+      typeof exception.value === "string" &&
+      exception.value.includes("Internal error. Icu error.");
+    if (!isIcuRangeError) continue;
+
+    if (
+      stackContains(exception, "clarity.js") &&
+      stackContains(exception, "Intl.DateTimeFormat")
+    ) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Browser-extension runtime noise (#176): `Invalid call to
+ * runtime.sendMessage(). Tab not found.` can only originate from an
+ * extension's `chrome.runtime`/`browser.runtime` call whose target tab
+ * closed mid-handshake — page JavaScript has no `runtime.sendMessage` and
+ * no site integration (GTM, Clarity, Cookiebot, Respond.io, Vercel
+ * Analytics) uses extension APIs. It surfaces as an unhandled rejection in
+ * the page's global handler. The filter requires the exact message AND the
+ * unhandledrejection mechanism, so any different runtime error — or a
+ * genuine app rejection — still reports.
+ */
+export function isExtensionSendMessageError(event: ErrorEvent): boolean {
+  for (const exception of event.exception?.values ?? []) {
+    if (
+      typeof exception.value === "string" &&
+      exception.value.includes(
+        "Invalid call to runtime.sendMessage(). Tab not found"
+      ) &&
+      exception.mechanism?.type ===
+        "auto.browser.global_handlers.onunhandledrejection"
+    ) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/** True when any stack frame's filename or function name contains `needle`. */
+function stackContains(
+  exception: {
+    stacktrace?: { frames?: { filename?: string; function?: string }[] };
+  },
+  needle: string
+): boolean {
+  return (exception.stacktrace?.frames ?? []).some(
+    (frame) =>
+      (typeof frame.filename === "string" &&
+        frame.filename.includes(needle)) ||
+      (typeof frame.function === "string" &&
+        frame.function.includes(needle))
+  );
+}
+
+/**
+ * Suppression rules, each proven by issue-level attribution and each a
+ * conjunction of (exact error signature) × (foreign/vendor stack evidence).
+ * A rule must name the external defect it suppresses and must never fire on
+ * a neighboring legitimate event — see tests/unit/sentry.test.ts.
+ */
+const KNOWN_FOREIGN_NOISE: ReadonlyArray<(event: ErrorEvent) => boolean> = [
+  isInjectedMediaFilterError,
+  isClarityIcuError,
+  isExtensionSendMessageError,
+];
+
+/**
  * Centralized `beforeSend` sanitizer, shared by browser and server events.
  *
- * Returns `null` only for events matching the injected-mediafilter signature
- * (#174) — foreign code running inside the visitor's browser that the site
- * cannot fix and that is pure telemetry noise. Everything else is returned
- * sanitized.
+ * Returns `null` only for events matching a `KNOWN_FOREIGN_NOISE` rule —
+ * foreign injected or vendor code that the site cannot fix and that is pure
+ * telemetry noise. Everything else is returned sanitized.
  *
  * Defense in depth on top of `dataCollection`/`sendDefaultPii` init options —
  * this runs for EVERY event regardless of which integration produced it, so
@@ -112,7 +186,13 @@ export function isInjectedMediaFilterError(event: ErrorEvent): boolean {
  * cookies, headers (incl. Referer/Authorization), user context.
  */
 export function sanitizeSentryEvent(event: ErrorEvent): ErrorEvent | null {
-  if (isInjectedMediaFilterError(event)) return null;
+  // Drop events proven to originate from foreign injected/vendor code (see
+  // KNOWN_FOREIGN_NOISE — #174 mediafilter, #176 Clarity ICU, #176
+  // extension runtime.sendMessage). Each rule requires its full signature;
+  // anything else falls through untouched.
+  if (KNOWN_FOREIGN_NOISE.some((isForeignNoise) => isForeignNoise(event))) {
+    return null;
+  }
 
   // No user context — ever. Redundant with dataCollection.userInfo:false, but
   // guarantees nothing downstream can re-attach identity.
