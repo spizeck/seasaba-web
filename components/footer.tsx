@@ -16,6 +16,7 @@ const PLAN_LINKS = [
   { label: "What to Bring",  href: `/plan-your-trip#${planYourTripAnchors.whatToBring}` },
   { label: "Good to Know",   href: `/plan-your-trip#${planYourTripAnchors.goodToKnow}` },
   { label: "Recommended Partners", href: "/partners" },
+  { label: "Support Saba", href: "/donate" },
 ] as const;
 
 const EXPLORE_LINKS = [
@@ -26,7 +27,6 @@ const EXPLORE_LINKS = [
   { label: "Visiting Yachts", href: "/visiting-yachts" },
   { label: "About",       href: "/about" },
   { label: "Contact",     href: "/contact" },
-  { label: "Support Saba", href: "/donate" },
 ] as const;
 
 const RESOURCE_LINKS: { label: string; href: string; external?: boolean; ariaLabel?: string }[] = [
