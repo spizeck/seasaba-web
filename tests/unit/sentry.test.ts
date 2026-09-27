@@ -3,6 +3,9 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { ErrorEvent } from "@sentry/nextjs";
 import {
+  isClarityIcuError,
+  isExtensionSendMessageError,
+  isInjectedMediaFilterError,
   isSentryActive,
   sanitizeSentryEvent,
   sentryDeploymentEnv,
@@ -95,6 +98,12 @@ function eventWith(overrides: Partial<ErrorEvent>): ErrorEvent {
   return { ...overrides } as ErrorEvent;
 }
 
+function sanitized(event: ErrorEvent): ErrorEvent {
+  const result = sanitizeSentryEvent(event);
+  expect(result).not.toBeNull();
+  return result as ErrorEvent;
+}
+
 describe("sanitizeSentryEvent", () => {
   it("strips query/fragment from the request URL and drops the query_string field", () => {
     const event = eventWith({
@@ -103,7 +112,7 @@ describe("sanitizeSentryEvent", () => {
         query_string: "item=classic&name=Jane",
       },
     });
-    const result = sanitizeSentryEvent(event);
+    const result = sanitized(event);
     expect(result.request?.url).toBe("https://www.seasaba.com/book");
     expect(result.request?.query_string).toBeUndefined();
   });
@@ -121,7 +130,7 @@ describe("sanitizeSentryEvent", () => {
         },
       },
     });
-    const result = sanitizeSentryEvent(event);
+    const result = sanitized(event);
     expect(result.request?.data).toBeUndefined();
     expect(result.request?.cookies).toBeUndefined();
     expect(result.request?.headers).toBeUndefined();
@@ -131,7 +140,7 @@ describe("sanitizeSentryEvent", () => {
     const event = eventWith({
       user: { id: "1", email: "jane@example.com", ip_address: "1.2.3.4" },
     });
-    expect(sanitizeSentryEvent(event).user).toBeUndefined();
+    expect(sanitized(event).user).toBeUndefined();
   });
 
   it("strips query/fragment from breadcrumb URLs", () => {
@@ -147,7 +156,7 @@ describe("sanitizeSentryEvent", () => {
         },
       ],
     });
-    const crumbs = sanitizeSentryEvent(event).breadcrumbs as {
+    const crumbs = sanitized(event).breadcrumbs as {
       data: Record<string, string>;
     }[];
     expect(crumbs[0].data.from).toBe("https://www.seasaba.com/");
@@ -174,10 +183,239 @@ describe("sanitizeSentryEvent", () => {
         ],
       },
     });
-    const frame = sanitizeSentryEvent(event).exception!.values![0].stacktrace!
+    const frame = sanitized(event).exception!.values![0].stacktrace!
       .frames![0];
     expect(frame.filename).toBe("https://www.seasaba.com/_next/chunk.js");
     expect(frame.abs_path).toBe("https://www.seasaba.com/_next/chunk.js");
+  });
+});
+
+describe("isInjectedMediaFilterError (#174)", () => {
+  const cloneMessage =
+    "Failed to execute 'postMessage' on 'Window': HTMLIFrameElement object could not be cloned.";
+
+  function cloneEvent(frames: object[]): ErrorEvent {
+    return eventWith({
+      exception: {
+        values: [
+          {
+            type: "DataCloneError",
+            value: cloneMessage,
+            stacktrace: { frames },
+          },
+        ],
+      },
+    });
+  }
+
+  it("drops the exact injected signature observed in production", () => {
+    // Mirrors events d535aa2d/43ba9ab7: a Respond.io or Clarity top frame
+    // touching an iframe, then the injected mediafilter wrapper + setup.js.
+    const event = cloneEvent([
+      { filename: "src/setup.js" },
+      {
+        filename: "src/mediafilter.generic-wrapper.min.js",
+        function: "Object.mediafilter.<computed> [as debugMessage]",
+      },
+      { filename: "webchat/widget/widget.js" },
+    ]);
+    expect(isInjectedMediaFilterError(event)).toBe(true);
+    expect(sanitizeSentryEvent(event)).toBeNull();
+  });
+
+  it("matches a mediafilter function frame even without the filename", () => {
+    const event = cloneEvent([
+      { function: "Object.mediafilter.<computed> [as debugMessage]" },
+    ]);
+    expect(isInjectedMediaFilterError(event)).toBe(true);
+  });
+
+  it("retains an ordinary DataCloneError with no mediafilter frames", () => {
+    const event = cloneEvent([
+      { filename: "https://www.seasaba.com/_next/static/chunks/app.js" },
+    ]);
+    expect(isInjectedMediaFilterError(event)).toBe(false);
+    expect(sanitized(event)).toBeDefined();
+  });
+
+  it("retains a vendor postMessage DataCloneError lacking mediafilter frames", () => {
+    // Same message, Respond.io/Clarity stacks only — a genuine vendor defect
+    // must keep reporting; the signature requires the foreign frames. Frame
+    // paths mirror how Sentry reports them (relative vendor paths).
+    const event = cloneEvent([
+      { filename: "webchat/widget/widget.js" },
+      { filename: "0.8.70/clarity.js" },
+    ]);
+    expect(isInjectedMediaFilterError(event)).toBe(false);
+    expect(sanitized(event)).toBeDefined();
+  });
+
+  it("retains an app-side postMessage error", () => {
+    const event = cloneEvent([
+      { filename: "https://www.seasaba.com/_next/static/chunks/main-app.js" },
+      { filename: "webpack://seasaba-web/lib/analytics.ts" },
+    ]);
+    expect(isInjectedMediaFilterError(event)).toBe(false);
+  });
+
+  it("retains mediafilter frames when the exception is not the clone signature", () => {
+    const event = eventWith({
+      exception: {
+        values: [
+          {
+            type: "TypeError",
+            value: "Cannot read properties of undefined",
+            stacktrace: {
+              frames: [{ filename: "src/mediafilter.generic-wrapper.min.js" }],
+            },
+          },
+        ],
+      },
+    });
+    expect(isInjectedMediaFilterError(event)).toBe(false);
+  });
+});
+
+describe("isClarityIcuError (#176)", () => {
+  function icuEvent(frames: object[], type = "RangeError"): ErrorEvent {
+    return eventWith({
+      exception: {
+        values: [
+          {
+            type,
+            value: "Internal error. Icu error.",
+            stacktrace: { frames },
+          },
+        ],
+      },
+    });
+  }
+
+  const clarityIcuFrames = [
+    // Mirrors event fca810f1: Sentry wrapper catches the callback exception,
+    // Clarity startup calls Intl.DateTimeFormat on a browser with broken ICU.
+    { filename: "app:///node_modules/@sentry/…", function: "wrapped" },
+    { function: "Intl.DateTimeFormat [as DateTimeFormat]" },
+    { filename: "0.8.70/clarity.js" },
+  ];
+
+  it("drops the exact Clarity ICU signature observed in production", () => {
+    const event = icuEvent(clarityIcuFrames);
+    expect(isClarityIcuError(event)).toBe(true);
+    expect(sanitizeSentryEvent(event)).toBeNull();
+  });
+
+  it("retains the same RangeError message with no Clarity frame", () => {
+    const event = icuEvent([
+      { function: "Intl.DateTimeFormat [as DateTimeFormat]" },
+      { filename: "https://www.seasaba.com/_next/static/chunks/app.js" },
+    ]);
+    expect(isClarityIcuError(event)).toBe(false);
+    expect(sanitized(event)).toBeDefined();
+  });
+
+  it("retains the Clarity signature without the Intl.DateTimeFormat frame", () => {
+    const event = icuEvent([{ filename: "0.8.70/clarity.js" }]);
+    expect(isClarityIcuError(event)).toBe(false);
+    expect(sanitized(event)).toBeDefined();
+  });
+
+  it("retains a different Clarity exception", () => {
+    const event = icuEvent(clarityIcuFrames, "TypeError");
+    expect(isClarityIcuError(event)).toBe(false);
+    expect(sanitized(event)).toBeDefined();
+  });
+
+  it("retains an application RangeError", () => {
+    const event = icuEvent([
+      { filename: "https://www.seasaba.com/_next/static/chunks/main-app.js" },
+    ]);
+    expect(isClarityIcuError(event)).toBe(false);
+    expect(sanitized(event)).toBeDefined();
+  });
+});
+
+describe("isExtensionSendMessageError (#176)", () => {
+  const sendMessageValue =
+    "Invalid call to runtime.sendMessage(). Tab not found.";
+  const rejectionMechanism = {
+    type: "auto.browser.global_handlers.onunhandledrejection",
+  };
+
+  function runtimeEvent(
+    value: string,
+    mechanism = rejectionMechanism
+  ): ErrorEvent {
+    return eventWith({
+      exception: { values: [{ type: "Error", value, mechanism }] },
+    });
+  }
+
+  it("drops the exact extension signature observed in production", () => {
+    // Mirrors event 3216716e: extension content script loses its tab and its
+    // sendMessage() promise rejects into the page's unhandledrejection hook.
+    const event = runtimeEvent(sendMessageValue);
+    expect(isExtensionSendMessageError(event)).toBe(true);
+    expect(sanitizeSentryEvent(event)).toBeNull();
+  });
+
+  it("retains a similar extension-runtime error (different API call)", () => {
+    const event = runtimeEvent(
+      "Invalid call to runtime.connect(). Tab not found."
+    );
+    expect(isExtensionSendMessageError(event)).toBe(false);
+    expect(sanitized(event)).toBeDefined();
+  });
+
+  it("retains the same message thrown synchronously (not the rejection path)", () => {
+    const event = runtimeEvent(sendMessageValue, {
+      type: "auto.browser.global_handlers.onerror",
+    });
+    expect(isExtensionSendMessageError(event)).toBe(false);
+    expect(sanitized(event)).toBeDefined();
+  });
+
+  it("retains a generic unhandled rejection", () => {
+    const event = runtimeEvent("fetch failed: network timeout");
+    expect(isExtensionSendMessageError(event)).toBe(false);
+    expect(sanitized(event)).toBeDefined();
+  });
+
+  it("retains a sendMessage mention with a different message body", () => {
+    const event = runtimeEvent(
+      "runtime.sendMessage is not a function"
+    );
+    expect(isExtensionSendMessageError(event)).toBe(false);
+    expect(sanitized(event)).toBeDefined();
+  });
+});
+
+describe("opaque same-origin script SyntaxError (#176)", () => {
+  it("retains a SyntaxError from the deployed Vercel Analytics script path", () => {
+    // Event eeefa934: `SyntaxError: Invalid or unexpected token` in
+    // app:///0aa4d9c5efab527d/script.js. That file is owned by our own
+    // Vercel Web Analytics integration, so the parse failure is a real
+    // (likely transient delivery) anomaly — it must keep reporting.
+    const event = eventWith({
+      exception: {
+        values: [
+          {
+            type: "SyntaxError",
+            value: "Invalid or unexpected token",
+            stacktrace: {
+              frames: [
+                {
+                  filename: "app:///0aa4d9c5efab527d/script.js",
+                  lineno: 1,
+                  colno: 2,
+                },
+              ],
+            },
+          },
+        ],
+      },
+    });
+    expect(sanitized(event)).toBeDefined();
   });
 });
 
