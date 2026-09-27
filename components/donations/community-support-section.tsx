@@ -52,11 +52,11 @@ export function CommunitySupportSection() {
       <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
         It doesn&apos;t have to be money. Depending on the request, Sea Saba can help with:
       </p>
-      <ul role="list" className="mt-3 grid list-none gap-3 pl-0 sm:grid-cols-2">
+      <ul role="list" className="mt-3 grid list-none gap-2.5 pl-0 sm:grid-cols-2">
         {SUPPORT_TYPES.map((type) => (
           <li
             key={type.value}
-            className="rounded-lg border border-border/50 bg-muted/20 px-4 py-3"
+            className="rounded-lg border border-border/50 bg-muted/20 px-4 py-2.5"
           >
             <p className="text-sm font-medium text-foreground">{type.label}</p>
             <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">
@@ -70,11 +70,11 @@ export function CommunitySupportSection() {
       <h3 className="mt-8 text-base font-semibold text-foreground">
         A few ground rules
       </h3>
-      <ul role="list" className="mt-3 grid list-none gap-3 pl-0 sm:grid-cols-2">
+      <ul role="list" className="mt-3 grid list-none gap-2.5 pl-0 sm:grid-cols-2">
         {SUPPORT_STANDARDS.map((standard) => (
           <li
             key={standard.title}
-            className="rounded-lg border border-border/50 px-4 py-3"
+            className="rounded-lg border border-border/50 px-4 py-2.5"
           >
             <p className="text-sm font-medium text-foreground">{standard.title}</p>
             <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">

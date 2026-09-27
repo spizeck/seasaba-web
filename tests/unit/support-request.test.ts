@@ -129,7 +129,7 @@ describe("supportRequestEmailBody", () => {
       "Organization / group / project: Saba Youth Football",
       "Phone / WhatsApp: +599 416 0000",
       "Category: Youth",
-      "Type of support requested: Financial contribution, Goods or supplies",
+      "Type of support requested: Financial support or sponsorship, Goods or supplies",
       "Estimated amount or value: USD 500",
       "Sponsorship of team uniforms",
       "under-14 team needs new uniforms",

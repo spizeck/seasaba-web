@@ -53,7 +53,6 @@ export function supportRequestCategoryLabel(value: string): string {
 /** The kinds of help Sea Saba may provide — not only money. */
 export type SupportType =
   | "financial"
-  | "sponsorship"
   | "goods"
   | "prize"
   | "services"
@@ -68,8 +67,7 @@ export interface SupportTypeOption {
 }
 
 export const SUPPORT_TYPES: readonly SupportTypeOption[] = [
-  { value: "financial", label: "Financial contribution", description: "A contribution toward a specific, documented cost." },
-  { value: "sponsorship", label: "Sponsorship", description: "Sponsoring a team, event, project, or initiative." },
+  { value: "financial", label: "Financial support or sponsorship", description: "A contribution toward a specific, documented cost, or sponsorship of a legitimate team, event, project, or initiative." },
   { value: "goods", label: "Goods or supplies", description: "Equipment, materials, or supplies purchased by Sea Saba." },
   { value: "prize", label: "Prize or raffle contribution", description: "A dive, course, or item donated as a prize." },
   { value: "services", label: "Sea Saba services", description: "Diving, boat time, courses, or use of our facilities." },
@@ -112,14 +110,9 @@ export const SUPPORT_STANDARDS: readonly SupportStandard[] = [
       "The request should benefit the island: its people, environment, youth, culture, events, or community organizations.",
   },
   {
-    title: "Someone responsible we can reach",
+    title: "A clear project and someone responsible",
     description:
-      "There is an identifiable person or organization behind the project, and a reliable way for us to contact them.",
-  },
-  {
-    title: "A specific purpose",
-    description:
-      "Tell us what you're doing, who benefits, what you're asking for, what it will be used for, and when it happens.",
+      "Tell us what you're doing, who benefits, what you're asking for, how the support will be used, when it happens, and who we can contact about it.",
   },
   {
     title: "We can see where support goes",

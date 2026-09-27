@@ -163,6 +163,15 @@ describe("specific-purpose links carry canonical fragments", () => {
     ).toBe("/donate");
   });
 
+  it("the footer Explore column links to the yacht guide", () => {
+    render(<Footer />);
+    const nav = screen.getByRole("navigation", { name: /site navigation/i });
+    const link = Array.from(nav.querySelectorAll("a")).find(
+      (a) => a.textContent === "Visiting Yachts"
+    );
+    expect(link?.getAttribute("href")).toBe("/visiting-yachts");
+  });
+
   it("partners conservation section and plan-your-trip island section link to /donate", () => {
     const { container: partners } = render(<PartnersPage key="p" />);
     const conservation = partners.querySelector(`#${partnersAnchors.conservationPartners}`);

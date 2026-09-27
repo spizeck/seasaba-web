@@ -336,7 +336,7 @@ export function SupportRequestForm() {
           placeholder="e.g. USD 250, or two sets of snorkel gear"
         />
         <p id="sr-amount-hint" className="text-xs text-muted-foreground">
-          Required when asking for a financial contribution. A rough figure is fine.
+          Required when asking for financial support or sponsorship. A rough figure is fine.
         </p>
         <FieldError id="sr-amount-error" message={touched.amount ? errors.amount : undefined} />
       </div>

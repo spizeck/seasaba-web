@@ -156,13 +156,26 @@ describe("community-support policy data (DRAFT)", () => {
 
   it("supports non-monetary help, not just money", () => {
     const values = SUPPORT_TYPES.map((t) => t.value);
-    for (const v of ["financial", "sponsorship", "goods", "services", "in-kind"]) {
+    for (const v of ["financial", "goods", "services", "in-kind"]) {
       expect(values).toContain(v);
     }
     for (const t of SUPPORT_TYPES) {
       expect(t.label.trim()).not.toBe("");
       expect(t.description.trim()).not.toBe("");
     }
+  });
+
+  it("ships six standards and six support types — the desktop grids are full", () => {
+    // Both card grids render sm:grid-cols-2; six entries fill three rows with
+    // no orphan card. Guard the count so a later addition doesn't reintroduce
+    // the dangling seventh card.
+    expect(SUPPORT_STANDARDS).toHaveLength(6);
+    expect(SUPPORT_TYPES).toHaveLength(6);
+    // The merged money option keeps the "financial" slug: the amount field's
+    // required-when-financial gate and existing drafts depend on it.
+    expect(SUPPORT_TYPES.find((t) => t.value === "financial")?.label).toBe(
+      "Financial support or sponsorship"
+    );
   });
 
   it("never contains invented guarantees, amounts, deadlines, or tax claims", () => {
@@ -250,7 +263,7 @@ async function fillValidRequest() {
   );
   await userEvent.type(screen.getByRole("textbox", { name: /^email/i }), "sentinel@example.test");
   await userEvent.selectOptions(screen.getByRole("combobox", { name: /category/i }), "youth");
-  await userEvent.click(screen.getByRole("checkbox", { name: /financial contribution/i }));
+  await userEvent.click(screen.getByRole("checkbox", { name: /financial support or sponsorship/i }));
   await userEvent.click(screen.getByRole("checkbox", { name: /goods or supplies/i }));
   await userEvent.type(
     screen.getByRole("textbox", { name: /estimated amount or value/i }),
@@ -311,9 +324,9 @@ describe("support request form", () => {
     expect(window.open).not.toHaveBeenCalled();
   });
 
-  it("requires an estimated amount only when a financial contribution is selected", async () => {
+  it("requires an estimated amount only when financial support is selected", async () => {
     render(<SupportRequestForm />);
-    await userEvent.click(screen.getByRole("checkbox", { name: /financial contribution/i }));
+    await userEvent.click(screen.getByRole("checkbox", { name: /financial support or sponsorship/i }));
     await userEvent.click(screen.getByRole("button", { name: "Continue to email" }));
     expect(
       screen.getByText(/please give an estimated amount/i)
@@ -331,7 +344,7 @@ describe("support request form", () => {
     expect(url.searchParams.get("subject")).toContain("Sentinel Youth Club");
     const body = url.searchParams.get("body") ?? "";
     expect(body).toContain("sentinel@example.test");
-    expect(body).toContain("Financial contribution, Goods or supplies");
+    expect(body).toContain("Financial support or sponsorship, Goods or supplies");
     expect(body).toContain("paying a supplier directly or purchasing goods: No");
     // The handoff notice offers a retry path.
     expect(screen.getByRole("status").textContent).toMatch(/email app should open/i);
