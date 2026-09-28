@@ -50,6 +50,57 @@ test("mobile: menu opens, closes, navigates, and responds to repeated use and Es
   await expect(page.getByRole("heading", { name: "Book Your Dive" })).toBeVisible();
 });
 
+test("footer carries no language selector; the header gates alternates by publication", async ({ page, request, isMobile }) => {
+  await hydratedGoto(page, "/diving", "#main-content");
+  const footer = page.getByRole("contentinfo");
+  // #156: language selection lives in the header; the footer bottom row is
+  // utility/social only — no selector in either production or draft preview.
+  await expect(footer.getByRole("navigation", { name: /choose language/i })).toHaveCount(0);
+  await expect(footer.locator('a[href^="/nl"]')).toHaveCount(0);
+  await expect(footer.getByText("Nederlands")).toHaveCount(0);
+
+  const header = page.locator("header");
+  const preview = (await request.get("/nl")).status() !== 404;
+  if (preview) {
+    // Draft preview: the control exists — desktop disclosure on desktop,
+    // hamburger-menu links on mobile.
+    if (isMobile) {
+      await page.getByRole("button", { name: "Open menu" }).click();
+      const mobileNav = page.getByRole("navigation", { name: "Mobile" });
+      await expect(
+        mobileNav.getByRole("navigation", { name: "Choose language" })
+      ).toBeVisible();
+    } else {
+      await expect(header.getByRole("button", { name: "Choose language" })).toBeVisible();
+    }
+  } else {
+    // Production must not advertise unpublished Dutch anywhere in the header.
+    await expect(header.getByRole("button", { name: /choose language/i })).toHaveCount(0);
+    await expect(header.locator('a[href^="/nl"]')).toHaveCount(0);
+    await expect(header.getByText("Nederlands")).toHaveCount(0);
+  }
+});
+
+test("header shows no horizontal overflow around the desktop-nav breakpoint", async ({ page, isMobile }) => {
+  test.skip(!!isMobile, "window-resize scenario needs a resizable desktop viewport");
+  await hydratedGoto(page, "/diving", "#main-content");
+  const toggle = page.locator('button[aria-controls="mobile-navigation"]');
+  const primaryNav = page.getByRole("navigation", { name: "Primary" });
+  for (const width of [740, 767, 768, 769, 800, 840, 900, 1024, 1280]) {
+    await page.setViewportSize({ width, height: 800 });
+    const overflow = await page.evaluate(
+      () => document.documentElement.scrollWidth - document.documentElement.clientWidth
+    );
+    expect(overflow, `${width}px document overflow`).toBeLessThanOrEqual(0);
+    if (width < 768) {
+      await expect(toggle, `${width}px hamburger`).toBeVisible();
+    } else {
+      await expect(primaryNav, `${width}px primary nav`).toBeVisible();
+      await expect(toggle, `${width}px hamburger hidden`).toBeHidden();
+    }
+  }
+});
+
 test("footer and contact page expose working phone, WhatsApp, email, and map paths", async ({ page, browserName }) => {
   test.skip(browserName !== "chromium", "link-target assertions only need one browser");
   await hydratedGoto(page, "/contact", "#main-content");

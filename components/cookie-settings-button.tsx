@@ -16,9 +16,10 @@ function openCookieSettings() {
 
 interface CookieSettingsButtonProps {
   className?: string;
+  label?: string;
 }
 
-export function CookieSettingsButton({ className }: CookieSettingsButtonProps) {
+export function CookieSettingsButton({ className, label = "Cookie Settings" }: CookieSettingsButtonProps) {
   return (
     <button
       type="button"
@@ -28,7 +29,7 @@ export function CookieSettingsButton({ className }: CookieSettingsButtonProps) {
         "inline-flex items-center rounded-md border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted"
       }
     >
-      Cookie Settings
+      {label}
     </button>
   );
 }

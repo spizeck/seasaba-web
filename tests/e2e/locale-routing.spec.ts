@@ -35,19 +35,49 @@ test.describe("locale routing foundation (#150)", () => {
     }
   });
 
+  test("drafted Dutch routes stay unpublished in production (#151)", async ({
+    page,
+    monitor,
+  }) => {
+    const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    // E2E runs against `next start` (production): every drafted /nl route
+    // must 404 inside the Dutch shell, with Dutch 404 copy.
+    for (const path of ["/nl", "/nl/diving", "/nl/plan-your-trip", "/nl/courses", "/nl/contact", "/nl/book"]) {
+      monitor.allowRequestFailure(new RegExp(escapeRegExp(path)));
+      monitor.allowConsoleError(new RegExp(escapeRegExp(path)));
+      const response = await page.goto(path);
+      expect(response?.status(), path).toBe(404);
+      // The Dutch 404 copy ships in the initial HTML.
+      await expect(page.getByText("Pagina niet gevonden")).toBeVisible();
+      // Next serves not-found responses inside its `<html id="__next_error__">`
+      // shell, which carries no lang attribute; the nl layout's lang="nl" is
+      // only applied when hydration mounts the real document. Hydration can
+      // lag on slower engines, so give it more than the default 5s.
+      await expect(page.locator("html")).toHaveAttribute("lang", "nl", {
+        timeout: 20000,
+      });
+    }
+  });
+
   test("locale-prefixed and unknown paths 404 safely inside the site shell", async ({
     page,
     monitor,
   }) => {
     const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    for (const path of ["/nl", "/nl/diving", "/nl/plan-your-trip", "/xx", "/xx/diving", "/en", "/en/diving"]) {
+    for (const path of ["/nl/visiting-yachts", "/nl/terms", "/xx", "/xx/diving", "/en", "/en/diving", "/nonexistent"]) {
       monitor.allowRequestFailure(new RegExp(escapeRegExp(path)));
       monitor.allowConsoleError(new RegExp(escapeRegExp(path)));
       const response = await page.goto(path);
       expect(response?.status(), path).toBe(404);
-      // Styled 404 inside the site shell — not Next's bare default page.
-      await expect(page.getByText("Page not found")).toBeVisible();
     }
+    // Styled 404 in the site shell — not Next's bare default page. Bogus
+    // non-locale paths get the English shell; /nl paths without a page get
+    // the global not-found (also styled, English) since nothing under /nl is
+    // published.
+    await page.goto("/xx/diving");
+    await expect(page.getByText("Page not found")).toBeVisible();
+    await page.goto("/nl/terms");
+    await expect(page.getByText("Page not found")).toBeVisible();
   });
 
   test("browser Accept-Language never forces a locale redirect", async ({

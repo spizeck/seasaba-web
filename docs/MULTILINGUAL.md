@@ -285,8 +285,14 @@ Created from this audit (independently reviewable, in dependency order):
    locale allowlist, `<html lang>` per subtree, switcher foundation with
    persisted explicit choice, locale-aware metadata plumbing #153 consumes,
    `global-not-found` for unmatched URLs, `PUBLISHED_ROUTES` gate.
-2. **Dutch Phase 1 pages** — the §4 page set + shared UI dictionary +
-   glossary.
+2. **Dutch Phase 1 pages (#151) — drafted, awaiting human review.**
+   `content/nl/` page modules + typed `content/<locale>/ui.ts` dictionaries +
+   `content/nl/GLOSSARY.md` + reviewer checklist `content/nl/REVIEW.md`.
+   Each module carries `TranslationReview` metadata (status/sourceHash);
+   `DRAFTED_ROUTES` + `isDraftPreviewEnabled()` make drafts browsable in
+   `next dev` or a build with `NEXT_PUBLIC_DRAFT_LOCALE_PREVIEW=1`
+   (**never set it on production**). Production keeps every `/nl/*` 404 until
+   a route is approved and listed in `PUBLISHED_ROUTES.nl`.
 3. **Translation freshness check** — `sourceHash`/`lastReviewed` +
    `check-translations` script wired into `npm run check`.
 4. **i18n SEO pass (#153)** — sitemap alternates, full reciprocal hreflang

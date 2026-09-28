@@ -1,5 +1,22 @@
 import { CONTACT } from "@/lib/constants";
 import { inquiryFor } from "@/data/operations";
+import { ui as enUi, type UiDictionary } from "@/content/en/ui";
+
+/** The visitor-facing half of the contact dictionary (#151). */
+export type ContactCopy = UiDictionary["contactForm"];
+
+const enContact: ContactCopy = enUi.contactForm;
+
+export interface InquiryCopy {
+  label: string;
+  subject: string;
+  partyLabel?: string;
+}
+
+/** Localized copy for an `INQUIRY_TYPES` slug, if the dict covers it. */
+export function inquiryCopy(dict: ContactCopy, value: string): InquiryCopy | undefined {
+  return (dict.inquiries as Record<string, InquiryCopy>)[value];
+}
 
 /**
  * Client-email handoff for the contact form. The site builds a
@@ -48,8 +65,11 @@ export interface InquiryDraft {
 const stripNewlines = (s: string) => s.replace(/[\r\n]+/g, " ").trim();
 
 /** Canonical inquiry context plus the visitor's name. */
-export function contactEmailSubject(draft: InquiryDraft): string {
-  const base = inquiryFor(draft.inquiryType)?.subject ?? "Website Inquiry";
+export function contactEmailSubject(draft: InquiryDraft, dict: ContactCopy = enContact): string {
+  const inquiry = inquiryFor(draft.inquiryType);
+  const base =
+    (inquiry && inquiryCopy(dict, inquiry.value)?.subject) ??
+    dict.handoffMessage.emailFallbackSubject;
   const name = stripNewlines(draft.name);
   return (name ? `${base} — ${name}` : base).slice(0, 200);
 }
@@ -58,24 +78,26 @@ export function contactEmailSubject(draft: InquiryDraft): string {
  * Human-readable structured body. Only fields with values appear — a
  * Sunset Cruise inquiry never mentions certification, and so on.
  */
-export function contactEmailBody(draft: InquiryDraft): string {
+export function contactEmailBody(draft: InquiryDraft, dict: ContactCopy = enContact): string {
   const inquiry = inquiryFor(draft.inquiryType);
+  const L = dict.handoffMessage.labels;
+  const dictInquiry = inquiry && inquiryCopy(dict, inquiry.value);
   const line = (label: string, value: string) => `${label}: ${stripNewlines(value)}`;
 
   const lines = [
-    "Sea Saba Website Inquiry",
+    dict.handoffMessage.emailHeader,
     "",
-    line("Name", draft.name),
-    line("Email", draft.email),
-    line("Inquiry", inquiry?.label ?? draft.inquiryType),
-    `Preferred contact method: ${draft.preferredContact === "whatsapp" ? "WhatsApp" : "Email"}`,
+    line(L.name, draft.name),
+    line(L.email, draft.email),
+    line(L.inquiry, dictInquiry?.label ?? draft.inquiryType),
+    `${L.preferredContact}: ${draft.preferredContact === "whatsapp" ? "WhatsApp" : dict.handoffMessage.preferredEmail}`,
   ];
-  if (draft.whatsapp.trim()) lines.push(line("WhatsApp", draft.whatsapp));
-  if (draft.dates.trim()) lines.push(line("Planned travel dates", draft.dates));
-  if (draft.students.trim()) lines.push(line(inquiry?.partyLabel ?? "Group size", draft.students));
-  if (draft.certification.trim()) lines.push(line("Certification level", draft.certification));
-  if (draft.loggedDives.trim()) lines.push(line("Logged dives", draft.loggedDives));
-  lines.push("", "Message:", draft.message.trim());
+  if (draft.whatsapp.trim()) lines.push(line(L.whatsapp, draft.whatsapp));
+  if (draft.dates.trim()) lines.push(line(L.dates, draft.dates));
+  if (draft.students.trim()) lines.push(line(dictInquiry?.partyLabel ?? dict.fields.partySize.label, draft.students));
+  if (draft.certification.trim()) lines.push(line(L.certification, draft.certification));
+  if (draft.loggedDives.trim()) lines.push(line(L.loggedDives, draft.loggedDives));
+  lines.push("", `${L.message}:`, draft.message.trim());
   return lines.join("\n");
 }
 
@@ -84,8 +106,8 @@ export function contactEmailBody(draft: InquiryDraft): string {
  * subject/body are URI-encoded (non-ASCII, punctuation, and line breaks —
  * normalized to CRLF, the most broadly accepted mailto newline form).
  */
-export function buildContactMailto(draft: InquiryDraft): string {
-  const subject = encodeURIComponent(contactEmailSubject(draft));
-  const body = encodeURIComponent(contactEmailBody(draft).replace(/\n/g, "\r\n"));
+export function buildContactMailto(draft: InquiryDraft, dict: ContactCopy = enContact): string {
+  const subject = encodeURIComponent(contactEmailSubject(draft, dict));
+  const body = encodeURIComponent(contactEmailBody(draft, dict).replace(/\n/g, "\r\n"));
   return `mailto:${CONTACT.email}?subject=${subject}&body=${body}`;
 }
