@@ -13,9 +13,130 @@ concurrency:
   group: website-tests-${{ github.ref }}
   cancel-in-progress: true
 
+# Change-aware CI. The `Detect changes` job classifies the diff into
+# domains; each check below runs only when the diff can plausibly affect
+# it. Pushes to master and manual dispatch always run the full suite.
+#
+# Gating uses job-level `if:` (never workflow-level `paths:` filters): a
+# skipped job reports Success and satisfies required checks, while a
+# filtered-out workflow would leave them pending forever. The classifier
+# fails safe: an uncomputable diff or an unrecognized path runs
+# everything.
+#
+# Domains:
+#   app  — Critical website tests (check/lint/typecheck/coverage/build/e2e)
+#   perf — Performance budgets (lab metrics against the test build)
 jobs:
+  changes:
+    name: Detect changes
+    runs-on: ubuntu-latest
+    outputs:
+      app: ${{ steps.classify.outputs.app }}
+      perf: ${{ steps.classify.outputs.perf }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Classify changed files
+        id: classify
+        shell: bash
+        env:
+          BASE_REF: ${{ github.base_ref }}
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          set -u
+          app=false
+          perf=false
+          files=""
+
+          run_all() {
+            app=true; perf=true
+          }
+
+          if [ "$EVENT_NAME" != "pull_request" ]; then
+            # Full run on master pushes and manual dispatch.
+            run_all
+          else
+            files="$(git diff --name-only "origin/${BASE_REF}...HEAD" 2>/dev/null)" || files=""
+            if [ -z "$files" ]; then
+              # A real PR always has a diff; empty means the diff failed.
+              # Fail safe toward full coverage, never toward skipping it.
+              echo "::warning::Could not compute PR diff — running all domains"
+              run_all
+            fi
+            while IFS= read -r f; do
+              [ -z "$f" ] && continue
+
+              # Cheap validation for config-only changes that no longer
+              # get exercised indirectly by a heavy suite.
+              case "$f" in
+                *.json)
+                  node -e "JSON.parse(require('fs').readFileSync(process.argv[1], 'utf8'))" "$f" || exit 1
+                  ;;
+                .github/workflows/*.yml|.github/workflows/*.yaml)
+                  if python3 -c "import yaml" 2>/dev/null; then
+                    python3 -c "import sys, yaml; yaml.safe_load(open(sys.argv[1]))" "$f" || exit 1
+                  else
+                    echo "::warning::PyYAML unavailable; skipping workflow YAML validation for $f"
+                  fi
+                  ;;
+              esac
+
+              case "$f" in
+                # Docs / metadata / CI config: cannot affect runtime.
+                *.md|LICENSE|docs/*|.github/*|.vscode/*|.env*|.gitignore|vercel.json)
+                  ;;
+
+                # Performance surface: budgets, the perf harness and the
+                # test build it measures.
+                perf/*|scripts/perf-*|scripts/build-test.mjs)
+                  app=true; perf=true ;;
+
+                # patch-package applies these at postinstall — they can
+                # change any installed dependency's behavior.
+                patches/*)
+                  run_all ;;
+
+                # Test suites: unit/integration/production specs are
+                # exercised by the critical-tests job.
+                tests/*)
+                  app=true ;;
+
+                # Application runtime: page bundle AND perceived
+                # performance — both domains.
+                app/*|components/*|lib/*|public/*|next.config.*|tsconfig.json|postcss.config.*|components.json|middleware.ts)
+                  app=true; perf=true ;;
+
+                # Root dependencies / runtime pin: blast radius crosses
+                # everything (runtime deps land in the measured bundle).
+                package.json|package-lock.json|.nvmrc)
+                  run_all ;;
+
+                # Lint/test config and repo-check scripts: app gate.
+                eslint*|vitest.config.mts|playwright.config.ts|playwright.production.config.ts|scripts/*)
+                  app=true ;;
+
+                # Unknown change: run everything.
+                *)
+                  run_all ;;
+              esac
+            done <<< "$files"
+          fi
+
+          echo "Changed files:"
+          echo "$files"
+          echo "Domains: app=$app perf=$perf"
+          {
+            echo "app=$app"
+            echo "perf=$perf"
+          } >> "$GITHUB_OUTPUT"
+
   critical-tests:
     name: Critical website tests
+    needs: changes
+    if: needs.changes.outputs.app == 'true'
     runs-on: ubuntu-latest
     # Official Playwright container: browsers + system deps pre-installed.
     # Pin to the exact version in package-lock.json; bump both together.
@@ -50,6 +171,8 @@ jobs:
 
   performance-budgets:
     name: Performance budgets
+    needs: changes
+    if: needs.changes.outputs.perf == 'true'
     runs-on: ubuntu-latest
     # Same Playwright container: the perf script drives its bundled Chromium.
     container:
