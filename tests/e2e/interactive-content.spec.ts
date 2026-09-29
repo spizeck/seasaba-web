@@ -91,3 +91,53 @@ test("the dive log still renders its UI when Firestore is unreachable", async ({
   await expect(page.getByRole("heading", { name: "Sea Saba Dive Log" })).toBeVisible();
   await expect(page.getByText(/No dives match your filters|Unable to load dive log/)).toBeVisible({ timeout: 25_000 });
 });
+
+// Issue #186: prose underlines every anchor; links rendered as buttons must
+// not pick that up, while ordinary text links keep the underline. Assert the
+// computed style — a class assertion can't prove what the cascade resolves to.
+test("donate button links are not underlined, text links are", async ({ page }) => {
+  await hydratedGoto(page, "/donate");
+
+  const donateButton = page.getByRole("link", { name: /Donate directly to Sea & Learn/i });
+  await expect(donateButton).toBeVisible();
+  await expect(donateButton).toHaveCSS("text-decoration-line", "none");
+
+  const visitLink = page.getByRole("link", { name: /Visit Sea & Learn.*website/i });
+  await expect(visitLink).toBeVisible();
+  await expect(visitLink).toHaveCSS("text-decoration-line", "underline");
+});
+
+// The recipient card's border/shadow cue applies on hover and while focus is
+// inside the card — keyboard users get the same affordance, with no motion.
+test("donate action card highlights on hover and focus-within, without layout shift", async ({ page }) => {
+  await hydratedGoto(page, "/donate");
+
+  const donateButton = page.getByRole("link", { name: /Donate directly to Sea & Learn/i });
+  // The prose layout wrapper is also an <article> — take the closest one.
+  const card = donateButton.locator("xpath=ancestor::article[1]");
+
+  // Layout position, not viewport position — hover() may scroll the page.
+  const layoutOf = (el: HTMLElement) => ({
+    top: el.offsetTop,
+    left: el.offsetLeft,
+    width: el.offsetWidth,
+    height: el.offsetHeight,
+  });
+  const borderAtRest = await card.evaluate((el) => getComputedStyle(el).borderColor);
+  const layoutAtRest = await card.evaluate(layoutOf);
+
+  // hover: styles only exist on devices with a real pointer (@media (hover:
+  // hover)) — touch-emulated projects have no hover state to measure.
+  if (await page.evaluate(() => matchMedia("(hover: hover)").matches)) {
+    await card.hover();
+    const borderOnHover = await card.evaluate((el) => getComputedStyle(el).borderColor);
+    expect(borderOnHover).not.toBe(borderAtRest);
+    expect(await card.evaluate(layoutOf)).toEqual(layoutAtRest);
+  }
+
+  await donateButton.focus();
+  expect(await card.evaluate((el) => el.matches(":focus-within"))).toBe(true);
+  const borderOnFocus = await card.evaluate((el) => getComputedStyle(el).borderColor);
+  expect(borderOnFocus).not.toBe(borderAtRest);
+  expect(await card.evaluate(layoutOf)).toEqual(layoutAtRest);
+});

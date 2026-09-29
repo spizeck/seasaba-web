@@ -193,6 +193,22 @@
 }
 
 /*
+ * Prose typography underlines every anchor for text-link affordance —
+ * correct for inline links, redundant noise on anchors rendered as
+ * buttons. The shared Button (including asChild anchors and the tracked
+ * button wrappers) always emits `data-slot="button"`, and buttonVariants
+ * already carries `no-underline`; this guard catches anything rendered
+ * into the button slot inside prose without the utility. An explicit
+ * `underline` utility still wins where a design intentionally calls for
+ * it.
+ */
+@layer components {
+  .prose a[data-slot="button"] {
+    text-decoration: none;
+  }
+}
+
+/*
  * Respond.io Website Chat — homepage hero suppression (issue #123).
  *
  * While the homepage hero region (marked `data-hero`, hero + trust bar)

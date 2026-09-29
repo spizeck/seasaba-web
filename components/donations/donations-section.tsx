@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
+import { TrackedOutboundButton } from "@/components/tracked-outbound-button";
 import { TrackedOutboundLink } from "@/components/tracked-outbound-link";
 import { cn } from "@/lib/utils";
 import type { DonationRecipient } from "@/data/donations";
@@ -66,7 +67,7 @@ export function DonationsSection({ recipients }: DonationsSectionProps) {
 
 function DonationCard({ recipient }: { recipient: DonationRecipient }) {
   return (
-    <article className="group flex flex-col rounded-xl border border-border/50 bg-background p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-sm">
+    <article className="group flex flex-col rounded-xl border border-border/50 bg-background p-5 transition-all duration-200 hover:border-primary/30 hover:shadow-sm focus-within:border-primary/30 focus-within:shadow-sm">
       {recipient.image && (
         <Image
           src={recipient.image}
@@ -96,16 +97,17 @@ function DonationCard({ recipient }: { recipient: DonationRecipient }) {
 
       <div className="mt-auto flex flex-wrap items-center gap-x-4 gap-y-2 pt-5">
         {recipient.donationUrl && (
-          <TrackedOutboundLink
+          <TrackedOutboundButton
             href={recipient.donationUrl}
             eventName="donation_click"
             buttonText={`Donate to ${recipient.name}`}
             ariaLabel={`Donate directly to ${recipient.name} on their own website, opens in a new tab`}
-            className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3.5 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            size="sm"
+            className="gap-1.5"
           >
             Donate directly
-            <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
-          </TrackedOutboundLink>
+            <ExternalLink className="size-3.5" aria-hidden="true" />
+          </TrackedOutboundButton>
         )}
         <TrackedOutboundLink
           href={recipient.website}
