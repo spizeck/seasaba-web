@@ -5,7 +5,9 @@ import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { ExternalLink, MapPin, Search, X } from "lucide-react";
 import { Pill } from "@/components/ui/pill";
+import { buttonVariants } from "@/components/ui/button";
 import { trackLinkClick } from "@/lib/analytics";
+import { cn } from "@/lib/utils";
 import { partnersAnchors } from "@/lib/anchors";
 import type { Accommodation, AccommodationType } from "@/data/partners";
 
@@ -340,10 +342,13 @@ function AccommodationCard({ accommodation }: { accommodation: Accommodation }) 
               rel="noopener noreferrer"
               onClick={() => accommodation.bookingUrl && trackLinkClick("social_click", accommodation.bookingUrl, `Book ${accommodation.name}`, { content_type: "accommodation_booking", partner_name: accommodation.name })}
               aria-label={`Book ${accommodation.name} directly, opens in a new tab`}
-              className="inline-flex w-fit items-center gap-1.5 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+              className={cn(
+                buttonVariants(),
+                "h-auto w-fit gap-1.5 rounded-full px-3 py-1 text-xs font-semibold"
+              )}
             >
               Book Directly
-              <ExternalLink className="h-3 w-3" aria-hidden="true" />
+              <ExternalLink className="size-3" aria-hidden="true" />
             </Link>
           )}
         </div>

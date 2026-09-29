@@ -175,6 +175,30 @@ describe("donate page", () => {
     expect(description).toMatch(/support saba/i);
     expect(description).toMatch(/request/i);
   });
+
+  // Issue #186: the interactive-card treatment (border/shadow emphasis +
+  // focus-within) belongs only on cards that contain real actions — the
+  // request form's wrapper — never on the passive info lists beside it.
+  it("marks action-oriented cards interactive and leaves informational cards passive", () => {
+    const { container } = render(<DonatePage />);
+    const formCard = container.querySelector("form")?.parentElement;
+    expect(formCard?.className).toContain("focus-within:border-primary/30");
+    expect(formCard?.className).toContain("hover:border-primary/30");
+
+    // Support-type and ground-rule items are pure information — highlighting
+    // them on hover would falsely advertise them as clickable. (Labels also
+    // appear in the form, so pick the copies living in card list items.)
+    for (const label of [SUPPORT_TYPES[0].label, SUPPORT_STANDARDS[0].title]) {
+      const cards = screen
+        .getAllByText(label)
+        .map((el) => el.closest("li"))
+        .filter((li): li is HTMLLIElement => li !== null);
+      expect(cards.length).toBeGreaterThan(0);
+      for (const card of cards) {
+        expect(card.className).not.toMatch(/hover:|focus-within:/);
+      }
+    }
+  });
 });
 
 describe("community-support policy data (DRAFT)", () => {
@@ -295,6 +319,37 @@ describe("donation recipient cards", () => {
     expect(screen.getByRole("link", { name: /^ask us$/i }).getAttribute("href")).toBe(
       "/contact"
     );
+  });
+
+  // Issue #186: button-shaped links inside prose must not inherit the
+  // text-link underline; ordinary text links keep it.
+  it("renders Donate directly through the shared button slot and keeps Visit website a text link", () => {
+    render(<DonationsSection recipients={FIXTURE} />);
+    const donate = screen.getByRole("link", {
+      name: /donate directly to example reef fund/i,
+    });
+    expect(donate).toHaveAttribute("data-slot", "button");
+    expect(donate.className).toContain("no-underline");
+
+    const visit = screen.getByRole("link", {
+      name: /visit example reef fund's website/i,
+    });
+    expect(visit).not.toHaveAttribute("data-slot");
+    expect(visit.className).not.toContain("no-underline");
+  });
+
+  it("gives action cards the shared hover/focus-within treatment without motion", () => {
+    render(<DonationsSection recipients={FIXTURE} />);
+    const card = screen
+      .getByRole("heading", { name: "Example Reef Fund" })
+      .closest("article")!;
+    expect(card.className).toContain("hover:border-primary/30");
+    expect(card.className).toContain("hover:shadow-sm");
+    // Keyboard users tabbing into the card's actions get the same cue.
+    expect(card.className).toContain("focus-within:border-primary/30");
+    expect(card.className).toContain("focus-within:shadow-sm");
+    // The treatment is visual only — no translate/scale/layout shift.
+    expect(card.className).not.toMatch(/translate|scale/);
   });
 });
 

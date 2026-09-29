@@ -58,7 +58,7 @@ export default function AboutPage() {
               href={fact.href}
               eventName="social_click"
               buttonText="Google Reviews"
-              className={`${cls} block transition-opacity hover:opacity-80`}
+              className={`${cls} block no-underline transition-opacity hover:opacity-80`}
             >
               {inner}
             </TrackedOutboundLink>

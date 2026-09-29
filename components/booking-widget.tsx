@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { buttonVariants } from "@/components/ui/button";
 import { trackLinkClick } from "@/lib/analytics";
+import { cn } from "@/lib/utils";
 import { BOOKING_URL, CONTACT } from "@/lib/constants";
 import {
   BOOKABLE_PRODUCTS,
@@ -169,7 +171,7 @@ export function BookingWidget({ item }: BookingWidgetProps) {
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => trackCheckfrontClick("Continue to Secure Booking System", "booking_widget_error", itemId || "general")}
-              className="inline-flex items-center rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+              className={cn(buttonVariants(), "h-auto px-6 py-3 font-semibold")}
             >
               Continue to Secure Booking System
             </a>
@@ -182,7 +184,10 @@ export function BookingWidget({ item }: BookingWidgetProps) {
                   button_location: "booking_widget_error",
                 })
               }
-              className="inline-flex items-center rounded-md border border-border px-6 py-3 text-sm font-semibold text-foreground hover:bg-muted"
+              className={cn(
+                buttonVariants({ variant: "outline" }),
+                "h-auto px-6 py-3 font-semibold"
+              )}
             >
               WhatsApp Us
             </a>
