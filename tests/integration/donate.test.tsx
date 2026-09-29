@@ -44,6 +44,34 @@ const FIXTURE: DonationRecipient[] = [
   },
 ];
 
+// Compile-time contract (PR #172 review): `image` is assignable only
+// alongside a required `imageAlt`, so alt text stays an explicit registry
+// decision — never missing, never invented by the renderer. `npm run
+// typecheck` is the guard: if the union ever loosens, the @ts-expect-error
+// below fails as an unused directive.
+const IMAGE_CONTRACT_FIXTURES: DonationRecipient[] = [
+  {
+    name: "Example No-Logo Project",
+    description: "Recipient without a card image.",
+    website: "https://nologo.example.org",
+  },
+  {
+    name: "Example Logo Project",
+    description: "Recipient whose card image carries deliberate alt text.",
+    website: "https://logo.example.org",
+    image: "/images/example-logo.webp",
+    imageAlt: "Example Logo Project mark",
+  },
+];
+
+// @ts-expect-error — `image` requires `imageAlt`.
+const IMAGE_WITHOUT_ALT: DonationRecipient = {
+  name: "Example Missing-Alt Project",
+  description: "Registry entry that must not compile.",
+  website: "https://missing-alt.example.org",
+  image: "/images/example-logo.webp",
+};
+
 describe("donate page", () => {
   it("renders a single h1, the intro, and the trust note", () => {
     render(<DonatePage />);
@@ -245,6 +273,17 @@ describe("donation recipient cards", () => {
     const visit = scoped.getByRole("link", { name: /visit.*website/i });
     expect(visit.getAttribute("href")).toBe("https://community.example.org");
     expect(visit.getAttribute("target")).toBe("_blank");
+  });
+
+  it("renders the supplied image alt text verbatim — never a generated fallback", () => {
+    render(<DonationsSection recipients={IMAGE_CONTRACT_FIXTURES} />);
+    expect(screen.getByAltText("Example Logo Project mark")).toBeTruthy();
+    const noLogoCard = screen
+      .getByRole("heading", { name: "Example No-Logo Project" })
+      .closest("article")!;
+    expect(within(noLogoCard as HTMLElement).queryByRole("img")).toBeNull();
+    // Keeps the negative fixture live; the real check is `npm run typecheck`.
+    expect(IMAGE_WITHOUT_ALT.image).toBe("/images/example-logo.webp");
   });
 
   it("still renders the graceful in-progress state when the registry is empty", () => {

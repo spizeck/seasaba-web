@@ -70,7 +70,7 @@ function DonationCard({ recipient }: { recipient: DonationRecipient }) {
       {recipient.image && (
         <Image
           src={recipient.image}
-          alt={recipient.imageAlt ?? ""}
+          alt={recipient.imageAlt}
           width={160}
           height={48}
           className="mb-3 h-14 w-auto self-start object-contain object-left"

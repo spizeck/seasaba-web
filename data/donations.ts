@@ -28,7 +28,7 @@ export type DonationCategory =
   | "marine-conservation"
   | "science-education";
 
-export interface DonationRecipient {
+interface DonationRecipientBase {
   /** Organization or cause name, as the organization itself styles it. */
   name: string;
   /** One or two sentences on who they are and what they do on Saba. */
@@ -46,11 +46,27 @@ export interface DonationRecipient {
   donationUrl?: string;
   /** Optional grouping label shown as a small pill on the card. */
   category?: DonationCategory;
-  /** Approved local asset under public/images — never a hotlinked third-party logo. */
-  image?: string;
-  /** Alt text for `image`; required when `image` is set. */
-  imageAlt?: string;
 }
+
+/**
+ * Card logo pairing: `image` and `imageAlt` are all-or-nothing. Making the
+ * alt text a required field alongside `image` keeps it an explicit
+ * editorial/accessibility decision — a future entry cannot compile with a
+ * logo and no deliberate alt text, and the renderer never invents one.
+ */
+type DonationRecipientImage =
+  | {
+      /** Approved local asset under public/images — never a hotlinked third-party logo. */
+      image: string;
+      /** Alt text for `image`; required when `image` is set. */
+      imageAlt: string;
+    }
+  | {
+      image?: undefined;
+      imageAlt?: undefined;
+    };
+
+export type DonationRecipient = DonationRecipientBase & DonationRecipientImage;
 
 export const DONATION_RECIPIENTS: DonationRecipient[] = [
   {
