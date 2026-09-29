@@ -1,21 +1,25 @@
 import type { Page } from "@playwright/test";
 import { test, expect, hydratedGoto } from "./fixtures";
 
-// Homepage chat-launcher suppression (#123) and resting-position
-// calibration (#125).
+// Homepage chat-launcher suppression (#123), resting-position
+// calibration (#125), and prompt-safety (#184).
 //
 // The real Respond.io iframe is third-party and asynchronous, so these
-// tests inject a deterministic stand-in matching the vendor's contract: an
+// tests inject deterministic stand-ins matching the vendor's contract: an
 // iframe titled "Webchat Widget" carrying a `state` attribute
-// ("widgetClose" / "widgetOpen") and the vendor's fixed bottom-right
-// geometry (measured on production: 90x90 at right/bottom:49px). What we
-// own is the mechanism — IntersectionObserver toggling `data-hero-in-view`
-// on <html>, the CSS rule hiding `[state="widgetClose"]` while it is set,
-// and the 36px resting-position translate — and that is what these
-// assertions exercise. The visible bubble sits inset inside the iframe, so
-// iframe-box clearance (13px) intentionally differs from visible-bubble
-// clearance (~17-18px). Real-widget verification was done manually against
-// production.
+// ("widgetClose" / "widgetOpen"), the vendor's fixed bottom-right
+// geometry, and — for the launcher-only state — the `data-launcher-only`
+// marker the component's geometry watcher sets on a 90x90 closed iframe
+// (measured on production: launcher 90x90 at right/bottom:49px; prompt
+// card inflates the same widgetClose iframe to ~330x179 at
+// right/bottom:43px). What we own is the mechanism —
+// IntersectionObserver toggling `data-hero-in-view` on <html>, the CSS
+// rule hiding `[state="widgetClose"]` while it is set, and the 36px
+// resting-position translate scoped to `data-launcher-only` — and that is
+// what these assertions exercise. The visible bubble sits inset inside
+// the iframe, so iframe-box clearance (13px) intentionally differs from
+// visible-bubble clearance (~17-18px). Real-widget verification was done
+// manually against production.
 
 async function injectLauncher(page: Page, state = "widgetClose") {
   await page.evaluate((s) => {
@@ -23,6 +27,9 @@ async function injectLauncher(page: Page, state = "widgetClose") {
     const f = document.createElement("iframe");
     f.title = "Webchat Widget";
     f.setAttribute("state", s);
+    // The watcher marks only launcher-sized widgetClose iframes; the open
+    // panel is never marked.
+    if (s === "widgetClose") f.setAttribute("data-launcher-only", "");
     // Vendor geometry measured on production: fixed, 90x90,
     // bottom/right 49px.
     f.style.cssText =
@@ -42,6 +49,7 @@ async function launcherState(page: Page) {
       bottom: +(innerHeight - r.bottom).toFixed(1),
       right: +(innerWidth - r.right).toFixed(1),
       transform: cs.transform,
+      clipPath: cs.clipPath,
       state: f.getAttribute("state"),
     };
   });
@@ -81,9 +89,30 @@ test("an open conversation is never forcibly hidden on the hero", async ({ page 
   await injectLauncher(page, "widgetOpen");
   const s = await launcherState(page);
   expect(s?.visibility).toBe("visible");
-  // The calibration translate is scoped to widgetClose — the open
+  // The calibration translate is scoped to data-launcher-only — the open
   // conversation is never repositioned.
   expect(s?.transform).toBe("none");
+});
+
+test("prompt card hides on the hero but is never clipped or repositioned", async ({ page }) => {
+  await hydratedGoto(page, "/");
+  // Prompt-visible closed state (issue #184): the vendor grows the same
+  // widgetClose iframe to ~330x179 at right/bottom:43px. The watcher
+  // leaves it unmarked, so clip/translate must not apply — but hero
+  // suppression still does (the rule keys off state="widgetClose").
+  await page.evaluate(() => {
+    document.querySelector('iframe[title="Webchat Widget"]')?.remove();
+    const f = document.createElement("iframe");
+    f.title = "Webchat Widget";
+    f.setAttribute("state", "widgetClose");
+    f.style.cssText =
+      "position:fixed;bottom:43px;right:43px;width:330px;height:179px;border:0;z-index:9999";
+    document.body.appendChild(f);
+  });
+  await expect.poll(async () => (await launcherState(page))?.visibility).toBe("hidden");
+  const s = await launcherState(page);
+  expect(s?.transform).toBe("none");
+  expect(s?.clipPath).toBe("none");
 });
 
 test("interior pages show the launcher immediately", async ({ page }) => {

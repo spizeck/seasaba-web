@@ -219,25 +219,32 @@ html[data-hero-in-view] iframe[title="Webchat Widget"][state="widgetClose"] {
 }
 
 /*
- * Resting-position calibration (issue #125). Measured on production: the
- * closed launcher iframe is 90x90 at right/bottom:49px (vendor 25px +
- * dashboard spacing), while the visible blue circle (~57-59px) sits ~4-5px
- * inside the iframe's corner — an effective ~53-54px of clearance vs
- * Cookiebot's ~10-11px. Shifting the closed launcher 36px right/down puts
- * the circle ~17-18px from the viewport edges. `transform` is safe: the
- * vendor positions via inline left/right/bottom and does not use
- * transform, and transforms never create document overflow. Scoped to
- * `widgetClose`; the open panel (`widgetOpen`) is untouched.
+ * Resting-position calibration (issue #125) + prompt-safety (issue #184).
+ * Measured on production: the closed launcher iframe is 90x90 at
+ * right/bottom:49px (vendor 25px + dashboard spacing), while the visible
+ * blue circle (~57-59px) sits ~4-5px inside the iframe's corner — an
+ * effective ~53-54px of clearance vs Cookiebot's ~10-11px. Shifting the
+ * launcher 36px right/down puts the circle ~17-18px from the viewport
+ * edges. `transform` is safe: the vendor positions via inline
+ * left/right/bottom and does not use transform, and transforms never
+ * create document overflow.
  *
- * The iframe's transparent top/left still intercepts pointer events
- * (verified via elementFromPoint on production). `clip-path` shrinks the
- * hit area to the bottom-right quarter that actually contains the circle
- * (~58px circle inset ~5px, so 25% leaves ~5px of slack), letting clicks
- * pass through to page content beneath. When the greeting card shows, the
- * iframe grows to host it in the same bottom-right region, which stays
- * inside the clip. The open panel is unaffected (`widgetOpen` unmatched).
+ * The launcher iframe's transparent top/left still intercepts pointer
+ * events (verified via elementFromPoint on production). `clip-path`
+ * shrinks the hit area to the bottom-right quarter that actually contains
+ * the circle (~58px circle inset ~5px, so 25% leaves ~5px of slack),
+ * letting clicks pass through to page content beneath.
+ *
+ * Why `data-launcher-only` instead of `state="widgetClose"`: the vendor
+ * reuses the same closed-state iframe for its promotional prompt card,
+ * growing it to ~179px tall and up to ~330px wide — the prompt renders in
+ * the region a blanket clip would cut off. CSS cannot read element size,
+ * so respond-io-widget.tsx marks the iframe `data-launcher-only` only
+ * while it measures launcher-sized (see lib/respond-io.ts). The prompt
+ * and the open conversation panel (`widgetOpen`) keep the vendor's own
+ * positioning and hit region untouched.
  */
-iframe[title="Webchat Widget"][state="widgetClose"] {
+iframe[title="Webchat Widget"][data-launcher-only] {
   transform: translate(36px, 36px);
   clip-path: inset(25% 0 0 25%);
 }
