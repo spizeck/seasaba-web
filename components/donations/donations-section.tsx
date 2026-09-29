@@ -73,7 +73,7 @@ function DonationCard({ recipient }: { recipient: DonationRecipient }) {
           alt={recipient.imageAlt ?? ""}
           width={160}
           height={48}
-          className="h-12 w-auto object-contain"
+          className="mb-3 h-14 w-auto self-start object-contain object-left"
         />
       )}
       <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5">

@@ -56,8 +56,9 @@ export const DONATION_RECIPIENTS: DonationRecipient[] = [
   {
     // Sea & Learn Foundation: a year-round foundation, not just the October
     // event. Copy below condenses their supplied description; final wording
-    // pending their review. They supplied a logo and graphic — wire `image`
-    // up once the owner drops the files into public/images.
+    // pending their review. Card uses their supplied horizontal transparent
+    // logo; the vertical variant stays in public/images/optimized as an
+    // alternate.
     name: "Sea & Learn Foundation",
     description:
       "A year-round foundation running hands-on science, environmental education, youth development, and cultural heritage programs that connect Saba's community with the island's extraordinary natural and cultural resources.",
@@ -66,14 +67,16 @@ export const DONATION_RECIPIENTS: DonationRecipient[] = [
     website: "https://www.seaandlearn.org/",
     donationUrl: "https://www.seaandlearn.org/donate",
     category: "science-education",
+    image: "/images/optimized/sea-and-learn-foundation-logo-horizontal.webp",
+    imageAlt: "Sea & Learn Foundation logo",
   },
   {
     // Saba Conservation Foundation: keep visitor-facing copy on marine
     // conservation per their request — the National Marine Park and coral
     // restoration. Donations go to their own donate page (the direct PayPal
-    // URL they also supplied is intentionally not used). Their color logo
-    // was supplied — wire `image` up once the owner adds it to
-    // public/images.
+    // URL they also supplied is intentionally not used). Card uses their
+    // supplied full-color logo on the light card; the white variant stays
+    // in public/images/optimized as an alternate for dark backgrounds.
     name: "Saba Conservation Foundation",
     description:
       "The organization working to protect and restore the beautiful reefs around Saba.",
@@ -82,5 +85,7 @@ export const DONATION_RECIPIENTS: DonationRecipient[] = [
     website: "https://sabapark.org/saba-conservation-foundation/",
     donationUrl: "https://sabapark.org/saba-conservation-foundation/donate-support/",
     category: "marine-conservation",
+    image: "/images/optimized/saba-conservation-foundation-logo-color.webp",
+    imageAlt: "Saba Conservation Foundation logo",
   },
 ];

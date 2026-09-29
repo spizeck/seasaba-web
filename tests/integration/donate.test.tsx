@@ -1,3 +1,5 @@
+import { existsSync } from "node:fs";
+import { join } from "node:path";
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -321,7 +323,16 @@ describe("donation recipient registry (#171)", () => {
       expect(r.description.trim()).not.toBe("");
       expect(r.website).toMatch(/^https:\/\//);
       if (r.donationUrl) expect(r.donationUrl).toMatch(/^https:\/\//);
-      if (r.image) expect(r.imageAlt?.trim()).toBeTruthy();
+      if (r.image) {
+        // Logos are organization-supplied local assets under public/images —
+        // never a hotlinked third-party URL, and the file must actually ship.
+        expect(r.imageAlt?.trim()).toBeTruthy();
+        expect(r.image).toMatch(/^\/images\//);
+        expect(
+          existsSync(join(process.cwd(), "public", r.image)),
+          `${r.name} image ${r.image}`
+        ).toBe(true);
+      }
       // No invented charitable claims in organization-facing copy.
       expect(`${r.description} ${r.funds ?? ""}`).not.toMatch(
         /tax[- ]deductible|nonprofit|501\(c\)/i
