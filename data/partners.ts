@@ -258,7 +258,7 @@ export const PARTNERS: Partner[] = [
     category: "local",
     subcategory: "Restaurants",
     village: "Windwardside",
-    website: "https://www.facebook.com/people/Amonhana-Saba/61567249710942/",
+    website: "https://www.facebook.com/amonhana.saba.2025/",
     linkType: "facebook",
   },
   {
@@ -309,6 +309,14 @@ export const PARTNERS: Partner[] = [
     linkType: "facebook",
   },
   {
+    name: "Gate Zero Cafe & Bites",
+    category: "local",
+    subcategory: "Restaurants",
+    village: "Juancho E. Yrausquin Airport",
+    website: "https://www.facebook.com/p/Gate-Zero-Cafe-Bites-Saba-61589765608533/",
+    linkType: "facebook",
+  },
+  {
     name: "Island Flavor",
     category: "local",
     subcategory: "Restaurants",
@@ -317,11 +325,18 @@ export const PARTNERS: Partner[] = [
     linkType: "facebook",
   },
   {
-    name: "Liam's Cuisine Bar & Restaurant",
+    name: "Island Paradise Cafe & Bistro",
     category: "local",
     subcategory: "Restaurants",
     village: "Windwardside",
-    website: "https://www.facebook.com/Liams-Cuisine-101391342634709/",
+    website: "https://www.facebook.com/people/Island-Paradise-Saba/61572396929574/",
+    linkType: "facebook",
+  },
+  {
+    name: "Lav's View",
+    category: "local",
+    subcategory: "Restaurants",
+    website: "https://www.facebook.com/lavsview.saba",
     linkType: "facebook",
   },
   {
@@ -376,7 +391,7 @@ export const PARTNERS: Partner[] = [
     category: "local",
     subcategory: "Restaurants",
     village: "Fort Bay",
-    website: "https://www.sabatourism.com/tour-item/tankd/",
+    website: "https://www.sabatourism.com/restaurants/bars/tankd/",
   },
   {
     name: "The Dive Bar",
@@ -398,7 +413,8 @@ export const PARTNERS: Partner[] = [
     category: "local",
     subcategory: "Restaurants",
     village: "Windwardside",
-    website: "https://www.sabatropicscafe.com/",
+    website: "https://www.facebook.com/TropicsCafeSaba",
+    linkType: "facebook",
   },
   // Local Partners — Transportation
   {
@@ -428,6 +444,15 @@ export const PARTNERS: Partner[] = [
     subcategory: "Transportation",
     transportationType: "airplane",
     website: "https://www.winair.sx/",
+  },
+  {
+    name: "Windward Express",
+    category: "local",
+    subcategory: "Transportation",
+    transportationType: "airplane",
+    // windwardexpress.com is HTTP-only (no TLS); the tourism board's
+    // getting-here page has a dedicated Windward Express section.
+    website: "https://www.sabatourism.com/getting-here/",
   },
 
   // Caribbean Dive Partners

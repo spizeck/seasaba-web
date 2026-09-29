@@ -6,6 +6,7 @@ import { trackEvent } from "@/lib/analytics";
 import {
   RESPOND_IO_SCRIPT_ID,
   respondIoWidgetSrc,
+  watchRespondIoIframe,
   wireRespondAnalytics,
   type RespondApi,
 } from "@/lib/respond-io";
@@ -29,7 +30,12 @@ import {
 export function RespondIoWidget() {
   useEffect(() => {
     const cId = process.env.NEXT_PUBLIC_RESPOND_IO_CID;
-    if (!cId || document.getElementById(RESPOND_IO_SCRIPT_ID)) return;
+    if (!cId) return;
+
+    // Geometry watcher runs even when the script element already exists
+    // (remount after client-side navigation): the vendor iframe keeps
+    // living in the DOM, so `data-launcher-only` must be maintained too.
+    const stopWatching = watchRespondIoIframe();
 
     let cancelled = false;
 
@@ -61,6 +67,7 @@ export function RespondIoWidget() {
 
     return () => {
       cancelled = true;
+      stopWatching();
       window.removeEventListener("load", inject);
     };
   }, []);
