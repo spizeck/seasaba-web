@@ -373,3 +373,19 @@ it("does not run the geometry watcher when the cId env var is unset", async () =
   await new Promise((r) => setTimeout(r, 0));
   expect(f).not.toHaveAttribute("data-launcher-only");
 });
+
+// Cleanup regression (PR #185 review): the vendor iframe outlives the
+// component, so unmount must strip `data-launcher-only` — otherwise a
+// prompt shown before remount would inherit the launcher clip.
+it("strips data-launcher-only from the surviving iframe on unmount", async () => {
+  vi.stubEnv("NEXT_PUBLIC_RESPOND_IO_CID", "test-cid-123");
+  const view = render(<RespondIoWidget />);
+  const f = fakeIframe({ width: 90, height: 90 });
+  await waitFor(() => expect(f).toHaveAttribute("data-launcher-only"));
+
+  view.unmount();
+  // The iframe stays in the DOM (the vendor owns it), but the marker is
+  // gone — it must never persist past the watcher that maintains it.
+  expect(document.body.contains(f)).toBe(true);
+  expect(f).not.toHaveAttribute("data-launcher-only");
+});

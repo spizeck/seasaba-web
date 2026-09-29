@@ -86,7 +86,9 @@ export function syncLauncherOnlyAttribute(iframe: HTMLIFrameElement): void {
  * iframe is injected asynchronously after widget.js runs, the vendor flips
  * its `state` attribute, and the prompt resizes the same element — so we
  * observe both DOM insertion and per-iframe size/attribute changes.
- * Returns a cleanup that disconnects every observer.
+ * Returns a cleanup that disconnects every observer and clears the
+ * marker — the vendor iframe can outlive the component, and a stale
+ * `data-launcher-only` would re-apply the launcher clip to a prompt.
  */
 export function watchRespondIoIframe(): () => void {
   let iframe: HTMLIFrameElement | null = null;
@@ -115,5 +117,6 @@ export function watchRespondIoIframe(): () => void {
     bodyObserver.disconnect();
     sizeObserver?.disconnect();
     stateObserver?.disconnect();
+    iframe?.removeAttribute("data-launcher-only");
   };
 }

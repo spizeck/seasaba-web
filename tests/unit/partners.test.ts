@@ -47,14 +47,28 @@ it("adds Windward Express to transportation", () => {
   expect(we?.website).toBe("https://www.sabatourism.com/getting-here/");
 });
 
+// Hostname check for linkType consistency: parse the URL and compare the
+// hostname to the canonical domain (or a real subdomain of it). Substring
+// matching is not a hostname check — "facebook.com.evil.example" or
+// "example.com/facebook.com" would pass `includes` but must fail here.
+function hostIs(url: string, expectedHost: string): boolean {
+  let host: string;
+  try {
+    host = new URL(url).hostname.toLowerCase();
+  } catch {
+    return false;
+  }
+  return host === expectedHost || host.endsWith(`.${expectedHost}`);
+}
+
 it("keeps partner entries structurally consistent", () => {
   for (const p of PARTNERS) {
     // Every partner links somewhere sane.
     expect(p.website, p.name).toMatch(/^(https?:\/\/|\/)/);
     // Social destinations are labeled so cards render the right CTA.
-    if (p.website.includes("facebook.com")) expect(p.linkType, p.name).toBe("facebook");
-    if (p.website.includes("instagram.com")) expect(p.linkType, p.name).toBe("instagram");
-    if (p.website.includes("tripadvisor.com")) expect(p.linkType, p.name).toBe("tripadvisor");
+    if (hostIs(p.website, "facebook.com")) expect(p.linkType, p.name).toBe("facebook");
+    if (hostIs(p.website, "instagram.com")) expect(p.linkType, p.name).toBe("instagram");
+    if (hostIs(p.website, "tripadvisor.com")) expect(p.linkType, p.name).toBe("tripadvisor");
   }
   // No duplicate partner names.
   const all = PARTNERS.map((p) => p.name);
@@ -62,5 +76,31 @@ it("keeps partner entries structurally consistent", () => {
   // Transportation entries declare their mode so cards pick an icon.
   for (const p of transportation) {
     expect(p.transportationType, p.name).toBeTruthy();
+  }
+});
+
+it("the social-domain helper accepts real subdomains and rejects lookalikes", () => {
+  const cases: [url: string, domain: string, expected: boolean][] = [];
+  for (const socialDomain of ["facebook.com", "instagram.com", "tripadvisor.com"]) {
+    cases.push(
+      [`https://${socialDomain}/page`, socialDomain, true],
+      [`https://www.${socialDomain}/page`, socialDomain, true],
+      [`https://${socialDomain}.evil.example/page`, socialDomain, false],
+      [`https://evil${socialDomain}/`, socialDomain, false],
+      [`https://example.com/${socialDomain}`, socialDomain, false],
+      [`https://example.com/?q=${socialDomain}`, socialDomain, false]
+    );
+  }
+  cases.push(
+    // Malformed URLs fail closed rather than throwing.
+    ["not a url", "facebook.com", false],
+    // Internal paths are valid partner websites but never match a social host.
+    ["/contact", "facebook.com", false]
+  );
+  for (const [url, domain, expected] of cases) {
+    // Evaluate outside expect(): Vitest's assertion rewriting miscompiles
+    // nested multi-arg calls inside expect(actual, message).
+    const actual = hostIs(url, domain);
+    expect(actual, url).toBe(expected);
   }
 });
