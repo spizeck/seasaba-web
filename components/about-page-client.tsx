@@ -63,13 +63,6 @@ const TEAM_MEMBERS: TeamMember[] = [
     languages: ["English", "French", "Spanish", "Haitian Creole"],
   },
   {
-    name: "Lynn",
-    title: "Divemaster",
-    bio: "Originally from Sint Maarten, Lynn brings warmth, positivity, and a love of culture and wellness to the Sea Saba family. She enjoys helping guests relax, embrace island life, and create unforgettable memories both above and below the water.",
-    languages: ["English", "Dutch"],
-    image: "/images/optimized/lynn.webp",
-  },
-  {
     name: "Lionel",
     title: "Dive Instructor",
     bio: "A Saban native, freelance instructor, and harbor master, Lionel simply can't stay away from the ocean. Whether he's leading REEF surveys, hunting lionfish, or sharing his love of Saba's reefs with guests, he's happiest in the water. If there's a chance to dive, chances are Lionel is already geared up.",
