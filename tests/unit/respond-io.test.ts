@@ -1,7 +1,9 @@
 import { readFileSync } from "node:fs";
 import { expect, it, vi } from "vitest";
 import {
+  isLauncherOnlyGeometry,
   RESPOND_IO_CDN,
+  RESPOND_IO_LAUNCHER_EDGE_PX,
   RESPOND_IO_SCRIPT_ID,
   respondIoWidgetSrc,
   wireRespondAnalytics,
@@ -77,22 +79,46 @@ it("hides only the closed widget launcher while the homepage hero is in view", (
   expect(globalsCss).not.toContain("translateY(calc(-60px");
 });
 
-// Launcher resting-position calibration (issue #125): production
-// measurement showed the visible bubble sits ~4-5px inside the 90x90
-// iframe's corner, so vendor right/bottom:49px yields ~53-54px of
-// visible clearance. A fixed 36px translate on the closed launcher lands
-// the bubble ~17-18px from the viewport edges. The vendor does not set
-// transform, so a plain rule is sufficient.
-it("shifts only the closed launcher to its calibrated resting position", () => {
+// Launcher resting-position calibration (issue #125) + prompt-safety
+// (issue #184): the vendor reuses the closed-state iframe for the
+// promotional prompt, growing it far beyond the 90x90 launcher — so the
+// translate/clip contract must key off the loader-maintained
+// `data-launcher-only` geometry marker, never the bare widgetClose state.
+it("shifts only the marked launcher-only iframe to its calibrated resting position", () => {
   const bodies = [...globalsCss.matchAll(
-    /iframe\[title="Webchat Widget"\]\[state="widgetClose"\]\s*{([^}]+)}/g
+    /iframe\[title="Webchat Widget"\]\[data-launcher-only\]\s*{([^}]+)}/g
   )].map((m) => m[1]);
   const combined = bodies.join("\n");
   expect(combined).toContain("transform: translate(36px, 36px)");
   // clip-path shrinks the transparent hit area to the circle's quarter.
   expect(combined).toContain("clip-path: inset(25% 0 0 25%)");
   expect(combined).not.toContain("!important");
+  // Regression for #184: no rule may translate or clip a widgetClose
+  // iframe unconditionally — the same state also hosts the prompt card.
+  const closedBodies = [...globalsCss.matchAll(
+    /iframe\[title="Webchat Widget"\]\[state="widgetClose"\]\s*{([^}]+)}/g
+  )].map((m) => m[1]).join("\n");
+  expect(closedBodies).not.toContain("transform:");
+  expect(closedBodies).not.toContain("clip-path");
   // The open conversation panel is never repositioned or clipped.
   expect(globalsCss).not.toMatch(/state="widgetOpen"\]\s*{[^}]*transform/);
   expect(globalsCss).not.toMatch(/state="widgetOpen"\]\s*{[^}]*clip-path/);
+});
+
+// Geometry contract the watcher enforces (issue #184): production
+// measurement — launcher-only is 90x90; the prompt card inflates the same
+// widgetClose iframe to ~179px tall / 234-330px wide; the open panel is
+// widgetOpen at any size.
+it("classifies launcher vs prompt vs open iframe geometry", () => {
+  expect(isLauncherOnlyGeometry("widgetClose", 90, 90)).toBe(true);
+  expect(isLauncherOnlyGeometry("widgetClose", RESPOND_IO_LAUNCHER_EDGE_PX, 90)).toBe(true);
+  // Prompt-visible closed iframe — must NOT be treated as launcher.
+  expect(isLauncherOnlyGeometry("widgetClose", 330, 179)).toBe(false);
+  expect(isLauncherOnlyGeometry("widgetClose", 234, 179)).toBe(false);
+  // Open panel, even if small, is never the launcher.
+  expect(isLauncherOnlyGeometry("widgetOpen", 90, 90)).toBe(false);
+  expect(isLauncherOnlyGeometry("widgetOpen", 400, 600)).toBe(false);
+  // Missing/zero-size iframe (still injecting) is not the launcher.
+  expect(isLauncherOnlyGeometry("widgetClose", 0, 0)).toBe(false);
+  expect(isLauncherOnlyGeometry(null, 90, 90)).toBe(false);
 });

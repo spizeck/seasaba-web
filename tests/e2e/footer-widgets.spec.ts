@@ -8,18 +8,21 @@ import {
 // Footer clearance above the fixed bottom-corner launchers (issue #127).
 //
 // Real production geometry (measured on www.seasaba.com):
-//   Respond.io closed iframe: 90x90, right/bottom:49px, plus our
-//     translate(36px, 36px) calibration -> box x:[vw-103, vw-13],
-//     y:[vh-103, vh-13]. Its transparent region intercepts pointer events,
-//     so globals.css clips the hit area to the bottom-right quarter that
-//     holds the ~58px circle -> effective zone x:[vw-80, vw-13],
-//     y:[vh-80, vh-13].
+//   Respond.io closed iframe, launcher-only: 90x90, right/bottom:49px —
+//     the component marks it `data-launcher-only` (issue #184), which is
+//     what applies the translate(36px, 36px) calibration + hit-region
+//     clip -> box x:[vw-103, vw-13], y:[vh-103, vh-13]; clipped zone
+//     x:[vw-80, vw-13], y:[vh-80, vh-13].
+//   Respond.io closed iframe, prompt card visible: up to ~330x179 at
+//     right/bottom:43px, still state="widgetClose" but NOT marked —
+//     vendor positioning and hit region stay intact so the prompt is
+//     never clipped.
 //   Cookiebot icon: 48x48 at left:10, bottom:11 -> x:[10,58], y:[vh-59, vh-11].
 // These tests use deterministic stand-ins and assert the real UX contract:
 // no element inside the clipped zones, every bottom-bar link clickable via
 // hit-testing, and no horizontal overflow — not a fixed padding value.
 
-const WIDTHS = [320, 375, 430, 640, 768, 1024, 1280, 1360, 1440] as const;
+const WIDTHS = [320, 375, 390, 430, 640, 768, 1024, 1280, 1360, 1440] as const;
 
 async function injectLaunchers(page: import("@playwright/test").Page) {
   await page.evaluate(() => {
@@ -28,6 +31,10 @@ async function injectLaunchers(page: import("@playwright/test").Page) {
     const f = document.createElement("iframe");
     f.title = "Webchat Widget";
     f.setAttribute("state", "widgetClose");
+    // The production watcher sets this marker only while the iframe
+    // measures launcher-sized (<=120px edge) — the 90x90 stand-in models
+    // exactly that state.
+    f.setAttribute("data-launcher-only", "");
     // Vendor geometry measured on production; the site's transform +
     // clip-path rules apply on top of this inline positioning.
     f.style.cssText =
@@ -103,6 +110,53 @@ test("footer bottom bar clears both floating launchers at every width", async ({
     // ~115px+ of dead space).
     expect(m.gapAboveZone, `${width}px gap above launcher zone`).toBeGreaterThan(4);
     expect(m.gapAboveZone, `${width}px gap above launcher zone`).toBeLessThan(35);
+  }
+});
+
+// Regression for issue #184: the vendor reuses the closed-state iframe
+// for its promotional prompt card. Measured on production the prompt
+// iframe is ~179px tall and min(330, vw-86)px wide, anchored at
+// right/bottom:43px — still state="widgetClose" but never marked
+// data-launcher-only. A blanket widgetClose clip-path would cut off the
+// left quarter of the prompt exactly as reported.
+test("prompt-sized closed iframe keeps vendor geometry and is never clipped", async ({ page }) => {
+  await hydratedGoto(page, "/diving");
+  for (const width of WIDTHS) {
+    await page.setViewportSize({ width, height: 800 });
+    const promptWidth = Math.min(330, width - 86);
+    const m = await page.evaluate((pw) => {
+      document.querySelector('iframe[title="Webchat Widget"]')?.remove();
+      const f = document.createElement("iframe");
+      f.title = "Webchat Widget";
+      f.setAttribute("state", "widgetClose");
+      // Prompt-state geometry measured on production. The watcher does
+      // NOT mark this state — the launcher clip/translate must not apply.
+      f.style.cssText = `position:fixed;bottom:43px;right:43px;width:${pw}px;height:179px;border:0;z-index:9999`;
+      document.body.appendChild(f);
+      const cs = getComputedStyle(f);
+      const r = f.getBoundingClientRect();
+      // Hit-test the region the old clip would have hidden: the prompt's
+      // top-left quarter must still reach the iframe (real content), not
+      // pass through or be blocked.
+      const hit = document.elementFromPoint(r.left + 8, r.top + 8);
+      return {
+        clipPath: cs.clipPath,
+        transform: cs.transform,
+        rightGap: +(innerWidth - r.right).toFixed(1),
+        bottomGap: +(innerHeight - r.bottom).toFixed(1),
+        hitIsIframe: hit === f,
+        docOverflow:
+          document.documentElement.scrollWidth - document.documentElement.clientWidth,
+      };
+    }, promptWidth);
+
+    expect(m.clipPath, `${width}px prompt must not be clipped`).toBe("none");
+    expect(m.transform, `${width}px prompt must not be translated`).toBe("none");
+    // Vendor offset preserved — prompt sits at its designed 43px offset.
+    expect(m.rightGap).toBe(43);
+    expect(m.bottomGap).toBe(43);
+    expect(m.hitIsIframe, `${width}px prompt corner must be clickable`).toBe(true);
+    expect(m.docOverflow, `${width}px document overflow`).toBeLessThanOrEqual(0);
   }
 });
 

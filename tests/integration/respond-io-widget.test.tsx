@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
-import { fireEvent, render } from "@testing-library/react";
+import { fireEvent, render, waitFor } from "@testing-library/react";
 import { RespondIoWidget } from "@/components/respond-io-widget";
 import { RESPOND_IO_SCRIPT_ID } from "@/lib/respond-io";
 
@@ -30,6 +30,25 @@ class IntersectionObserverStub {
   }
 }
 vi.stubGlobal("IntersectionObserver", IntersectionObserverStub);
+
+// jsdom has no ResizeObserver — the iframe-geometry watcher (issue #184)
+// uses it to re-mark the launcher when the vendor resizes the element.
+// The stub captures each callback so tests can drive resizes manually.
+const roCallbacks: (() => void)[] = [];
+class ResizeObserverStub {
+  cb: () => void;
+  disconnected = false;
+  constructor(cb: () => void) {
+    this.cb = cb;
+    roCallbacks.push(cb);
+  }
+  observe() {}
+  unobserve() {}
+  disconnect() {
+    this.disconnected = true;
+  }
+}
+vi.stubGlobal("ResizeObserver", ResizeObserverStub);
 
 // The widget itself is a vendor iframe application; the loader is our
 // surface. These tests exercise the real loader (script injection, env
@@ -65,11 +84,15 @@ beforeEach(() => {
   (window as unknown as { dataLayer: unknown[] }).dataLayer = [];
   mocks.pathname.current = "/";
   ioInstances.length = 0;
+  roCallbacks.length = 0;
   document.documentElement.removeAttribute("data-hero-in-view");
 });
 
 afterEach(() => {
   document.getElementById(RESPOND_IO_SCRIPT_ID)?.remove();
+  document
+    .querySelectorAll('iframe[title="Webchat Widget"]')
+    .forEach((el) => el.remove());
   delete (window as unknown as { $respond?: RespondStub }).$respond;
   document.documentElement.removeAttribute("data-hero-in-view");
   vi.unstubAllEnvs();
@@ -255,4 +278,114 @@ it("removes the attribute on unmount", () => {
   ioInstances[0].cb([{ isIntersecting: true }]);
   view.unmount();
   expect(heroAttr()).toBe(false);
+});
+
+// --- Launcher-vs-prompt geometry marker (issue #184) ---
+// The vendor reuses the closed-state iframe for the prompt card, so the
+// component watches the iframe and marks it `data-launcher-only` only
+// while it measures launcher-sized. globals.css scopes the resting
+// translate + hit-region clip to that marker.
+
+function fakeIframe(size: { width: number; height: number }, state = "widgetClose") {
+  const f = document.createElement("iframe");
+  f.title = "Webchat Widget";
+  f.setAttribute("state", state);
+  vi.spyOn(f, "getBoundingClientRect").mockReturnValue({
+    ...size,
+    x: 0,
+    y: 0,
+    top: 0,
+    left: 0,
+    right: size.width,
+    bottom: size.height,
+    toJSON: () => ({}),
+  } as DOMRect);
+  document.body.appendChild(f);
+  return f;
+}
+
+it("marks a launcher-sized closed iframe as data-launcher-only", async () => {
+  vi.stubEnv("NEXT_PUBLIC_RESPOND_IO_CID", "test-cid-123");
+  render(<RespondIoWidget />);
+  const f = fakeIframe({ width: 90, height: 90 });
+  await waitFor(() => expect(f).toHaveAttribute("data-launcher-only"));
+});
+
+it("does not mark a prompt-sized closed iframe — the prompt must never be clipped", async () => {
+  vi.stubEnv("NEXT_PUBLIC_RESPOND_IO_CID", "test-cid-123");
+  render(<RespondIoWidget />);
+  const f = fakeIframe({ width: 330, height: 179 });
+  const rectSpy = f.getBoundingClientRect as ReturnType<typeof vi.spyOn>;
+  // The watcher attaches via MutationObserver and measures the iframe on
+  // attach — wait until it has actually seen this element.
+  await waitFor(() => expect(rectSpy).toHaveBeenCalled());
+  expect(f).not.toHaveAttribute("data-launcher-only");
+});
+
+it("drops the marker when the iframe grows for the prompt or opens", async () => {
+  vi.stubEnv("NEXT_PUBLIC_RESPOND_IO_CID", "test-cid-123");
+  render(<RespondIoWidget />);
+  const f = fakeIframe({ width: 90, height: 90 });
+  await waitFor(() => expect(f).toHaveAttribute("data-launcher-only"));
+
+  // Vendor grows the same widgetClose iframe to host the prompt.
+  const rectSpy = f.getBoundingClientRect as ReturnType<typeof vi.spyOn>;
+  rectSpy.mockReturnValue({
+    width: 330,
+    height: 179,
+    x: 0,
+    y: 0,
+    top: 0,
+    left: 0,
+    right: 330,
+    bottom: 179,
+    toJSON: () => ({}),
+  } as DOMRect);
+  roCallbacks.forEach((cb) => cb());
+  expect(f).not.toHaveAttribute("data-launcher-only");
+
+  // Vendor reopens the launcher: shrink back and close state again.
+  rectSpy.mockReturnValue({
+    width: 90,
+    height: 90,
+    x: 0,
+    y: 0,
+    top: 0,
+    left: 0,
+    right: 90,
+    bottom: 90,
+    toJSON: () => ({}),
+  } as DOMRect);
+  roCallbacks.forEach((cb) => cb());
+  expect(f).toHaveAttribute("data-launcher-only");
+
+  // state=widgetOpen is never the launcher, even at a small size.
+  f.setAttribute("state", "widgetOpen");
+  await waitFor(() => expect(f).not.toHaveAttribute("data-launcher-only"));
+});
+
+it("does not run the geometry watcher when the cId env var is unset", async () => {
+  vi.stubEnv("NEXT_PUBLIC_RESPOND_IO_CID", "");
+  render(<RespondIoWidget />);
+  const f = fakeIframe({ width: 90, height: 90 });
+  // Give the MutationObserver a microtask tick — with no cId the watcher
+  // never attaches, so the iframe stays unmarked.
+  await new Promise((r) => setTimeout(r, 0));
+  expect(f).not.toHaveAttribute("data-launcher-only");
+});
+
+// Cleanup regression (PR #185 review): the vendor iframe outlives the
+// component, so unmount must strip `data-launcher-only` — otherwise a
+// prompt shown before remount would inherit the launcher clip.
+it("strips data-launcher-only from the surviving iframe on unmount", async () => {
+  vi.stubEnv("NEXT_PUBLIC_RESPOND_IO_CID", "test-cid-123");
+  const view = render(<RespondIoWidget />);
+  const f = fakeIframe({ width: 90, height: 90 });
+  await waitFor(() => expect(f).toHaveAttribute("data-launcher-only"));
+
+  view.unmount();
+  // The iframe stays in the DOM (the vendor owns it), but the marker is
+  // gone — it must never persist past the watcher that maintains it.
+  expect(document.body.contains(f)).toBe(true);
+  expect(f).not.toHaveAttribute("data-launcher-only");
 });
