@@ -8,6 +8,7 @@ import PlanYourTripPage from "@/app/(en)/(content)/plan-your-trip/page";
 import VisitingYachtsPage from "@/app/(en)/(content)/visiting-yachts/page";
 import TermsPage from "@/app/(en)/(content)/terms/page";
 import PartnersPage from "@/app/(en)/(content)/partners/page";
+import DonatePage from "@/app/(en)/(content)/donate/page";
 import { Footer } from "@/components/footer";
 import {
   coursesAnchors,
@@ -76,6 +77,7 @@ describe("canonical anchors resolve to real section ids", () => {
   // /diving anchors are already covered by operations-sourcing.test.tsx.
   const idCheckCases: [string, React.ReactElement][] = [
     ["/", <HomePage key="home" />],
+    ["/donate", <DonatePage key="d" />],
     ...cases.map(([path, element]) => [path, element] as [string, React.ReactElement]),
   ];
 
@@ -152,6 +154,73 @@ describe("specific-purpose links carry canonical fragments", () => {
       );
       expect(link, `missing footer link for #${anchor}`).toBeTruthy();
     }
+  });
+
+  it("donate entry points resolve: footer, partners, and plan-your-trip", () => {
+    render(<Footer />);
+    // Support Saba lives in the Plan Your Trip column (owner IA review):
+    // exactly one footer link to /donate, under the trip-planning nav.
+    const links = screen.getAllByRole("link", { name: "Support Saba" });
+    expect(links).toHaveLength(1);
+    expect(links[0].getAttribute("href")).toBe("/donate");
+    const planNav = screen.getByRole("navigation", {
+      name: /trip planning links/i,
+    });
+    expect(planNav.contains(links[0])).toBe(true);
+  });
+
+  it("the footer Plan and Explore columns balance at seven links each", () => {
+    render(<Footer />);
+    const planNav = screen.getByRole("navigation", {
+      name: /trip planning links/i,
+    });
+    const exploreNav = screen.getByRole("navigation", {
+      name: /site navigation/i,
+    });
+    expect(planNav.querySelectorAll("a")).toHaveLength(7);
+    expect(exploreNav.querySelectorAll("a")).toHaveLength(7);
+  });
+
+  it("the footer Explore column links to the yacht guide", () => {
+    render(<Footer />);
+    const nav = screen.getByRole("navigation", { name: /site navigation/i });
+    const link = Array.from(nav.querySelectorAll("a")).find(
+      (a) => a.textContent === "Visiting Yachts"
+    );
+    expect(link?.getAttribute("href")).toBe("/visiting-yachts");
+  });
+
+  it("partners conservation section and plan-your-trip island section link to /donate", () => {
+    const { container: partners } = render(<PartnersPage key="p" />);
+    const conservation = partners.querySelector(`#${partnersAnchors.conservationPartners}`);
+    expect(
+      Array.from(conservation?.querySelectorAll("a") ?? []).some(
+        (a) => a.getAttribute("href") === "/donate"
+      ),
+      "missing /donate link in partners conservation section"
+    ).toBe(true);
+
+    const { container: pyt } = render(<PlanYourTripPage key="pyt" />);
+    const history = pyt.querySelector(`#${planYourTripAnchors.history}`);
+    expect(
+      Array.from(history?.querySelectorAll("a") ?? []).some(
+        (a) => a.getAttribute("href") === "/donate"
+      ),
+      "missing /donate link in plan-your-trip island section"
+    ).toBe(true);
+  });
+
+  it("the donate page's internal links resolve", () => {
+    render(<DonatePage />);
+    expect(
+      hrefOf(/how the saba marine park works/i)
+    ).toBe(`/diving#${divingAnchors.marinePark}`);
+    // The intro signposts island organizations to the request half of the
+    // page. (The empty-registry "ask us" -> /contact link is covered by the
+    // DonationsSection fail-safe test in donate.test.tsx.)
+    expect(hrefOf(/^request support from sea saba$/i)).toBe(
+      "/donate#request-support"
+    );
   });
 
   it("where-to-stay on plan-your-trip offers a contact path", () => {

@@ -8,7 +8,7 @@ import { test, expect } from "./fixtures";
 const PUBLIC_PAGES = [
   "/", "/diving", "/dive-sites", "/courses", "/plan-your-trip",
   "/visiting-yachts", "/about", "/contact", "/book", "/dive-log",
-  "/partners", "/terms", "/privacy", "/cookie-policy",
+  "/partners", "/donate", "/terms", "/privacy", "/cookie-policy",
 ];
 
 // Static assets and framework URLs that legitimately appear as href/src values.

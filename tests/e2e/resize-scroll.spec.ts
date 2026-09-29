@@ -172,8 +172,6 @@ const BOTTOM_TOLERANCE = 24;
 // The keeper restores a landmark's gap below the chrome exactly; this covers
 // font-load shifts and sub-pixel rounding in re-measurement.
 const LANDMARK_TOLERANCE = 60;
-// Well clear of the footer region (footer is ~460px tall at desktop widths).
-const FOOTER_THRESHOLD_HINT = 1500;
 // UX budget for transient landmark drift during a stepped resize. The
 // keeper pins per frame, so the only legitimate movement is sticky-chrome
 // growth (~34px for a wrapped pill nav) plus a frame of jitter. The previous
@@ -323,12 +321,13 @@ test.describe("bottom preservation", () => {
 
     // The same element is still at the top of the reading area — the scroll
     // offset may move by the full reflow delta, but the visible content must
-    // not change. And the visitor was not pulled toward the bottom.
+    // not change. And the visitor was not pulled toward the bottom — the
+    // footer itself stays below the fold.
     expect(after.landmarkTop).not.toBeNull();
     expect(
       Math.abs((after.landmarkGap ?? 0) - (before.landmarkGap ?? 0))
     ).toBeLessThanOrEqual(LANDMARK_TOLERANCE);
-    expect(geo.fromBottom).toBeGreaterThan(FOOTER_THRESHOLD_HINT);
+    expect(geo.footerVisible).toBe(false);
   });
 });
 
@@ -467,28 +466,39 @@ test.describe("content landmark preservation", () => {
 // because the threshold was measured against the taller post-reflow footer.
 test.describe("homepage landmark preservation", () => {
   // Reading positions covering a heading, the responsive image-card grid,
-  // and content just above the footer (577px from the end at 1280 — inside
-  // the post-reflow 758px footer but outside the 462px pre-reflow one).
-  // `frac` is a fraction of max scroll; negative means px above the bottom.
-  const positions = [
+  // and content just above the footer. `frac` is a fraction of the max
+  // scroll; negative means px above the bottom. The footer position instead
+  // anchors to the footer's top edge — the semantic boundary — so the
+  // scenario does not depend on how tall the footer happens to be.
+  const positions: { label: string; frac?: number; aboveFooterPx?: number }[] = [
     { label: "upper sections", frac: 0.25 },
     { label: "image-card grid", frac: 0.66 },
-    { label: "just above footer", frac: -577 },
+    { label: "just above footer", aboveFooterPx: 160 },
   ];
 
-  for (const { label, frac } of positions) {
-    test(`keeps ${label} in view 1280→768`, async ({ page, isMobile }) => {
+  for (const position of positions) {
+    test(`keeps ${position.label} in view 1280→768`, async ({ page, isMobile }) => {
       test.skip(!!isMobile, "desktop window-resize scenario");
 
       await page.setViewportSize({ width: 1280, height: 800 });
       await hydratedGoto(page, "/");
-      await page.evaluate((f) => {
-        const max =
-          document.documentElement.scrollHeight - window.innerHeight;
-        window.scrollTo(0, f >= 0 ? max * f : max + f);
-      }, frac);
+      await page.evaluate((p) => {
+        const doc = document.documentElement;
+        const max = doc.scrollHeight - window.innerHeight;
+        if (p.aboveFooterPx != null) {
+          const footer = document.querySelector("footer");
+          const top = footer
+            ? footer.getBoundingClientRect().top + window.scrollY
+            : doc.scrollHeight;
+          window.scrollTo(0, top - window.innerHeight - p.aboveFooterPx);
+        } else {
+          const frac = p.frac ?? 0;
+          window.scrollTo(0, frac >= 0 ? max * frac : max + frac);
+        }
+      }, position);
       await waitForStableScroll(page);
       const before = await tagLandmark(page);
+      const beforeGeo = await measure(page);
       expect(before.landmarkTop).not.toBeNull();
 
       await page.setViewportSize({ width: 768, height: 800 });
@@ -502,7 +512,13 @@ test.describe("homepage landmark preservation", () => {
         Math.abs((after.landmarkGap ?? 0) - (before.landmarkGap ?? 0))
       ).toBeLessThanOrEqual(LANDMARK_TOLERANCE);
       const geo = await measure(page);
-      expect(geo.fromBottom).toBeGreaterThan(FOOTER_THRESHOLD_HINT);
+      // A narrowing reflow can only lengthen the document, so a preserved
+      // reading position leaves the page end at least as far below the fold
+      // as before — a keeper that mis-pinned the visitor toward the bottom
+      // would shrink this distance. And the footer itself stays out of view:
+      // the visitor is reading content above it, not viewing the footer.
+      expect(geo.fromBottom).toBeGreaterThanOrEqual(beforeGeo.fromBottom);
+      expect(geo.footerVisible).toBe(false);
     });
   }
 

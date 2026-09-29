@@ -16,6 +16,7 @@ const PLAN_LINKS = [
   { label: "What to Bring",  href: `/plan-your-trip#${planYourTripAnchors.whatToBring}` },
   { label: "Good to Know",   href: `/plan-your-trip#${planYourTripAnchors.goodToKnow}` },
   { label: "Recommended Partners", href: "/partners" },
+  { label: "Support Saba", href: "/donate" },
 ] as const;
 
 const EXPLORE_LINKS = [
@@ -23,6 +24,7 @@ const EXPLORE_LINKS = [
   { label: "Diving",      href: "/diving" },
   { label: "Dive Log",    href: "/dive-log" },
   { label: "Courses",     href: "/courses" },
+  { label: "Visiting Yachts", href: "/visiting-yachts" },
   { label: "About",       href: "/about" },
   { label: "Contact",     href: "/contact" },
 ] as const;
@@ -53,13 +55,13 @@ export function Footer() {
   return (
     <footer className="border-t border-border/40 bg-muted/30">
       {/* pb clears the fixed launchers' clipped hit region (~80px) plus safe-area */}
-      <div className="mx-auto max-w-6xl px-4 pt-16 pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))] sm:px-6 lg:px-8">
-        <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mx-auto max-w-6xl px-4 pt-10 pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))] sm:px-6 lg:px-8">
+        <div className="grid gap-8 sm:grid-cols-2 sm:gap-10 lg:grid-cols-4">
 
           {/* Plan Your Trip */}
           <div>
             <p className={headingCls}>Plan Your Trip</p>
-            <nav aria-label="Trip planning links" className="mt-4 flex flex-col gap-3">
+            <nav aria-label="Trip planning links" className="mt-3 flex flex-col gap-2">
               {PLAN_LINKS.map((l) => (
                 <Link key={l.label} href={l.href} className={linkCls}>
                   {l.label}
@@ -71,7 +73,7 @@ export function Footer() {
           {/* Explore */}
           <div>
             <p className={headingCls}>Explore</p>
-            <nav aria-label="Site navigation" className="mt-4 flex flex-col gap-3">
+            <nav aria-label="Site navigation" className="mt-3 flex flex-col gap-2">
               {EXPLORE_LINKS.map((l) => (
                 <Link key={l.label} href={l.href} className={linkCls}>
                   {l.label}
@@ -83,7 +85,7 @@ export function Footer() {
           {/* Contact */}
           <div>
             <p className={headingCls}>Contact</p>
-            <address className="mt-4 flex flex-col gap-2 not-italic text-sm text-muted-foreground">
+            <address className="mt-3 flex flex-col gap-2 not-italic text-sm text-muted-foreground">
               {CONTACT.address.displayLines.map((line) => (
                 <span key={line}>{line}</span>
               ))}
@@ -117,7 +119,7 @@ export function Footer() {
           {/* Resources */}
           <div>
             <p className={headingCls}>Resources</p>
-            <nav aria-label="Travel resources" className="mt-4 flex flex-col gap-3">
+            <nav aria-label="Travel resources" className="mt-3 flex flex-col gap-2">
               {RESOURCE_LINKS.map((l) =>
                 l.external ? (
                   <a
@@ -143,8 +145,8 @@ export function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="mt-12 border-t border-border/30 pt-8">
-          <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
+        <div className="mt-6 border-t border-border/30 pt-6">
+          <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
             <p className="text-xs text-muted-foreground text-center sm:text-left">
               &copy; {OPERATIONS.establishedYear}&ndash;2026 Sea Saba, NV &bull; The Bottom, Saba, Caribbean Netherlands
             </p>

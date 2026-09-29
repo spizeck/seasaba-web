@@ -11,6 +11,7 @@ const PUBLIC_ROUTES = [
   "/book",
   "/dive-log",
   "/partners",
+  "/donate",
   "/terms",
   "/privacy",
   "/cookie-policy",

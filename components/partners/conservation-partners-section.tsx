@@ -44,6 +44,17 @@ export function ConservationPartnersSection({ partners }: ConservationPartnersSe
           </div>
         ))}
       </div>
+
+      <p className="mt-6 text-sm text-muted-foreground">
+        Want to support the island&apos;s conservation and community work?{" "}
+        <Link
+          href="/donate"
+          className="font-medium text-primary underline-offset-4 hover:underline"
+        >
+          See ways to give back to Saba
+        </Link>
+        .
+      </p>
     </section>
   );
 }

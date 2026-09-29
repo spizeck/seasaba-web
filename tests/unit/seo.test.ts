@@ -18,6 +18,7 @@ const CANONICAL_ROUTES = [
   "/about",
   "/contact",
   "/partners",
+  "/donate",
   "/terms",
   "/privacy",
   "/cookie-policy",
