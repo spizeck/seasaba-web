@@ -18,11 +18,13 @@ import { divingAnchors } from "@/lib/anchors";
 
 // /donate (issue #171) serves two audiences: visitors looking for vetted Saba
 // organizations to support directly (Sea Saba never processes donations — the
-// shipped registry stays empty until the owner approves recipients), and Saba
-// organizations/projects requesting support FROM Sea Saba (the community-giving
-// program). Request submissions use the same visitor-handoff mechanism as the
-// contact form — the requester's own email app or WhatsApp sends it, so no
-// server endpoint, no shared-sender Respond.io collapse (#104).
+// registry currently holds Sea & Learn Foundation and Saba Conservation
+// Foundation from organization-supplied material, with final card wording
+// pending each organization's review), and Saba organizations/projects
+// requesting support FROM Sea Saba (the community-giving program). Request
+// submissions use the same visitor-handoff mechanism as the contact form —
+// the requester's own email app or WhatsApp sends it, so no server endpoint,
+// no shared-sender Respond.io collapse (#104).
 
 const FIXTURE: DonationRecipient[] = [
   {
@@ -92,18 +94,27 @@ describe("donate page", () => {
     expect(screen.getByText(SUPPORT_REQUEST_NO_GUARANTEE)).toBeTruthy();
   });
 
-  it("renders a graceful in-progress state while the shipped registry is empty", () => {
+  it("renders the organization-confirmed recipients and no pending ones", () => {
     render(<DonatePage />);
     expect(
-      screen.getByText(/assembling a short list of saba organizations/i)
+      screen.getByRole("heading", { name: "Sea & Learn Foundation" })
     ).toBeTruthy();
-    // The empty state still offers a real next step.
-    expect(screen.getByRole("link", { name: /^ask us$/i }).getAttribute("href")).toBe(
-      "/contact"
-    );
-    // No fabricated recipients: the only h3 card headings are the request
-    // section's subsections, not organization cards.
-    expect(screen.queryByText("Example Reef Fund")).toBeNull();
+    expect(
+      screen.getByRole("heading", { name: "Saba Conservation Foundation" })
+    ).toBeTruthy();
+    // Recipients still in outreach must not appear: Saba Reach Foundation,
+    // Child Focus Foundation, Body Mind & Spirit, SFPCA (deferred), and the
+    // unapproved Project Bureau Saba / Sea Fan Society Foundation concept.
+    for (const pending of [
+      /saba reach/i,
+      /child focus/i,
+      /body,?\s*mind/i,
+      /sfpca|prevention of cruelty/i,
+      /sea fan/i,
+      /project bureau/i,
+    ]) {
+      expect(screen.queryByText(pending)).toBeNull();
+    }
   });
 
   it("keeps claims honest — no checkout, funding promises, or tax language", () => {
@@ -234,9 +245,76 @@ describe("donation recipient cards", () => {
     expect(visit.getAttribute("target")).toBe("_blank");
   });
 
-  it("shipped registry stays empty until owner-approved recipients land", () => {
-    // Issue #171 ships the architecture without recipients; if entries are
-    // added later they must satisfy the content contract instead.
+  it("still renders the graceful in-progress state when the registry is empty", () => {
+    render(<DonationsSection recipients={[]} />);
+    expect(
+      screen.getByText(/assembling a short list of saba organizations/i)
+    ).toBeTruthy();
+    // The empty state still offers a real next step.
+    expect(screen.getByRole("link", { name: /^ask us$/i }).getAttribute("href")).toBe(
+      "/contact"
+    );
+  });
+});
+
+describe("donation recipient registry (#171)", () => {
+  // Both entries below come from the organizations' own September 2026
+  // outreach replies; final card wording is pending their review before
+  // publication.
+  it("holds exactly the two organization-confirmed recipients", () => {
+    expect(DONATION_RECIPIENTS).toHaveLength(2);
+    expect(DONATION_RECIPIENTS.map((r) => r.name)).toEqual([
+      "Sea & Learn Foundation",
+      "Saba Conservation Foundation",
+    ]);
+  });
+
+  it("gives Sea & Learn its canonical donation URL, free of tracking params", () => {
+    const recipient = DONATION_RECIPIENTS.find(
+      (r) => r.name === "Sea & Learn Foundation"
+    );
+    expect(recipient?.donationUrl).toBe("https://www.seaandlearn.org/donate");
+    expect(recipient?.donationUrl).not.toMatch(/[?#]/);
+    // Year-round framing: the card must not read as the October event.
+    expect(recipient?.description).toMatch(/year-round/i);
+    expect(`${recipient?.description} ${recipient?.funds ?? ""}`).not.toMatch(
+      /october|annual event/i
+    );
+  });
+
+  it("gives SCF its preferred donation page — never the raw PayPal URL", () => {
+    const recipient = DONATION_RECIPIENTS.find(
+      (r) => r.name === "Saba Conservation Foundation"
+    );
+    expect(recipient?.donationUrl).toBe(
+      "https://sabapark.org/saba-conservation-foundation/donate-support/"
+    );
+    // SCF supplied a direct PayPal link but asked us not to use it; PayPal
+    // must not appear anywhere in the registry.
+    expect(JSON.stringify(DONATION_RECIPIENTS)).not.toMatch(/paypal/i);
+    // Their requested emphasis: the marine park and coral restoration.
+    expect(`${recipient?.description} ${recipient?.funds ?? ""}`).toMatch(
+      /national marine park/i
+    );
+    expect(`${recipient?.description} ${recipient?.funds ?? ""}`).toMatch(
+      /coral restoration/i
+    );
+  });
+
+  it("sends every donation CTA straight to the recipient's own site", () => {
+    render(<DonationsSection recipients={DONATION_RECIPIENTS} />);
+    for (const r of DONATION_RECIPIENTS) {
+      const cta = screen.getByRole("link", {
+        name: new RegExp(`donate directly to ${r.name}`, "i"),
+      });
+      expect(cta.getAttribute("href")).toBe(r.donationUrl);
+      expect(cta.getAttribute("target")).toBe("_blank");
+      // First-party recipient domain only — Sea Saba never touches the gift.
+      expect(new URL(r.donationUrl!).hostname).not.toContain("seasaba.com");
+    }
+  });
+
+  it("keeps every entry inside the content contract", () => {
     expect(Array.isArray(DONATION_RECIPIENTS)).toBe(true);
     for (const r of DONATION_RECIPIENTS) {
       expect(r.name.trim()).not.toBe("");
@@ -244,6 +322,10 @@ describe("donation recipient cards", () => {
       expect(r.website).toMatch(/^https:\/\//);
       if (r.donationUrl) expect(r.donationUrl).toMatch(/^https:\/\//);
       if (r.image) expect(r.imageAlt?.trim()).toBeTruthy();
+      // No invented charitable claims in organization-facing copy.
+      expect(`${r.description} ${r.funds ?? ""}`).not.toMatch(
+        /tax[- ]deductible|nonprofit|501\(c\)/i
+      );
     }
   });
 });
@@ -333,7 +415,11 @@ describe("support request form", () => {
     ).toBeVisible();
   });
 
-  it("opens the requester's own email app with the structured request", async () => {
+  // fillValidRequest() types through ~10 real fields via userEvent — easily
+  // 3-4s on a fast machine and past the 5s default under full-suite load.
+  // A timed-out test can strand queued input events that corrupt the next
+  // test's render, so the submission tests get explicit headroom.
+  it("opens the requester's own email app with the structured request", { timeout: 20000 }, async () => {
     render(<SupportRequestForm />);
     await fillValidRequest();
     await userEvent.click(screen.getByRole("button", { name: "Continue to email" }));
@@ -350,7 +436,7 @@ describe("support request form", () => {
     expect(screen.getByRole("status").textContent).toMatch(/email app should open/i);
   });
 
-  it("records the direct-payment preference when checked", async () => {
+  it("records the direct-payment preference when checked", { timeout: 20000 }, async () => {
     render(<SupportRequestForm />);
     await fillValidRequest();
     await userEvent.click(
@@ -363,7 +449,7 @@ describe("support request form", () => {
     );
   });
 
-  it("offers a WhatsApp handoff carrying the same request", async () => {
+  it("offers a WhatsApp handoff carrying the same request", { timeout: 20000 }, async () => {
     render(<SupportRequestForm />);
     await fillValidRequest();
     await userEvent.click(
@@ -386,7 +472,7 @@ describe("support request form", () => {
     expect(started).toHaveLength(1);
   });
 
-  it("never sends request details or PII to analytics", async () => {
+  it("never sends request details or PII to analytics", { timeout: 20000 }, async () => {
     render(<SupportRequestForm />);
     await fillValidRequest();
     await userEvent.click(screen.getByRole("button", { name: "Continue to email" }));

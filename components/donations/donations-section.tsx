@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 import { TrackedOutboundLink } from "@/components/tracked-outbound-link";
+import { cn } from "@/lib/utils";
 import type { DonationRecipient } from "@/data/donations";
 
 const CATEGORY_LABELS: Record<NonNullable<DonationRecipient["category"]>, string> = {
@@ -12,6 +13,8 @@ const CATEGORY_LABELS: Record<NonNullable<DonationRecipient["category"]>, string
   animals: "Animals",
   youth: "Youth",
   culture: "Culture",
+  "marine-conservation": "Marine conservation & coral restoration",
+  "science-education": "Science, education, youth & culture",
 };
 
 interface DonationsSectionProps {
@@ -44,8 +47,16 @@ export function DonationsSection({ recipients }: DonationsSectionProps) {
     );
   }
 
+  // Three columns only once the registry outgrows two entries — with one or
+  // two approved recipients a wider card fills the row and keeps the longer
+  // focus labels on one line instead of leaving an empty third column.
   return (
-    <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div
+      className={cn(
+        "mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2",
+        recipients.length > 2 && "lg:grid-cols-3"
+      )}
+    >
       {recipients.map((recipient) => (
         <DonationCard key={recipient.name} recipient={recipient} />
       ))}
@@ -65,7 +76,7 @@ function DonationCard({ recipient }: { recipient: DonationRecipient }) {
           className="h-12 w-auto object-contain"
         />
       )}
-      <div className="flex items-start justify-between gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5">
         <h3 className="text-base font-semibold text-foreground">{recipient.name}</h3>
         {recipient.category && (
           <span className="shrink-0 rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">

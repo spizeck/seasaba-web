@@ -215,7 +215,12 @@ describe("specific-purpose links carry canonical fragments", () => {
     expect(
       hrefOf(/how the saba marine park works/i)
     ).toBe(`/diving#${divingAnchors.marinePark}`);
-    expect(hrefOf(/^ask us$/i)).toBe("/contact");
+    // The intro signposts island organizations to the request half of the
+    // page. (The empty-registry "ask us" -> /contact link is covered by the
+    // DonationsSection fail-safe test in donate.test.tsx.)
+    expect(hrefOf(/^request support from sea saba$/i)).toBe(
+      "/donate#request-support"
+    );
   });
 
   it("where-to-stay on plan-your-trip offers a contact path", () => {
