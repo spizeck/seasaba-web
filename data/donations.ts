@@ -71,15 +71,17 @@ export const DONATION_RECIPIENTS: DonationRecipient[] = [
     imageAlt: "Sea & Learn Foundation logo",
   },
   {
-    // Saba Conservation Foundation: keep visitor-facing copy on marine
-    // conservation per their request — the National Marine Park and coral
-    // restoration. Donations go to their own donate page (the direct PayPal
-    // URL they also supplied is intentionally not used). Card uses their
-    // supplied full-color logo on the light card; the white variant stays
-    // in public/images/optimized as an alternate for dark backgrounds.
+    // Saba Conservation Foundation: description covers their full mission
+    // on land and at sea — both national parks — per their review request;
+    // the "helps fund" line keeps the visitor-donation emphasis on the
+    // National Marine Park and coral restoration. Donations go to their
+    // own donate page (the direct PayPal URL they also supplied is
+    // intentionally not used). Card uses their supplied full-color logo on
+    // the light card; the white variant stays in public/images/optimized
+    // as an alternate for dark backgrounds.
     name: "Saba Conservation Foundation",
     description:
-      "The organization working to protect and restore the beautiful reefs around Saba.",
+      "The foundation works to protect and restore Saba's natural environment on land and at sea by managing the Saba National Marine Park and Mt. Scenery National Park.",
     funds:
       "Conservation of Saba's National Marine Park and ongoing projects such as coral restoration.",
     website: "https://sabapark.org/saba-conservation-foundation/",

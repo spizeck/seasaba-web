@@ -303,6 +303,21 @@ describe("donation recipient registry (#171)", () => {
     );
   });
 
+  it("describes SCF's mission on land and at sea — both national parks", () => {
+    const recipient = DONATION_RECIPIENTS.find(
+      (r) => r.name === "Saba Conservation Foundation"
+    );
+    // SCF's review request: the description carries the full mission
+    // (Saba National Marine Park AND Mt. Scenery National Park), while
+    // the funding line keeps the visitor-donation marine emphasis.
+    expect(recipient?.description).toMatch(/on land and at sea/i);
+    expect(recipient?.description).toMatch(/saba national marine park/i);
+    expect(recipient?.description).toMatch(/mt\.? scenery national park/i);
+    expect(recipient?.funds).toMatch(/national marine park/i);
+    expect(recipient?.funds).toMatch(/coral restoration/i);
+    expect(recipient?.category).toBe("marine-conservation");
+  });
+
   it("sends every donation CTA straight to the recipient's own site", () => {
     render(<DonationsSection recipients={DONATION_RECIPIENTS} />);
     for (const r of DONATION_RECIPIENTS) {
