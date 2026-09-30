@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Hero } from "@/components/hero";
+import { ContourLines } from "@/components/contour-lines";
 import { Button } from "@/components/ui/button";
 import { ImageCard } from "@/components/image-card";
 import { FeatureImage } from "@/components/feature-image";
@@ -116,8 +117,9 @@ export default function Home() {
       <Hero />
 
       {/* 2. Why Saba */}
-      <section className="bg-card py-20">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+      <section className="relative overflow-hidden bg-card py-20">
+        <ContourLines corner="top-right" seed={1} className="text-primary" />
+        <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
 
           {/* Section header */}
           <div className="mb-12 max-w-2xl">
@@ -231,8 +233,9 @@ export default function Home() {
       </section>
 
       {/* 4. Plan Your Trip */}
-      <section className="bg-card py-20">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+      <section className="relative overflow-hidden bg-card py-20">
+        <ContourLines corner="bottom-left" seed={4} className="text-primary" />
+        <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
 
           {/* Section header */}
           <div className="mb-16 max-w-2xl">
