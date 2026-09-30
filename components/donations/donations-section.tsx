@@ -74,18 +74,26 @@ function DonationCard({ recipient }: { recipient: DonationRecipient }) {
   const [bankDetailsOpen, setBankDetailsOpen] = useState(false);
   return (
     <article className="group flex flex-col rounded-xl border border-border/50 bg-background p-5 transition-card hover:border-primary/30 hover:shadow-sm focus-within:border-primary/30 focus-within:shadow-sm">
-      {recipient.image && (
-        <Image
-          src={recipient.image}
-          alt={recipient.imageAlt}
-          width={160}
-          height={48}
-          className={cn(
-            "mb-3 w-auto self-start object-contain object-left",
-            recipient.imageClassName ?? "h-14"
-          )}
-        />
-      )}
+      {/* Shared fixed-height logo region: the wrapper height — not the
+          image's — sets where the title row begins, so portrait and
+          landscape marks start their names on the same line. Logos rest
+          on a common baseline (items-end) and scale inside the region
+          via imageClassName, capped by max-h-full. The region renders
+          even without an image so a future logo-less entry still aligns. */}
+      <div className="mb-3 flex h-24 items-end">
+        {recipient.image && (
+          <Image
+            src={recipient.image}
+            alt={recipient.imageAlt}
+            width={160}
+            height={48}
+            className={cn(
+              "max-h-full w-auto max-w-full object-contain object-left",
+              recipient.imageClassName ?? "h-14"
+            )}
+          />
+        )}
+      </div>
       <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5">
         <h3 className="text-base font-semibold text-foreground">{recipient.name}</h3>
         {recipient.category && (

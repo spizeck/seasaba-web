@@ -366,6 +366,28 @@ describe("donation recipient cards", () => {
     expect(visit.className).not.toContain("no-underline");
   });
 
+  // PR #196 follow-up: organization names must start on the same line
+  // across cards even when logo aspect ratios differ (Child Focus's mark
+  // is portrait, Sea & Learn's and SCF's are wide). The wrapper's fixed
+  // height — not the image's — positions the title row.
+  it("reserves the same fixed-height logo region on every card", () => {
+    render(<DonationsSection recipients={DONATION_RECIPIENTS} />);
+    const articles = screen
+      .getAllByRole("heading", { level: 3 })
+      .map((h) => h.closest("article")!);
+    expect(articles).toHaveLength(DONATION_RECIPIENTS.length);
+    for (const article of articles) {
+      // First child is the shared logo region, directly above the title row.
+      const region = article.firstElementChild as HTMLElement;
+      expect(region.className).toContain("h-24");
+      const img = region.querySelector("img");
+      expect(img, "every current recipient ships a logo").toBeTruthy();
+      // The image scales inside the region and can never outgrow it.
+      expect(img!.className).toContain("max-h-full");
+      expect(img!.className).toContain("object-contain");
+    }
+  });
+
   it("gives action cards the shared hover/focus-within treatment without motion", () => {
     render(<DonationsSection recipients={FIXTURE} />);
     const card = screen
