@@ -78,16 +78,16 @@ export default function DonatePage() {
         </h2>
         <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
           When you&apos;re ready to do more, a number of island organizations
-          welcome direct support. Every card below links out to the
-          organization&apos;s own website. Your donation goes to them, not
-          through us.
+          welcome direct support. Each card below points to the
+          organization&apos;s own website or lists its own bank details. Your
+          donation goes to them, not through us.
         </p>
 
         <DonationsSection recipients={DONATION_RECIPIENTS} />
 
         <p className="mt-6 text-xs leading-relaxed text-muted-foreground">
-          Any donation link on this page opens the organization&apos;s own
-          website in a new tab. Sea Saba never collects, processes, or retains
+          Any donation link or bank detail on this page belongs to the
+          organization itself. Sea Saba never collects, processes, or retains
           donated funds. Each organization manages its own gifts and receipts.
         </p>
       </section>
