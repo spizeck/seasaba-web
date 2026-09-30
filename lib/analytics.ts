@@ -15,6 +15,8 @@ export type AnalyticsEvent =
   | "donation_click"
   | "donation_request_started"
   | "donation_request_submitted"
+  | "donation_request_succeeded"
+  | "donation_request_failed"
   | "ferry_link_click"
   | "social_click"
   | "pdf_download"

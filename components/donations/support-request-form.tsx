@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useCallback, useMemo, useRef } from "react";
+import { useState, useCallback, useEffect, useMemo, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { Mail, MailCheck, MessageCircle } from "lucide-react";
+import { CircleCheck, Send, TriangleAlert } from "lucide-react";
 import { trackEvent, trackLinkClick } from "@/lib/analytics";
 import { CONTACT } from "@/lib/constants";
+import { newIdempotencyKey } from "@/lib/community-support/contract";
 import {
   buildSupportRequestMailto,
   buildSupportRequestWhatsAppUrl,
@@ -46,26 +47,47 @@ function FieldError({ id, message }: { id: string; message?: string }) {
   );
 }
 
+type SubmitState =
+  | { status: "idle" }
+  | { status: "submitting" }
+  | { status: "success"; reference: string }
+  | { status: "error"; kind: "validation" | "rate_limited" | "unavailable" };
+
+/** Wire shape of POST /api/support-requests — the first-party boundary. */
+interface SubmitResponseBody {
+  ok?: boolean;
+  reference?: string;
+  kind?: string;
+  fields?: Record<string, string>;
+}
+
+// Backend field errors use the same field names as the draft — only those
+// may be merged into the form's per-field error state.
+const DRAFT_FIELD_NAMES = new Set(Object.keys(EMPTY_DRAFT));
+
 /**
- * "Request Support from Sea Saba" form (#171). Same submission mechanism as
- * the contact form: the visitor's own email app (or WhatsApp) sends the
- * request, so Respond.io files it under the visitor's real address — no
- * shared-sender collapse, no server-side submission, no third-party form
- * provider. Analytics receive only generic started/submitted events; field
- * contents never leave the page except in the visitor's own handoff.
+ * "Request Support from Sea Saba" form (#171, persistence boundary #189).
+ * Submits to the Sea Saba-owned route /api/support-requests, which persists
+ * the request in the Community Support system and returns a human-friendly
+ * reference — success is shown only after that persistence succeeds. The
+ * visitor's own email app / WhatsApp remain as an explicit fallback when
+ * the system can't be reached, so no request is ever stranded. Analytics
+ * receive only generic started/submitted/succeeded/failed events; field
+ * contents never leave the page in an analytics payload.
  */
 export function SupportRequestForm() {
   const [draft, setDraft] = useState<SupportRequestDraft>(EMPTY_DRAFT);
   const [errors, setErrors] = useState<SupportRequestErrors>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
-  // The mailto: href built for the most recent handoff — rendered as a
-  // "reopen" link in the notice so a missed protocol handoff is retryable.
-  const [handoffHref, setHandoffHref] = useState("");
-  const handoffRef = useRef<HTMLDivElement>(null);
-  // Per-method duplicate-click guards — the window is short so deliberate
-  // resubmission (and switching between email and WhatsApp) still works.
-  const lastEmailAt = useRef(0);
-  const lastWhatsAppAt = useRef(0);
+  const [submitState, setSubmitState] = useState<SubmitState>({ status: "idle" });
+  // Honeypot — invisible and unreachable to humans (aria-hidden, offscreen,
+  // tabIndex -1, no autocomplete). Any value means a bot.
+  const [honeypot, setHoneypot] = useState("");
+  const statusRef = useRef<HTMLDivElement>(null);
+  // One idempotency key per distinct draft: retries of an unchanged draft
+  // replay safely on the backend; any edit mints a fresh key so a follow-up
+  // request is a new record, never a conflict.
+  const idempotencyRef = useRef<{ key: string; fingerprint: string } | null>(null);
   const startedRef = useRef(false);
 
   const wantsFinancial = useMemo(
@@ -138,48 +160,162 @@ export function SupportRequestForm() {
     return Object.keys(validationErrors).length === 0;
   }, [draft, touchAll]);
 
-  // Client-email handoff: build the structured request and open it in the
-  // visitor's own email app via mailto:. The visitor reviews and sends it
-  // themselves, so their real address reaches info@seasaba.com and
-  // Respond.io attaches the request to the correct contact — a shared
-  // server-side sender collapsed every visitor into one contact (#104).
-  const handleEmail = useCallback(() => {
+  // Move focus to the status panel whenever one appears — the announce-
+  // first-then-focus order keeps screen readers on the message itself.
+  useEffect(() => {
+    if (submitState.status === "success" || submitState.status === "error") {
+      statusRef.current?.focus();
+    }
+  }, [submitState.status]);
+
+  // Persistence-first submit: the draft goes to the Sea Saba-owned
+  // /api/support-requests route, which forwards it server-to-server into
+  // the Community Support system. Success is shown only when the backend
+  // confirms a persisted reference — a transport failure, validation
+  // rejection, or timeout keeps every entry and offers the email/WhatsApp
+  // handoff as the explicit fallback.
+  const handleSendRequest = useCallback(async () => {
     if (!validateAll()) return;
-    if (Date.now() - lastEmailAt.current < 1000) return;
-    lastEmailAt.current = Date.now();
+    if (submitState.status === "submitting") return;
 
-    const href = buildSupportRequestMailto(draft);
-    const eventParams = { method: "email", button_location: "donate_request_form" };
-    // Handoff events only — no request details, names, or amounts.
-    trackEvent("donation_request_submitted", eventParams);
-    trackLinkClick("email_click", href, "Continue to Email", eventParams);
-    setHandoffHref(href);
-    window.open(href, "_self");
-    requestAnimationFrame(() => handoffRef.current?.focus());
-  }, [validateAll, draft]);
+    const fingerprint = JSON.stringify(draft);
+    if (!idempotencyRef.current || idempotencyRef.current.fingerprint !== fingerprint) {
+      idempotencyRef.current = { key: newIdempotencyKey(), fingerprint };
+    }
 
-  const handleWhatsApp = useCallback(() => {
-    if (!validateAll()) return;
-    if (Date.now() - lastWhatsAppAt.current < 1000) return;
-    lastWhatsAppAt.current = Date.now();
+    setSubmitState({ status: "submitting" });
+    // Generic funnel signal only — never field contents.
+    trackEvent("donation_request_submitted", {
+      method: "server",
+      button_location: "donate_request_form",
+    });
 
-    const href = buildSupportRequestWhatsAppUrl(draft);
-    const eventParams = { method: "whatsapp", button_location: "donate_request_form" };
-    trackEvent("donation_request_submitted", eventParams);
-    trackLinkClick("whatsapp_click", href, "WhatsApp Sea Saba", eventParams);
-    window.open(href, "_blank", "noopener,noreferrer");
-  }, [validateAll, draft]);
+    const fail = (kind: "validation" | "rate_limited" | "unavailable") => {
+      setSubmitState({ status: "error", kind });
+      trackEvent("donation_request_failed", {
+        reason: kind,
+        button_location: "donate_request_form",
+      });
+    };
+
+    let body: SubmitResponseBody | null = null;
+    try {
+      const res = await fetch("/api/support-requests", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          request: draft,
+          idempotencyKey: idempotencyRef.current.key,
+          submittedAt: new Date().toISOString(),
+          website: honeypot,
+        }),
+      });
+      body = (await res.json().catch(() => null)) as SubmitResponseBody | null;
+    } catch {
+      fail("unavailable");
+      return;
+    }
+
+    if (body?.ok === true && typeof body.reference === "string" && body.reference) {
+      setSubmitState({ status: "success", reference: body.reference });
+      trackEvent("donation_request_succeeded", {
+        button_location: "donate_request_form",
+      });
+      return;
+    }
+
+    if (body?.kind === "validation") {
+      const serverFields = body.fields ?? {};
+      const known: SupportRequestErrors = {};
+      for (const [field, message] of Object.entries(serverFields)) {
+        if (DRAFT_FIELD_NAMES.has(field) && typeof message === "string") {
+          known[field] = message;
+        }
+      }
+      if (Object.keys(known).length > 0) {
+        setErrors((prev) => ({ ...prev, ...known }));
+        setTouched((prev) => ({
+          ...prev,
+          ...Object.fromEntries(Object.keys(known).map((f) => [f, true])),
+        }));
+      }
+      fail("validation");
+      return;
+    }
+    fail(body?.kind === "rate_limited" ? "rate_limited" : "unavailable");
+  }, [validateAll, draft, honeypot, submitState.status]);
+
+  // ---- success: the request is persisted; replace the form so an
+  // accidental resubmit cannot create a second record.
+  if (submitState.status === "success") {
+    return (
+      <div
+        ref={statusRef}
+        tabIndex={-1}
+        role="status"
+        className="rounded-md border border-primary/30 bg-primary/5 p-4 outline-none"
+      >
+        <div className="flex items-start gap-3">
+          <CircleCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+          <div>
+            <p className="text-sm font-medium text-foreground">
+              Your request has been received.
+            </p>
+            <p className="mt-1 text-sm text-foreground">
+              Reference: <strong className="font-semibold">{submitState.reference}</strong>
+            </p>
+            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+              Keep the reference somewhere handy: it&apos;s how we find your request if you
+              contact us. We read every request against the ground rules above and may come
+              back with a follow-up question or two at the email address you gave. If you
+              need to add anything, email{" "}
+              <a
+                href={`mailto:${CONTACT.email}`}
+                className="font-medium text-primary underline-offset-2 hover:underline"
+              >
+                {CONTACT.email}
+              </a>{" "}
+              or message us on{" "}
+              <a
+                href={CONTACT.whatsappHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium text-primary underline-offset-2 hover:underline"
+              >
+                WhatsApp
+              </a>{" "}
+              and mention your reference.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <form
       className="space-y-4"
       onSubmit={(e) => {
         e.preventDefault();
-        handleEmail();
+        void handleSendRequest();
       }}
       onFocusCapture={markStarted}
       noValidate
     >
+      {/* Honeypot — bots fill anything; humans never reach this field. */}
+      <div className="absolute -left-[10000px] top-auto h-px w-px overflow-hidden" aria-hidden="true">
+        <label htmlFor="sr-website">Website</label>
+        <input
+          id="sr-website"
+          name="website"
+          type="text"
+          tabIndex={-1}
+          autoComplete="off"
+          value={honeypot}
+          onChange={(e) => setHoneypot(e.target.value)}
+        />
+      </div>
+
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
           <label htmlFor="sr-name" className={labelClass}>
@@ -515,57 +651,78 @@ export function SupportRequestForm() {
           <FieldError id="sr-ack-error" message={touched.acknowledged ? errors.acknowledged : undefined} />
         </div>
   
-        {handoffHref && (
+        {submitState.status === "error" && (
           <div
-            ref={handoffRef}
+            ref={statusRef}
             tabIndex={-1}
-            role="status"
-            className="rounded-md border border-primary/30 bg-primary/5 p-4 outline-none"
+            role="alert"
+            className="rounded-md border border-destructive/40 bg-destructive/5 p-4 outline-none"
           >
             <div className="flex items-start gap-3">
-              <MailCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+              <TriangleAlert className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
               <div>
                 <p className="text-sm font-medium text-foreground">
-                  Your email app should open with your request ready to send.
+                  {submitState.kind === "validation"
+                    ? "We couldn't check your request. Please review the highlighted fields and send it again."
+                    : submitState.kind === "rate_limited"
+                      ? "We're receiving a lot of requests right now. Please wait a moment and send it again."
+                      : "We couldn't reach our system to save your request. Nothing was sent, and your entries are still here."}
                 </p>
-                <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                  Review it and press Send. It goes to {CONTACT.email} from your own email address. If
-                  nothing opened,{" "}
-                  <a href={handoffHref} className="font-medium text-primary underline-offset-2 hover:underline">
-                    try opening it again
-                  </a>{" "}
-                  or email us directly at{" "}
-                  <a href={`mailto:${CONTACT.email}`} className="font-medium text-primary underline-offset-2 hover:underline">
-                    {CONTACT.email}
-                  </a>
-                  . You can edit anything above first. Your entries are kept.
-                </p>
+                {submitState.kind !== "validation" && (
+                  <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+                    If it keeps failing, the same request can still reach us the
+                    old way; nothing you typed is lost:{" "}
+                    <a
+                      href={buildSupportRequestMailto(draft)}
+                      onClick={() =>
+                        trackLinkClick("email_click", buildSupportRequestMailto(draft), "Send by email instead", {
+                          method: "email_fallback",
+                          button_location: "donate_request_form",
+                        })
+                      }
+                      className="font-medium text-primary underline-offset-2 hover:underline"
+                    >
+                      send it by email
+                    </a>{" "}
+                    or{" "}
+                    <a
+                      href={buildSupportRequestWhatsAppUrl(draft)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() =>
+                        trackLinkClick("whatsapp_click", buildSupportRequestWhatsAppUrl(draft), "Send by WhatsApp instead", {
+                          method: "whatsapp_fallback",
+                          button_location: "donate_request_form",
+                        })
+                      }
+                      className="font-medium text-primary underline-offset-2 hover:underline"
+                    >
+                      send it by WhatsApp
+                    </a>
+                    .
+                  </p>
+                )}
               </div>
             </div>
           </div>
         )}
-  
+
         <div className="flex flex-col gap-3 pt-1 sm:flex-row">
-          <Button type="submit" className="w-full sm:w-auto" aria-label="Continue to email">
-            <Mail className="h-4 w-4" />
-            Continue to Email
-          </Button>
           <Button
-            type="button"
-            variant="outline"
-            onClick={handleWhatsApp}
-            className="w-full border-green-700 text-green-700 hover:bg-green-50 hover:text-green-800 sm:w-auto"
-            aria-label="Send request by WhatsApp"
+            type="submit"
+            className="w-full sm:w-auto"
+            aria-label="Send request"
+            disabled={submitState.status === "submitting"}
           >
-            <MessageCircle className="h-4 w-4" />
-            WhatsApp Sea Saba
+            <Send className="h-4 w-4" />
+            {submitState.status === "submitting" ? "Sending..." : "Send request"}
           </Button>
         </div>
-  
+
         <p className="text-xs text-muted-foreground">
-          The form opens your email app (or WhatsApp) with the request ready to send. Nothing is
-          stored on this website, and you can attach supporting documents in your email app before
-          sending. Prefer to just talk it through? Reach us on WhatsApp or at {CONTACT.email}.
+          Your request goes straight to Sea Saba and is saved so our team can track it, and you&apos;ll
+          get a reference to keep. Nothing you enter here is sent to analytics or advertisers.
+          Prefer to just talk it through? Reach us on WhatsApp or at {CONTACT.email}.
         </p>
       </div>
     </form>

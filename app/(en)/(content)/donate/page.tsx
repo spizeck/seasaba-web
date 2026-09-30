@@ -3,7 +3,7 @@ import { createMetadata } from "@/lib/metadata";
 import { PageHero } from "@/components/page-hero";
 import { DonationsSection } from "@/components/donations/donations-section";
 import { CommunitySupportSection } from "@/components/donations/community-support-section";
-import { DONATION_RECIPIENTS } from "@/data/donations";
+import { getDonationRecipients } from "@/lib/community-support/server";
 import { OPERATIONS } from "@/data/operations";
 import { divingAnchors } from "@/lib/anchors";
 
@@ -14,7 +14,15 @@ export const metadata = createMetadata({
   path: "/donate",
 });
 
-export default function DonatePage() {
+// Recipients come from the Community Support public read endpoint when it
+// is configured and healthy; the local registry is the fallback, so a
+// backend outage can never blank the page. ISR keeps stale-but-known-good
+// content serving while a revalidation is in flight.
+export const revalidate = 300;
+
+export default async function DonatePage() {
+  const recipients = await getDonationRecipients();
+
   return (
     <>
       <PageHero
@@ -83,7 +91,7 @@ export default function DonatePage() {
           through us.
         </p>
 
-        <DonationsSection recipients={DONATION_RECIPIENTS} />
+        <DonationsSection recipients={recipients} />
 
         <p className="mt-6 text-xs leading-relaxed text-muted-foreground">
           Any donation link on this page opens the organization&apos;s own

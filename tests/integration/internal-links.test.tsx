@@ -75,9 +75,10 @@ describe("canonical anchors resolve to real section ids", () => {
   }
 
   // /diving anchors are already covered by operations-sourcing.test.tsx.
+  // /donate is an async server component (#189), so its element is awaited
+  // separately rather than stored in the sync array.
   const idCheckCases: [string, React.ReactElement][] = [
     ["/", <HomePage key="home" />],
-    ["/donate", <DonatePage key="d" />],
     ...cases.map(([path, element]) => [path, element] as [string, React.ReactElement]),
   ];
 
@@ -90,6 +91,13 @@ describe("canonical anchors resolve to real section ids", () => {
       expect(dupes, `duplicate ids on ${path}`).toEqual([]);
     });
   }
+
+  it("/donate has no duplicate element ids", async () => {
+    const { container } = render(await DonatePage());
+    const ids = Array.from(container.querySelectorAll("[id]")).map((el) => el.id);
+    const dupes = ids.filter((id, i) => ids.indexOf(id) !== i);
+    expect(dupes, "duplicate ids on /donate").toEqual([]);
+  });
 });
 
 describe("specific-purpose links carry canonical fragments", () => {
@@ -210,8 +218,8 @@ describe("specific-purpose links carry canonical fragments", () => {
     ).toBe(true);
   });
 
-  it("the donate page's internal links resolve", () => {
-    render(<DonatePage />);
+  it("the donate page's internal links resolve", async () => {
+    render(await DonatePage());
     expect(
       hrefOf(/how the saba marine park works/i)
     ).toBe(`/diving#${divingAnchors.marinePark}`);
