@@ -607,8 +607,10 @@ describe("support request form", () => {
     await userEvent.click(screen.getByRole("button", { name: "Send request" }));
 
     const alert = await screen.findByRole("alert");
-    expect(alert.textContent).toMatch(/couldn't reach our system/i);
-    expect(alert.textContent).toMatch(/nothing was sent/i);
+    expect(alert.textContent).toMatch(/couldn't confirm whether our system saved/i);
+    expect(alert.textContent).toMatch(/try sending it again/i);
+    // A fallback channel could duplicate a silently-persisted request.
+    expect(alert.textContent).toMatch(/may create a duplicate/i);
     // No false success anywhere.
     expect(screen.queryByRole("status")).toBeNull();
     expect(screen.queryByText(/CSR-\d{4}-\d{4}/)).toBeNull();

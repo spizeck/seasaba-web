@@ -153,6 +153,34 @@ describe("submitSupportRequest", () => {
     expect(fetch).not.toHaveBeenCalled();
   });
 
+  it("refuses to send the ingest key over http to a non-loopback host", async () => {
+    vi.stubEnv("COMMUNITY_SUPPORT_API_BASE_URL", "http://backend.test");
+    vi.stubEnv("COMMUNITY_SUPPORT_INGEST_KEY", KEY);
+    const result = await submitSupportRequest(VALID_DRAFT, {
+      idempotencyKey: "key-12345",
+    });
+    expect(result).toEqual({ ok: false, kind: "unavailable" });
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it("still permits http for loopback development backends", async () => {
+    for (const base of [
+      "http://localhost:3000",
+      "http://127.0.0.1:3000",
+      "http://[::1]:3000",
+    ]) {
+      vi.stubEnv("COMMUNITY_SUPPORT_API_BASE_URL", base);
+      vi.stubEnv("COMMUNITY_SUPPORT_INGEST_KEY", KEY);
+      vi.mocked(fetch).mockResolvedValue(
+        jsonResponse(201, { reference: "CSR-2026-0001", requestId: "r", duplicate: false })
+      );
+      const result = await submitSupportRequest(VALID_DRAFT, {
+        idempotencyKey: "key-12345",
+      });
+      expect(result.ok).toBe(true);
+    }
+  });
+
   it("posts the shared contract to the ingest endpoint with Bearer auth", async () => {
     configureEnv();
     vi.mocked(fetch).mockResolvedValue(

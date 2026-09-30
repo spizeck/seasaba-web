@@ -65,6 +65,10 @@ interface SubmitResponseBody {
 // may be merged into the form's per-field error state.
 const DRAFT_FIELD_NAMES = new Set(Object.keys(EMPTY_DRAFT));
 
+// Client-side bound on the boundary request: comfortably above the
+// server's own backend timeout so a normal slow response still lands.
+const CLIENT_TIMEOUT_MS = 20_000;
+
 /**
  * "Request Support from Sea Saba" form (#171, persistence boundary #189).
  * Submits to the Sea Saba-owned route /api/support-requests, which persists
@@ -199,6 +203,12 @@ export function SupportRequestForm() {
     };
 
     let body: SubmitResponseBody | null = null;
+    // Bound the whole request: without a client-side abort, a stalled
+    // connection could leave the form disabled indefinitely. A timeout is
+    // an uncertain outcome — the idempotency key above is preserved so a
+    // retry of the unchanged draft replays against the same key.
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), CLIENT_TIMEOUT_MS);
     try {
       const res = await fetch("/api/support-requests", {
         method: "POST",
@@ -209,11 +219,14 @@ export function SupportRequestForm() {
           submittedAt: new Date().toISOString(),
           website: honeypot,
         }),
+        signal: controller.signal,
       });
       body = (await res.json().catch(() => null)) as SubmitResponseBody | null;
     } catch {
       fail("unavailable");
       return;
+    } finally {
+      clearTimeout(timeout);
     }
 
     if (body?.ok === true && typeof body.reference === "string" && body.reference) {
@@ -666,12 +679,13 @@ export function SupportRequestForm() {
                     ? "We couldn't check your request. Please review the highlighted fields and send it again."
                     : submitState.kind === "rate_limited"
                       ? "We're receiving a lot of requests right now. Please wait a moment and send it again."
-                      : "We couldn't reach our system to save your request. Nothing was sent, and your entries are still here."}
+                      : "We couldn't confirm whether our system saved your request. Your entries are still here; please try sending it again first."}
                 </p>
                 {submitState.kind !== "validation" && (
                   <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-                    If it keeps failing, the same request can still reach us the
-                    old way; nothing you typed is lost:{" "}
+                    {submitState.kind === "unavailable"
+                      ? "If retries keep failing, the same request can still reach us the old way; sending it again through email or WhatsApp may create a duplicate if the first attempt was saved: "
+                      : "If it keeps failing, the same request can still reach us the old way; nothing you typed is lost: "}
                     <a
                       href={buildSupportRequestMailto(draft)}
                       onClick={() =>

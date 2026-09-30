@@ -36,15 +36,30 @@ export const RECIPIENTS_REVALIDATE_SECONDS = 300;
 
 // Env reads stay literal (not via constants) so scripts/check-env-vars.mjs
 // can see them.
+function isLoopbackHostname(hostname: string): boolean {
+  const h = hostname.toLowerCase();
+  return (
+    h === "localhost" ||
+    h === "127.0.0.1" ||
+    h === "::1" ||
+    h === "[::1]" ||
+    h.endsWith(".localhost")
+  );
+}
+
 function baseUrl(): string | null {
   const raw = process.env.COMMUNITY_SUPPORT_API_BASE_URL?.trim();
   if (!raw) return null;
   try {
     const url = new URL(raw);
-    // http is allowed for local development against a local backend; the
-    // production value must be https.
-    if (url.protocol !== "https:" && url.protocol !== "http:") return null;
-    return url.origin;
+    // http is allowed only for loopback development against a local
+    // backend — the Bearer key and applicant data must never cross the
+    // network in plaintext to a remote host.
+    if (url.protocol === "https:") return url.origin;
+    if (url.protocol === "http:" && isLoopbackHostname(url.hostname)) {
+      return url.origin;
+    }
+    return null;
   } catch {
     return null;
   }
