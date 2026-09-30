@@ -78,6 +78,15 @@ export interface SupportRequestIngestResult {
   duplicate: boolean;
 }
 
+// Backend reference format (America/Curacao business year + sequence).
+// A 2xx response whose reference does not match this is malformed — never
+// a success.
+const CSR_REFERENCE_RE = /^CSR-\d{4}-\d{4}$/;
+
+export function isValidSupportReference(reference: unknown): reference is string {
+  return typeof reference === "string" && CSR_REFERENCE_RE.test(reference);
+}
+
 /**
  * The backend error vocabulary (communitySupportErrorResponse). Error
  * bodies are `{ error: <code>, fields?: Record<string,string> }` — the

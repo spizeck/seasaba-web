@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   draftEnumErrors,
   isValidIdempotencyKey,
+  isValidSupportReference,
   newIdempotencyKey,
   readSupportRequestDraft,
   COMMUNITY_SUPPORT_SOURCE,
@@ -285,6 +286,24 @@ describe("submitSupportRequest", () => {
       idempotencyKey: "my-key-123",
     });
     expect(result).toEqual({ ok: false, kind: "unavailable" });
+  });
+
+  it("a 2xx whose reference is not CSR-YYYY-NNNN is malformed, never success", async () => {
+    configureEnv();
+    for (const reference of ["accepted", "CSR-1", "csr-2026-0001", "OK"]) {
+      vi.mocked(fetch).mockResolvedValue(
+        jsonResponse(201, { requestId: "x", reference, duplicate: false })
+      );
+      const result = await submitSupportRequest(VALID_DRAFT, {
+        idempotencyKey: "my-key-123",
+      });
+      expect(result, `reference "${reference}"`).toEqual({
+        ok: false,
+        kind: "unavailable",
+      });
+    }
+    // Sanity: the real format is accepted.
+    expect(isValidSupportReference("CSR-2026-0001")).toBe(true);
   });
 
   it("never logs the request body or applicant PII", async () => {

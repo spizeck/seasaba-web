@@ -4,6 +4,7 @@ import type { SupportRequestDraft } from "@/lib/support-request";
 import {
   COMMUNITY_SUPPORT_SOURCE,
   SUPPORT_REQUEST_SCHEMA_VERSION,
+  isValidSupportReference,
   type CommunitySupportErrorCode,
   type SupportRequestIngestPayload,
   type SupportRequestIngestResult,
@@ -143,7 +144,7 @@ export async function submitSupportRequest(
 
   if (res.status === 200 || res.status === 201) {
     const result = body as Partial<SupportRequestIngestResult> | null;
-    if (result && typeof result.reference === "string" && result.reference) {
+    if (result && isValidSupportReference(result.reference)) {
       return {
         ok: true,
         reference: result.reference,
