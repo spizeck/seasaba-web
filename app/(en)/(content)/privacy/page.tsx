@@ -53,6 +53,7 @@ export default function PrivacyPage() {
           </p>
           <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-relaxed text-muted-foreground">
             <li>Respond to inquiries</li>
+            <li>Evaluate and manage donation, sponsorship, and community-support requests</li>
             <li>Create and manage reservations</li>
             <li>Process payments</li>
             <li>Communicate about trips, courses, charters, schedule changes, and reservations</li>
@@ -79,6 +80,7 @@ export default function PrivacyPage() {
             <li>Payment processors used in connection with reservations</li>
             <li>Respond.io (website chat and customer messaging, including WhatsApp)</li>
             <li>Your email provider (our contact form prepares a message in your own email app, which you review and send yourself)</li>
+            <li>Google Cloud / Firebase, which hosts the internal Sea Saba system where Support Saba requests are stored and reviewed by our team</li>
             <li>Analytics providers</li>
             <li>Advertising and measurement platforms</li>
             <li>Cookie and consent-management providers</li>
@@ -132,9 +134,19 @@ export default function PrivacyPage() {
             If you contact Sea Saba through email, WhatsApp, website chat, or website forms, we may retain those communications to provide customer service and assist with future inquiries.
           </p>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-            Our website contact and support-request forms do not transmit your message to us
-            directly. They open a pre-filled email in your own email application, and the message
-            is sent from your email account when you choose to send it.
+            Our website contact form does not transmit your message to us directly. It opens a
+            pre-filled email in your own email application, and the message is sent from your
+            email account when you choose to send it.
+          </p>
+          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+            The Support Saba request form on our{" "}
+            <Link href="/donate" className="underline hover:text-foreground">
+              Support Saba
+            </Link>{" "}
+            page works differently: what you enter is transmitted directly to Sea Saba and
+            stored in our internal community-support system, so our team can review the
+            request, follow up with you, and track it through our support program. You receive
+            a reference for your request when it is received.
           </p>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
             The website chat widget is provided by Respond.io. When you open the chat and submit the

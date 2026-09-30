@@ -291,6 +291,18 @@ NEXT_PUBLIC_SENTRY_DSN
 SENTRY_ORG
 ```
 
+**Server-only Community Support integration** — `/donate` support requests
+persist via the contract-builder backend (see
+[docs/COMMUNITY_SUPPORT.md](docs/COMMUNITY_SUPPORT.md)). Both are secrets/
+server config, never `NEXT_PUBLIC_*`; unset fails closed (submissions show
+"unavailable" with an email/WhatsApp fallback). Donation recipients stay
+code-owned in `data/donations.ts` — the page never needs the backend:
+
+```
+COMMUNITY_SUPPORT_API_BASE_URL
+COMMUNITY_SUPPORT_INGEST_KEY
+```
+
 The canonical site URL is **not** an environment variable — it is the
 `SITE_URL` constant in `lib/constants.ts` (used by metadata, sitemap, robots
 and structured data). If the domain ever changes, update that constant.

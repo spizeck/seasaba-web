@@ -38,7 +38,9 @@
 | `directions_click` | FindSeaSaba map card/tooltip | Page parameters, link parameters, and legacy aliases |
 | `donation_click` | `/donate` recipient "Donate directly" CTAs — outbound links to each organization's own donation page | Page parameters, link parameters, and legacy aliases |
 | `donation_request_started` | `/donate` "Request Support" form — first field focus | Page parameters and `button_location` only — **never** names, emails, request contents, amounts, or any field values |
-| `donation_request_submitted` | `/donate` "Request Support" form — a completed form continuing to the visitor's email app or WhatsApp (`method` distinguishes them). A handoff, not a confirmed send | Page parameters, `method`, `button_location` only — **never** request details |
+| `donation_request_submitted` | `/donate` "Request Support" form — a completed form sent to the Sea Saba server boundary (`method: "server"`), which persists it in the Community Support system. Fired on the submit attempt, not a confirmed persistence | Page parameters, `method`, `button_location` only — **never** request details |
+| `donation_request_succeeded` | `/donate` "Request Support" form — the backend confirmed the request was persisted and returned a reference | Page parameters and `button_location` only — **never** request details or the reference |
+| `donation_request_failed` | `/donate` "Request Support" form — the submission failed (`reason`: `validation`, `rate_limited`, or `unavailable`); the form keeps the entries and offers email/WhatsApp fallback | Page parameters, `reason`, `button_location` only — **never** request details |
 | `ferry_link_click` | Plan-your-trip and local partner ferry links | Page parameters, link parameters, and legacy aliases |
 | `social_click` | Social, partner, accommodation, and outbound resource links | Page parameters, link parameters, `partner_name` where applicable, and legacy aliases |
 | `pdf_download` | Dive-log PDF export | Page parameters, `dive_count`, `unit_system` |

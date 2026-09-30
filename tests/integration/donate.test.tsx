@@ -24,9 +24,12 @@ import { divingAnchors } from "@/lib/anchors";
 // Foundation from organization-supplied material, with final card wording
 // pending each organization's review), and Saba organizations/projects
 // requesting support FROM Sea Saba (the community-giving program). Request
-// submissions use the same visitor-handoff mechanism as the contact form —
-// the requester's own email app or WhatsApp sends it, so no server endpoint,
-// no shared-sender Respond.io collapse (#104).
+// submissions persist through the Sea Saba-owned /api/support-requests
+// boundary into the Community Support backend (issue #189, paired with
+// contract-builder#148); the visitor's own email app / WhatsApp remain only
+// as an explicit fallback when the system can't be reached. Recipient
+// content is code-owned — the page renders DONATION_RECIPIENTS and makes
+// no call to contract-builder.
 
 const FIXTURE: DonationRecipient[] = [
   {
@@ -144,6 +147,26 @@ describe("donate page", () => {
       /project bureau/i,
     ]) {
       expect(screen.queryByText(pending)).toBeNull();
+    }
+  });
+
+  it("renders recipients entirely from local data — contract-builder is not needed", () => {
+    // The page is a sync component reading DONATION_RECIPIENTS; no fetch,
+    // no server boundary, no env config participates in rendering.
+    const originalFetch = globalThis.fetch;
+    const fetchSpy = vi.fn();
+    vi.stubGlobal("fetch", fetchSpy);
+    try {
+      render(<DonatePage />);
+      expect(
+        screen.getByRole("heading", { name: "Sea & Learn Foundation" })
+      ).toBeTruthy();
+      expect(
+        screen.getByRole("heading", { name: "Saba Conservation Foundation" })
+      ).toBeTruthy();
+      expect(fetchSpy).not.toHaveBeenCalled();
+    } finally {
+      vi.stubGlobal("fetch", originalFetch);
     }
   });
 
@@ -451,11 +474,38 @@ describe("donation recipient registry (#171)", () => {
 });
 
 // ---------------------------------------------------------------------------
-// Request Support form — same visitor-handoff contract as the contact form.
-// Uses the real analytics plumbing (@vercel/analytics track is mocked in
-// setup.ts; GTM pushes go to window.dataLayer) so the PII assertions exercise
-// the actual sanitization path, not a mock of it.
+// Request Support form — persistence-first contract (issue #189). The form
+// posts to the first-party /api/support-requests boundary; these tests stub
+// global fetch and simulate the boundary's wire responses, so no backend is
+// needed. Uses the real analytics plumbing (@vercel/analytics track is
+// mocked in setup.ts; GTM pushes go to window.dataLayer) so the PII
+// assertions exercise the actual sanitization path, not a mock of it.
 // ---------------------------------------------------------------------------
+
+function jsonResponse(status: number, body: unknown): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
+
+function boundarySuccess(reference = "CSR-2026-0042") {
+  return jsonResponse(200, { ok: true, reference });
+}
+
+function readPostedRequest(callIndex = 0) {
+  const call = vi.mocked(fetch).mock.calls[callIndex];
+  expect(call, "expected a fetch to the submission boundary").toBeTruthy();
+  expect(String(call?.[0])).toBe("/api/support-requests");
+  const init = call?.[1] as RequestInit;
+  expect(init.method).toBe("POST");
+  return JSON.parse(String(init.body)) as {
+    request: Record<string, unknown>;
+    idempotencyKey?: string;
+    submittedAt?: string;
+    website?: string;
+  };
+}
 
 async function fillValidRequest() {
   await userEvent.type(screen.getByRole("textbox", { name: /your name/i }), "Sentinel Person");
@@ -498,13 +548,13 @@ async function fillValidRequest() {
 
 describe("support request form", () => {
   beforeEach(() => {
-    vi.spyOn(window, "open").mockReturnValue(null);
+    vi.stubGlobal("fetch", vi.fn());
     (window as unknown as { dataLayer: unknown[] }).dataLayer = [];
   });
 
   it("blocks an empty submission with accessible errors, including the acknowledgement", async () => {
     render(<SupportRequestForm />);
-    await userEvent.click(screen.getByRole("button", { name: "Continue to email" }));
+    await userEvent.click(screen.getByRole("button", { name: "Send request" }));
     for (const message of [
       "Please enter your name.",
       "Please enter your email address.",
@@ -523,61 +573,133 @@ describe("support request form", () => {
       "aria-invalid",
       "true"
     );
-    expect(window.open).not.toHaveBeenCalled();
+    expect(fetch).not.toHaveBeenCalled();
   });
 
   it("requires an estimated amount only when financial support is selected", async () => {
     render(<SupportRequestForm />);
     await userEvent.click(screen.getByRole("checkbox", { name: /financial support or sponsorship/i }));
-    await userEvent.click(screen.getByRole("button", { name: "Continue to email" }));
+    await userEvent.click(screen.getByRole("button", { name: "Send request" }));
     expect(
       screen.getByText(/please give an estimated amount/i)
     ).toBeVisible();
+    expect(fetch).not.toHaveBeenCalled();
   });
 
   // fillValidRequest() types through ~10 real fields via userEvent — easily
   // 3-4s on a fast machine and past the 5s default under full-suite load.
   // A timed-out test can strand queued input events that corrupt the next
   // test's render, so the submission tests get explicit headroom.
-  it("opens the requester's own email app with the structured request", { timeout: 20000 }, async () => {
-    render(<SupportRequestForm />);
-    await fillValidRequest();
-    await userEvent.click(screen.getByRole("button", { name: "Continue to email" }));
-
-    const href = String(vi.mocked(window.open).mock.calls.at(-1)?.[0]);
-    const url = new URL(href);
-    expect(`${url.protocol}${url.pathname}`).toBe("mailto:info@seasaba.com");
-    expect(url.searchParams.get("subject")).toContain("Sentinel Youth Club");
-    const body = url.searchParams.get("body") ?? "";
-    expect(body).toContain("sentinel@example.test");
-    expect(body).toContain("Financial support or sponsorship, Goods or supplies");
-    expect(body).toContain("paying a supplier directly or purchasing goods: No");
-    // The handoff notice offers a retry path.
-    expect(screen.getByRole("status").textContent).toMatch(/email app should open/i);
-  });
-
-  it("records the direct-payment preference when checked", { timeout: 20000 }, async () => {
+  it("persists through the first-party boundary and shows the returned reference", { timeout: 20000 }, async () => {
+    vi.mocked(fetch).mockResolvedValue(boundarySuccess());
     render(<SupportRequestForm />);
     await fillValidRequest();
     await userEvent.click(
       screen.getByRole("checkbox", { name: /pay a supplier directly/i })
     );
-    await userEvent.click(screen.getByRole("button", { name: "Continue to email" }));
-    const href = String(vi.mocked(window.open).mock.calls.at(-1)?.[0]);
-    expect(new URL(href).searchParams.get("body")).toContain(
-      "paying a supplier directly or purchasing goods: Yes"
+    await userEvent.click(screen.getByRole("button", { name: "Send request" }));
+
+    const posted = readPostedRequest();
+    expect(posted.request.name).toBe("Sentinel Person");
+    expect(posted.request.email).toBe("sentinel@example.test");
+    expect(posted.request.organization).toBe("Sentinel Youth Club");
+    expect(posted.request.category).toBe("youth");
+    expect(posted.request.supportTypes).toEqual(["financial", "goods"]);
+    expect(posted.request.amount).toBe("USD 9001");
+    expect(posted.request.request).toBe("Sentinel request detail");
+    expect(posted.request.vendorPayment).toBe(true);
+    expect(posted.request.acknowledged).toBe(true);
+    expect(posted.idempotencyKey).toMatch(/^[\w:.-]{8,128}$/);
+    expect(posted.submittedAt).toBeTruthy();
+    // The honeypot is untouched by real interaction.
+    expect(posted.website).toBe("");
+
+    const status = await screen.findByRole("status");
+    expect(status.textContent).toContain("CSR-2026-0042");
+    // The form is gone — nothing left to double-submit.
+    expect(screen.queryByRole("button", { name: "Send request" })).toBeNull();
+  });
+
+  it("never shows success when the boundary fails, and keeps every entry", { timeout: 20000 }, async () => {
+    vi.mocked(fetch).mockResolvedValue(
+      jsonResponse(503, { ok: false, kind: "unavailable" })
+    );
+    render(<SupportRequestForm />);
+    await fillValidRequest();
+    await userEvent.click(screen.getByRole("button", { name: "Send request" }));
+
+    const alert = await screen.findByRole("alert");
+    expect(alert.textContent).toMatch(/couldn't confirm whether our system saved/i);
+    expect(alert.textContent).toMatch(/try sending it again/i);
+    // A fallback channel could duplicate a silently-persisted request.
+    expect(alert.textContent).toMatch(/may create a duplicate/i);
+    // No false success anywhere.
+    expect(screen.queryByRole("status")).toBeNull();
+    expect(screen.queryByText(/CSR-\d{4}-\d{4}/)).toBeNull();
+    // Entered data survives the recoverable failure.
+    expect(screen.getByRole("textbox", { name: /your name/i })).toHaveValue(
+      "Sentinel Person"
+    );
+    expect(screen.getByRole("textbox", { name: /^email/i })).toHaveValue(
+      "sentinel@example.test"
+    );
+    // The handoff fallback carries the same request to the canonical inbox.
+    const emailFallback = screen.getByRole("link", { name: /send it by email/i });
+    expect(emailFallback.getAttribute("href")).toMatch(/^mailto:info@seasaba\.com/);
+    const whatsAppFallback = screen.getByRole("link", { name: /send it by whatsapp/i });
+    expect(whatsAppFallback.getAttribute("href")).toMatch(/^https:\/\/wa\.me\//);
+  });
+
+  it("surfaces backend validation failures on the matching fields", { timeout: 20000 }, async () => {
+    vi.mocked(fetch).mockResolvedValue(
+      jsonResponse(400, {
+        ok: false,
+        kind: "validation",
+        fields: { email: "Email is not a valid address." },
+      })
+    );
+    render(<SupportRequestForm />);
+    await fillValidRequest();
+    await userEvent.click(screen.getByRole("button", { name: "Send request" }));
+
+    await screen.findByRole("alert");
+    expect(
+      await screen.findByText("Email is not a valid address.")
+    ).toBeVisible();
+    expect(screen.queryByRole("status")).toBeNull();
+  });
+
+  it("shows a wait-and-retry message when the boundary is rate limited", { timeout: 20000 }, async () => {
+    vi.mocked(fetch).mockResolvedValue(
+      jsonResponse(429, { ok: false, kind: "rate_limited" })
+    );
+    render(<SupportRequestForm />);
+    await fillValidRequest();
+    await userEvent.click(screen.getByRole("button", { name: "Send request" }));
+
+    const alert = await screen.findByRole("alert");
+    expect(alert.textContent).toMatch(/wait a moment/i);
+    expect(screen.getByRole("textbox", { name: /your name/i })).toHaveValue(
+      "Sentinel Person"
     );
   });
 
-  it("offers a WhatsApp handoff carrying the same request", { timeout: 20000 }, async () => {
+  it("reuses the same idempotency key when an unchanged draft is retried", { timeout: 20000 }, async () => {
+    vi.mocked(fetch)
+      .mockRejectedValueOnce(new TypeError("fetch failed"))
+      .mockResolvedValueOnce(boundarySuccess("CSR-2026-0007"));
     render(<SupportRequestForm />);
     await fillValidRequest();
-    await userEvent.click(
-      screen.getByRole("button", { name: "Send request by WhatsApp" })
-    );
-    const href = String(vi.mocked(window.open).mock.calls.at(-1)?.[0]);
-    expect(href).toContain("https://wa.me/");
-    expect(decodeURIComponent(href)).toContain("Sentinel request detail");
+
+    await userEvent.click(screen.getByRole("button", { name: "Send request" }));
+    await screen.findByRole("alert");
+    await userEvent.click(screen.getByRole("button", { name: "Send request" }));
+
+    await screen.findByRole("status");
+    const first = readPostedRequest(0).idempotencyKey;
+    const second = readPostedRequest(1).idempotencyKey;
+    expect(first).toBeTruthy();
+    expect(second).toBe(first);
   });
 
   it("fires donation_request_started exactly once, before submission", async () => {
@@ -593,17 +715,27 @@ describe("support request form", () => {
   });
 
   it("never sends request details or PII to analytics", { timeout: 20000 }, async () => {
+    vi.mocked(fetch).mockResolvedValue(boundarySuccess());
     render(<SupportRequestForm />);
     await fillValidRequest();
-    await userEvent.click(screen.getByRole("button", { name: "Continue to email" }));
-    await userEvent.click(
-      screen.getByRole("button", { name: "Send request by WhatsApp" })
-    );
+    await userEvent.click(screen.getByRole("button", { name: "Send request" }));
+    await screen.findByRole("status");
 
     const trackCalls = vi.mocked(track).mock.calls;
+    for (const event of [
+      "donation_request_started",
+      "donation_request_submitted",
+      "donation_request_succeeded",
+    ]) {
+      expect(
+        trackCalls.filter(([name]) => name === event),
+        `expected exactly one ${event}`
+      ).toHaveLength(1);
+    }
+    // No failure event on the happy path.
     expect(
-      trackCalls.filter(([event]) => event === "donation_request_submitted")
-    ).toHaveLength(2);
+      trackCalls.filter(([name]) => name === "donation_request_failed")
+    ).toHaveLength(0);
 
     // Every analytics payload — Vercel track() calls and GTM dataLayer pushes —
     // serialized and scanned for anything a requester typed.
@@ -619,6 +751,8 @@ describe("support request form", () => {
       "Sentinel request detail",
       "Sentinel project description",
       "9001",
+      // The returned reference stays out of analytics too.
+      "CSR-2026-0042",
     ]) {
       for (const payload of payloads) {
         expect(payload, `analytics leaked ${pii}`).not.toContain(pii);
