@@ -292,12 +292,11 @@ SENTRY_ORG
 ```
 
 **Server-only Community Support integration** — `/donate` support requests
-persist via the contract-builder backend and donation recipients can be
-sourced from it (see
+persist via the contract-builder backend (see
 [docs/COMMUNITY_SUPPORT.md](docs/COMMUNITY_SUPPORT.md)). Both are secrets/
 server config, never `NEXT_PUBLIC_*`; unset fails closed (submissions show
-"unavailable" with an email/WhatsApp fallback, recipients render from the
-local registry):
+"unavailable" with an email/WhatsApp fallback). Donation recipients stay
+code-owned in `data/donations.ts` — the page never needs the backend:
 
 ```
 COMMUNITY_SUPPORT_API_BASE_URL

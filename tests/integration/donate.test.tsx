@@ -27,7 +27,9 @@ import { divingAnchors } from "@/lib/anchors";
 // submissions persist through the Sea Saba-owned /api/support-requests
 // boundary into the Community Support backend (issue #189, paired with
 // contract-builder#148); the visitor's own email app / WhatsApp remain only
-// as an explicit fallback when the system can't be reached.
+// as an explicit fallback when the system can't be reached. Recipient
+// content is code-owned — the page renders DONATION_RECIPIENTS and makes
+// no call to contract-builder.
 
 const FIXTURE: DonationRecipient[] = [
   {
@@ -74,8 +76,8 @@ const IMAGE_WITHOUT_ALT: DonationRecipient = {
 };
 
 describe("donate page", () => {
-  it("renders a single h1, the intro, and the trust note", async () => {
-    render(await DonatePage());
+  it("renders a single h1, the intro, and the trust note", () => {
+    render(<DonatePage />);
     expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
     expect(
       screen.getByRole("heading", { level: 1, name: /support saba/i })
@@ -85,8 +87,8 @@ describe("donate page", () => {
     ).toBeTruthy();
   });
 
-  it("represents both audiences: giving visitors and island requesters", async () => {
-    render(await DonatePage());
+  it("represents both audiences: giving visitors and island requesters", () => {
+    render(<DonatePage />);
     expect(
       screen.getByRole("heading", { level: 2, name: /ways to give back/i })
     ).toBeTruthy();
@@ -101,16 +103,16 @@ describe("donate page", () => {
     expect(document.getElementById("request-support")).toBeTruthy();
   });
 
-  it("states the existing marine-park contribution and deep-links to it", async () => {
-    render(await DonatePage());
+  it("states the existing marine-park contribution and deep-links to it", () => {
+    render(<DonatePage />);
     const link = screen.getByRole("link", {
       name: /how the saba marine park works/i,
     });
     expect(link.getAttribute("href")).toBe(`/diving#${divingAnchors.marinePark}`);
   });
 
-  it("renders the draft standards, eligibility, support types, and process from data", async () => {
-    render(await DonatePage());
+  it("renders the draft standards, eligibility, support types, and process from data", () => {
+    render(<DonatePage />);
     for (const item of WHO_CAN_REQUEST) expect(screen.getByText(item)).toBeTruthy();
     for (const type of SUPPORT_TYPES) {
       expect(screen.getAllByText(type.label).length).toBeGreaterThan(0);
@@ -125,8 +127,8 @@ describe("donate page", () => {
     expect(screen.getByText(SUPPORT_REQUEST_NO_GUARANTEE)).toBeTruthy();
   });
 
-  it("renders the organization-confirmed recipients and no pending ones", async () => {
-    render(await DonatePage());
+  it("renders the organization-confirmed recipients and no pending ones", () => {
+    render(<DonatePage />);
     expect(
       screen.getByRole("heading", { name: "Sea & Learn Foundation" })
     ).toBeTruthy();
@@ -148,8 +150,28 @@ describe("donate page", () => {
     }
   });
 
-  it("keeps claims honest — no checkout, funding promises, or tax language", async () => {
-    const { container } = render(await DonatePage());
+  it("renders recipients entirely from local data — contract-builder is not needed", () => {
+    // The page is a sync component reading DONATION_RECIPIENTS; no fetch,
+    // no server boundary, no env config participates in rendering.
+    const originalFetch = globalThis.fetch;
+    const fetchSpy = vi.fn();
+    vi.stubGlobal("fetch", fetchSpy);
+    try {
+      render(<DonatePage />);
+      expect(
+        screen.getByRole("heading", { name: "Sea & Learn Foundation" })
+      ).toBeTruthy();
+      expect(
+        screen.getByRole("heading", { name: "Saba Conservation Foundation" })
+      ).toBeTruthy();
+      expect(fetchSpy).not.toHaveBeenCalled();
+    } finally {
+      vi.stubGlobal("fetch", originalFetch);
+    }
+  });
+
+  it("keeps claims honest — no checkout, funding promises, or tax language", () => {
+    const { container } = render(<DonatePage />);
     const text = container.textContent ?? "";
     expect(text).not.toMatch(/checkout|add to cart|processing fee/i);
     // No tax-deductibility claim without owner-supplied documentation.
@@ -160,11 +182,11 @@ describe("donate page", () => {
     expect(text).not.toMatch(/within \d+ (business )?(days|hours|weeks)/i);
   });
 
-  it("uses no em or en dashes in customer-facing copy", async () => {
+  it("uses no em or en dashes in customer-facing copy", () => {
     // Owner style rule: no em dashes in website copy. Rendering the whole
     // page covers page prose, community-support policy data, form labels and
     // helper text, and the recipients empty state in one check.
-    const { container } = render(await DonatePage());
+    const { container } = render(<DonatePage />);
     expect(container.textContent ?? "").not.toMatch(/[—–]/);
     expect(String(metadata.description ?? "")).not.toMatch(/[—–]/);
   });
@@ -180,8 +202,8 @@ describe("donate page", () => {
   // Issue #186: the interactive-card treatment (border/shadow emphasis +
   // focus-within) belongs only on cards that contain real actions — the
   // request form's wrapper — never on the passive info lists beside it.
-  it("marks action-oriented cards interactive and leaves informational cards passive", async () => {
-    const { container } = render(await DonatePage());
+  it("marks action-oriented cards interactive and leaves informational cards passive", () => {
+    const { container } = render(<DonatePage />);
     const formCard = container.querySelector("form")?.parentElement;
     expect(formCard?.className).toContain("focus-within:border-primary/30");
     expect(formCard?.className).toContain("hover:border-primary/30");

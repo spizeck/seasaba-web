@@ -2,7 +2,6 @@ import {
   SUPPORT_REQUEST_CATEGORIES,
   SUPPORT_TYPES,
 } from "@/data/community-support";
-import type { DonationRecipient } from "@/data/donations";
 import type { SupportRequestDraft } from "@/lib/support-request";
 
 /**
@@ -98,39 +97,6 @@ export type CommunitySupportErrorCode =
   | "unavailable";
 
 // ---------------------------------------------------------------------------
-// GET /api/public/community-support/recipients (public read)
-// ---------------------------------------------------------------------------
-
-export const DONATION_CATEGORIES = [
-  "conservation",
-  "community",
-  "animals",
-  "youth",
-  "culture",
-  "marine-conservation",
-  "science-education",
-] as const;
-
-/**
- * The backend's public DTO — an explicit allowlist. Internal fields
- * (staffNotes, reviewStatus, publication, lastVerifiedAt, timestamps,
- * audit history) are never emitted by the endpoint and must never be
- * added here.
- */
-export interface PublicDonationRecipient {
-  slug: string;
-  name: string;
-  description: string;
-  funds: string | null;
-  category: (typeof DONATION_CATEGORIES)[number] | null;
-  website: string;
-  donationUrl: string | null;
-  image: string | null;
-  imageAlt: string | null;
-  sortOrder: number;
-}
-
-// ---------------------------------------------------------------------------
 // Wire readers — structural validation shared by the API route and tests
 // ---------------------------------------------------------------------------
 
@@ -211,90 +177,4 @@ export function draftEnumErrors(
   return errors;
 }
 
-const isNonEmptyString = (v: unknown): v is string =>
-  typeof v === "string" && v.trim().length > 0;
 
-const nullableString = (v: unknown): string | null =>
-  typeof v === "string" && v.trim().length > 0 ? v : null;
-
-/**
- * Parse the public recipients response body `{ schemaVersion, recipients }`
- * into validated DTOs. Returns null when the body is malformed at the top
- * level; individual records that violate the contract are dropped rather
- * than published (e.g. an image without alt text can never render).
- */
-export function parsePublicRecipients(
-  body: unknown
-): PublicDonationRecipient[] | null {
-  if (typeof body !== "object" || body === null) return null;
-  const recipients = (body as Record<string, unknown>).recipients;
-  if (!Array.isArray(recipients)) return null;
-
-  const parsed: PublicDonationRecipient[] = [];
-  for (const item of recipients) {
-    if (typeof item !== "object" || item === null) return null;
-    const r = item as Record<string, unknown>;
-    if (
-      !isNonEmptyString(r.slug) ||
-      !isNonEmptyString(r.name) ||
-      !isNonEmptyString(r.description) ||
-      !isNonEmptyString(r.website) ||
-      typeof r.sortOrder !== "number"
-    ) {
-      return null;
-    }
-    const category =
-      typeof r.category === "string" &&
-      (DONATION_CATEGORIES as readonly string[]).includes(r.category)
-        ? (r.category as PublicDonationRecipient["category"])
-        : null;
-    const image = nullableString(r.image);
-    const imageAlt = nullableString(r.imageAlt);
-    // Accessibility invariant from the backend contract: an image with no
-    // deliberate alt text may not surface publicly.
-    if (image !== null && !isNonEmptyString(imageAlt)) continue;
-    parsed.push({
-      slug: r.slug,
-      name: r.name,
-      description: r.description,
-      funds: nullableString(r.funds),
-      category,
-      website: r.website,
-      donationUrl: nullableString(r.donationUrl),
-      image,
-      imageAlt,
-      sortOrder: r.sortOrder,
-    });
-  }
-  return parsed;
-}
-
-// Local card images only — the registry policy requires organization-
-// supplied assets under public/images (never a hotlinked third-party URL),
-// and next/image has no remotePatterns configured. A backend-supplied
-// remote URL renders the card without a logo rather than hotlinking.
-const LOCAL_IMAGE_RE = /^\/images\//;
-
-/**
- * Map a validated public DTO onto the DonationRecipient shape the
- * DonationsSection renders. Backend nulls become optional absences; the
- * image/imageAlt pair stays all-or-nothing, and non-local images are
- * dropped (the card renders fine without a logo).
- */
-export function toDonationRecipient(
-  dto: PublicDonationRecipient
-): DonationRecipient {
-  const image =
-    dto.image !== null && dto.imageAlt !== null && LOCAL_IMAGE_RE.test(dto.image)
-      ? { image: dto.image, imageAlt: dto.imageAlt }
-      : {};
-  return {
-    name: dto.name,
-    description: dto.description,
-    website: dto.website,
-    ...(dto.funds !== null ? { funds: dto.funds } : {}),
-    ...(dto.category !== null ? { category: dto.category } : {}),
-    ...(dto.donationUrl !== null ? { donationUrl: dto.donationUrl } : {}),
-    ...image,
-  };
-}

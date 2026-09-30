@@ -19,14 +19,11 @@ key. Both env vars are unprefixed server-only values read by
 `lib/community-support/server.ts`, which is guarded by `server-only` so a
 client-bundle import fails the build.
 
-Recipient reads are similar but unauthenticated:
-
-```
-donate page (server component, ISR)
-  -> getDonationRecipients()
-  -> GET {base}/api/public/community-support/recipients  (public DTO only)
-  -> fallback: DONATION_RECIPIENTS in data/donations.ts
-```
+Donation-recipient content (Sea & Learn Foundation, Saba Conservation
+Foundation, future curated entries) is **code-owned** — it renders straight
+from `DONATION_RECIPIENTS` in `data/donations.ts`. The backend's public
+recipients endpoint is intentionally not used, and `/donate` renders with
+no dependency on contract-builder at all.
 
 ## Environment variables
 
@@ -82,29 +79,6 @@ The route maps every backend outcome onto a small safe vocabulary —
 Success is shown **only** after the backend returns a reference. Logging
 anywhere in this path is limited to status/error codes and the reference —
 never request bodies or applicant PII.
-
-## Recipients read path
-
-- Backend orders by `sortOrder`, then `name`; only `published` +
-  review-`approved` records appear, projected through the
-  `PublicDonationRecipient` allowlist (internal notes/review metadata can
-  never reach the browser).
-- `parsePublicRecipients` re-validates the DTO server-side and drops
-  malformed records (e.g. `image` without `imageAlt`).
-- `toDonationRecipient` maps nulls to optional fields and keeps images
-  same-origin only (`/images/...`) — matching the no-hotlink registry
-  policy and the absence of `next/image` remotePatterns.
-- Cache: `fetch` with `next: { revalidate: 300 }` + page `revalidate =
-  300`. ISR serves the last good payload during transient backend trouble;
-  the backend's own headers (`s-maxage=300, stale-while-revalidate=600`)
-  add a second stale layer at the CDN.
-- Fallback: unconfigured / transport failure / non-2xx / malformed or
-  empty response -> `DONATION_RECIPIENTS` (Sea & Learn Foundation, Saba
-  Conservation Foundation) so verified content cannot disappear while the
-  backend is being seeded and proven. Revisit once the backend registry is
-  authoritative in production — at that point an *empty* published list
-  may become meaningful rather than a fallback trigger, and
-  `data/donations.ts` can be retired.
 
 ## Privacy / analytics
 

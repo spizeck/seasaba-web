@@ -1,22 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
-  DONATION_CATEGORIES,
   draftEnumErrors,
   isValidIdempotencyKey,
   newIdempotencyKey,
-  parsePublicRecipients,
   readSupportRequestDraft,
-  toDonationRecipient,
   COMMUNITY_SUPPORT_SOURCE,
   SUPPORT_REQUEST_SCHEMA_VERSION,
-  type PublicDonationRecipient,
 } from "@/lib/community-support/contract";
-import {
-  fetchPublicRecipients,
-  getDonationRecipients,
-  submitSupportRequest,
-} from "@/lib/community-support/server";
-import { DONATION_RECIPIENTS } from "@/data/donations";
+import { submitSupportRequest } from "@/lib/community-support/server";
 import type { SupportRequestDraft } from "@/lib/support-request";
 
 // Integration boundary tests for seasaba-web#189. The backend
@@ -315,173 +306,5 @@ describe("submitSupportRequest", () => {
     // And the ingest key itself must never be logged either.
     expect(logged).not.toContain(KEY);
     errorSpy.mockRestore();
-  });
-});
-
-const SEA_AND_LEARN_DTO: PublicDonationRecipient = {
-  slug: "sea-and-learn-foundation",
-  name: "Sea & Learn Foundation",
-  description: "Year-round programs.",
-  funds: "Year-round programs on Saba.",
-  category: "science-education",
-  website: "https://www.seaandlearn.org/",
-  donationUrl: "https://www.seaandlearn.org/donate",
-  image: "/images/optimized/sea-and-learn-foundation-logo-horizontal.webp",
-  imageAlt: "Sea & Learn Foundation logo",
-  sortOrder: 0,
-};
-
-describe("parsePublicRecipients", () => {
-  it("parses the public DTO list", () => {
-    const parsed = parsePublicRecipients({
-      schemaVersion: 1,
-      recipients: [SEA_AND_LEARN_DTO],
-    });
-    expect(parsed).toEqual([SEA_AND_LEARN_DTO]);
-  });
-
-  it("rejects a malformed top-level body", () => {
-    expect(parsePublicRecipients(null)).toBeNull();
-    expect(parsePublicRecipients({})).toBeNull();
-    expect(parsePublicRecipients({ recipients: "nope" })).toBeNull();
-    expect(parsePublicRecipients({ recipients: [{ name: "x" }] })).toBeNull();
-  });
-
-  it("drops a record whose image lacks alt text — never renders alt-less logos", () => {
-    const parsed = parsePublicRecipients({
-      recipients: [
-        SEA_AND_LEARN_DTO,
-        { ...SEA_AND_LEARN_DTO, slug: "bad", name: "Bad Org", imageAlt: "" },
-      ],
-    });
-    expect(parsed).toHaveLength(1);
-    expect(parsed?.[0].slug).toBe("sea-and-learn-foundation");
-  });
-});
-
-describe("toDonationRecipient", () => {
-  it("maps DTO nulls to optional absences and keeps local images", () => {
-    const mapped = toDonationRecipient(SEA_AND_LEARN_DTO);
-    expect(mapped).toEqual({
-      name: "Sea & Learn Foundation",
-      description: "Year-round programs.",
-      funds: "Year-round programs on Saba.",
-      category: "science-education",
-      website: "https://www.seaandlearn.org/",
-      donationUrl: "https://www.seaandlearn.org/donate",
-      image: "/images/optimized/sea-and-learn-foundation-logo-horizontal.webp",
-      imageAlt: "Sea & Learn Foundation logo",
-    });
-    // The DTO allowlist — no internal field can reach the mapped record.
-    expect(JSON.stringify(mapped)).not.toMatch(
-      /staffNotes|reviewStatus|publication|lastVerifiedAt|sortOrder/
-    );
-  });
-
-  it("drops a remote image URL rather than hotlinking", () => {
-    const mapped = toDonationRecipient({
-      ...SEA_AND_LEARN_DTO,
-      image: "https://cdn.example.org/logo.png",
-    });
-    expect(mapped.image).toBeUndefined();
-    expect(mapped.imageAlt).toBeUndefined();
-  });
-
-  it("handles a no-frills record", () => {
-    const mapped = toDonationRecipient({
-      ...SEA_AND_LEARN_DTO,
-      funds: null,
-      category: null,
-      donationUrl: null,
-      image: null,
-      imageAlt: null,
-    });
-    expect(mapped.funds).toBeUndefined();
-    expect(mapped.category).toBeUndefined();
-    expect(mapped.donationUrl).toBeUndefined();
-    expect(mapped.image).toBeUndefined();
-    expect(mapped.imageAlt).toBeUndefined();
-    expect(DONATION_CATEGORIES.length).toBeGreaterThan(0);
-  });
-});
-
-describe("fetchPublicRecipients", () => {
-  it("returns null without configuration — no request attempted", async () => {
-    expect(await fetchPublicRecipients()).toBeNull();
-    expect(fetch).not.toHaveBeenCalled();
-  });
-
-  it("returns validated DTOs on success", async () => {
-    configureEnv();
-    vi.mocked(fetch).mockResolvedValue(
-      jsonResponse(200, {
-        schemaVersion: 1,
-        recipients: [SEA_AND_LEARN_DTO],
-      })
-    );
-    const result = await fetchPublicRecipients();
-    expect(result).toEqual([SEA_AND_LEARN_DTO]);
-    expect(vi.mocked(fetch).mock.calls[0][0]).toBe(
-      `${BASE}/api/public/community-support/recipients`
-    );
-  });
-
-  it.each([[503], [404], [500]])("returns null on backend %i", async (status) => {
-    configureEnv();
-    vi.mocked(fetch).mockResolvedValue(
-      jsonResponse(status, { error: "unavailable" })
-    );
-    expect(await fetchPublicRecipients()).toBeNull();
-  });
-
-  it("returns null on transport failure or malformed JSON", async () => {
-    configureEnv();
-    vi.mocked(fetch).mockRejectedValue(new TypeError("fetch failed"));
-    expect(await fetchPublicRecipients()).toBeNull();
-
-    vi.mocked(fetch).mockResolvedValue(
-      new Response("not json", { status: 200 })
-    );
-    expect(await fetchPublicRecipients()).toBeNull();
-  });
-});
-
-describe("getDonationRecipients", () => {
-  it("maps backend recipients in server order when the read succeeds", async () => {
-    configureEnv();
-    const first = { ...SEA_AND_LEARN_DTO };
-    const second = {
-      ...SEA_AND_LEARN_DTO,
-      slug: "saba-conservation-foundation",
-      name: "Saba Conservation Foundation",
-      sortOrder: 1,
-    };
-    vi.mocked(fetch).mockResolvedValue(
-      jsonResponse(200, { schemaVersion: 1, recipients: [first, second] })
-    );
-    const recipients = await getDonationRecipients();
-    expect(recipients.map((r) => r.name)).toEqual([
-      "Sea & Learn Foundation",
-      "Saba Conservation Foundation",
-    ]);
-  });
-
-  it("falls back to the local registry on failure or empty backend lists", async () => {
-    configureEnv();
-    // Backend down.
-    vi.mocked(fetch).mockResolvedValue(
-      jsonResponse(503, { error: "unavailable" })
-    );
-    expect(await getDonationRecipients()).toBe(DONATION_RECIPIENTS);
-    // Backend healthy but nothing published yet — the migration floor keeps
-    // verified content visible.
-    vi.mocked(fetch).mockResolvedValue(
-      jsonResponse(200, { schemaVersion: 1, recipients: [] })
-    );
-    expect(await getDonationRecipients()).toBe(DONATION_RECIPIENTS);
-  });
-
-  it("falls back when the backend is unconfigured", async () => {
-    expect(await getDonationRecipients()).toBe(DONATION_RECIPIENTS);
   });
 });

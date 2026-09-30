@@ -1,14 +1,10 @@
 import "server-only";
 
-import { DONATION_RECIPIENTS, type DonationRecipient } from "@/data/donations";
 import type { SupportRequestDraft } from "@/lib/support-request";
 import {
   COMMUNITY_SUPPORT_SOURCE,
   SUPPORT_REQUEST_SCHEMA_VERSION,
-  parsePublicRecipients,
-  toDonationRecipient,
   type CommunitySupportErrorCode,
-  type PublicDonationRecipient,
   type SupportRequestIngestPayload,
   type SupportRequestIngestResult,
 } from "./contract";
@@ -18,8 +14,9 @@ import {
  *
  * The browser never talks to the backend directly: the /donate form posts
  * to the first-party route `app/api/support-requests/route.ts`, which calls
- * submitSupportRequest() here; the donate page reads recipients through
- * getDonationRecipients().
+ * submitSupportRequest() here. Donation-recipient content is deliberately
+ * NOT sourced from the backend — it stays code-owned in
+ * `data/donations.ts`.
  *
  * Configuration (server-only, never NEXT_PUBLIC_*):
  *   COMMUNITY_SUPPORT_API_BASE_URL  e.g. https://seasaba.app
@@ -31,8 +28,6 @@ import {
  */
 
 const REQUEST_TIMEOUT_MS = 10_000;
-/** Revalidation for the recipients read — matches the backend's s-maxage. */
-export const RECIPIENTS_REVALIDATE_SECONDS = 300;
 
 // Env reads stay literal (not via constants) so scripts/check-env-vars.mjs
 // can see them.
@@ -192,46 +187,4 @@ export async function submitSupportRequest(
         : "unknown",
   });
   return { ok: false, kind: "unavailable" };
-}
-
-/**
- * Fetch published donation recipients from the unauthenticated public
- * endpoint. Returns null on any failure (unconfigured, transport error,
- * non-2xx, malformed body) so callers can fall back to the local registry.
- * `next.revalidate` makes this ISR-friendly: stale-but-known-good data is
- * served while a background revalidation is in flight.
- */
-export async function fetchPublicRecipients(): Promise<
-  PublicDonationRecipient[] | null
-> {
-  const base = baseUrl();
-  if (!base) return null;
-  try {
-    const res = await fetch(
-      `${base}/api/public/community-support/recipients`,
-      {
-        headers: { accept: "application/json" },
-        signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
-        next: { revalidate: RECIPIENTS_REVALIDATE_SECONDS },
-      }
-    );
-    if (!res.ok) return null;
-    return parsePublicRecipients(await res.json());
-  } catch {
-    return null;
-  }
-}
-
-/**
- * The recipients source for /donate. The backend is authoritative only
- * when it returns a proven non-empty list; otherwise the local
- * DONATION_RECIPIENTS registry is the floor so Sea & Learn Foundation and
- * Saba Conservation Foundation content can never disappear during the
- * migration window (contract-builder#148 seeds both as draft records).
- */
-export async function getDonationRecipients(): Promise<DonationRecipient[]> {
-  const remote = await fetchPublicRecipients();
-  if (!remote || remote.length === 0) return DONATION_RECIPIENTS;
-  const mapped = remote.map(toDonationRecipient);
-  return mapped.length > 0 ? mapped : DONATION_RECIPIENTS;
 }
