@@ -43,7 +43,7 @@ the English term rather than inventing an awkward Dutch equivalent.
 | 2-tank dive / two-tank diving | 2-tankduik; "twee duiken" in running text |
 | triple-tank day | dag met drie duiken |
 | dive trip | duiktrip |
-| dive site | duikstek |
+| dive site | duikplek / duikplekken (preferred per Jeanine's review; "duikstek" still appears in sections she reviewed and kept) |
 | dive guide | (duik)gids |
 | boat dive | bootduik |
 | drift dive | driftduik |
@@ -104,6 +104,13 @@ the English term rather than inventing an awkward Dutch equivalent.
 - Depths/units keep the source's imperial-first notation ("~70 ft / 21 m")
   because the source serves an international audience; where the source only
   gives imperial, a metric equivalent may be added in parentheses.
+- Saba's area is expressed in metric ("13 km²"), matching Jeanine's reviewed
+  homepage wording — do not translate "five square miles" literally.
 - Headings use sentence case, matching Dutch typographic convention (the
   English source uses title case; this is an intentional localization, not an
-  omission).
+  omission). Jeanine's review retitled a few headings with title case
+  (e.g. "Duiken Met Kinderen en Junior-duikers") — her reviewed wording was
+  kept verbatim in the sections she reviewed.
+- Jeanine splits some compounds as she edits ("duik stek", "rif vriendelijke",
+  "duik opleidingen"). Her wording is preserved verbatim in reviewed sections;
+  defer normalizing these until her pass is complete.

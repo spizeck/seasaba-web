@@ -58,7 +58,7 @@ const WHY_TRAIN_SABA = [
     icon: Ship,
     title: "Van haven naar rif",
     description:
-      `Begin in het rustige water van ${OPERATIONS.harbor} om je drijfvermogen en loodverdeling te perfectioneren voordat je de openwaterduiken op Saba's spectaculaire rifstekken maakt.`,
+      `Begin in het rustige water van ${OPERATIONS.harbor} om je drijfvermogen en loodverdeling te perfectioneren voordat je de openwaterduiken op Saba's spectaculaire rifduikplekken maakt.`,
   },
   {
     icon: Wrench,
@@ -107,7 +107,7 @@ const COURSES: Course[] = [
     level: "Beginner",
     duration: "Hele dag",
     description:
-      "Je eerste ademteug onder water, op een echte duikstek. Geen brevet nodig — alleen nieuwsgierigheid. Een instructeur van Sea Saba begeleidt je bij elke stap: van een korte introductie van de vaardigheden in Fort Bay Harbor tot een begeleide bootduik op het rif.",
+      "Je eerste ademteug onder water, op een echte duikplek. Geen brevet nodig — alleen nieuwsgierigheid. Een instructeur van Sea Saba begeleidt je bij elke stap: van een korte introductie van de vaardigheden in Fort Bay Harbor tot een begeleide bootduik op het rif.",
     includes: ["Alle uitrusting inbegrepen", "Begeleide bootduik", "Maximaal 2 cursisten per instructeur", "Geen ervaring nodig"],
     cta: "Vraag info over Try Scuba",
     path: "/contact?interest=try-scuba",
@@ -118,7 +118,7 @@ const COURSES: Course[] = [
     level: "Beginner",
     duration: "3 dagen",
     description:
-      "Doorloop de theorie via SDI eLearning voordat je komt, zodat je vakantie in het water zit en niet in het klaslokaal. De sessies in beschermd water vinden plaats in het rustige water van Fort Bay Harbor, en je vier brevetduiken maak je vanaf de boten van Sea Saba op echte stekken in het Saba Marine Park.",
+      "Doorloop de theorie via SDI eLearning voordat je komt, zodat je vakantie in het water zit en niet in het klaslokaal. De sessies in beschermd water vinden plaats in het rustige water van Fort Bay Harbor, en je vier brevetduiken maak je vanaf de boten van Sea Saba op echte duikplekken in het Saba Marine Park.",
     includes: ["eLearning vooraf afronden", "Sessies in beschermd water in Fort Bay Harbor", "Vier bootduiken in het Saba Marine Park", "Alle uitrusting inbegrepen", "Maximaal 3 cursisten per instructeur"],
     cta: "Vraag info over Open Water",
     path: "/contact?interest=sdi-open-water",

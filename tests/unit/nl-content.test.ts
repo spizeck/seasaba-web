@@ -309,6 +309,90 @@ describe("glossary consistency (#151)", () => {
   });
 });
 
+describe("human review pass — Jeanine (#151)", () => {
+  const home = nlModuleSource("home.tsx");
+  const diving = nlModuleSource("diving.tsx");
+  const ui = nlModuleSource("ui.ts");
+  const unreviewed = [
+    "plan-your-trip.tsx",
+    "courses.tsx",
+    "contact.tsx",
+    "book.tsx",
+  ]
+    .map(nlModuleSource)
+    .join("\n");
+
+  it("applies Jeanine's reviewed edits through NL-DIVING-149", () => {
+    // Landmark reviewed strings — enough to catch a reverted apply without
+    // freezing every sentence.
+    expect(home + ui).toContain("Professioneel scuba duiken op Saba");
+    expect(home).toContain("Bewust kleinschalig");
+    expect(ui).toContain("Slechts 13 km² groot, hoog boven de zee.");
+    expect(diving).toContain(
+      "Samen duiken ondanks verschillende ervaringsniveaus",
+    );
+    expect(diving).toContain("Wat heb je nodig");
+    expect(diving).toContain("Logboek of digitale duiklog");
+    expect(diving).toContain("rif vriendelijke zonnebrand");
+  });
+
+  it("keeps reviewed data expressions and links intact", () => {
+    // Reviewed passages that wrap dynamic values must keep the expressions.
+    for (const token of [
+      "OPERATIONS.nitrox",
+      "OPERATIONS.refresher.recommendedAfterYears",
+      "OPERATIONS.refresher.generallyRequiredAfterYears",
+      "DIVE_PRODUCTS.classic",
+      "divingAnchors.mixedExperience",
+      "divingAnchors.juniorDivers",
+    ]) {
+      expect(diving, `missing ${token}`).toContain(token);
+    }
+  });
+
+  it("uses duikplek(ken) for dive sites in unreviewed modules and UI", () => {
+    // Jeanine prefers duikplek(ken); applied systematically outside her
+    // reviewed range (where a few "duikstek" remain verbatim for now).
+    for (const [label, source] of [
+      ["ui.ts", ui],
+      ["unreviewed modules", unreviewed],
+    ]) {
+      expect(
+        source,
+        `${label} still uses stek-family term for dive sites`,
+      ).not.toMatch(/(?<!uit)stek(ken)?\b/);
+    }
+    expect(ui).toContain("Duikplekken");
+    expect(unreviewed).toContain("duikplekken");
+  });
+
+  it("documents duikplekken as the preferred dive-site term", () => {
+    const glossary = readFileSync(
+      path.join(NL_DIR, "GLOSSARY.md"),
+      "utf8",
+    );
+    expect(glossary).toContain("duikplek");
+    expect(glossary).not.toMatch(/\| dive site \| duikstek \|/);
+  });
+
+  it("uses metric wording for Saba's area", () => {
+    expect(unreviewed + home + ui).not.toContain("vierkante mijl");
+    expect(nlModuleSource("plan-your-trip.tsx")).toContain("13 km²");
+  });
+
+  it("documents partial-review status without claiming approval", () => {
+    const reviewDoc = readFileSync(path.join(NL_DIR, "REVIEW.md"), "utf8");
+    expect(reviewDoc).toContain("Jeanine");
+    expect(reviewDoc).toContain("NL-DIVING-149");
+    // Partial progress is documentation-only: no module is approved.
+    for (const [route, mod] of Object.entries(NL_CONTENT)) {
+      expect(mod.review.status, route).toBe("draft");
+      expect(mod.review.reviewedBy, route).toBeNull();
+      expect(mod.review.reviewedAt, route).toBeNull();
+    }
+  });
+});
+
 describe("contact workflow (#151)", () => {
   it("keeps English inquiry slugs as the canonical values", () => {
     const source = nlModuleSource("contact.tsx") + nlModuleSource("diving.tsx");

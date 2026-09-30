@@ -75,7 +75,7 @@ const GOOD_TO_KNOW = [
   {
     icon: Timer,
     title: "Korte boottochten",
-    description: "De meeste duikstekken liggen 5–15 minuten van Fort Bay Harbor.",
+    description: "De meeste duikplekken liggen 5–15 minuten van Fort Bay Harbor.",
   },
 ] as const;
 
@@ -118,7 +118,7 @@ export function NlPlanYourTrip() {
 
       {/* Introduction */}
       <p className="text-base leading-relaxed text-muted-foreground">
-        Saba is een vijf vierkante mijl groot vulkanisch eiland in Caribisch Nederland. Zonder
+        Saba is een 13 km² groot vulkanisch eiland in Caribisch Nederland. Zonder
         cruiseschepen en zonder grote resorts biedt Saba een rustige, authentieke Caribische
         ervaring die duikers consequent tot een van hun favoriete bestemmingen rekenen.
       </p>
@@ -937,7 +937,7 @@ export function NlPlanYourTrip() {
       <section id={planYourTripAnchors.history} className="mt-12 scroll-mt-40">
         <h2 className="text-xl font-semibold text-foreground">Het eiland Saba</h2>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          Saba is een vulkanisch eiland van vijf vierkante mijl en bijzondere gemeente van
+          Saba is een vulkanisch eiland van 13 km² en bijzondere gemeente van
           Nederland, dat dramatisch oprijst uit de Caribische Zee tot de 887 meter (2.910 voet)
           hoge top van Mount Scenery. Met circa 2.000 inwoners en vrijwel geen vlakke grond heeft
           het dramatische landschap de geschiedenis, cultuur en levenswijze van het eiland gevormd.

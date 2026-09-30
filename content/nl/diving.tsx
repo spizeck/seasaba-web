@@ -31,14 +31,14 @@ export const review: TranslationReview = {
 export const nlMetadata = {
   title: "Duiken op Saba",
   description:
-    `De praktische gids voor duiken op Saba met Sea Saba: bootduiken in het Marine Park, kleine begeleide groepen, duikopties voor elk brevetniveau en gratis ${OPERATIONS.nitroxBlend} Nitrox.`,
+    `De praktische gids voor duiken op Saba met Sea Saba: bootduiken in het Marine Park, kleine begeleide groepen, duik opties voor elk niveau en gratis ${OPERATIONS.nitroxBlend} Nitrox.`,
 };
 
 const TRUST_SIGNALS = [
-  { icon: Users, label: "Kleine groepen", sublabel: `Recreatieve duiken — max. ${OPERATIONS.maxRecreationalDiversPerGuide} per gids` },
-  { icon: Bus, label: "Gratis taxishuttle", sublabel: "Overal op Saba" },
+  { icon: Users, label: "Kleine groepen", sublabel: `Recreatieve duiken — max. ${OPERATIONS.maxRecreationalDiversPerGuide} per duikgids` },
+  { icon: Bus, label: "Gratis taxi shuttle", sublabel: "Overal op Saba" },
   { icon: Droplets, label: `Gratis ${OPERATIONS.nitroxBlend} Nitrox`, sublabel: "Voor gebrevetteerde duikers" },
-  { icon: Award, label: `Sinds ${OPERATIONS.establishedYear}`, sublabel: "Saba's enige onafgebroken actieve duikcentrum" },
+  { icon: Award, label: `Sinds ${OPERATIONS.establishedYear}`, sublabel: "Saba's enige en continu actieve duikcentrum" },
 ];
 
 const DIVE_EXPERIENCES = [
@@ -54,9 +54,9 @@ const DIVE_EXPERIENCES = [
       `Gratis ${OPERATIONS.nitroxBlend} Nitrox`,
       // Owner-confirmed rule — kept as page copy, not a canonical
       // `requirement` (see data/operations.ts and docs/OPERATIONS.md).
-      "Minimaal Scuba Diver — privégids vereist",
+      "Minimaal Scuba Diver niveau (privégids vereist)",
     ],
-    cta: "Boek Classic-duiken",
+    cta: "Boek Classic Diving",
     href: bookingHref("classic"),
     itemId: DIVE_PRODUCTS.classic.slug,
     featured: true,
@@ -65,7 +65,7 @@ const DIVE_EXPERIENCES = [
     title: DIVE_PRODUCTS.advanced.name,
     subtitle: "VOOR ERVAREN DUIKERS",
     description:
-      "Verken diepere pinnacles, wanden en zeemynnen met dramatisch onderwaterterrein.",
+      "Verken diepere pinnacles, wanden en rotsformaties met een spectaculair onderwaterlandschap.",
     details: [
       `Vertrek ${DIVE_PRODUCTS.advanced.schedule.departure}`,
       `Terug rond ${DIVE_PRODUCTS.advanced.schedule.returns}`,
@@ -74,14 +74,14 @@ const DIVE_EXPERIENCES = [
       "Gratis Nitrox (verplicht op duik 1)",
       DIVE_PRODUCTS.advanced.requirement,
     ],
-    cta: "Boek Advanced-duiken",
+    cta: "Boek Advanced Diving",
     href: bookingHref("advanced"),
     itemId: DIVE_PRODUCTS.advanced.slug,
     featured: false,
   },
   {
     title: DIVE_PRODUCTS.afternoon.name,
-    subtitle: "EEN ONTSPANNEN MIDDAGDUIK",
+    subtitle: "EEN ONTSPANNEN MIDDAG DUIK",
     description:
       "Eén middagduik op een van Saba's bekendste stekken. Ideaal om een extra duik toe te voegen of voor een rustigere dag.",
     details: [
@@ -89,42 +89,42 @@ const DIVE_EXPERIENCES = [
       `Terug rond ${DIVE_PRODUCTS.afternoon.schedule.returns}`,
       "Tot ~70 ft / 21 m",
       // Owner-confirmed rule — same private-guide requirement as Classic.
-      "Minimaal Scuba Diver — privégids vereist",
+      "Minimaal Scuba Diver Niveau (privégids vereist)",
     ],
-    cta: "Boek middagduik",
+    cta: "Boek Afternoon Dive",
     href: bookingHref("afternoon"),
     itemId: DIVE_PRODUCTS.afternoon.slug,
     featured: false,
   },
   {
     title: DIVE_PRODUCTS.snorkel.name,
-    subtitle: "VERKENNING AAN DE OPPERVLAKTE",
+    subtitle: "JOUW AVONTUUR AAN DE OPPERVLAKTE",
     description:
-      "Geniet van Saba's riffen, schildpadden en zeeleven vanaf de oppervlakte terwijl duikers dieper gaan.",
+      "Geniet van Saba's riffen, schildpadden en zeeleven aan de oppervlakte terwijl duikers onder water zijn.",
     details: [
       `Vertrek ${DIVE_PRODUCTS.snorkel.schedule.departure}`,
       `Terug rond ${DIVE_PRODUCTS.snorkel.schedule.returns}`,
       "Uitrusting inbegrepen",
-      "Voor zekere zwemmers",
-      "Onbegeleide ervaring",
+      "Voor comfortabele zwemmers",
+      "Niet gegidst",
     ],
-    cta: "Boek snorkelen",
+    cta: "Boek Snorkeling",
     href: bookingHref("snorkel"),
     itemId: DIVE_PRODUCTS.snorkel.slug,
     featured: false,
   },
   {
     title: DIVE_PRODUCTS.private.name,
-    subtitle: "EXCLUSIEVE ERVARINGEN",
+    subtitle: "EXCLUSIEVE BELEVENISSEN",
     description:
-      "Privé duiken aan boord van onze in het Caribisch gebied gebouwde catamarans, met flexibele tijden en een programma op maat.",
+      "Privé duiken aan boord van onze, in het Caribisch gebied gefabriceerde, catamarans, op flexibele tijden en een op maat gemaakt programma.",
     details: [
       "Halve of hele dag",
       DIVE_PRODUCTS.private.capacity,
       "Eigen kapitein",
       "Flexibele vertrektijden",
     ],
-    cta: "Boek privécharter",
+    cta: "Boek privé charter",
     href: bookingHref("private"),
     itemId: DIVE_PRODUCTS.private.slug,
     featured: false,
@@ -133,8 +133,8 @@ const DIVE_EXPERIENCES = [
     title: "SDI- / TDI-cursussen",
     subtitle: "PROFESSIONELE INSTRUCTIE",
     description:
-      "Van Discover Scuba tot Divemaster — leer van ervaren instructeurs in een van de meest belonende duikomgevingen van het Caraïbisch gebied.",
-    details: ["Alle brevetniveaus", "Kleine groepen", "SDI- en TDI-opleidingen", "Privéinstructie mogelijk"],
+      "Van Discover Scuba Diving tot Divemaster, leer van onze ervaren instructeurs in een van de meest schitterende duik omgevingen van het Caraïbisch gebied.",
+    details: ["Alle brevet niveaus", "Kleine groepen", "SDI- en TDI-opleidingen", "Privé instructeur mogelijk"],
     cta: "Bekijk cursussen",
     href: localeHref("nl", "/courses"),
     featured: false,
@@ -147,8 +147,8 @@ const DIVING_FAQS = [
     answer: (
       <>
         De meeste gebrevetteerde duikers boeken de {DIVE_PRODUCTS.classic.name}. Voldoe je aan de
-        ervaringseis en wil je diepere profielen, dan vaart de {DIVE_PRODUCTS.advanced.name} eerder
-        uit. Voor één duik en een rustigere dag kies je de {DIVE_PRODUCTS.afternoon.name}. Nog niet
+        ervaringseisen en wil je diepere duikprofielen, dan ben je welkom op de {DIVE_PRODUCTS.advanced.name} die eerder
+        uitgaat. Voor één duik en een rustigere dag kies je de {DIVE_PRODUCTS.afternoon.name}. Nog niet
         gebrevetteerd? Bekijk onze{" "}
         <Link href={localeHref("nl", "/courses")} className="font-medium text-primary hover:underline underline-offset-4">cursussen</Link>.
       </>
@@ -159,10 +159,10 @@ const DIVING_FAQS = [
     answer: (
       <>
         Ja. Gasten met een Scuba Diver-brevet kunnen de {DIVE_PRODUCTS.classic.name} of{" "}
-        {DIVE_PRODUCTS.afternoon.name} boeken zonder minimum aantal gelogde duiken — je duikt dan met
+        {DIVE_PRODUCTS.afternoon.name} boeken zonder minimum aantal gelogde duiken, je duikt dan met
         een privégids.{" "}
         <Link href={localeHref("nl", "/contact?interest=book-diving")} className="font-medium text-primary hover:underline underline-offset-4">Neem contact op</Link>{" "}
-        zodat wij dit kunnen regelen.
+        zodat wij dit voor je kunnen regelen.
       </>
     ),
   },
@@ -170,8 +170,7 @@ const DIVING_FAQS = [
     question: "Heb ik een eigen duikcomputer nodig?",
     answer: (
       <>
-        Ja. Een duikcomputer is verplicht bij elke duik. Heb je er geen? Dan zijn er
-        huurcomputers beschikbaar.
+        Ja. Een duikcomputer is verplicht bij elke duik. Heb je er geen? Dan zijn er huur computers beschikbaar.
       </>
     ),
   },
@@ -180,8 +179,8 @@ const DIVING_FAQS = [
     answer: (
       <>
         Nee. Een Nitrox-brevet is niet vereist voor de meeste trips. Gebrevetteerde
-        Nitrox-duikers krijgen gratis {OPERATIONS.nitroxBlend} Nitrox. Nitrox is wel verplicht
-        op duik 1 van de {DIVE_PRODUCTS.advanced.name} — voor die trip heb je dus een
+        Nitrox-duikers duiken gratis {OPERATIONS.nitroxBlend} Nitrox. Nitrox is wel verplicht
+        op duik 1 van de {DIVE_PRODUCTS.advanced.name}. Voor die trip heb je dus een
         Nitrox-brevet nodig.
       </>
     ),
@@ -190,19 +189,16 @@ const DIVING_FAQS = [
     question: "Kunnen we samen duiken als onze ervaringsniveaus verschillen?",
     answer: (
       <>
-        Meestal wel. De beste regeling hangt af van het verschil. Zie{" "}
-        <Link href={`#${divingAnchors.mixedExperience}`} className="font-medium text-primary hover:underline underline-offset-4">Samen duiken met verschillende ervaringsniveaus</Link>{" "}
+        Meestal wel. De beste regeling hangt af van het verschil in ervaring. Zie{" "}“<Link href={`#${divingAnchors.mixedExperience}`} className="font-medium text-primary hover:underline underline-offset-4">Samen duiken met verschillende ervaringsniveaus</Link>”{" "}
         hierboven, of vraag het ons gewoon.
       </>
     ),
   },
   {
-    question: "Wat gebeurt er als een geplande stek door de omstandigheden niet kan?",
+    question: "Wat gebeurt er als een geplande duikstek door de omstandigheden niet gedoken kan worden?",
     answer: (
       <>
-        De stekken worden elke dag gekozen op basis van het actuele weer en de stroming, dus de
-        crew kan een geplande stek verruilen voor een betere. Je krijgt dezelfde trip en
-        hetzelfde aantal duiken.
+        De duikstekken worden elke dag gekozen op basis van het actuele weer en de stroming, dus de crew kan een geplande stek verruilen voor een betere en veiligere. Je krijgt dezelfde trip en hetzelfde aantal duiken.
       </>
     ),
   },
@@ -220,10 +216,7 @@ const DIVING_FAQS = [
     question: "Duiken jullie altijd vanaf een mooring?",
     answer: (
       <>
-        De meeste duiken gebruiken de moorings van het Marine Park, maar niet allemaal. We
-        maken ook driftduiken als de omstandigheden daarom vragen of als dat een betere duik
-        oplevert. Een drift kan lopen van mooring naar mooring, van een mooring naar een live
-        pickup, of met zowel een live drop als een live pickup.
+        De meeste duiken gebruiken de moorings van het Marine Park, maar niet altijd. We maken ook driftduiken als de omstandigheden daarom vragen of als dat een betere duik oplevert. Een driftduik kan lopen van mooring naar mooring, van een mooring met een live pickup, of met zowel een live drop als een live pickup.
       </>
     ),
   },
@@ -241,9 +234,9 @@ export function NlDiving() {
       />
 
       <p className="text-base leading-relaxed text-muted-foreground">
-        Sea Saba laat duikers al sinds {OPERATIONS.establishedYear} kennismaken met Saba. Als het enige
-        onafgebroken actieve duikcentrum van het eiland combineren we tientallen jaren lokale
-        kennis met kleine groepen, comfortabele boten en persoonlijke service.
+        Sinds {OPERATIONS.establishedYear} is Sea Saba hét vertrouwde gezicht voor duikers op Saba. Als het enige
+        continu actieve duikcentrum van het eiland combineren we tientallen jaren lokale kennis en
+        ervaring in kleine groepen, met comfortabele boten en persoonlijke service.
       </p>
 
       {/* Trust Signals */}
@@ -284,27 +277,27 @@ export function NlDiving() {
       <section className="mt-12">
         <FeatureImage
           src="/images/optimized/guests-on-bow-saba.webp"
-          alt="Gasten zitten op de boeg van een boot van Sea Saba en kijken naar Saba."
+          alt="Gasten zittend op de boeg van een Sea Saba boot en genietend van Saba."
           centerText
         >
           <div>
-            <h2 className="text-xl font-semibold text-foreground">De Sea Saba-ervaring</h2>
+            <h2 className="text-xl font-semibold text-foreground">De Sea Saba-Ervaring</h2>
             <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-              Sinds {OPERATIONS.establishedYear} verkennen generaties duikers Saba met Sea Saba. Onze
-              op maat gemaakte 38-voets catamarans zijn gebouwd voor Caribische omstandigheden en
-              ontworpen rond het comfort van de duiker, met ruime overdekte dekken, cameratafels,
-              zoetwater-spoelbakken, grote ladders en ervaren lokale crews.
+              Al sinds {OPERATIONS.establishedYear} neemt Sea Saba generaties duikers mee op ontdekkingstocht rond Saba. Onze
+              op maat gemaakte 38-voets catamarans zijn gebouwd voor Caribische condities en zijn
+              speciaal ontworpen voor het comfort van de duiker, met een ruim overdekt dek, camera tafel,
+              zoetwater-spoelbak, grote ladder en ervaren lokale crew.
             </p>
           </div>
         </FeatureImage>
 
         {/* Feature checklist — full-width 2-col grid below the media row */}
         <ul className="mt-6 grid gap-3 sm:grid-cols-2 text-sm text-muted-foreground">
-          <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Gratis taxipickup overal op Saba</span></li>
+          <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Gratis taxi pickup overal op Saba</span></li>
           <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Gratis {OPERATIONS.nitroxBlend} Nitrox voor gebrevetteerde duikers</span></li>
-          <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Saba&apos;s enige onafgebroken actieve duikcentrum sinds {OPERATIONS.establishedYear}</span></li>
+          <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Saba&apos;s enige continu actieve duikcentrum sinds {OPERATIONS.establishedYear}</span></li>
           <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Maximaal {OPERATIONS.maxRecreationalDiversPerGuide} duikers per gids op recreatieve duiken</span></li>
-          <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Grote stabiele catamarans met schaduw en marinetoiletten</span></li>
+          <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Grote stabiele catamarans met schaduw en marine toilet</span></li>
           <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Uitrusting gespoeld en terugbezorgd bij je accommodatie</span></li>
         </ul>
       </section>
@@ -313,7 +306,7 @@ export function NlDiving() {
       <section id={divingAnchors.options} className="mt-14 scroll-mt-40">
         <h2 className="text-xl font-semibold text-foreground">Duikopties</h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          Kies de ervaring die past bij je brevetniveau en je planning.
+          Kies de ervaring die past bij je brevet niveau en je planning.
         </p>
 
         <div className="mt-6 grid gap-6 sm:grid-cols-2">
@@ -379,41 +372,32 @@ export function NlDiving() {
           <h2 className="text-xl font-semibold text-foreground">Hoe duiken op Saba eruitziet</h2>
         </div>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          Saba is een slapende vulkaan die recht uit diep water omhoogkomt, en dat merk je aan het
-          duiken. In plaats van vlakke koraaltuinen bestaan de stekken uit vulkanisch gesteente:
-          pinnacles die richting de oppervlakte klimmen, wanden, rotsblokvelden en lavaruggen.
-          Alles waar we duiken ligt binnen het Saba Marine Park, een korte boottocht vanuit{" "}
+          Saba is een slapende vulkaan die recht uit het diepe water omhoog rijst, en dat kenmerkt het
+          duiken. In plaats van vlakke koraaltuinen bestaan de duikstekken uit vulkanisch gesteente:
+          pinnacles die uit de diepte richting het wateroppervlak reiken, wanden, rotsblok velden en lava ruggen.
+          Alle duikplekken die we duiken liggen binnen het Saba Marine Park, een korte boottocht vanuit{" "}
           {OPERATIONS.harbor}.
         </p>
 
         <div className="mt-6 grid gap-5 sm:grid-cols-2">
           <div className="rounded-lg border border-border/40 bg-muted/20 p-5">
-            <h3 className="text-sm font-semibold text-foreground">Vulkanisch terrein, echte variatie</h3>
+            <h3 className="text-sm font-semibold text-foreground">Vulkanisch terrein, heel gevarieerd</h3>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              De duikstekken van Saba omvatten pinnacles voor de kust, wanden, rotsblokvelden en
-              lavaruggen. Third Encounter, Shark Shoal en Twilight Zone behoren tot de diepere
-              stekken, terwijl stekken dichter bij de kust, zoals Tent Reef, ondiep beginnen en
-              afzakken naar richels en wanden. Man O&apos; War Shoals en Diamond Rock rijzen net zo
-              dramatisch op, hoewel beide vlak bij de kust liggen. De dieptes en profielen variëren
-              genoeg om een week duiken nooit te laten herhalen.
+              De duikstekken van Saba omvatten pinnacles voor de kust, wanden, rotsblok velden en
+              lava ruggen. Third Encounter, Shark Shoal en Twilight Zone behoren tot de diepere
+              duikstekken, terwijl duikstekken dichter bij de kust, zoals Tent Reef, ondiep beginnen en
+              afdalen naar richels en wanden. Man O&apos; War Shoals en Diamond Rock rijzen net zo
+              dramatisch op, hoewel beiden dicht bij de kust liggen. De dieptes en duikprofielen zijn zo
+              variërend dat je je gedurende een week duiken niet zult vervelen.
             </p>
           </div>
           <div className="rounded-lg border border-border/40 bg-muted/20 p-5">
-            <h3 className="text-sm font-semibold text-foreground">Omstandigheden verschillen per stek en per dag</h3>
+            <h3 className="text-sm font-semibold text-foreground">Condities verschillen per duikstek en per dag</h3>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              Saba ligt in open oceaan, dus de omstandigheden zijn echt. Exposed pinnacles kunnen
-              stroming hebben, stekken aan de lijzijde zijn meestal rustiger en de oostkant is
-              alleen duikbaar bij rustig weer. Onze crew kiest de stekken per dag op basis van de
-              werkelijke omstandigheden en de ervaring aan boord. Niet elke stek past bij elke
-              duiker of elke dag.
+              Saba ligt in de open oceaan, dus de omstandigheden kunnen uitdagend zijn. Exposed pinnacles kunnen stroming hebben, duikstekken aan de lijzijde zijn meestal rustiger en de oostkant kan alleen gedoken worden bij rustig weer. Onze crew kiest de duikstekken per dag op basis van de condities en omstandigheden en het comfort aan boord. Niet iedere duikstek past bij elke duiker of elke dag.
             </p>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              De meeste duiken gebruiken de moorings van het Marine Park, maar we maken ook
-              driftduiken als de omstandigheden daarom vragen of als dat een betere duik oplevert.
-              Dat kan betekenen: driften van mooring naar mooring, starten bij een mooring met een
-              live pickup, of zowel een live drop als een live pickup. Het water in gaan gebeurt
-              altijd vanaf de boot, en onze grote diepe ladders maken het weer aan boord komen
-              eenvoudig.
+              De meeste duiken zijn Marine Park mooring duiken, maar we maken ook driftduiken als de omstandigheden daarom vragen of als dat een betere duik oplevert. Wat kan dit betekenen? Driften van mooring naar mooring, starten bij een mooring met een live pickup, of zowel een live drop als een live pickup. Het water in gaan gebeurt altijd vanaf de boot, en onze grote diepe ladders maken het weer terug aan boord komen heel eenvoudig.
             </p>
           </div>
         </div>
@@ -423,18 +407,18 @@ export function NlDiving() {
 
       {/* A Day with Sea Saba */}
       <section id={divingAnchors.diveDay} className="mt-16 scroll-mt-40">
-        <h2 className="text-xl font-semibold text-foreground">Een dag met Sea Saba</h2>
+        <h2 className="text-xl font-semibold text-foreground">Jouw Dag met Sea Saba</h2>
         <div className="mt-6 grid gap-5 lg:grid-cols-3">
           <div className="rounded-lg border border-border/40 bg-muted/20 p-6">
-            <h3 className="text-sm font-semibold text-foreground">Voor de duik</h3>
+            <h3 className="text-sm font-semibold text-foreground">Voordat de duik begint</h3>
             <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
               <li className="flex items-start gap-3">
                 <span className="text-primary">✓</span>
-                <span>Gratis vervoer tussen je accommodatie en het duikcentrum</span>
+                <span>Gratis vervoer tussen jouw accommodatie en het duikcentrum</span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-primary">✓</span>
-                <span>Hulp van de crew bij het opbouwen van je set, fleswissels en materiaal</span>
+                <span>Hulp van de crew bij het opbouwen van je set, tank wissel en materiaal</span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-primary">✓</span>
@@ -442,11 +426,11 @@ export function NlDiving() {
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-primary">✓</span>
-                <span>Uitgebreide duikbriefings over omstandigheden, zeeleven en hoogtepunten van de stek</span>
+                <span>Uitgebreide duik briefings over condities, onderwater leven en hoogtepunten van de duikstek</span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-primary">✓</span>
-                <span>Zuurstof, EHBO, reservemateriaal en Save-a-Dive-kits aan boord</span>
+                <span>Zuurstof, EHBO box, reserve equipment en Save-a-Dive-kits aan boord</span>
               </li>
             </ul>
           </div>
@@ -455,19 +439,19 @@ export function NlDiving() {
             <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
               <li className="flex items-start gap-3">
                 <span className="text-primary">✓</span>
-                <span>Op maat gemaakte 38-voets motorcatamarans, ontworpen en gebouwd voor Caribische omstandigheden</span>
+                <span>Op maat gemaakte 38-voets motor catamarans, speciaal ontworpen en gefabriceerd voor Caribische condities</span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-primary">✓</span>
-                <span>Schaduwrijke zitplaatsen, ruime dekken, loungeplekken op de boeg en het bovendek van Fin &amp; Tonic</span>
+                <span>Schaduwrijke zitplaatsen, ruime dek, loungeplekken op de boeg en het zonnedek van Fin & Tonic</span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-primary">✓</span>
-                <span>Cameratafels, geïntegreerde zoetwaterspoeltanks en zoetwaterslangen</span>
+                <span>Camera tafels, geïntegreerde zoetwater spoeltanks en zoetwater douche.</span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-primary">✓</span>
-                <span>Grote diepe ladders voor een makkelijke uitstap</span>
+                <span>Grote diepe ladders om gemakkelijk het water uit te komen</span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-primary">✓</span>
@@ -475,7 +459,7 @@ export function NlDiving() {
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-primary">✓</span>
-                <span>Ontspannen tempo met ervaren lokale crews</span>
+                <span>Ontspannen duikdagen met ervaren lokale crew</span>
               </li>
             </ul>
           </div>
@@ -488,15 +472,15 @@ export function NlDiving() {
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-primary">✓</span>
-                <span>Sea Saba spoelt, bewaart en bezorgt je uitrusting terug bij je accommodatie</span>
+                <span>Sea Saba spoelt, bewaart en bezorgt jouw uitrusting terug bij je accommodatie</span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-primary">✓</span>
-                <span>Meer tijd om van Saba te genieten in plaats van nat materiaal over het eiland te sjouwen</span>
+                <span>Meer tijd om van Saba te genieten in plaats van je natte duikmateriaal over het eiland te moeten sjouwen</span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-primary">✓</span>
-                <span>Koude drankjes bij het duikcentrum: lokale sappen, frisdrank, water en bier van Deep Dive Brewing Co.</span>
+                <span>Koude drankjes bij het duikcentrum: lokale sapjes, frisdranken, water en bier van onze eigen Deep Dive Brewing Co.</span>
               </li>
             </ul>
           </div>
@@ -507,55 +491,53 @@ export function NlDiving() {
       <section id={divingAnchors.certification} className="mt-14 scroll-mt-40">
         <div className="flex items-center gap-3">
           <Award className="h-5 w-5 text-primary" />
-          <h2 className="text-xl font-semibold text-foreground">Ervaring &amp; brevetten</h2>
+          <h2 className="text-xl font-semibold text-foreground">Ervaring & brevettering</h2>
         </div>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          Sea Saba biedt meerdere duikopties, mede zodat elke duiker wordt gekoppeld aan stekken en
-          profielen die passen bij zijn of haar opleiding en ervaring. Kies de trip die bij jou
-          past — niet de trip met de meeste duiken.
+          Sea Saba biedt meerdere duik opties, zodat elke duiker wordt gekoppeld aan duikstekken en profielen die passen bij zijn of haar opleiding en ervaring. Kies de trip die bij jou past, niet de trip met de meeste duiken.
         </p>
 
         <div className="mt-6 space-y-4">
           <div className="rounded-lg border border-border/40 bg-muted/20 p-5">
-            <h3 className="text-sm font-semibold text-foreground">Open Water-gebrevetteerd? Begin met de Classic.</h3>
+            <h3 className="text-sm font-semibold text-foreground">Open Water-gebrevetteerd? Begin met de Classic 2 Tank</h3>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
               De {DIVE_PRODUCTS.classic.name} past bij de meeste gebrevetteerde duikers: twee
-              begeleide duiken op stekken rond de 70 ft / 21 m, in een ontspannen tempo. De{" "}
-              {DIVE_PRODUCTS.afternoon.name} werkt hetzelfde als je één duik en een rustigere dag
+              begeleide duiken op duikstekken naar ongeveer 70 ft / 21 m, in een ontspannen tempo. De{" "}
+              {DIVE_PRODUCTS.afternoon.name} werkt hetzelfde als je maar één duik en een rustigere dag
               wilt.
             </p>
           </div>
           <div className="rounded-lg border border-border/40 bg-muted/20 p-5">
-            <h3 className="text-sm font-semibold text-foreground">Diepere profielen? Dat is de Advanced-trip.</h3>
+            <h3 className="text-sm font-semibold text-foreground">Diepere profielen? Dan is de Advanced-trip voor jou.</h3>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              De {DIVE_PRODUCTS.advanced.name} vaart eerder uit, duikt dieper op de eerste duik en
-              vereist Nitrox op duik 1. Toelatingseis: {DIVE_PRODUCTS.advanced.requirement}.
-              Het is een gecombineerde brevet- en ervaringseis, niet alleen een kaartcontrole.
+              De {DIVE_PRODUCTS.advanced.name} trip vaart eerder uit, de duik is dieper op de eerste duik en
+              vereist Nitrox op duik 1. Toelatingseis: AOW + 20 gelogde duiken OF OW + 50 gelogde duiken.
+              De toelatingseis is een combinatie van brevettering en goede duikervaring. Niet alleen een kaartcontrole.
             </p>
           </div>
           <div className="rounded-lg border border-border/40 bg-muted/20 p-5">
             <h3 className="text-sm font-semibold text-foreground">Scuba Diver-gebrevetteerd? Je bent welkom.</h3>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              Scuba Diver is een brevet met begeleiding, dus je mag er niet zelfstandig mee duiken
-              met een buddy zoals met Open Water. Je kunt wel de {DIVE_PRODUCTS.classic.name} of{" "}
-              {DIVE_PRODUCTS.afternoon.name} boeken zonder minimum aantal gelogde duiken — je duikt
-              dan met een privégids. Vermeld het bij je boeking zodat wij dit kunnen regelen.
+              Scuba Diver is een brevet met begeleiding, dus je mag er niet zelfstandig met een buddy mee duiken
+              zoals met Open Water. Je kunt wel de {DIVE_PRODUCTS.classic.name} of{" "}
+              {DIVE_PRODUCTS.afternoon.name} boeken zonder minimum aantal gelogde duiken, je duikt
+              dan wel met een privégids. Vermeld het bij je boeking zodat wij dit kunnen regelen.
             </p>
           </div>
           <div className="rounded-lg border border-border/40 bg-muted/20 p-5">
             <h3 className="text-sm font-semibold text-foreground">Nog niet gebrevetteerd, of is het een tijd geleden?</h3>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              Try Scuba en volledige brevetopleidingen vind je op onze{" "}
+              Informatie over Try Scuba en volledige duik opleidingen vind je op onze{" "}
               <Link href={localeHref("nl", "/courses")} className="font-medium text-primary hover:underline underline-offset-4">cursuspagina</Link>.
               Is je laatste duik meer dan {OPERATIONS.refresher.recommendedAfterYears} jaar geleden,
-              dan raden we een refresher aan om weer op je gemak te raken. Na grofweg{" "}
-              {OPERATIONS.refresher.generallyRequiredAfterYears} jaar moet je erop rekenen dat die
+              dan raden we je een refresher aan om weer comfortabel te geraken. Na grofweg{" "}
+              {OPERATIONS.refresher.generallyRequiredAfterYears} jaar moet je erop rekenen dat een refresher
               vereist is. Het is echter geen harde grens. Welke optie het beste past, bepaalt Sea
               Saba op basis van je werkelijke ervaring, recente duikgeschiedenis, comfortniveau en
               de duiken die je hebt gepland. Soms is een privégids het betere antwoord. Vermeld het
               bij je boeking of{" "}
-              <Link href={localeHref("nl", "/contact?interest=book-diving")} className="font-medium text-primary hover:underline underline-offset-4">stuur ons een bericht</Link>
-              {" "}— dan adviseren we de juiste regeling.
+              <Link href={localeHref("nl", "/contact?interest=book-diving")} className="font-medium text-primary hover:underline underline-offset-4">stuur ons een bericht</Link>,
+              dan adviseren we je wat het beste past bij jou.
             </p>
           </div>
         </div>
@@ -565,26 +547,25 @@ export function NlDiving() {
       <section id={divingAnchors.mixedExperience} className="mt-14 scroll-mt-40">
         <div className="flex items-center gap-3">
           <Users className="h-5 w-5 text-primary" />
-          <h2 className="text-xl font-semibold text-foreground">Samen duiken met verschillende ervaringsniveaus</h2>
+          <h2 className="text-xl font-semibold text-foreground">Samen duiken ondanks verschillende ervaringsniveaus</h2>
         </div>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          Meestal kan dat. Het vraagt alleen wat planning. Hoe het werkt, hangt af van het verschil
-          in ervaring.
+          Meestal kan dat. Het vraagt alleen wat planning, afhankelijk van het verschil in niveau en ervaring.
         </p>
 
         <ul className="mt-5 space-y-4 text-sm text-muted-foreground">
           <li className="flex items-start gap-3">
             <span className="mt-0.5 text-primary">✓</span>
             <span>
-              <strong className="font-medium text-foreground">Open Water- + Advanced-gebrevetteerde partners.</strong>{" "}
+              <strong className="font-medium text-foreground">Open Water en Advanced-gebrevetteerde buddies.</strong>{" "}
               Je hebt opties:
               <span className="mt-1.5 block space-y-1.5">
-                <span className="block">Boek samen de {DIVE_PRODUCTS.classic.name} en deel beide duiken.</span>
+                <span className="block">Boek allebei de {DIVE_PRODUCTS.classic.name} en duik samen beide duiken.</span>
                 <span className="block">
                   Of de duiker die aan de eis voldoet begint eerder op de {DIVE_PRODUCTS.advanced.name} (duik 1)
-                  en deelt duik 2 met de Classic-groep. Voegt diegene de middagduik toe, dan wordt het
-                  een dag met drie duiken, waarvan duik 2 en 3 gedeeld worden met de partner. De
-                  middagduik kan meestal dezelfde dag worden toegevoegd, als er plek is.
+                  en deelt duik 2 met de Classic-groep. Voegt diegene de middag duik toe, dan wordt het
+                  een dag met drie duiken, waarvan duik 2 en 3 gedeeld worden met zijn/haar buddy. De
+                  middag duik kan spontaan op dezelfde dag worden toegevoegd, mits er plek is.
                 </span>
               </span>
             </span>
@@ -593,7 +574,7 @@ export function NlDiving() {
             <span className="text-primary">✓</span>
             <span>
               <strong className="font-medium text-foreground">Scuba Diver + zelfstandige duikers.</strong>{" "}
-              Een privégids kan de gast met het Scuba Diver-brevet begeleiden op dezelfde boot. De
+              Een privégids kan de duiker met het Scuba Diver gebrevetteerde begeleiden vanaf dezelfde boot. De
               groep blijft bij elkaar terwijl elke duiker binnen de grenzen van zijn of haar brevet duikt.
             </span>
           </li>
@@ -602,24 +583,24 @@ export function NlDiving() {
             <span>
               <strong className="font-medium text-foreground">Een duiker en een snorkelaar.</strong>{" "}
               De {DIVE_PRODUCTS.snorkel.name} deelt de boot met de{" "}
-              {DIVE_PRODUCTS.afternoon.name}, dus niet-duikende vrienden kunnen de middag samen met
-              de duiker op het water doorbrengen.
+              {DIVE_PRODUCTS.afternoon.name}, dus niet-duikende familie of vrienden kunnen de middag samen met
+              de duiker in het water doorbrengen.
             </span>
           </li>
           <li className="flex items-start gap-3">
             <span className="text-primary">✓</span>
             <span>
               <strong className="font-medium text-foreground">Grotere of bijzondere groepen.</strong>{" "}
-              Een {DIVE_PRODUCTS.private.name.toLowerCase()} houdt iedereen op één boot en biedt meer
-              flexibiliteit in tijden en programma.
+              Op een {DIVE_PRODUCTS.private.name.toLowerCase()} heeft jouw groep een eigen boot, wat meer
+              flexibiliteit in tijden en programma biedt.
             </span>
           </li>
         </ul>
 
         <div className="mt-5 rounded-lg border border-primary/20 bg-primary/5 px-5 py-4">
           <p className="text-sm text-muted-foreground">
-            Elke groep is anders. Twijfel je welke regeling past, vertel ons je brevetten en
-            gelogde duiken — dan adviseren we de juiste opzet.{" "}
+            Elke groep is anders. Twijfel je welk programma passend is, geef ons je brevetten en
+            gelogde duiken door, dan adviseren we de juiste opzet voor jouw groep.{" "}
             <Link href={localeHref("nl", "/contact?interest=book-diving")} className="font-medium text-primary hover:underline underline-offset-4">
               Neem contact op
             </Link>{" "}
@@ -638,10 +619,7 @@ export function NlDiving() {
         </div>
 
         <p className="mt-4 text-sm text-muted-foreground">
-          Reis je met jonge duikers? Zie{" "}
-          <Link href={`#${divingAnchors.juniorDivers}`} className="font-medium text-primary hover:underline underline-offset-4">
-            Duiken met kinderen en junior-duikers
-          </Link>{" "}
+          Reis je met jonge duikers? Zie{" "}“<Link href={`#${divingAnchors.juniorDivers}`} className="font-medium text-primary hover:underline underline-offset-4">Duiken met Kinderen en Junior-duikers</Link>”{" "}
           hieronder.
         </p>
       </section>
@@ -650,12 +628,10 @@ export function NlDiving() {
       <section id={divingAnchors.juniorDivers} className="mt-14 scroll-mt-40">
         <div className="flex items-center gap-3">
           <Heart className="h-5 w-5 text-primary" />
-          <h2 className="text-xl font-semibold text-foreground">Duiken met kinderen en junior-duikers</h2>
+          <h2 className="text-xl font-semibold text-foreground">Duiken met Kinderen en Junior-duikers</h2>
         </div>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          Duiken met jonge duikers is iets wat we zelf kennen. Onze eigen twee kinderen werden op
-          hun tiende gebrevetteerd en groeiden op met duiken op Saba. Junior-duikers zijn welkom op
-          onze trips en duiken binnen de diepte-, begeleidings- en andere grenzen van hun brevet.
+          Duiken met jonge duikers is iets waar wij persoonlijk ervaring mee hebben. Onze eigen twee kinderen werden op hun tiende gebrevetteerd en groeiden op met duiken op Saba. Junior-duikers zijn welkom op onze trips en duiken binnen de diepte-, begeleidings- en andere grenzen van hun brevet.
         </p>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
           Gezinnen met jongere duikers zijn vaak het beste af met een eigen gids. We raden een
@@ -664,8 +640,8 @@ export function NlDiving() {
           het duikprofiel in plaats van mee te moeten met de rest van de groep.
         </p>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          Elke jonge duiker is anders, dus vertel ons over hun brevet, ervaring en comfort in het
-          water — dan helpen we je de juiste regeling te kiezen.{" "}
+          Elke jonge duiker is anders. Informeer ons over hun brevet, duikervaring en comfort in het
+          water, dan helpen we je het juiste programma te kiezen.{" "}
           <Link href={localeHref("nl", "/contact?interest=book-diving")} className="font-medium text-primary hover:underline underline-offset-4">
             Neem contact op
           </Link>{" "}
@@ -690,17 +666,16 @@ export function NlDiving() {
           <h2 className="text-xl font-semibold text-foreground">Uitrusting, flessen &amp; duikcomputers</h2>
         </div>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          Neem je eigen set mee of huur alles op het eiland — beide is hier normaal. De crew
-          verzorgt de opbouw en de fleswissels; jij zorgt voor je brevetkaart en je computer.
+          Neem je eigen uitrusting mee of huur alles op het eiland. Onze crew verzorgt het opbouwen van je uitrusting en je fles wissel op de boot.
         </p>
 
         <div className="mt-6 grid gap-5 lg:grid-cols-3">
           <div className="rounded-lg border border-border/40 bg-muted/20 p-5">
-            <h3 className="text-sm font-semibold text-foreground">Wat je nodig hebt</h3>
+            <h3 className="text-sm font-semibold text-foreground">Wat heb je nodig</h3>
             <ul className="mt-3 space-y-2.5 text-sm text-muted-foreground">
-              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Brevetkaart of digitaal brevet</span></li>
-              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Een duikcomputer is verplicht bij elke duik; huurcomputers zijn beschikbaar als je er geen hebt.</span></li>
-              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Logboek of digitale duikgeschiedenis</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Duikbrevet digitaal of kaart</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Een duikcomputer is verplicht bij elke duik; huur computers zijn beschikbaar als je er geen hebt.</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Logboek of digitale duiklog</span></li>
             </ul>
           </div>
           <div className="rounded-lg border border-border/40 bg-muted/20 p-5">
@@ -714,7 +689,7 @@ export function NlDiving() {
           <div className="rounded-lg border border-border/40 bg-muted/20 p-5">
             <h3 className="text-sm font-semibold text-foreground">Huuruitrusting</h3>
             <ul className="mt-3 space-y-2.5 text-sm text-muted-foreground">
-              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Complete huurpakketten: trimvest, ademautomaat, wetsuit, masker, vinnen</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Complete huur uitrusting: trimvest, ademautomaat, wetsuit, masker, vinnen</span></li>
               <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Duikcomputers te huur</span></li>
               <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Geef bij het boeken je maten door, dan ligt je materiaal klaar bij aankomst</span></li>
             </ul>
@@ -722,11 +697,11 @@ export function NlDiving() {
         </div>
 
         <p className="mt-4 text-sm text-muted-foreground">
-          Voor de volledige paklijst, inclusief rifvriendelijke zonnebrand en drybags, zie{" "}
+          Voor de volledige bagagelijst, inclusief rif vriendelijke zonnebrand en drybags, zie{" "}
           <Link href={localeHref("nl", `/plan-your-trip#${planYourTripAnchors.whatToBring}`)} className="font-medium text-primary hover:underline underline-offset-4">
             Wat neem je mee
           </Link>{" "}
-          op de pagina Plan je reis.
+          op de pagina “Plan je reis”.
         </p>
       </section>
 
@@ -814,7 +789,7 @@ export function NlDiving() {
               <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Boten leggen vast aan permanente moorings — niemand ankert op het rif</span></li>
               <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Alleen begeleid duiken; geen soloduiken</span></li>
               <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Recreatieve trips blijven binnen de nuldecompressiegrenzen</span></li>
-              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Stekken worden elke dag gekozen op de omstandigheden en de groep aan boord</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Duikplekken worden elke dag gekozen op de omstandigheden en de groep aan boord</span></li>
             </ul>
           </div>
         </div>
@@ -1020,7 +995,7 @@ export function NlDiving() {
             <h3 className="text-sm font-semibold text-foreground">Diepe vulkanische pinnacles</h3>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
               Saba&apos;s diepe pinnacles en wanden lenen zich uitstekend voor ervaren
-              decompressieduikers. Stekken zoals Third Encounter, Outer Limits en Tent Wall bieden
+              decompressieduikers. Duikplekken zoals Third Encounter, Outer Limits en Tent Wall bieden
               dramatische verticale profielen, uitstekend zicht en het soort vulkanische topografie
               waarvoor technische duikers uit het hele Caraïbisch gebied komen.
             </p>
@@ -1199,7 +1174,7 @@ export function NlDiving() {
         </h2>
         <p className="mt-3 text-base text-muted-foreground">
           Kies de trip die past, vertel ons je brevet, en wij regelen de rest: taxi, flessen en de
-          route naar de juiste stekken.
+          route naar de juiste duikplekken.
         </p>
         <div className="mt-6 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
           <TrackedInternalButton
@@ -1213,7 +1188,7 @@ export function NlDiving() {
             Boek je duiken
           </TrackedInternalButton>
           <Button asChild variant="outline" size="lg" className="text-base font-semibold">
-            <Link href="/dive-sites">Bekijk de duikstekken</Link>
+            <Link href="/dive-sites">Bekijk de duikplekken</Link>
           </Button>
         </div>
         <p className="mt-5 text-sm text-muted-foreground">
