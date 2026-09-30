@@ -6,6 +6,24 @@ switcher, sitemap, and hreflang do not advertise them. To preview locally:
 `npm run dev` → `http://localhost:3000/nl`, `/nl/diving`, etc. Production
 builds 404 every `/nl/*` route until a route is approved and listed.
 
+## Review progress (Jeanine, Sea Saba)
+
+First human pass applied verbatim from the shared review document:
+
+- [x] `/nl` — home: **all sections reviewed** (NL-HOME-001 → end)
+- [x] `/nl/diving`: reviewed through **"Equipment, Tanks & Dive Computers"**
+      (NL-DIVING-149). Everything from **Nitrox** (NL-DIVING-150) onward is
+      **not yet human-reviewed**; only systematic terminology updates
+      (`duikstek` → `duikplek`) were applied there
+- [ ] `/nl/diving` — Nitrox, Technical Diving, and later sections: pending
+- [ ] `/nl/plan-your-trip`, `/nl/courses`, `/nl/contact`, `/nl/book`,
+      shared UI: pending (systematic `duikplek`/`13 km²` updates applied only)
+
+Jeanine edited the Dutch lines directly in the review doc; empty `Revisie:`
+fields do not mean "no change". Her wording is kept verbatim in the reviewed
+range, including informal compounds and occasional title-case headings —
+do not normalize them away.
+
 ## What to check on every page
 
 - [ ] Natural, fluent Dutch — not word-for-word English
@@ -80,7 +98,9 @@ builds 404 every `/nl/*` route until a route is approved and listed.
 ## Wording uncertainties for the reviewer
 
 - "trimvest" chosen for BCD (standard NL scuba term) — confirm preference vs. "BCD"
-- "duikstek" for dive site (informal, standard among NL divers)
+- ~~"duikstek" for dive site~~ → **resolved:** Jeanine prefers "duikplek(ken)";
+  applied systematically in unreviewed content. Some "duikstek" remains inside
+  her reviewed range where she kept it — flag for her next pass.
 - "bijzondere gemeente" for Special Municipality (official term)
 - "nevelwoud" for cloud forest
 - "nuldecompressiegrens" for no-decompression limit

@@ -18,7 +18,7 @@ export const ui: UiDictionary = {
     languageSwitcherLabel: "Kies je taal",
     items: {
       "/diving": "Duiken",
-      "/dive-sites": "Duikstekken",
+      "/dive-sites": "Duikplekken",
       "/courses": "Cursussen",
       "/plan-your-trip": "Plan je reis",
       "/about": "Over ons",
@@ -45,7 +45,7 @@ export const ui: UiDictionary = {
       partners: "Aanbevolen partners",
     },
     exploreLinks: {
-      diveSites: "Duikstekken",
+      diveSites: "Duikplekken",
       diving: "Duiken",
       diveLog: "Duiklogboek",
       courses: "Cursussen",
@@ -70,12 +70,12 @@ export const ui: UiDictionary = {
     copyrightSuffix: "Sea Saba, NV • The Bottom, Saba, Caribisch Nederland",
   },
   hero: {
-    headline: "Duik in het buitengewone.",
-    taglineA: "Amper 13 km² boven water.",
+    headline: "Duik in het uitzonderlijke.",
+    taglineA: "Slechts 13 km² groot, hoog boven de zee.",
     taglineB: "Daaronder ligt een van de meest bijzondere duikgebieden van het Caraïbisch gebied.",
     bookDiving: "Boek je duiken",
     planTrip: "Plan je reis",
-    exploreSites: "Ontdek de duikstekken",
+    exploreSites: "Ontdek de duikplekken",
     trust: {
       established: "Opgericht",
       protectedWaters: "Beschermde wateren",
