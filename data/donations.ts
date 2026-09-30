@@ -75,10 +75,18 @@ type DonationRecipientImage =
       image: string;
       /** Alt text for `image`; required when `image` is set. */
       imageAlt: string;
+      /**
+       * Optional height override for the card logo (Tailwind height class,
+       * default "h-14"). Portrait marks need more height than wide marks to
+       * hold comparable visual weight — set only where the default reads
+       * small, e.g. "h-20" for a portrait logo.
+       */
+      imageClassName?: string;
     }
   | {
       image?: undefined;
       imageAlt?: undefined;
+      imageClassName?: undefined;
     };
 
 export type DonationRecipient = DonationRecipientBase & DonationRecipientImage;
@@ -140,5 +148,9 @@ export const DONATION_RECIPIENTS: DonationRecipient[] = [
     category: "youth",
     image: "/images/child-focus-foundation-logo.jpg",
     imageAlt: "Child Focus Foundation logo",
+    // Portrait mark: the default h-14 reads noticeably smaller than the two
+    // wide logos beside it, so it gets a taller slot. The supplied image is
+    // untouched — only the displayed height changes.
+    imageClassName: "h-20",
   },
 ];

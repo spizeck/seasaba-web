@@ -504,29 +504,62 @@ describe("Child Focus Foundation card (#195)", () => {
     expect(scoped.getByText(/ages 4-12/)).toBeTruthy();
   });
 
-  it("shows the exact supplied bank details, marked as the foundation's own account", () => {
+  it("keeps bank details out of the closed card — they live behind the dialog", () => {
+    render(<DonationsSection recipients={DONATION_RECIPIENTS} />);
+    // The card stays visually consistent with the other recipients: no
+    // account numbers or SWIFT codes dumped inline before interaction.
+    expect(screen.queryByText("8600002172025517")).toBeNull();
+    expect(screen.queryByText("RBTTBQSAXXX")).toBeNull();
+    expect(screen.queryByRole("dialog")).toBeNull();
+  });
+
+  it("opens a labeled dialog with the exact supplied bank details", async () => {
     render(<DonationsSection recipients={DONATION_RECIPIENTS} />);
     const scoped = within(card());
-    expect(scoped.getByText(/direct bank transfer/i)).toBeTruthy();
-    expect(
-      scoped.getByText(/not a Sea Saba account/i)
-    ).toBeTruthy();
+    const trigger = scoped.getByRole("button", {
+      name: /bank transfer details/i,
+    });
+    await userEvent.click(trigger);
+
+    const dialog = screen.getByRole("dialog", {
+      name: /child focus foundation bank transfer details/i,
+    });
+    const inDialog = within(dialog);
+    expect(inDialog.getByText(/donate directly to child focus foundation/i))
+      .toBeTruthy();
     for (const value of [
       "Child Focus Foundation",
       "8600002172025517",
       "RBC",
       "RBTTBQSAXXX",
     ]) {
-      expect(scoped.getAllByText(value).length).toBeGreaterThan(0);
+      expect(inDialog.getAllByText(value).length).toBeGreaterThan(0);
+    }
+    // Clear that these are CFF's own details, not Sea Saba's account.
+    expect(inDialog.getByText(/not a Sea Saba account/i)).toBeTruthy();
+    // Copy controls for the machine-critical values.
+    for (const label of [/copy account number/i, /copy swift code/i]) {
+      expect(inDialog.getByRole("button", { name: label })).toBeTruthy();
     }
   });
 
-  it("offers copy buttons for the account number and SWIFT code", async () => {
+  it("closes the dialog via the close button and via Escape", async () => {
     render(<DonationsSection recipients={DONATION_RECIPIENTS} />);
-    const scoped = within(card());
-    for (const label of [/copy account number/i, /copy swift code/i]) {
-      expect(scoped.getByRole("button", { name: label })).toBeTruthy();
-    }
+    const trigger = within(card()).getByRole("button", {
+      name: /bank transfer details/i,
+    });
+
+    await userEvent.click(trigger);
+    let dialog = screen.getByRole("dialog");
+    await userEvent.click(
+      within(dialog).getByRole("button", { name: /close bank transfer/i })
+    );
+    expect(screen.queryByRole("dialog")).toBeNull();
+
+    await userEvent.click(trigger);
+    dialog = screen.getByRole("dialog");
+    await userEvent.keyboard("{Escape}");
+    expect(screen.queryByRole("dialog")).toBeNull();
   });
 
   it("has no outbound donation link — CFF takes bank transfers only", () => {

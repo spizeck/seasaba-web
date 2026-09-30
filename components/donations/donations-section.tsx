@@ -3,11 +3,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { Check, Copy, ExternalLink } from "lucide-react";
+import { ExternalLink } from "lucide-react";
+import { BankDetailsModal } from "@/components/donations/bank-details-modal";
+import { Button } from "@/components/ui/button";
 import { TrackedOutboundButton } from "@/components/tracked-outbound-button";
 import { TrackedOutboundLink } from "@/components/tracked-outbound-link";
 import { cn } from "@/lib/utils";
-import type { DonationBankDetails, DonationRecipient } from "@/data/donations";
+import type { DonationRecipient } from "@/data/donations";
 
 const CATEGORY_LABELS: Record<NonNullable<DonationRecipient["category"]>, string> = {
   conservation: "Conservation",
@@ -26,8 +28,10 @@ interface DonationsSectionProps {
 /**
  * Recipient grid for /donate (#171). While DONATION_RECIPIENTS is empty the
  * section renders a graceful in-progress note — no fabricated organizations
- * may appear publicly. Cards always send visitors to the recipient's own
- * site; Sea Saba never processes donations.
+ * may appear publicly. Cards send visitors to the recipient's own site, or
+ * open the recipient's own bank-transfer details in a dialog when the
+ * organization takes donations by transfer instead; Sea Saba never
+ * processes donations either way.
  */
 export function DonationsSection({ recipients }: DonationsSectionProps) {
   if (recipients.length === 0) {
@@ -66,72 +70,8 @@ export function DonationsSection({ recipients }: DonationsSectionProps) {
   );
 }
 
-function CopyValueButton({ value, label }: { value: string; label: string }) {
-  const [copied, setCopied] = useState(false);
-  return (
-    <button
-      type="button"
-      aria-label={copied ? `${label} copied` : `Copy ${label}`}
-      title={copied ? `${label} copied` : `Copy ${label}`}
-      onClick={async () => {
-        try {
-          await navigator.clipboard.writeText(value);
-          setCopied(true);
-          setTimeout(() => setCopied(false), 2000);
-        } catch {
-          // Clipboard unavailable (insecure context or permission denied) —
-          // the value stays visible and selectable either way.
-        }
-      }}
-      className="inline-flex shrink-0 items-center justify-center rounded-md p-1 text-muted-foreground transition-colors hover:bg-background hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary"
-    >
-      {copied ? (
-        <Check className="size-3.5 text-primary" aria-hidden="true" />
-      ) : (
-        <Copy className="size-3.5" aria-hidden="true" />
-      )}
-    </button>
-  );
-}
-
-function BankDetailsBlock({
-  details,
-  recipientName,
-}: {
-  details: DonationBankDetails;
-  recipientName: string;
-}) {
-  const rows: { label: string; value: string; copyable?: boolean }[] = [
-    { label: "Account name", value: details.accountName },
-    { label: "Account number", value: details.accountNumber, copyable: true },
-    { label: "Bank", value: details.bankName },
-    { label: "SWIFT code", value: details.swift, copyable: true },
-  ];
-  return (
-    <div className="mt-3 rounded-lg border border-border/50 bg-muted/20 p-3.5">
-      <p className="text-xs font-semibold tracking-wide text-foreground uppercase">
-        Donate by direct bank transfer
-      </p>
-      <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-        These are the {recipientName}&apos;s own bank details, not a Sea Saba
-        account.
-      </p>
-      <dl className="mt-2.5 space-y-1.5 text-xs">
-        {rows.map(({ label, value, copyable }) => (
-          <div key={label} className="flex items-baseline justify-between gap-2">
-            <dt className="shrink-0 text-muted-foreground">{label}</dt>
-            <dd className="flex items-center gap-1 font-medium break-all text-foreground">
-              <span className="text-right">{value}</span>
-              {copyable && <CopyValueButton value={value} label={label} />}
-            </dd>
-          </div>
-        ))}
-      </dl>
-    </div>
-  );
-}
-
 function DonationCard({ recipient }: { recipient: DonationRecipient }) {
+  const [bankDetailsOpen, setBankDetailsOpen] = useState(false);
   return (
     <article className="group flex flex-col rounded-xl border border-border/50 bg-background p-5 transition-card hover:border-primary/30 hover:shadow-sm focus-within:border-primary/30 focus-within:shadow-sm">
       {recipient.image && (
@@ -140,7 +80,10 @@ function DonationCard({ recipient }: { recipient: DonationRecipient }) {
           alt={recipient.imageAlt}
           width={160}
           height={48}
-          className="mb-3 h-14 w-auto self-start object-contain object-left"
+          className={cn(
+            "mb-3 w-auto self-start object-contain object-left",
+            recipient.imageClassName ?? "h-14"
+          )}
         />
       )}
       <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5">
@@ -160,14 +103,7 @@ function DonationCard({ recipient }: { recipient: DonationRecipient }) {
           {recipient.funds}
         </p>
       )}
-      {recipient.bankDetails && (
-        <BankDetailsBlock
-          details={recipient.bankDetails}
-          recipientName={recipient.name}
-        />
-      )}
-
-      {(recipient.donationUrl || recipient.website) && (
+      {(recipient.donationUrl || recipient.website || recipient.bankDetails) && (
         <div className="mt-auto flex flex-wrap items-center gap-x-4 gap-y-2 pt-5">
           {recipient.donationUrl && (
             <TrackedOutboundButton
@@ -182,6 +118,16 @@ function DonationCard({ recipient }: { recipient: DonationRecipient }) {
               <ExternalLink className="size-3.5" aria-hidden="true" />
             </TrackedOutboundButton>
           )}
+          {recipient.bankDetails && (
+            <Button
+              type="button"
+              size="sm"
+              className="gap-1.5"
+              onClick={() => setBankDetailsOpen(true)}
+            >
+              Bank transfer details
+            </Button>
+          )}
           {recipient.website && (
             <TrackedOutboundLink
               href={recipient.website}
@@ -195,6 +141,12 @@ function DonationCard({ recipient }: { recipient: DonationRecipient }) {
             </TrackedOutboundLink>
           )}
         </div>
+      )}
+      {bankDetailsOpen && recipient.bankDetails && (
+        <BankDetailsModal
+          recipient={recipient}
+          onClose={() => setBankDetailsOpen(false)}
+        />
       )}
     </article>
   );
