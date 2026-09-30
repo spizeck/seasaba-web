@@ -5,6 +5,7 @@ import { InlineImage } from "@/components/inline-image";
 import { Button } from "@/components/ui/button";
 import { Anchor, Users, Shield, Ship, Bus, MapPin } from "lucide-react";
 import { TeamCarousel, OwnerFeature } from "@/components/about-page-client";
+import { ContourLines } from "@/components/contour-lines";
 import { TrackedInternalButton } from "@/components/tracked-internal-button";
 import { TrackedOutboundLink } from "@/components/tracked-outbound-link";
 import { divingAnchors } from "@/lib/anchors";
@@ -228,26 +229,29 @@ export default function AboutPage() {
       </section>
 
       {/* CTA */}
-      <section className="mt-14 rounded-lg border border-border/40 bg-muted/20 p-8 text-center">
-        <h2 className="text-xl font-semibold text-foreground">Dive with Sea Saba</h2>
-        <p className="mt-3 text-base text-muted-foreground">
-          Experience professional, small-group diving with a team that has been exploring 
-          Saba&apos;s waters since {OPERATIONS.establishedYear}.
-        </p>
-        <div className="mt-6 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-          <TrackedInternalButton
-            size="lg"
-            className="text-base font-semibold"
-            href="/book"
-            eventName="book_now_click"
-            buttonText="Book Diving"
-            buttonLocation="about_footer_cta"
-          >
-            Book Diving
-          </TrackedInternalButton>
-          <Button asChild variant="outline" size="lg" className="text-base font-semibold">
-            <Link href={`/diving#${divingAnchors.options}`}>View Diving Options</Link>
-          </Button>
+      <section className="relative mt-14 overflow-hidden rounded-lg border border-border/40 bg-muted/20 p-8 text-center">
+        <ContourLines corner="top-left" seed={9} className="text-primary" />
+        <div className="relative">
+          <h2 className="text-xl font-semibold text-foreground">Dive with Sea Saba</h2>
+          <p className="mt-3 text-base text-muted-foreground">
+            Experience professional, small-group diving with a team that has been exploring
+            Saba&apos;s waters since {OPERATIONS.establishedYear}.
+          </p>
+          <div className="mt-6 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+            <TrackedInternalButton
+              size="lg"
+              className="text-base font-semibold"
+              href="/book"
+              eventName="book_now_click"
+              buttonText="Book Diving"
+              buttonLocation="about_footer_cta"
+            >
+              Book Diving
+            </TrackedInternalButton>
+            <Button asChild variant="outline" size="lg" className="text-base font-semibold">
+              <Link href={`/diving#${divingAnchors.options}`}>View Diving Options</Link>
+            </Button>
+          </div>
         </div>
       </section>
     </>

@@ -98,8 +98,9 @@ export function contourCluster({
     return {
       d: smoothClosedPath(points),
       // Outermost rings fade — the cluster dissolves into the page rather
-      // than ending on a hard outer edge.
-      opacity: 0.07 - ring * 0.006,
+      // than ending on a hard outer edge. Clamped so custom radii longer
+      // than the default still render at a visible minimum.
+      opacity: Math.max(0.01, 0.07 - ring * 0.006),
       width: ring % 3 === 2 ? 1.4 : 0.9,
     };
   });

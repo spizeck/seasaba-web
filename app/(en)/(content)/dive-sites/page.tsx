@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { PageHero } from "@/components/page-hero";
 import { FeatureImage } from "@/components/feature-image";
+import { ContourLines } from "@/components/contour-lines";
 import { DiveAreaSites } from "@/components/dive-area-sites";
 import { TrackedInternalButton } from "@/components/tracked-internal-button";
 import { diveSiteAnchors, divingAnchors } from "@/lib/anchors";
@@ -128,28 +129,31 @@ export default function DiveSitesPage() {
       </div>
 
       {/* CTA Section */}
-      <section className="mt-20 text-center">
-        <h2 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-          Ready to explore?
-        </h2>
-        <p className="mt-3 text-base text-muted-foreground">
-          Sea Saba&apos;s experienced guides know every site intimately and match conditions to your experience level.
-        </p>
-        <div className="mt-6 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-          <Button asChild size="lg" className="text-base font-semibold">
-            <Link href={`/diving#${divingAnchors.options}`}>View Diving Options</Link>
-          </Button>
-          <TrackedInternalButton
-            variant="outline"
-            size="lg"
-            className="text-base font-semibold"
-            href="/book"
-            eventName="book_now_click"
-            buttonText="Book Your Dive"
-            buttonLocation="dive_sites_footer_cta"
-          >
-            Book Your Dive
-          </TrackedInternalButton>
+      <section className="relative mt-20 overflow-hidden text-center">
+        <ContourLines corner="bottom-right" seed={13} className="text-primary" />
+        <div className="relative">
+          <h2 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+            Ready to explore?
+          </h2>
+          <p className="mt-3 text-base text-muted-foreground">
+            Sea Saba&apos;s experienced guides know every site intimately and match conditions to your experience level.
+          </p>
+          <div className="mt-6 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+            <Button asChild size="lg" className="text-base font-semibold">
+              <Link href={`/diving#${divingAnchors.options}`}>View Diving Options</Link>
+            </Button>
+            <TrackedInternalButton
+              variant="outline"
+              size="lg"
+              className="text-base font-semibold"
+              href="/book"
+              eventName="book_now_click"
+              buttonText="Book Your Dive"
+              buttonLocation="dive_sites_footer_cta"
+            >
+              Book Your Dive
+            </TrackedInternalButton>
+          </div>
         </div>
       </section>
     </>

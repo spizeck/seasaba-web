@@ -46,4 +46,13 @@ describe("contourCluster", () => {
     };
     expect(span(rings[2].d)).toBeGreaterThan(span(rings[0].d));
   });
+
+  it("keeps opacity positive when radii is much longer than the default", () => {
+    const radii = Array.from({ length: 16 }, (_, i) => 40 + i * 30);
+    const rings = contourCluster({ seed: 1, cx: 320, cy: 320, radii });
+    expect(rings).toHaveLength(16);
+    for (const ring of rings) {
+      expect(ring.opacity).toBeGreaterThan(0);
+    }
+  });
 });
