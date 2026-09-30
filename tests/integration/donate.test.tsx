@@ -517,16 +517,15 @@ describe("Child Focus Foundation card (#195)", () => {
     render(<DonationsSection recipients={DONATION_RECIPIENTS} />);
     const scoped = within(card());
     const trigger = scoped.getByRole("button", {
-      name: /bank transfer details/i,
+      name: /donate by bank transfer/i,
     });
     await userEvent.click(trigger);
 
     const dialog = screen.getByRole("dialog", {
-      name: /child focus foundation bank transfer details/i,
+      name: /donate to child focus foundation/i,
     });
     const inDialog = within(dialog);
-    expect(inDialog.getByText(/donate directly to child focus foundation/i))
-      .toBeTruthy();
+    expect(inDialog.getByText(/direct bank transfer/i)).toBeTruthy();
     for (const value of [
       "Child Focus Foundation",
       "8600002172025517",
@@ -536,7 +535,10 @@ describe("Child Focus Foundation card (#195)", () => {
       expect(inDialog.getAllByText(value).length).toBeGreaterThan(0);
     }
     // Clear that these are CFF's own details, not Sea Saba's account.
-    expect(inDialog.getByText(/not a Sea Saba account/i)).toBeTruthy();
+    expect(inDialog.getByText(/own bank details/i)).toBeTruthy();
+    expect(
+      inDialog.getByText(/does not collect or process/i)
+    ).toBeTruthy();
     // Copy controls for the machine-critical values.
     for (const label of [/copy account number/i, /copy swift code/i]) {
       expect(inDialog.getByRole("button", { name: label })).toBeTruthy();
@@ -546,13 +548,13 @@ describe("Child Focus Foundation card (#195)", () => {
   it("closes the dialog via the close button and via Escape", async () => {
     render(<DonationsSection recipients={DONATION_RECIPIENTS} />);
     const trigger = within(card()).getByRole("button", {
-      name: /bank transfer details/i,
+      name: /donate by bank transfer/i,
     });
 
     await userEvent.click(trigger);
     let dialog = screen.getByRole("dialog");
     await userEvent.click(
-      within(dialog).getByRole("button", { name: /close bank transfer/i })
+      within(dialog).getByRole("button", { name: /close donation/i })
     );
     expect(screen.queryByRole("dialog")).toBeNull();
 

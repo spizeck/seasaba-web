@@ -125,7 +125,7 @@ function DonationCard({ recipient }: { recipient: DonationRecipient }) {
               className="gap-1.5"
               onClick={() => setBankDetailsOpen(true)}
             >
-              Bank transfer details
+              Donate by bank transfer
             </Button>
           )}
           {recipient.website && (

@@ -78,24 +78,24 @@ export function BankDetailsModal({
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
       role="dialog"
       aria-modal="true"
-      aria-label={`${recipient.name} bank transfer details`}
+      aria-label={`Donate to ${recipient.name} by bank transfer`}
     >
       <div
         ref={modalRef}
-        className="relative flex w-full max-w-sm flex-col overflow-hidden rounded-2xl bg-card shadow-2xl"
+        className="relative flex max-h-[calc(100dvh-2rem)] w-full max-w-sm flex-col overflow-y-auto rounded-2xl bg-card shadow-2xl sm:max-h-[calc(100dvh-3rem)]"
         style={{ animation: "hotelModalIn 0.18s ease-out both" }}
       >
         {/* Close button */}
         <button
           ref={closeRef}
           onClick={onClose}
-          aria-label="Close bank transfer details"
+          aria-label="Close donation details"
           className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-muted text-muted-foreground transition-colors hover:bg-muted/70 hover:text-foreground"
         >
           <X className="h-4 w-4" />
         </button>
 
-        <div className="flex flex-col gap-4 p-5 sm:p-6">
+        <div className="flex flex-col gap-3 p-5">
           <div className="flex items-center gap-3 pr-8">
             {recipient.image && (
               <Image
@@ -103,19 +103,19 @@ export function BankDetailsModal({
                 alt=""
                 width={80}
                 height={80}
-                className="h-14 w-14 shrink-0 rounded-md object-contain object-left"
+                className="h-16 w-16 shrink-0 rounded-md object-contain object-left"
               />
             )}
             <h2 className="text-base font-semibold text-foreground">
-              {recipient.name}
+              Donate to {recipient.name}
             </h2>
           </div>
 
           <p className="text-sm leading-relaxed text-muted-foreground">
-            Donate directly to {recipient.name} by bank transfer.
+            Pay by direct bank transfer to the account below.
           </p>
 
-          <dl className="space-y-2 rounded-lg border border-border/50 bg-muted/20 p-4 text-sm">
+          <dl className="space-y-1.5 rounded-lg border border-border/50 bg-muted/20 p-3.5 text-sm">
             {rows.map(({ label, value, copyable }) => (
               <div
                 key={label}
@@ -131,8 +131,8 @@ export function BankDetailsModal({
           </dl>
 
           <p className="text-xs leading-relaxed text-muted-foreground">
-            These are the {recipient.name}&apos;s own bank details, not a Sea
-            Saba account. Your donation goes to them directly.
+            These are the {recipient.name}&apos;s own bank details. Sea Saba
+            does not collect or process your donation.
           </p>
         </div>
       </div>

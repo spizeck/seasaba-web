@@ -151,6 +151,6 @@ export const DONATION_RECIPIENTS: DonationRecipient[] = [
     // Portrait mark: the default h-14 reads noticeably smaller than the two
     // wide logos beside it, so it gets a taller slot. The supplied image is
     // untouched — only the displayed height changes.
-    imageClassName: "h-20",
+    imageClassName: "h-24",
   },
 ];
