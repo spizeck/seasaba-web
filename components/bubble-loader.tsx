@@ -12,9 +12,11 @@ import { cn } from "@/lib/utils";
  *   `role="status"` container, never as the sole loading indicator.
  * - CSS-first: transform/opacity keyframes (`--animate-bubble-rise` theme
  *   token). No JS timers, no canvas, no layout cost.
- * - `prefers-reduced-motion`: animation is removed entirely; the bubbles
- *   hold their scattered static positions and remain visible as a quiet
- *   cluster beside the loading text.
+ * - Bubbles start at `opacity-0`: those still inside their stagger delay
+ *   stay invisible instead of sitting fully opaque until their first cycle.
+ * - `prefers-reduced-motion`: animation is removed entirely and opacity is
+ *   restored, so the bubbles hold their scattered static positions as a
+ *   quiet cluster beside the loading text.
  *
  * Usage: `<BubbleLoader />` (standard) or `<BubbleLoader size="sm" />`
  * inside a centered loading block.
@@ -27,6 +29,8 @@ interface BubbleSpec {
   top: string;
   /** Diameter in px. */
   size: number;
+  /** Gentle one-way lateral drift in px — a few px only, no zig-zag. */
+  drift: number;
   delay: string;
   duration: string;
 }
@@ -34,15 +38,16 @@ interface BubbleSpec {
 /**
  * Hand-tuned scatter: six bubbles is enough to read as a stream without
  * becoming a particle field. Positions/delays are fixed (no Math.random) so
- * server markup is deterministic and hydration-safe.
+ * server markup is deterministic and hydration-safe. Larger bubbles rise a
+ * little faster; smaller ones linger — a loose nod to buoyancy, kept subtle.
  */
 const BUBBLES: BubbleSpec[] = [
-  { left: "10%", top: "64%", size: 10, delay: "0s",    duration: "3.2s" },
-  { left: "26%", top: "80%", size: 6,  delay: "1.5s",  duration: "4.0s" },
-  { left: "43%", top: "58%", size: 12, delay: "0.6s",  duration: "3.0s" },
-  { left: "58%", top: "76%", size: 7,  delay: "2.2s",  duration: "4.2s" },
-  { left: "73%", top: "62%", size: 9,  delay: "1.1s",  duration: "3.5s" },
-  { left: "86%", top: "82%", size: 8,  delay: "2.8s",  duration: "3.8s" },
+  { left: "10%", top: "64%", size: 10, drift: 4,  delay: "0s",   duration: "3.1s" },
+  { left: "26%", top: "80%", size: 6,  drift: -3, delay: "1.5s", duration: "4.4s" },
+  { left: "43%", top: "58%", size: 12, drift: 5,  delay: "0.6s", duration: "2.9s" },
+  { left: "58%", top: "76%", size: 7,  drift: -3, delay: "2.2s", duration: "4.1s" },
+  { left: "73%", top: "62%", size: 9,  drift: 4,  delay: "1.1s", duration: "3.5s" },
+  { left: "86%", top: "82%", size: 8,  drift: -5, delay: "2.8s", duration: "3.9s" },
 ];
 
 const SIZES = {
@@ -64,7 +69,7 @@ export function BubbleLoader({ size = "md", className }: BubbleLoaderProps) {
       {BUBBLES.map((b, i) => (
         <span
           key={i}
-          className="absolute animate-bubble-rise rounded-full border border-primary/50 bg-primary/10 motion-reduce:animate-none"
+          className="absolute animate-bubble-rise rounded-full border border-primary/50 bg-primary/10 opacity-0 motion-reduce:animate-none motion-reduce:opacity-100"
           style={{
             left: b.left,
             top: b.top,
@@ -72,6 +77,7 @@ export function BubbleLoader({ size = "md", className }: BubbleLoaderProps) {
             height: b.size,
             animationDelay: b.delay,
             animationDuration: b.duration,
+            ["--bubble-drift" as string]: `${b.drift}px`,
           }}
         />
       ))}

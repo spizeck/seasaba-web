@@ -424,7 +424,7 @@ export function DiveLogClient() {
             {loading ? (
               <div className="rounded-lg border border-border/40 bg-muted/20 p-8 text-center" role="status">
                 <BubbleLoader size="sm" className="mx-auto" />
-                <p className="mt-3 text-sm font-medium text-foreground">Loading recent dives...</p>
+                <p className="mt-2 text-sm font-medium text-foreground">Loading recent dives...</p>
               </div>
             ) : error ? (
               <div className="rounded-lg border border-border/40 bg-muted/20 p-8 text-center">

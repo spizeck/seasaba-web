@@ -71,24 +71,37 @@
   --radius-4xl: calc(var(--radius) + 16px);
 
   /* Branded loading treatment (issue #199): a few small bubbles rising
-     through a contained vertical area. Per-bubble delay/duration are set
-     inline by the component; travel distance comes from a container-level
-     CSS var so compact and standard sizes share one keyframe set. */
+     through a contained vertical area. Per-bubble delay/duration/drift are
+     set inline by the component; travel distance and drift come from CSS
+     vars so compact and standard sizes share one keyframe set. The opacity
+     curve fades in over the first ~12%, holds near 0.65 through the body of
+     the rise, and releases over the last ~20% so bubbles never pop in or
+     out of the water column. */
   --animate-bubble-rise: bubble-rise 3.4s ease-in-out infinite;
 
   @keyframes bubble-rise {
     0% {
-      transform: translateY(0);
+      transform: translate(0, 0);
       opacity: 0;
     }
-    15% {
-      opacity: 0.85;
+    12% {
+      opacity: 0.65;
     }
-    75% {
-      opacity: 0.85;
+    55% {
+      transform: translate(
+        calc(var(--bubble-drift, 0px) * 0.5),
+        calc(var(--bubble-rise-distance, -72px) * 0.55)
+      );
+      opacity: 0.65;
+    }
+    80% {
+      opacity: 0.65;
     }
     100% {
-      transform: translateY(var(--bubble-rise-distance, -72px));
+      transform: translate(
+        var(--bubble-drift, 0px),
+        var(--bubble-rise-distance, -72px)
+      );
       opacity: 0;
     }
   }
