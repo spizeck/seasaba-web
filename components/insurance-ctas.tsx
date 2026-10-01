@@ -9,10 +9,10 @@ const DAN_SHORT_TERM_URL =
   "https://apps.dan.org/short-term/?token=~d243r01E0g0h0lydq0460v1e2J2h12Qf1o15t2d68r112g1706A7499s1763";
 
 const btnPrimary =
-  "inline-flex items-center justify-center gap-1.5 rounded-md px-4 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2";
+  "inline-flex items-center justify-center gap-1.5 rounded-md px-4 py-2 text-sm font-semibold text-white pressable hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2";
 
 const btnOutline =
-  "inline-flex items-center justify-center gap-1.5 rounded-md border px-4 py-2 text-sm font-semibold transition-colors hover:bg-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2";
+  "inline-flex items-center justify-center gap-1.5 rounded-md border px-4 py-2 text-sm font-semibold pressable hover:bg-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2";
 
 interface InsuranceCTAsProps {
   /** Show the general travel insurance CTA (DiveAssure) */

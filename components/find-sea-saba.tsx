@@ -40,7 +40,7 @@ export function FindSeaSaba() {
         >
           {/* Tooltip */}
           <div
-            className="absolute bottom-full left-1/2 mb-3 -translate-x-1/2 opacity-0 scale-95 pointer-events-none transition-all duration-200 group-hover:opacity-100 group-hover:scale-100 group-hover:pointer-events-auto"
+            className="absolute bottom-full left-1/2 mb-3 -translate-x-1/2 opacity-0 motion-safe:scale-95 pointer-events-none transition-[opacity,transform] duration-200 group-hover:opacity-100 motion-safe:group-hover:scale-100 group-hover:pointer-events-auto group-focus-within:opacity-100 motion-safe:group-focus-within:scale-100 group-focus-within:pointer-events-auto"
           >
             <a
               href={MAPS_URL}
@@ -67,17 +67,16 @@ export function FindSeaSaba() {
             className="relative flex items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-1"
           >
             <span
-              className="absolute inset-0 animate-ping rounded-full opacity-20"
+              className="absolute inset-0 animate-ping rounded-full opacity-20 motion-reduce:animate-none"
               style={{ backgroundColor: "#9D2235", animationDuration: "2.8s" }}
             />
             <span
-              className="relative flex items-center justify-center rounded-full transition-transform duration-200 group-hover:scale-110"
+              className="relative flex items-center justify-center rounded-full animate-seasaba-float motion-reduce:animate-none motion-safe:transition-transform motion-safe:duration-200 motion-safe:group-hover:scale-110"
               style={{
                 width: PIN.size,
                 height: PIN.size,
                 backgroundColor: "#9D2235",
                 boxShadow: "0 4px 14px rgba(157,34,53,0.55)",
-                animation: "seasaba-float 3s ease-in-out infinite",
               }}
             >
               <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" className="h-3.5 w-3.5">
@@ -95,12 +94,6 @@ export function FindSeaSaba() {
               style={{ backgroundColor: "#9D2235" }}
             />
           </button>
-          <style>{`
-            @keyframes seasaba-float {
-              0%, 100% { transform: translateY(0); }
-              50%       { transform: translateY(-5px); }
-            }
-          `}</style>
         </div>
       </div>
 

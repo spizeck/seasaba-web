@@ -454,6 +454,76 @@ Avoid:
 
 Motion should reinforce quality and calm professionalism.
 
+### Micro-Interaction System
+
+One small motion vocabulary, shared by every control, card, and overlay.
+The site should feel responsive and tactile — never "animated."
+
+#### Timing scale
+
+| Layer | Duration | Used for |
+|---|---|---|
+| Controls | `~150ms ease-out` | buttons, pills, chips, toggles |
+| Surfaces | `~200ms ease-out` | card border/shadow/lift, sticky-nav state changes |
+| Overlays | `150–200ms ease-out` | dialog backdrop fade (`animate-overlay-in`), panel entrance (`animate-rise-in`) |
+| Imagery | `~500ms` | photo hover zoom |
+
+Prefer the shared utilities over one-off values:
+
+- **`pressable`** — the standard control transition (transform, color,
+  background, border, shadow, fill/stroke at 150ms) plus a restrained
+  tactile press (`scale: 0.97` while `:active`). Skipped automatically for
+  disabled controls, `variant="link"` buttons, and reduced-motion users.
+  Use it on any hand-rolled button that should feel like a Button.
+- **`transition-card`** — the standard interactive-card transition
+  (transform + border + shadow, 200ms). Pair with
+  `motion-safe:hover:-translate-y-0.5` for explorable cards.
+- **`animate-overlay-in` / `animate-rise-in`** — the shared dialog
+  entrance: backdrop fades, panel fades + rises ~6px and settles at
+  ~200ms. Apply both with `motion-reduce:animate-none`.
+
+#### Button press
+
+Buttons and button-styled CTAs get a ~3% `scale` on `:active` — enough to
+feel tactile on mouse and touch, too small to read as bounce. The press
+uses the independent CSS `scale` property so it composes with translate/
+rotate utilities already on the element. Text-link-style buttons
+(`variant="link"`), nav links, and inline prose links do **not** press.
+
+#### Card categories
+
+- **Static informational cards** (course cards, dive-log entries): border
+  or emphasis change only; no movement.
+- **Explorable cards** (partner cards, accommodation cards):
+  `transition-card` + `motion-safe:hover:-translate-y-0.5` +
+  `hover:border-primary/30 hover:shadow-sm`.
+- **Image-led cards** (`ImageCard`): restrained `motion-safe:` image zoom
+  inside a static container — the card itself never moves.
+- **Form containers**: `focus-within` border/shadow, no lift.
+
+#### Dialogs
+
+All dialogs share the same visual language: `animate-overlay-in` backdrop
++ `animate-rise-in` panel, instant exit, existing focus trap / Escape /
+backdrop-click / focus-restore semantics preserved. Do not add spring,
+large scale, or slide-in entrances.
+
+#### Reduced motion
+
+Every nonessential or continuous animation must opt out via
+`motion-reduce:animate-none` or `motion-safe:` variants: bubble loader,
+image zoom, card lifts, pin ping/float, carousel track, mobile menu,
+skeleton pulses, dialog entrances. State changes must remain clear with
+motion removed — reduced motion means instant, not absent.
+
+#### When not to animate
+
+- tiny inline text links (color change only)
+- disabled or unavailable controls
+- anything behind long-form prose or forms
+- state feedback that reads better instantly (validation, counters)
+- anything that would delay perceived responsiveness
+
 ---
 
 ## Navigation Structure

@@ -15,7 +15,7 @@ const TRUST_INDICATORS: { stat: string; statMobile?: string; label: string; href
 ];
 
 const btnClasses =
-  "inline-flex h-11 items-center justify-center whitespace-nowrap rounded-md px-6 text-[0.9375rem] font-semibold no-underline transition-[background-color,box-shadow] duration-200 cursor-pointer";
+  "inline-flex h-11 items-center justify-center whitespace-nowrap rounded-md px-6 text-[0.9375rem] font-semibold no-underline pressable cursor-pointer";
 
 const primaryCTAClasses =
   HERO_CTA_VARIANT === "A"

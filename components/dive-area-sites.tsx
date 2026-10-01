@@ -23,8 +23,8 @@ export function DiveAreaSites({ sites, dark = false, interactive = true }: Props
   };
 
   const pillBase = dark
-    ? "rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium text-white/70 transition-colors"
-    : "rounded-full px-3 py-1 text-xs font-medium transition-colors";
+    ? "rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium text-white/70 pressable"
+    : "rounded-full px-3 py-1 text-xs font-medium pressable";
 
   const pillActive = dark
     ? "hover:bg-white/15 hover:text-white cursor-pointer"

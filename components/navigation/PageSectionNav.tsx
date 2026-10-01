@@ -148,7 +148,7 @@ export function PageSectionNav({ items, className, offset = 96 }: PageSectionNav
       ref={navRef}
       aria-label="On this page"
       className={cn(
-        "sticky top-16 z-40 w-full py-4 transition-all duration-200",
+        "sticky top-16 z-40 w-full py-4 transition-[background-color,border-color,box-shadow] duration-200",
         isSticky
           ? "border-b border-border/40 bg-background/80 shadow-sm backdrop-blur-md"
           : "bg-transparent",

@@ -101,7 +101,7 @@ export function CommunitySupportSection() {
         This gives us what we need to evaluate your request fairly. It&apos;s
         not a grant application. Short, honest answers are perfect.
       </p>
-      <div className="mt-4 rounded-lg border border-border/60 bg-card p-6 transition-all duration-200 hover:border-primary/30 hover:shadow-sm focus-within:border-primary/30 focus-within:shadow-sm">
+      <div className="mt-4 rounded-lg border border-border/60 bg-card p-6 transition-card hover:border-primary/30 hover:shadow-sm focus-within:border-primary/30 focus-within:shadow-sm">
         <SupportRequestForm />
       </div>
     </section>

@@ -161,7 +161,7 @@ function DiveCard({
           <button
             onClick={onToggle}
             aria-label={selected ? `Remove ${dive.diveSite} from my dive log` : `Add ${dive.diveSite} to my dive log`}
-            className={`shrink-0 rounded-md border px-3 py-1.5 text-xs font-medium transition-colors ${
+            className={`shrink-0 rounded-md border px-3 py-1.5 text-xs font-medium pressable ${
               selected
                 ? "border-primary bg-primary text-white hover:bg-primary/90"
                 : "border-border/60 text-muted-foreground hover:border-primary/40 hover:text-primary"
@@ -197,7 +197,7 @@ function DiveCard({
                 <button
                   key={s.speciesName}
                   onClick={() => openSpecies(s.speciesName)}
-                  className="inline-flex items-center rounded-md bg-muted/60 px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary"
+                  className="inline-flex items-center rounded-md bg-muted/60 px-2 py-1 text-xs text-muted-foreground pressable hover:bg-primary/10 hover:text-primary"
                 >
                   {chip}
                 </button>
@@ -346,7 +346,7 @@ export function DiveLogClient() {
               <div className="inline-flex items-center gap-1 rounded-md border border-border/60 p-0.5 text-xs">
                 <button
                   onClick={() => setUnitSystem("metric")}
-                  className={`rounded px-2 py-1 transition-colors ${
+                  className={`rounded px-2 py-1 pressable ${
                     unitSystem === "metric" ? "bg-primary text-white" : "text-muted-foreground hover:text-foreground"
                   }`}
                   aria-label="Metric units"
@@ -355,7 +355,7 @@ export function DiveLogClient() {
                 </button>
                 <button
                   onClick={() => setUnitSystem("imperial")}
-                  className={`rounded px-2 py-1 transition-colors ${
+                  className={`rounded px-2 py-1 pressable ${
                     unitSystem === "imperial" ? "bg-primary text-white" : "text-muted-foreground hover:text-foreground"
                   }`}
                   aria-label="Imperial units"
@@ -385,7 +385,7 @@ export function DiveLogClient() {
               </div>
               <button
                 onClick={() => setFiltersOpen((v) => !v)}
-                className="inline-flex items-center gap-1.5 rounded-md border border-border/60 px-3 py-1.5 text-xs font-medium text-muted-foreground hover:border-primary/40 hover:text-primary transition-colors"
+                className="inline-flex items-center gap-1.5 rounded-md border border-border/60 px-3 py-1.5 text-xs font-medium text-muted-foreground pressable hover:border-primary/40 hover:text-primary"
               >
                 <SlidersHorizontal className="h-3.5 w-3.5" />
                 {filtersOpen ? "Hide Filters" : "Filter"}
@@ -461,7 +461,7 @@ export function DiveLogClient() {
               <button
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
-                className="rounded-md border border-border/60 px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary disabled:opacity-40 disabled:hover:border-border/60 disabled:hover:text-muted-foreground"
+                className="rounded-md border border-border/60 px-3 py-1.5 text-xs font-medium text-muted-foreground pressable hover:border-primary/40 hover:text-primary disabled:opacity-40 disabled:hover:border-border/60 disabled:hover:text-muted-foreground"
               >
                 Previous
               </button>
@@ -471,7 +471,7 @@ export function DiveLogClient() {
               <button
                 onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages}
-                className="rounded-md border border-border/60 px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary disabled:opacity-40 disabled:hover:border-border/60 disabled:hover:text-muted-foreground"
+                className="rounded-md border border-border/60 px-3 py-1.5 text-xs font-medium text-muted-foreground pressable hover:border-primary/40 hover:text-primary disabled:opacity-40 disabled:hover:border-border/60 disabled:hover:text-muted-foreground"
               >
                 Next
               </button>
