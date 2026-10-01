@@ -22,7 +22,7 @@ export const Pill = React.forwardRef<HTMLButtonElement, PillProps>(
         ref={ref}
         aria-current={active ? "true" : undefined}
         className={cn(
-          "inline-flex shrink-0 items-center justify-center rounded-full border px-3 py-1 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50",
+          "inline-flex shrink-0 items-center justify-center rounded-full border px-3 py-1 text-xs font-medium pressable focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50",
           active
             ? "border-primary bg-primary text-primary-foreground"
             : "border-border/60 bg-background text-muted-foreground hover:border-primary/30 hover:text-foreground",

@@ -65,7 +65,7 @@ function RestaurantCard({ partner }: { partner: Partner }) {
             : "Visit Website";
 
   return (
-    <div className="group flex flex-col rounded-xl border border-border/50 bg-background p-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-sm">
+    <div className="group flex flex-col rounded-xl border border-border/50 bg-background p-4 transition-card motion-safe:hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-sm">
       <div className="flex flex-1 flex-col">
         <h4 className="text-sm font-semibold text-foreground">{partner.name}</h4>
 
@@ -103,7 +103,7 @@ function TransportationCard({ partner }: { partner: Partner }) {
   const typeLabel = type ? type.charAt(0).toUpperCase() + type.slice(1) : "Transportation";
 
   return (
-    <div className="group flex flex-col rounded-xl border border-border/50 bg-background p-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-sm">
+    <div className="group flex flex-col rounded-xl border border-border/50 bg-background p-4 transition-card motion-safe:hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-sm">
       <div className="flex flex-1 flex-col">
         <h4 className="text-sm font-semibold text-foreground">{partner.name}</h4>
 

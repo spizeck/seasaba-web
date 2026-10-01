@@ -84,7 +84,7 @@ export function ExperienceSelector() {
           <button
             key={exp.id}
             onClick={() => setSelected(exp.id)}
-            className={`rounded-full border px-4 py-1.5 text-sm font-medium transition-colors ${
+            className={`rounded-full border px-4 py-1.5 text-sm font-medium pressable ${
               selected === exp.id
                 ? "border-primary bg-primary text-primary-foreground"
                 : "border-border/60 bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground"

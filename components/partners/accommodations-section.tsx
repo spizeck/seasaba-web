@@ -269,12 +269,6 @@ export function AccommodationsSection({ accommodations }: AccommodationsSectionP
         </div>
       )}
 
-      <style>{`
-        @keyframes accommodationIn {
-          from { opacity: 0; transform: translateY(8px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
     </section>
   );
 }
@@ -312,8 +306,7 @@ function FilterGroup({
 function AccommodationCard({ accommodation }: { accommodation: Accommodation }) {
   return (
     <div
-      className="group flex flex-col rounded-xl border border-border/50 bg-background p-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-sm"
-      style={{ animation: "accommodationIn 0.25s ease-out both" }}
+      className="group flex flex-col rounded-xl border border-border/50 bg-background p-4 transition-card motion-safe:hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-sm animate-rise-in motion-reduce:animate-none"
     >
       <div className="flex flex-1 flex-col">
         <h4 className="text-sm font-semibold text-foreground">{accommodation.name}</h4>

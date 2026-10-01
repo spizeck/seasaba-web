@@ -34,7 +34,7 @@ export function Header() {
 
   return (
     <header
-      className={`sticky top-0 z-50 w-full transition-colors duration-300 ${
+      className={`sticky top-0 z-50 w-full transition-colors duration-200 ${
         transparent
           ? "border-b border-white/10 bg-black/20 backdrop-blur-md"
           : "border-b border-border/40 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60"
@@ -82,7 +82,7 @@ export function Header() {
 
         {/* Mobile toggle */}
         <button
-          className={`relative inline-flex h-9 w-9 items-center justify-center rounded-md p-2 md:hidden ${
+          className={`pressable relative inline-flex h-9 w-9 items-center justify-center rounded-md p-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:hidden ${
             transparent ? "text-white" : "text-muted-foreground"
           }`}
           onClick={() => setMobileOpen(!mobileOpen)}
@@ -91,12 +91,12 @@ export function Header() {
           aria-controls="mobile-navigation"
         >
           <Menu
-            className={`absolute h-5 w-5 transition-all duration-300 ${
+            className={`absolute h-5 w-5 transition-[transform,opacity] duration-200 motion-reduce:transition-none ${
               mobileOpen ? "rotate-90 opacity-0" : "rotate-0 opacity-100"
             }`}
           />
           <X
-            className={`absolute h-5 w-5 transition-all duration-300 ${
+            className={`absolute h-5 w-5 transition-[transform,opacity] duration-200 motion-reduce:transition-none ${
               mobileOpen ? "rotate-0 opacity-100" : "-rotate-90 opacity-0"
             }`}
           />
@@ -108,7 +108,7 @@ export function Header() {
         id="mobile-navigation"
         aria-label="Mobile"
         inert={!mobileOpen}
-        className={`overflow-hidden border-t border-border/40 bg-background transition-all duration-500 ease-in-out md:hidden ${
+        className={`overflow-hidden border-t border-border/40 bg-background transition-[max-height,opacity] duration-300 ease-in-out motion-reduce:transition-none md:hidden ${
           mobileOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
         }`}
       >

@@ -67,7 +67,7 @@ export function DonationsSection({ recipients }: DonationsSectionProps) {
 
 function DonationCard({ recipient }: { recipient: DonationRecipient }) {
   return (
-    <article className="group flex flex-col rounded-xl border border-border/50 bg-background p-5 transition-all duration-200 hover:border-primary/30 hover:shadow-sm focus-within:border-primary/30 focus-within:shadow-sm">
+    <article className="group flex flex-col rounded-xl border border-border/50 bg-background p-5 transition-card hover:border-primary/30 hover:shadow-sm focus-within:border-primary/30 focus-within:shadow-sm">
       {recipient.image && (
         <Image
           src={recipient.image}

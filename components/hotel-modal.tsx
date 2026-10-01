@@ -74,8 +74,7 @@ export function HotelModal({ hotel, onClose }: HotelModalProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
-      style={{ background: "rgba(0,0,0,0.65)", backdropFilter: "blur(4px)", WebkitBackdropFilter: "blur(4px)" }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/70 backdrop-blur-sm animate-overlay-in motion-reduce:animate-none"
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
       role="dialog"
       aria-modal="true"
@@ -83,15 +82,14 @@ export function HotelModal({ hotel, onClose }: HotelModalProps) {
     >
       <div
         ref={modalRef}
-        className="relative flex w-full max-w-lg flex-col overflow-hidden rounded-2xl bg-card shadow-2xl"
-        style={{ animation: "hotelModalIn 0.18s ease-out both" }}
+        className="relative flex w-full max-w-lg flex-col overflow-hidden rounded-2xl bg-card shadow-2xl animate-rise-in motion-reduce:animate-none"
       >
         {/* Close button */}
         <button
           ref={closeRef}
           onClick={onClose}
           aria-label="Close hotel details"
-          className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm transition-colors hover:bg-black/60"
+          className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm pressable hover:bg-black/60"
         >
           <X className="h-4 w-4" />
         </button>
@@ -145,20 +143,13 @@ export function HotelModal({ hotel, onClose }: HotelModalProps) {
             </a>
             <button
               onClick={onClose}
-              className="inline-flex items-center justify-center rounded-md border border-border/60 px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted"
+              className="inline-flex items-center justify-center rounded-md border border-border/60 px-4 py-2 text-sm font-medium text-muted-foreground pressable hover:bg-muted"
             >
               Close
             </button>
           </div>
         </div>
       </div>
-
-      <style>{`
-        @keyframes hotelModalIn {
-          from { opacity: 0; transform: scale(0.96) translateY(8px); }
-          to   { opacity: 1; transform: scale(1) translateY(0); }
-        }
-      `}</style>
     </div>
   );
 }

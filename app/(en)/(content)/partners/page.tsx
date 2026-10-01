@@ -45,7 +45,7 @@ export default function PartnersPage() {
 
       <OnThisPageNav />
 
-      <Suspense fallback={<div className="mt-14 h-64 animate-pulse rounded-xl bg-muted/40" aria-label="Loading accommodations" />}>
+      <Suspense fallback={<div className="mt-14 h-64 motion-safe:animate-pulse rounded-xl bg-muted/40" aria-label="Loading accommodations" />}>
         <AccommodationsSection accommodations={ACCOMMODATIONS} />
       </Suspense>
       <LocalPartnersSection partners={localPartners} subcategories={LOCAL_PARTNER_SUBCATEGORIES} />

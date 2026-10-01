@@ -105,6 +105,30 @@
       opacity: 0;
     }
   }
+
+  /* Shared entrance language (issue #199): `overlay-in` is a quiet backdrop
+     fade; `rise-in` is a small rise+settle for dialog panels and freshly
+     revealed card grids. Every user pairs it with motion-reduce:animate-none
+     so reduced-motion users get instant presentation. */
+  --animate-overlay-in: overlay-in 0.15s ease-out both;
+  --animate-rise-in: rise-in 0.2s ease-out both;
+
+  @keyframes overlay-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes rise-in {
+    from { opacity: 0; transform: translateY(6px) scale(0.985); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  /* Find Sea Saba map pin — gentle bob, distinct from the ping ring. */
+  --animate-seasaba-float: seasaba-float 3s ease-in-out infinite;
+
+  @keyframes seasaba-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+  }
 }
 
 :root {
@@ -242,6 +266,42 @@
   .prose a[data-slot="button"] {
     text-decoration: none;
   }
+}
+
+/*
+ * Shared interaction utilities (issue #199) — the small Sea Saba motion
+ * vocabulary documented in docs/design/THEME_UX_GUIDE.md.
+ *
+ * `pressable` is the standard control transition (includes opacity for
+ * hover/disabled fades) plus a restrained tactile press: a ~3% scale
+ * while :active, skipped entirely under
+ * prefers-reduced-motion and for disabled or link-styled controls
+ * (`data-variant="link"`, emitted by the shared Button).
+ *
+ * `transition-card` is the standard interactive-surface transition:
+ * transform + border + shadow only, ~200ms. It replaces broad
+ * `transition-all` on cards so layout/visual properties outside the
+ * interaction contract can't animate accidentally.
+ */
+@utility pressable {
+  transition-property:
+    transform, scale, color, background-color, border-color, box-shadow,
+    fill, stroke, opacity;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+  /* `scale` (not transform: scale) composes with any translate/rotate
+     utilities already on the element — e.g. centered carousel controls. */
+  @media (prefers-reduced-motion: no-preference) {
+    &:active:not(:disabled):not([aria-disabled="true"]):not([data-variant="link"]) {
+      scale: 0.97;
+    }
+  }
+}
+
+@utility transition-card {
+  transition-property: transform, border-color, box-shadow;
+  transition-duration: 200ms;
+  transition-timing-function: ease-out;
 }
 
 /*
