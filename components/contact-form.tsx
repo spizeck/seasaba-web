@@ -222,12 +222,12 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
   const remainingFields =
     selectedInquiry?.fields.filter((f) => f !== "whatsapp") ?? [];
 
-  const renderContextualField = (field: ContactField) => {
+  const renderContextualField = (field: ContactField, extraClass = "") => {
     const meta = FIELD_META[field];
     const errorKey = PAYLOAD_KEY[field];
     const error = errors[errorKey];
     return (
-      <div key={field} className="space-y-1.5">
+      <div key={field} className={`space-y-1.5${extraClass}`}>
         <label htmlFor={meta.id} className="text-sm font-medium text-foreground">
           {field === "partySize" ? (selectedInquiry?.partyLabel ?? meta.label) : meta.label}{" "}
           <span className="font-normal text-muted-foreground">(optional)</span>
@@ -360,7 +360,16 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
           WhatsApp is rendered beside Inquiry Type above. */}
       {remainingFields.length > 0 && (
         <div className="grid gap-x-4 gap-y-3 sm:grid-cols-2">
-          {remainingFields.map(renderContextualField)}
+          {/* An odd count leaves the last field alone in its row — let it
+              span both columns instead of sitting beside an empty cell. */}
+          {remainingFields.map((field, i) =>
+            renderContextualField(
+              field,
+              i === remainingFields.length - 1 && remainingFields.length % 2 === 1
+                ? " sm:col-span-2"
+                : "",
+            ),
+          )}
         </div>
       )}
 
