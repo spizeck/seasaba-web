@@ -16,6 +16,8 @@ beforeEach(() => {
 it("loads recent dives, filters by guide, changes units, selects and exports only selected dives", async () => {
   render(<DiveLogClient />);
   expect(screen.getByText("Loading recent dives...")).toBeVisible();
+  // The branded bubble treatment accompanies the text while loading.
+  expect(screen.getByRole("status").querySelector(".animate-bubble-rise")).toBeTruthy();
   await screen.findByRole("heading", { name: "2 dives" });
   expect(screen.getAllByRole("heading", { level: 3 }).map((h) => h.textContent)).toEqual(["Diamond Rock", "Tent Reef"]);
   await userEvent.click(screen.getByRole("button", { name: "Filter" }));
