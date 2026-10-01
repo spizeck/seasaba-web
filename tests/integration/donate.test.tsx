@@ -380,10 +380,14 @@ describe("donation recipient cards", () => {
       // First child is the shared logo region, directly above the title row.
       const region = article.firstElementChild as HTMLElement;
       expect(region.className).toContain("h-24");
+      expect(region.className).toContain("items-center");
       const img = region.querySelector("img");
       expect(img, "every current recipient ships a logo").toBeTruthy();
-      // The image scales inside the region and can never outgrow it.
+      // The image scales inside the region and can never outgrow it; my-0
+      // overrides the .prose img margins that would otherwise overflow it.
+      expect(img!.className).toContain("my-0");
       expect(img!.className).toContain("max-h-full");
+      expect(img!.className).toContain("max-w-full");
       expect(img!.className).toContain("object-contain");
     }
   });

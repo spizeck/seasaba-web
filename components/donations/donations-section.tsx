@@ -76,11 +76,13 @@ function DonationCard({ recipient }: { recipient: DonationRecipient }) {
     <article className="group flex flex-col rounded-xl border border-border/50 bg-background p-5 transition-card hover:border-primary/30 hover:shadow-sm focus-within:border-primary/30 focus-within:shadow-sm">
       {/* Shared fixed-height logo region: the wrapper height — not the
           image's — sets where the title row begins, so portrait and
-          landscape marks start their names on the same line. Logos rest
-          on a common baseline (items-end) and scale inside the region
-          via imageClassName, capped by max-h-full. The region renders
-          even without an image so a future logo-less entry still aligns. */}
-      <div className="mb-3 flex h-24 items-end">
+          landscape marks start their names on the same line. Logos are
+          vertically centered and scale inside the region via
+          imageClassName, capped by max-h-full/max-w-full. The region
+          renders even without an image so a future logo-less entry still
+          aligns. my-0 is required: the page lives inside .prose, whose
+          2em img margins would overflow this fixed region. */}
+      <div className="mb-3 flex h-24 items-center">
         {recipient.image && (
           <Image
             src={recipient.image}
@@ -88,7 +90,7 @@ function DonationCard({ recipient }: { recipient: DonationRecipient }) {
             width={160}
             height={48}
             className={cn(
-              "max-h-full w-auto max-w-full object-contain object-left",
+              "my-0 max-h-full w-auto max-w-full object-contain object-left",
               recipient.imageClassName ?? "h-14"
             )}
           />

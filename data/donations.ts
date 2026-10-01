@@ -80,10 +80,10 @@ type DonationRecipientImage =
        * fixed-height region (Tailwind height class, default "h-14").
        * The region's height — not the image's — sets where the card title
        * begins, so larger values never misalign titles across cards;
-       * anything beyond the region height is capped by max-h-full.
+       * anything beyond the region is capped by max-h-full/max-w-full.
+       * Prefer relative scale like "h-full" over absolute heights.
        * Portrait marks need more height than wide marks to hold comparable
-       * visual weight — set only where the default reads small, e.g.
-       * "h-24" for a portrait logo.
+       * visual weight — set only where the default reads small.
        */
       imageClassName?: string;
     }
@@ -153,9 +153,10 @@ export const DONATION_RECIPIENTS: DonationRecipient[] = [
     image: "/images/child-focus-foundation-logo.jpg",
     imageAlt: "Child Focus Foundation logo",
     // Portrait mark: the default h-14 reads noticeably smaller than the two
-    // wide logos beside it, so it fills the shared h-24 logo region. The
-    // supplied image is untouched — only the displayed height changes, and
-    // the fixed region keeps this card's title aligned with the others.
-    imageClassName: "h-24",
+    // wide logos beside it, so it fills the shared logo region ("h-full" —
+    // relative to the wrapper, so it can never outgrow it). The supplied
+    // image is untouched — only the displayed height changes, and the
+    // fixed region keeps this card's title aligned with the others.
+    imageClassName: "h-full",
   },
 ];
