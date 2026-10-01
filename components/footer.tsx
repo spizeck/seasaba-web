@@ -55,7 +55,7 @@ const headingCls = "text-xs font-semibold uppercase tracking-widest text-foregro
 export function Footer() {
   return (
     <footer className="relative overflow-hidden border-t border-border/40 bg-muted/30">
-      <ContourLines corner="bottom-left" seed={7} className="text-primary" />
+      <ContourLines corner="bottom-right" seed={7} className="text-primary" />
       {/* pb clears the fixed launchers' clipped hit region (~80px) plus safe-area */}
       <div className="relative mx-auto max-w-6xl px-4 pt-10 pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))] sm:px-6 lg:px-8">
         <div className="grid gap-8 sm:grid-cols-2 sm:gap-10 lg:grid-cols-4">
