@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect, useId } from "react";
 import { PageHero } from "@/components/page-hero";
+import { BubbleLoader } from "@/components/bubble-loader";
 import { Button } from "@/components/ui/button";
 import { SpeciesModal } from "@/components/species-modal";
 import { findSpeciesInfo } from "@/data/species";
@@ -421,8 +422,9 @@ export function DiveLogClient() {
           {/* Dive list */}
           <div className="mt-4 flex flex-col gap-3">
             {loading ? (
-              <div className="rounded-lg border border-border/40 bg-muted/20 p-8 text-center">
-                <p className="text-sm font-medium text-foreground">Loading recent dives...</p>
+              <div className="rounded-lg border border-border/40 bg-muted/20 p-8 text-center" role="status">
+                <BubbleLoader size="sm" className="mx-auto" />
+                <p className="mt-3 text-sm font-medium text-foreground">Loading recent dives...</p>
               </div>
             ) : error ? (
               <div className="rounded-lg border border-border/40 bg-muted/20 p-8 text-center">

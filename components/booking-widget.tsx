@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { BubbleLoader } from "@/components/bubble-loader";
 import { buttonVariants } from "@/components/ui/button";
 import { trackLinkClick } from "@/lib/analytics";
 import { cn } from "@/lib/utils";
@@ -252,8 +253,8 @@ export function BookingWidget({ item }: BookingWidgetProps) {
       >
         {status === "loading" && (
           <div className="absolute inset-0 flex items-center justify-center rounded-lg border border-border/40 bg-muted/10">
-            <div className="text-center">
-              <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+            <div className="text-center" role="status">
+              <BubbleLoader className="mx-auto" />
               <p className="mt-4 text-sm text-muted-foreground">
                 Loading availability...
               </p>

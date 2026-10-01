@@ -83,6 +83,33 @@ it("shows the product banner for a valid preselected item", () => {
   expect(screen.getByRole("link", { name: "view all options" })).toHaveAttribute("href", "/book");
 });
 
+it("shows the branded bubble loader while availability loads", () => {
+  render(<BookingWidget />);
+  const status = screen.getByRole("status");
+  expect(status).toHaveTextContent("Loading availability...");
+  const loader = status.querySelector('[aria-hidden="true"]');
+  expect(loader).toBeTruthy();
+  const bubbles = loader!.querySelectorAll("span.animate-bubble-rise");
+  expect(bubbles.length).toBeGreaterThanOrEqual(5);
+});
+
+it("removes the bubble loader once the widget renders", () => {
+  state.DROPLET = { Widget: class { constructor() {} render() {} } };
+  render(<BookingWidget />);
+  expect(document.querySelector(".animate-bubble-rise")).toBeTruthy();
+  fireEvent.load(script());
+  act(() => vi.advanceTimersByTime(100));
+  expect(document.querySelector(".animate-bubble-rise")).toBeNull();
+  expect(screen.queryByRole("status")).not.toBeInTheDocument();
+});
+
+it("keeps the error fallback free of the loading treatment", () => {
+  render(<BookingWidget />);
+  fireEvent.error(script());
+  expect(screen.getByText("Booking isn't loading")).toBeVisible();
+  expect(document.querySelector(".animate-bubble-rise")).toBeNull();
+});
+
 it("reuses the script on navigation and stops polling after unmount", () => {
   const existing = document.createElement("script");
   existing.id = "checkfront-interface-script";
