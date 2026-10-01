@@ -470,8 +470,9 @@ The site should feel responsive and tactile — never "animated."
 
 Prefer the shared utilities over one-off values:
 
-- **`pressable`** — the standard control transition (transform, color,
-  background, border, shadow, fill/stroke at 150ms) plus a restrained
+- **`pressable`** — the standard control transition (transform, scale,
+  color, background, border, shadow, fill/stroke, opacity at 150ms) plus a
+  restrained
   tactile press (`scale: 0.97` while `:active`). Skipped automatically for
   disabled controls, `variant="link"` buttons, and reduced-motion users.
   Use it on any hand-rolled button that should feel like a Button.

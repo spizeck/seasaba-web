@@ -272,8 +272,9 @@
  * Shared interaction utilities (issue #199) — the small Sea Saba motion
  * vocabulary documented in docs/design/THEME_UX_GUIDE.md.
  *
- * `pressable` is the standard control transition plus a restrained tactile
- * press: a ~3% scale while :active, skipped entirely under
+ * `pressable` is the standard control transition (includes opacity for
+ * hover/disabled fades) plus a restrained tactile press: a ~3% scale
+ * while :active, skipped entirely under
  * prefers-reduced-motion and for disabled or link-styled controls
  * (`data-variant="link"`, emitted by the shared Button).
  *
@@ -285,7 +286,7 @@
 @utility pressable {
   transition-property:
     transform, scale, color, background-color, border-color, box-shadow,
-    fill, stroke;
+    fill, stroke, opacity;
   transition-duration: 150ms;
   transition-timing-function: ease-out;
   /* `scale` (not transform: scale) composes with any translate/rotate
