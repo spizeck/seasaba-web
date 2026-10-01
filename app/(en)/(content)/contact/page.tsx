@@ -45,7 +45,7 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
         {subtitle}
       </p>
 
-      <div className="mt-8 rounded-lg border border-border/60 bg-card p-6">
+      <div className="not-prose mt-8 rounded-lg border border-border/60 bg-card p-6">
         <ContactForm initialInterest={interest} />
       </div>
 

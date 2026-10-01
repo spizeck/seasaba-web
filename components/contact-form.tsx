@@ -215,9 +215,61 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
     window.open(whatsappHref, "_blank", "noopener,noreferrer");
   }, [validate, selectedInquiry, buildWhatsAppMessage]);
 
+  // WhatsApp sits beside Inquiry Type when the inquiry asks for it: both
+  // are "how should we reach you" fields, and removing it from the
+  // contextual grid lets the remaining fields fill whole two-column rows.
+  const showWhatsapp = Boolean(selectedInquiry?.fields.includes("whatsapp"));
+  const remainingFields =
+    selectedInquiry?.fields.filter((f) => f !== "whatsapp") ?? [];
+
+  const renderContextualField = (field: ContactField) => {
+    const meta = FIELD_META[field];
+    const errorKey = PAYLOAD_KEY[field];
+    const error = errors[errorKey];
+    return (
+      <div key={field} className="space-y-1.5">
+        <label htmlFor={meta.id} className="text-sm font-medium text-foreground">
+          {field === "partySize" ? (selectedInquiry?.partyLabel ?? meta.label) : meta.label}{" "}
+          <span className="font-normal text-muted-foreground">(optional)</span>
+        </label>
+        <input
+          id={meta.id}
+          name={meta.id}
+          type={meta.type}
+          value={contextualValues[field]}
+          maxLength={meta.maxLength}
+          onChange={(e) => contextualSetters[field](e.target.value)}
+          aria-invalid={!!error}
+          aria-describedby={error ? `${meta.id}-error` : undefined}
+          className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+          placeholder={meta.placeholder}
+        />
+        {field === "whatsapp" && (
+          <label
+            htmlFor="whatsapp-prefer"
+            className="flex items-center gap-2 text-xs text-muted-foreground"
+          >
+            <input
+              id="whatsapp-prefer"
+              name="whatsapp-prefer"
+              type="checkbox"
+              checked={preferWhatsapp}
+              onChange={(e) => setPreferWhatsapp(e.target.checked)}
+              className="h-4 w-4 shrink-0 rounded border-border accent-primary focus:ring-1 focus:ring-primary"
+            />
+            I prefer to be contacted on WhatsApp
+          </label>
+        )}
+        <p id={`${meta.id}-error`} className={`min-h-4 text-xs text-destructive${error ? "" : " invisible"}`}>
+          {error || " "}
+        </p>
+      </div>
+    );
+  };
+
   return (
-    <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); handleEmail(); }} noValidate>
-      <div className="grid gap-4 sm:grid-cols-2">
+    <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); handleEmail(); }} noValidate>
+      <div className="grid gap-x-4 gap-y-3 sm:grid-cols-2">
         <div className="space-y-1.5">
           <label htmlFor="name" className="text-sm font-medium text-foreground">
             Name <span className="text-destructive">*</span>
@@ -235,7 +287,7 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
             className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
             placeholder="Your full name"
           />
-          <p id="name-error" className={`min-h-5 text-xs text-destructive${touched.name && errors.name ? "" : " invisible"}`}>
+          <p id="name-error" className={`min-h-4 text-xs text-destructive${touched.name && errors.name ? "" : " invisible"}`}>
             {touched.name && errors.name ? errors.name : " "}
           </p>
         </div>
@@ -257,97 +309,58 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
             className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
             placeholder="you@example.com"
           />
-          <p id="email-error" className={`min-h-5 text-xs text-destructive${touched.email && errors.email ? "" : " invisible"}`}>
+          <p id="email-error" className={`min-h-4 text-xs text-destructive${touched.email && errors.email ? "" : " invisible"}`}>
             {touched.email && errors.email ? errors.email : " "}
           </p>
         </div>
       </div>
 
-      <div className="space-y-1.5">
-        <label htmlFor="inquiry-type" className="text-sm font-medium text-foreground">
-          Inquiry Type <span className="text-destructive">*</span>
-        </label>
-        <select
-          id="inquiry-type"
-          name="inquiry-type"
-          value={inquiryType}
-          onChange={(e) => handleInquiryChange(e.target.value)}
-          onBlur={() => handleBlur("inquiryType")}
-          aria-invalid={touched.inquiryType && !!errors.inquiryType}
-          aria-describedby={touched.inquiryType && errors.inquiryType ? "inquiry-type-error" : undefined}
-          className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-        >
-          <option value="" disabled>
-            Select an inquiry type
-          </option>
-          <optgroup label="Courses">
-            {COURSE_INQUIRIES.map((inquiry) => (
-              <option key={inquiry.value} value={inquiry.value}>
-                {inquiry.label}
-              </option>
-            ))}
-          </optgroup>
-          <optgroup label="General">
-            {GENERAL_INQUIRIES.map((inquiry) => (
-              <option key={inquiry.value} value={inquiry.value}>
-                {inquiry.label}
-              </option>
-            ))}
-          </optgroup>
-        </select>
-        <p id="inquiry-type-error" className={`min-h-5 text-xs text-destructive${touched.inquiryType && errors.inquiryType ? "" : " invisible"}`}>
-          {touched.inquiryType && errors.inquiryType ? errors.inquiryType : " "}
-        </p>
+      <div className="grid gap-x-4 gap-y-3 sm:grid-cols-2">
+        <div className={`space-y-1.5${showWhatsapp ? "" : " sm:col-span-2"}`}>
+          <label htmlFor="inquiry-type" className="text-sm font-medium text-foreground">
+            Inquiry Type <span className="text-destructive">*</span>
+          </label>
+          <select
+            id="inquiry-type"
+            name="inquiry-type"
+            value={inquiryType}
+            onChange={(e) => handleInquiryChange(e.target.value)}
+            onBlur={() => handleBlur("inquiryType")}
+            aria-invalid={touched.inquiryType && !!errors.inquiryType}
+            aria-describedby={touched.inquiryType && errors.inquiryType ? "inquiry-type-error" : undefined}
+            className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+          >
+            <option value="" disabled>
+              Select an inquiry type
+            </option>
+            <optgroup label="Courses">
+              {COURSE_INQUIRIES.map((inquiry) => (
+                <option key={inquiry.value} value={inquiry.value}>
+                  {inquiry.label}
+                </option>
+              ))}
+            </optgroup>
+            <optgroup label="General">
+              {GENERAL_INQUIRIES.map((inquiry) => (
+                <option key={inquiry.value} value={inquiry.value}>
+                  {inquiry.label}
+                </option>
+              ))}
+            </optgroup>
+          </select>
+          <p id="inquiry-type-error" className={`min-h-4 text-xs text-destructive${touched.inquiryType && errors.inquiryType ? "" : " invisible"}`}>
+            {touched.inquiryType && errors.inquiryType ? errors.inquiryType : " "}
+          </p>
+        </div>
+        {showWhatsapp && renderContextualField("whatsapp")}
       </div>
 
       {/* Contextual fields: driven by the inquiry's `fields` list in
-          data/operations.ts — nothing here is hardcoded per inquiry. */}
-      {selectedInquiry && selectedInquiry.fields.length > 0 && (
-        <div className="grid gap-4 sm:grid-cols-2">
-          {selectedInquiry.fields.map((field) => {
-            const meta = FIELD_META[field];
-            const errorKey = PAYLOAD_KEY[field];
-            const error = errors[errorKey];
-            return (
-              <div key={field} className="space-y-1.5">
-                <label htmlFor={meta.id} className="text-sm font-medium text-foreground">
-                  {field === "partySize" ? (selectedInquiry.partyLabel ?? meta.label) : meta.label}{" "}
-                  <span className="font-normal text-muted-foreground">(optional)</span>
-                </label>
-                <input
-                  id={meta.id}
-                  name={meta.id}
-                  type={meta.type}
-                  value={contextualValues[field]}
-                  maxLength={meta.maxLength}
-                  onChange={(e) => contextualSetters[field](e.target.value)}
-                  aria-invalid={!!error}
-                  aria-describedby={error ? `${meta.id}-error` : undefined}
-                  className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-                  placeholder={meta.placeholder}
-                />
-                {field === "whatsapp" && (
-                  <label
-                    htmlFor="whatsapp-prefer"
-                    className="flex items-center gap-2 text-xs text-muted-foreground"
-                  >
-                    <input
-                      id="whatsapp-prefer"
-                      name="whatsapp-prefer"
-                      type="checkbox"
-                      checked={preferWhatsapp}
-                      onChange={(e) => setPreferWhatsapp(e.target.checked)}
-                      className="h-4 w-4 shrink-0 rounded border-border accent-primary focus:ring-1 focus:ring-primary"
-                    />
-                    I prefer to be contacted on WhatsApp
-                  </label>
-                )}
-                <p id={`${meta.id}-error`} className={`min-h-5 text-xs text-destructive${error ? "" : " invisible"}`}>
-                  {error || " "}
-                </p>
-              </div>
-            );
-          })}
+          data/operations.ts — nothing here is hardcoded per inquiry.
+          WhatsApp is rendered beside Inquiry Type above. */}
+      {remainingFields.length > 0 && (
+        <div className="grid gap-x-4 gap-y-3 sm:grid-cols-2">
+          {remainingFields.map(renderContextualField)}
         </div>
       )}
 
@@ -369,7 +382,7 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
           placeholder="Tell us about your plans, questions, or anything we should know."
         />
         <div className="flex items-baseline justify-between gap-3">
-          <p id="message-error" className={`min-h-5 text-xs text-destructive${touched.message && errors.message ? "" : " invisible"}`}>
+          <p id="message-error" className={`min-h-4 text-xs text-destructive${touched.message && errors.message ? "" : " invisible"}`}>
             {touched.message && errors.message ? errors.message : " "}
           </p>
           <p id="message-limit" className="shrink-0 text-xs text-muted-foreground">
@@ -408,7 +421,7 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
         </div>
       )}
 
-      <div className="flex flex-col gap-3 pt-1 sm:flex-row">
+      <div className="flex flex-col gap-3 sm:flex-row">
         <Button
           type="submit"
           className="w-full sm:w-auto"
