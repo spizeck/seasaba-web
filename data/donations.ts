@@ -1,19 +1,19 @@
 /**
  * Registry of the Saba organizations and causes featured on /donate (#171).
  *
- * STATUS: two recipients populated from organization-supplied material
- * (Sea & Learn Foundation and Saba Conservation Foundation, September 2026).
- * Both organizations asked to review the final rendered card wording before
- * publication, so this registry must not go live until the owner confirms
- * each organization has signed off. Until then, entries may be edited in
- * place — do not add placeholder, sample, or unverified entries to make the
- * list look complete, and do not add pending recipients early.
+ * STATUS: three recipients — Sea & Learn Foundation and Saba Conservation
+ * Foundation from organization-supplied material (September 2026; final
+ * card wording pending their review before publication), and Child Focus
+ * Foundation added per owner request with owner-supplied copy, logo, and
+ * direct bank details (#195).
  *
  * To add a recipient, append one entry here — no page or layout changes are
- * needed. Every entry must be owner-confirmed: name, description, and website
- * come from the organization itself, and `donationUrl` (optional) must be the
- * recipient's own donation page. Sea Saba never collects, processes, or
- * retains donations, so there is no checkout or payment field here by design.
+ * needed. Every entry must be owner-confirmed: name and description come
+ * from the organization itself, `website` and `donationUrl` (both optional)
+ * must be the recipient's own pages, and `bankDetails` (optional) must be
+ * the recipient's own account — never a Sea Saba account. Sea Saba never
+ * collects, processes, or retains donations, so there is no checkout or
+ * payment field here by design.
  *
  * Fields that must never be guessed: nonprofit/tax status, percentages or
  * fee breakdowns, and any charitable claim. Leave `funds` unset unless the
@@ -28,6 +28,19 @@ export type DonationCategory =
   | "marine-conservation"
   | "science-education";
 
+/**
+ * Direct bank-transfer details, shown on the card when a recipient takes
+ * donations by bank transfer instead of (or alongside) a website. Every
+ * field is the recipient's own account information — never Sea Saba's —
+ * and must come from the organization or owner directly.
+ */
+export interface DonationBankDetails {
+  accountName: string;
+  accountNumber: string;
+  bankName: string;
+  swift: string;
+}
+
 interface DonationRecipientBase {
   /** Organization or cause name, as the organization itself styles it. */
   name: string;
@@ -35,8 +48,10 @@ interface DonationRecipientBase {
   description: string;
   /** Plain-language summary of what a donation helps fund — from the recipient's own materials only. */
   funds?: string;
-  /** The organization's own website — required; doubles as the fallback destination when no donationUrl exists. */
-  website: string;
+  /** The organization's own website; doubles as the fallback destination when no donationUrl exists. Omit when the recipient has none. */
+  website?: string;
+  /** Direct bank-transfer details — the recipient's own account, shown on the card so donors can copy them. */
+  bankDetails?: DonationBankDetails;
   /**
    * Direct donation page on the recipient's own site, when one exists.
    * First-party recipient URLs only — never an intermediary and never a
@@ -60,10 +75,22 @@ type DonationRecipientImage =
       image: string;
       /** Alt text for `image`; required when `image` is set. */
       imageAlt: string;
+      /**
+       * Optional size override for the card logo inside its shared
+       * fixed-height region (Tailwind height class, default "h-14").
+       * The region's height — not the image's — sets where the card title
+       * begins, so larger values never misalign titles across cards;
+       * anything beyond the region is capped by max-h-full/max-w-full.
+       * Prefer relative scale like "h-full" over absolute heights.
+       * Portrait marks need more height than wide marks to hold comparable
+       * visual weight — set only where the default reads small.
+       */
+      imageClassName?: string;
     }
   | {
       image?: undefined;
       imageAlt?: undefined;
+      imageClassName?: undefined;
     };
 
 export type DonationRecipient = DonationRecipientBase & DonationRecipientImage;
@@ -105,5 +132,31 @@ export const DONATION_RECIPIENTS: DonationRecipient[] = [
     category: "marine-conservation",
     image: "/images/optimized/saba-conservation-foundation-logo-color.webp",
     imageAlt: "Saba Conservation Foundation logo",
+  },
+  {
+    // Child Focus Foundation: added per owner request (#195) with
+    // owner-supplied copy and the provided logo. CFF has no website and
+    // takes donations by direct bank transfer, so the card renders their
+    // own RBC account details instead of outbound links.
+    name: "Child Focus Foundation",
+    description:
+      "An after-school program dedicated to creating meaningful opportunities for children ages 4-12 on Saba, with educational, recreational, cultural, creative, and sports activities that help children learn, grow, build confidence, and develop positive relationships within their community. Together, we can create opportunities for our children to learn, explore, create, and thrive.",
+    funds:
+      "The resources, equipment, instructors, and materials that keep these programs active, safe, engaging, and accessible to children after school.",
+    bankDetails: {
+      accountName: "Child Focus Foundation",
+      accountNumber: "8600002172025517",
+      bankName: "RBC",
+      swift: "RBTTBQSAXXX",
+    },
+    category: "youth",
+    image: "/images/child-focus-foundation-logo.jpg",
+    imageAlt: "Child Focus Foundation logo",
+    // Portrait mark: the default h-14 reads noticeably smaller than the two
+    // wide logos beside it, so it fills the shared logo region ("h-full" —
+    // relative to the wrapper, so it can never outgrow it). The supplied
+    // image is untouched — only the displayed height changes, and the
+    // fixed region keeps this card's title aligned with the others.
+    imageClassName: "h-full",
   },
 ];

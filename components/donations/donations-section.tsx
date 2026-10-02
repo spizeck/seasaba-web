@@ -2,7 +2,10 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 import { ExternalLink } from "lucide-react";
+import { BankDetailsModal } from "@/components/donations/bank-details-modal";
+import { Button } from "@/components/ui/button";
 import { TrackedOutboundButton } from "@/components/tracked-outbound-button";
 import { TrackedOutboundLink } from "@/components/tracked-outbound-link";
 import { cn } from "@/lib/utils";
@@ -25,8 +28,10 @@ interface DonationsSectionProps {
 /**
  * Recipient grid for /donate (#171). While DONATION_RECIPIENTS is empty the
  * section renders a graceful in-progress note — no fabricated organizations
- * may appear publicly. Cards always send visitors to the recipient's own
- * site; Sea Saba never processes donations.
+ * may appear publicly. Cards send visitors to the recipient's own site, or
+ * open the recipient's own bank-transfer details in a dialog when the
+ * organization takes donations by transfer instead; Sea Saba never
+ * processes donations either way.
  */
 export function DonationsSection({ recipients }: DonationsSectionProps) {
   if (recipients.length === 0) {
@@ -66,17 +71,31 @@ export function DonationsSection({ recipients }: DonationsSectionProps) {
 }
 
 function DonationCard({ recipient }: { recipient: DonationRecipient }) {
+  const [bankDetailsOpen, setBankDetailsOpen] = useState(false);
   return (
     <article className="group flex flex-col rounded-xl border border-border/50 bg-background p-5 transition-card hover:border-primary/30 hover:shadow-sm focus-within:border-primary/30 focus-within:shadow-sm">
-      {recipient.image && (
-        <Image
-          src={recipient.image}
-          alt={recipient.imageAlt}
-          width={160}
-          height={48}
-          className="mb-3 h-14 w-auto self-start object-contain object-left"
-        />
-      )}
+      {/* Shared fixed-height logo region: the wrapper height — not the
+          image's — sets where the title row begins, so portrait and
+          landscape marks start their names on the same line. Logos are
+          vertically centered and scale inside the region via
+          imageClassName, capped by max-h-full/max-w-full. The region
+          renders even without an image so a future logo-less entry still
+          aligns. my-0 is required: the page lives inside .prose, whose
+          2em img margins would overflow this fixed region. */}
+      <div className="mb-3 flex h-24 items-center">
+        {recipient.image && (
+          <Image
+            src={recipient.image}
+            alt={recipient.imageAlt}
+            width={160}
+            height={48}
+            className={cn(
+              "my-0 max-h-full w-auto max-w-full object-contain object-left",
+              recipient.imageClassName ?? "h-14"
+            )}
+          />
+        )}
+      </div>
       <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5">
         <h3 className="text-base font-semibold text-foreground">{recipient.name}</h3>
         {recipient.category && (
@@ -94,32 +113,51 @@ function DonationCard({ recipient }: { recipient: DonationRecipient }) {
           {recipient.funds}
         </p>
       )}
-
-      <div className="mt-auto flex flex-wrap items-center gap-x-4 gap-y-2 pt-5">
-        {recipient.donationUrl && (
-          <TrackedOutboundButton
-            href={recipient.donationUrl}
-            eventName="donation_click"
-            buttonText={`Donate to ${recipient.name}`}
-            ariaLabel={`Donate directly to ${recipient.name} on their own website, opens in a new tab`}
-            size="sm"
-            className="gap-1.5"
-          >
-            Donate directly
-            <ExternalLink className="size-3.5" aria-hidden="true" />
-          </TrackedOutboundButton>
-        )}
-        <TrackedOutboundLink
-          href={recipient.website}
-          eventName="social_click"
-          buttonText={`Visit ${recipient.name}`}
-          ariaLabel={`Visit ${recipient.name}'s website, opens in a new tab`}
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-primary transition-colors hover:text-primary/80"
-        >
-          {recipient.donationUrl ? "Visit website" : "Visit their website"}
-          <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
-        </TrackedOutboundLink>
-      </div>
+      {(recipient.donationUrl || recipient.website || recipient.bankDetails) && (
+        <div className="mt-auto flex flex-wrap items-center gap-x-4 gap-y-2 pt-5">
+          {recipient.donationUrl && (
+            <TrackedOutboundButton
+              href={recipient.donationUrl}
+              eventName="donation_click"
+              buttonText={`Donate to ${recipient.name}`}
+              ariaLabel={`Donate directly to ${recipient.name} on their own website, opens in a new tab`}
+              size="sm"
+              className="gap-1.5"
+            >
+              Donate directly
+              <ExternalLink className="size-3.5" aria-hidden="true" />
+            </TrackedOutboundButton>
+          )}
+          {recipient.bankDetails && (
+            <Button
+              type="button"
+              size="sm"
+              className="gap-1.5"
+              onClick={() => setBankDetailsOpen(true)}
+            >
+              Donate by bank transfer
+            </Button>
+          )}
+          {recipient.website && (
+            <TrackedOutboundLink
+              href={recipient.website}
+              eventName="social_click"
+              buttonText={`Visit ${recipient.name}`}
+              ariaLabel={`Visit ${recipient.name}'s website, opens in a new tab`}
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-primary transition-colors hover:text-primary/80"
+            >
+              {recipient.donationUrl ? "Visit website" : "Visit their website"}
+              <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+            </TrackedOutboundLink>
+          )}
+        </div>
+      )}
+      {bankDetailsOpen && recipient.bankDetails && (
+        <BankDetailsModal
+          recipient={recipient}
+          onClose={() => setBankDetailsOpen(false)}
+        />
+      )}
     </article>
   );
 }

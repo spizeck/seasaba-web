@@ -135,12 +135,14 @@ describe("donate page", () => {
     expect(
       screen.getByRole("heading", { name: "Saba Conservation Foundation" })
     ).toBeTruthy();
+    expect(
+      screen.getByRole("heading", { name: "Child Focus Foundation" })
+    ).toBeTruthy();
     // Recipients still in outreach must not appear: Saba Reach Foundation,
-    // Child Focus Foundation, Body Mind & Spirit, SFPCA (deferred), and the
-    // unapproved Project Bureau Saba / Sea Fan Society Foundation concept.
+    // Body Mind & Spirit, SFPCA (deferred), and the unapproved Project
+    // Bureau Saba / Sea Fan Society Foundation concept.
     for (const pending of [
       /saba reach/i,
-      /child focus/i,
       /body,?\s*mind/i,
       /sfpca|prevention of cruelty/i,
       /sea fan/i,
@@ -163,6 +165,9 @@ describe("donate page", () => {
       ).toBeTruthy();
       expect(
         screen.getByRole("heading", { name: "Saba Conservation Foundation" })
+      ).toBeTruthy();
+      expect(
+        screen.getByRole("heading", { name: "Child Focus Foundation" })
       ).toBeTruthy();
       expect(fetchSpy).not.toHaveBeenCalled();
     } finally {
@@ -361,6 +366,32 @@ describe("donation recipient cards", () => {
     expect(visit.className).not.toContain("no-underline");
   });
 
+  // PR #196 follow-up: organization names must start on the same line
+  // across cards even when logo aspect ratios differ (Child Focus's mark
+  // is portrait, Sea & Learn's and SCF's are wide). The wrapper's fixed
+  // height — not the image's — positions the title row.
+  it("reserves the same fixed-height logo region on every card", () => {
+    render(<DonationsSection recipients={DONATION_RECIPIENTS} />);
+    const articles = screen
+      .getAllByRole("heading", { level: 3 })
+      .map((h) => h.closest("article")!);
+    expect(articles).toHaveLength(DONATION_RECIPIENTS.length);
+    for (const article of articles) {
+      // First child is the shared logo region, directly above the title row.
+      const region = article.firstElementChild as HTMLElement;
+      expect(region.className).toContain("h-24");
+      expect(region.className).toContain("items-center");
+      const img = region.querySelector("img");
+      expect(img, "every current recipient ships a logo").toBeTruthy();
+      // The image scales inside the region and can never outgrow it; my-0
+      // overrides the .prose img margins that would otherwise overflow it.
+      expect(img!.className).toContain("my-0");
+      expect(img!.className).toContain("max-h-full");
+      expect(img!.className).toContain("max-w-full");
+      expect(img!.className).toContain("object-contain");
+    }
+  });
+
   it("gives action cards the shared hover/focus-within treatment without motion", () => {
     render(<DonationsSection recipients={FIXTURE} />);
     const card = screen
@@ -377,14 +408,16 @@ describe("donation recipient cards", () => {
 });
 
 describe("donation recipient registry (#171)", () => {
-  // Both entries below come from the organizations' own September 2026
-  // outreach replies; final card wording is pending their review before
-  // publication.
-  it("holds exactly the two organization-confirmed recipients", () => {
-    expect(DONATION_RECIPIENTS).toHaveLength(2);
+  // Sea & Learn and SCF come from the organizations' own September 2026
+  // outreach replies (final card wording pending their review); Child Focus
+  // Foundation was added per owner request with owner-supplied copy and
+  // bank details (#195).
+  it("holds exactly the three organization-confirmed recipients", () => {
+    expect(DONATION_RECIPIENTS).toHaveLength(3);
     expect(DONATION_RECIPIENTS.map((r) => r.name)).toEqual([
       "Sea & Learn Foundation",
       "Saba Conservation Foundation",
+      "Child Focus Foundation",
     ]);
   });
 
@@ -438,13 +471,16 @@ describe("donation recipient registry (#171)", () => {
   it("sends every donation CTA straight to the recipient's own site", () => {
     render(<DonationsSection recipients={DONATION_RECIPIENTS} />);
     for (const r of DONATION_RECIPIENTS) {
+      // Recipients without a donationUrl (Child Focus Foundation) take direct
+      // bank transfers instead — their card carries bank details, not a link.
+      if (!r.donationUrl) continue;
       const cta = screen.getByRole("link", {
         name: new RegExp(`donate directly to ${r.name}`, "i"),
       });
       expect(cta.getAttribute("href")).toBe(r.donationUrl);
       expect(cta.getAttribute("target")).toBe("_blank");
       // First-party recipient domain only — Sea Saba never touches the gift.
-      expect(new URL(r.donationUrl!).hostname).not.toContain("seasaba.com");
+      expect(new URL(r.donationUrl).hostname).not.toContain("seasaba.com");
     }
   });
 
@@ -453,8 +489,14 @@ describe("donation recipient registry (#171)", () => {
     for (const r of DONATION_RECIPIENTS) {
       expect(r.name.trim()).not.toBe("");
       expect(r.description.trim()).not.toBe("");
-      expect(r.website).toMatch(/^https:\/\//);
+      // A website is optional — a recipient may take direct bank transfers
+      // instead. Either way the card must offer a real donation path.
+      if (r.website) expect(r.website).toMatch(/^https:\/\//);
       if (r.donationUrl) expect(r.donationUrl).toMatch(/^https:\/\//);
+      expect(
+        r.website || r.donationUrl || r.bankDetails,
+        `${r.name} has no donation path`,
+      ).toBeTruthy();
       if (r.image) {
         // Logos are organization-supplied local assets under public/images —
         // never a hotlinked third-party URL, and the file must actually ship.
@@ -470,6 +512,101 @@ describe("donation recipient registry (#171)", () => {
         /tax[- ]deductible|nonprofit|501\(c\)/i
       );
     }
+  });
+});
+
+describe("Child Focus Foundation card (#195)", () => {
+  const card = () =>
+    screen.getByRole("heading", { name: "Child Focus Foundation" })
+      .closest("article") as HTMLElement;
+
+  it("renders the supplied copy, logo, and youth category", () => {
+    render(<DonationsSection recipients={DONATION_RECIPIENTS} />);
+    const scoped = within(card());
+    expect(scoped.getByAltText("Child Focus Foundation logo")).toBeTruthy();
+    expect(scoped.getByText("Youth")).toBeTruthy();
+    expect(scoped.getByText(/after-school program/i)).toBeTruthy();
+    // Owner copy uses a hyphen for the age range — never an en/em dash.
+    expect(scoped.getByText(/ages 4-12/)).toBeTruthy();
+  });
+
+  it("keeps bank details out of the closed card — they live behind the dialog", () => {
+    render(<DonationsSection recipients={DONATION_RECIPIENTS} />);
+    // The card stays visually consistent with the other recipients: no
+    // account numbers or SWIFT codes dumped inline before interaction.
+    expect(screen.queryByText("8600002172025517")).toBeNull();
+    expect(screen.queryByText("RBTTBQSAXXX")).toBeNull();
+    expect(screen.queryByRole("dialog")).toBeNull();
+  });
+
+  it("opens a labeled dialog with the exact supplied bank details", async () => {
+    render(<DonationsSection recipients={DONATION_RECIPIENTS} />);
+    const scoped = within(card());
+    const trigger = scoped.getByRole("button", {
+      name: /donate by bank transfer/i,
+    });
+    await userEvent.click(trigger);
+
+    const dialog = screen.getByRole("dialog", {
+      name: /donate to child focus foundation/i,
+    });
+    const inDialog = within(dialog);
+    expect(inDialog.getByText(/direct bank transfer/i)).toBeTruthy();
+    for (const value of [
+      "Child Focus Foundation",
+      "8600002172025517",
+      "RBC",
+      "RBTTBQSAXXX",
+    ]) {
+      expect(inDialog.getAllByText(value).length).toBeGreaterThan(0);
+    }
+    // Clear that these are CFF's own details, not Sea Saba's account.
+    expect(inDialog.getByText(/own bank details/i)).toBeTruthy();
+    expect(
+      inDialog.getByText(/does not collect or process/i)
+    ).toBeTruthy();
+    // Copy controls for the machine-critical values.
+    for (const label of [/copy account number/i, /copy swift code/i]) {
+      expect(inDialog.getByRole("button", { name: label })).toBeTruthy();
+    }
+  });
+
+  it("closes the dialog via the close button and via Escape", async () => {
+    render(<DonationsSection recipients={DONATION_RECIPIENTS} />);
+    const trigger = within(card()).getByRole("button", {
+      name: /donate by bank transfer/i,
+    });
+
+    await userEvent.click(trigger);
+    let dialog = screen.getByRole("dialog");
+    await userEvent.click(
+      within(dialog).getByRole("button", { name: /close donation/i })
+    );
+    expect(screen.queryByRole("dialog")).toBeNull();
+
+    await userEvent.click(trigger);
+    dialog = screen.getByRole("dialog");
+    await userEvent.keyboard("{Escape}");
+    expect(screen.queryByRole("dialog")).toBeNull();
+  });
+
+  it("has no outbound donation link — CFF takes bank transfers only", () => {
+    render(<DonationsSection recipients={DONATION_RECIPIENTS} />);
+    const scoped = within(card());
+    expect(scoped.queryByRole("link")).toBeNull();
+    const recipient = DONATION_RECIPIENTS.find(
+      (r) => r.name === "Child Focus Foundation"
+    );
+    expect(recipient?.website).toBeUndefined();
+    expect(recipient?.donationUrl).toBeUndefined();
+    // The bank details belong to CFF — the account number is theirs, not
+    // Sea Saba's, and no value may drift from the owner-supplied strings.
+    expect(recipient?.bankDetails).toEqual({
+      accountName: "Child Focus Foundation",
+      accountNumber: "8600002172025517",
+      bankName: "RBC",
+      swift: "RBTTBQSAXXX",
+    });
   });
 });
 
