@@ -240,7 +240,7 @@ function SelectField({
         id={id}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="rounded-md border border-border/60 bg-background px-3 py-2 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30"
+        className="rounded-md border border-border/60 bg-background px-3 py-2 text-base text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30 lg:text-sm"
       >
         <option value="">All</option>
         {options.map((o) => (
@@ -374,7 +374,7 @@ export function DiveLogClient() {
                     setDateRange(e.target.value as DateRange);
                     resetPage();
                   }}
-                  className="rounded-md border border-border/60 bg-background px-2 py-1.5 text-xs text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30"
+                  className="rounded-md border border-border/60 bg-background px-2 py-1.5 text-base text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30 lg:text-sm"
                 >
                   {(Object.keys(DATE_RANGE_LABELS) as DateRange[]).map((key) => (
                     <option key={key} value={key}>
@@ -410,7 +410,7 @@ export function DiveLogClient() {
               {hasActiveFilters && (
                 <button
                   onClick={() => { clearFilters(); resetPage(); }}
-                  className="mt-4 flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                  className="mt-4 flex items-center gap-1 py-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <X className="h-3.5 w-3.5" />
                   Clear all filters
@@ -481,7 +481,7 @@ export function DiveLogClient() {
 
         {/* Right — selected dives summary */}
         <div className="lg:w-72 lg:shrink-0">
-          <div className="sticky top-24 rounded-lg border border-border/60 bg-card p-5">
+          <div className="rounded-lg border border-border/60 bg-card p-5 lg:sticky lg:top-24">
             <div className="flex items-center gap-2">
               <BookOpen className="h-4 w-4 text-primary" />
               <h2 className="text-sm font-semibold text-foreground">My Dive Log</h2>
@@ -503,7 +503,7 @@ export function DiveLogClient() {
                       <button
                         onClick={() => toggleDive(d.id)}
                         aria-label={`Remove ${d.diveSite}`}
-                        className="mt-0.5 shrink-0 text-muted-foreground hover:text-foreground transition-colors"
+                        className="-mx-1.5 -mb-1.5 -mt-1 shrink-0 p-1.5 text-muted-foreground hover:text-foreground transition-colors"
                       >
                         <X className="h-3.5 w-3.5" />
                       </button>
@@ -534,7 +534,7 @@ export function DiveLogClient() {
                   </Button>
                   <button
                     onClick={() => setSelectedIds(new Set())}
-                    className="mt-3 w-full text-center text-xs text-muted-foreground hover:text-foreground transition-colors"
+                    className="mt-3 w-full py-1.5 text-center text-xs text-muted-foreground hover:text-foreground transition-colors"
                   >
                     Clear selection
                   </button>

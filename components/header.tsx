@@ -80,9 +80,10 @@ export function Header() {
           </Button>
         </nav>
 
-        {/* Mobile toggle */}
+        {/* Mobile toggle — 44px hit area; -mr-1 keeps the icon visually
+            aligned with the container edge. */}
         <button
-          className={`pressable relative inline-flex h-9 w-9 items-center justify-center rounded-md p-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:hidden ${
+          className={`pressable relative -mr-1 inline-flex h-11 w-11 items-center justify-center rounded-md p-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:hidden ${
             transparent ? "text-white" : "text-muted-foreground"
           }`}
           onClick={() => setMobileOpen(!mobileOpen)}
@@ -108,16 +109,19 @@ export function Header() {
         id="mobile-navigation"
         aria-label="Mobile"
         inert={!mobileOpen}
-        className={`overflow-hidden border-t border-border/40 bg-background transition-[max-height,opacity] duration-300 ease-in-out motion-reduce:transition-none md:hidden ${
-          mobileOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+        className={`border-t border-border/40 bg-background transition-[max-height,opacity] duration-300 ease-in-out motion-reduce:transition-none md:hidden ${
+          mobileOpen
+            ? "max-h-[70dvh] overflow-y-auto opacity-100"
+            : "max-h-0 overflow-hidden opacity-0"
         }`}
       >
-        <div className="flex flex-col gap-3 px-4 pb-4 pt-2">
+        {/* py-2.5 rows give each link a ~40px tap target. */}
+        <div className="flex flex-col gap-1 px-4 pb-4 pt-2">
           {NAV_ITEMS.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              className="rounded-md px-2 py-2.5 text-base font-medium text-muted-foreground transition-colors hover:text-foreground"
               onClick={() => setMobileOpen(false)}
             >
               {item.label}
@@ -125,7 +129,7 @@ export function Header() {
           ))}
           <Button
             asChild
-            size="sm"
+            size="lg"
             className="mt-2 w-full bg-[#9D2235] text-white hover:bg-[#8a1e2e]"
             onClick={() => trackBookingClick("/book", "Book Now", "header_mobile")}
           >

@@ -323,7 +323,7 @@ function AccommodationCard({ accommodation }: { accommodation: Accommodation }) 
             rel="noopener noreferrer"
             onClick={() => trackLinkClick("social_click", accommodation.website, `Visit ${accommodation.name}`)}
             aria-label={`Visit ${accommodation.name} website, opens in a new tab`}
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-primary transition-colors hover:text-primary/80"
+            className="inline-flex items-center gap-1.5 py-2 text-sm font-medium text-primary transition-colors hover:text-primary/80"
           >
             Visit Website
             <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
@@ -337,7 +337,7 @@ function AccommodationCard({ accommodation }: { accommodation: Accommodation }) 
               aria-label={`Book ${accommodation.name} directly, opens in a new tab`}
               className={cn(
                 buttonVariants(),
-                "h-auto w-fit gap-1.5 rounded-full px-3 py-1 text-xs font-semibold"
+                "h-auto w-fit gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold"
               )}
             >
               Book Directly

@@ -28,13 +28,18 @@ const PAYLOAD_KEY: Record<ContactField, string> = {
   loggedDives: "loggedDives",
 };
 
-const FIELD_META: Record<ContactField, { id: string; label: string; type: string; placeholder: string; maxLength: number }> = {
-  whatsapp: { id: "whatsapp", label: "WhatsApp number", type: "tel", placeholder: "+1 234 567 8900", maxLength: CONTACT_LIMITS.whatsapp },
+const FIELD_META: Record<ContactField, { id: string; label: string; type: string; placeholder: string; maxLength: number; autoComplete?: string; inputMode?: "numeric" }> = {
+  whatsapp: { id: "whatsapp", label: "WhatsApp number", type: "tel", placeholder: "+1 234 567 8900", maxLength: CONTACT_LIMITS.whatsapp, autoComplete: "tel" },
   dates: { id: "dates", label: "Planned travel dates", type: "text", placeholder: "e.g. March 10 - 17, 2027", maxLength: CONTACT_LIMITS.dates },
-  partySize: { id: "students", label: "Number of people", type: "text", placeholder: "1", maxLength: CONTACT_LIMITS.students },
+  partySize: { id: "students", label: "Number of people", type: "text", placeholder: "1", maxLength: CONTACT_LIMITS.students, inputMode: "numeric" },
   certification: { id: "certification", label: "Certification level", type: "text", placeholder: "e.g. Open Water, Advanced", maxLength: CONTACT_LIMITS.certification },
-  loggedDives: { id: "logged-dives", label: "Logged dives", type: "text", placeholder: "e.g. 25", maxLength: CONTACT_LIMITS.loggedDives },
+  loggedDives: { id: "logged-dives", label: "Logged dives", type: "text", placeholder: "e.g. 25", maxLength: CONTACT_LIMITS.loggedDives, inputMode: "numeric" },
 };
+
+/* Inputs render at text-base (16px) below lg so iOS Safari doesn't auto-zoom
+   on focus; desktop keeps the denser text-sm. */
+const fieldClass =
+  "w-full rounded-md border border-border bg-background px-3 py-2 text-base text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary lg:text-sm";
 
 export function ContactForm({ initialInterest }: ContactFormProps) {
   const [name, setName] = useState("");
@@ -238,10 +243,12 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
           type={meta.type}
           value={contextualValues[field]}
           maxLength={meta.maxLength}
+          autoComplete={meta.autoComplete}
+          inputMode={meta.inputMode}
           onChange={(e) => contextualSetters[field](e.target.value)}
           aria-invalid={!!error}
           aria-describedby={error ? `${meta.id}-error` : undefined}
-          className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+          className={fieldClass}
           placeholder={meta.placeholder}
         />
         {field === "whatsapp" && (
@@ -280,11 +287,12 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
             type="text"
             value={name}
             maxLength={CONTACT_LIMITS.name}
+            autoComplete="name"
             onChange={(e) => setName(e.target.value)}
             onBlur={() => handleBlur("name")}
             aria-invalid={touched.name && !!errors.name}
             aria-describedby={touched.name && errors.name ? "name-error" : undefined}
-            className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+            className={fieldClass}
             placeholder="Your full name"
           />
           <p id="name-error" className={`min-h-4 text-xs text-destructive${touched.name && errors.name ? "" : " invisible"}`}>
@@ -302,11 +310,12 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
             type="email"
             value={email}
             maxLength={CONTACT_LIMITS.email}
+            autoComplete="email"
             onChange={(e) => setEmail(e.target.value)}
             onBlur={() => handleBlur("email")}
             aria-invalid={touched.email && !!errors.email}
             aria-describedby={touched.email && errors.email ? "email-error" : undefined}
-            className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+            className={fieldClass}
             placeholder="you@example.com"
           />
           <p id="email-error" className={`min-h-4 text-xs text-destructive${touched.email && errors.email ? "" : " invisible"}`}>
@@ -328,7 +337,7 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
             onBlur={() => handleBlur("inquiryType")}
             aria-invalid={touched.inquiryType && !!errors.inquiryType}
             aria-describedby={touched.inquiryType && errors.inquiryType ? "inquiry-type-error" : undefined}
-            className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+            className="w-full rounded-md border border-border bg-background px-3 py-2 text-base text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary lg:text-sm"
           >
             <option value="" disabled>
               Select an inquiry type
@@ -387,7 +396,7 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
           onBlur={() => handleBlur("message")}
           aria-invalid={touched.message && !!errors.message}
           aria-describedby={touched.message && errors.message ? "message-error" : "message-limit"}
-          className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+          className={fieldClass}
           placeholder="Tell us about your plans, questions, or anything we should know."
         />
         <div className="flex items-baseline justify-between gap-3">
