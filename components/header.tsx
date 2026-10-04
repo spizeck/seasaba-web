@@ -115,13 +115,15 @@ export function Header() {
             : "max-h-0 overflow-hidden opacity-0"
         }`}
       >
-        {/* py-2.5 rows give each link a ~40px tap target. */}
-        <div className="flex flex-col gap-1 px-4 pb-4 pt-2">
+        {/* Contiguous py-2.5 rows: ~44px tap targets with no dead space
+            between items, so the menu stays dense while remaining
+            comfortable to hit. */}
+        <div className="flex flex-col px-4 pb-4 pt-2">
           {NAV_ITEMS.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="rounded-md px-2 py-2.5 text-base font-medium text-muted-foreground transition-colors hover:text-foreground"
+              className="block py-2.5 text-base font-medium text-muted-foreground transition-colors hover:text-foreground"
               onClick={() => setMobileOpen(false)}
             >
               {item.label}

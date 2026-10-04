@@ -29,7 +29,7 @@ export function Breadcrumbs() {
           ...crumbs.map((c) => ({ name: c.label, path: c.href })),
         ]}
       />
-      <nav aria-label="Breadcrumb" className="mb-4 text-sm text-muted-foreground sm:mb-6">
+      <nav aria-label="Breadcrumb" className="mb-6 text-sm text-muted-foreground">
       <ol className="flex items-center gap-1.5">
         <li>
           <Link href="/" className="transition-colors hover:text-foreground">
