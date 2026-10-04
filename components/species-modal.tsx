@@ -75,7 +75,7 @@ export function SpeciesModal({ species, onClose }: Props) {
     >
       <div
         ref={modalRef}
-        className="relative flex w-full max-w-md flex-col overflow-hidden rounded-xl bg-card shadow-2xl animate-rise-in motion-reduce:animate-none"
+        className="relative flex max-h-[calc(100dvh-2rem)] w-full max-w-md flex-col overflow-y-auto rounded-xl bg-card shadow-2xl animate-rise-in motion-reduce:animate-none"
       >
         <button
           ref={closeButtonRef}

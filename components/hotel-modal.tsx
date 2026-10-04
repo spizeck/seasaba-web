@@ -82,7 +82,7 @@ export function HotelModal({ hotel, onClose }: HotelModalProps) {
     >
       <div
         ref={modalRef}
-        className="relative flex w-full max-w-lg flex-col overflow-hidden rounded-2xl bg-card shadow-2xl animate-rise-in motion-reduce:animate-none"
+        className="relative flex max-h-[calc(100dvh-2rem)] w-full max-w-lg flex-col overflow-y-auto rounded-2xl bg-card shadow-2xl animate-rise-in motion-reduce:animate-none sm:max-h-[calc(100dvh-3rem)]"
       >
         {/* Close button */}
         <button
