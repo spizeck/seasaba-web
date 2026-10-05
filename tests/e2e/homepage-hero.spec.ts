@@ -49,7 +49,7 @@ test("homepage hero fits the first screen at mobile widths", async ({ page }) =>
 
     // The hero must size to the small viewport unit so the trust bar stays
     // on the first screen while mobile browser chrome is shown. The hero
-    // runs ~2px past the viewport edge (pre-existing -mt-16/border overage,
+    // runs ~2px past the viewport edge (pre-existing -mt-20/border overage,
     // unchanged by this fix) — allow 3px.
     expect(g.heroMinHeight).toBe("100svh");
     expect(g.heroBottom).toBeLessThanOrEqual(g.viewport + 3);

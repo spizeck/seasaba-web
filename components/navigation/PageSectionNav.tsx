@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Pill } from "@/components/ui/pill";
 
-const HEADER_HEIGHT = 64;
+const HEADER_HEIGHT = 80;
 const SCROLL_END_DEBOUNCE_MS = 100;
 
 export type PageNavItem = {
@@ -148,7 +148,7 @@ export function PageSectionNav({ items, className, offset = 96 }: PageSectionNav
       ref={navRef}
       aria-label="On this page"
       className={cn(
-        "sticky top-16 z-40 w-full py-2.5 transition-[background-color,border-color,box-shadow] duration-200 sm:py-4",
+        "sticky top-20 z-40 w-full py-2.5 transition-[background-color,border-color,box-shadow] duration-200 sm:py-4",
         isSticky
           ? "border-b border-border/40 bg-background/80 shadow-sm backdrop-blur-md"
           : "bg-transparent",

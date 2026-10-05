@@ -35,7 +35,7 @@ export function Hero() {
       // Marks the homepage hero region: the Respond.io launcher is
       // suppressed while this intersects the viewport (issue #123).
       data-hero
-      className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden -mt-16 pt-16"
+      className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden -mt-20 pt-20"
       // 100svh = the small viewport: the hero (and its bottom-anchored trust
       // bar) fits the first screen while mobile browser chrome is shown,
       // unlike 100vh which sizes to the chrome-collapsed height. Inline so

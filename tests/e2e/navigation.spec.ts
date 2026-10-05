@@ -21,6 +21,19 @@ test("desktop: primary navigation, logo, and Book Now reach their destinations",
   await expect(page.getByRole("heading", { name: "Book Your Dive" })).toBeVisible();
 });
 
+test("header shell floats inside the viewport edges", async ({ page }) => {
+  await hydratedGoto(page, "/about", "#main-content");
+  const shell = page.locator("header > div").first();
+  const viewportWidth = await page.evaluate(() => window.innerWidth);
+  const box = await shell.boundingBox();
+  expect(box, "floating shell must be measurable").not.toBeNull();
+  // Breathing room on every side: the painted nav object must not touch
+  // the top, left, or right viewport edge (issue #204).
+  expect(box!.y).toBeGreaterThan(0);
+  expect(box!.x).toBeGreaterThan(0);
+  expect(box!.x + box!.width).toBeLessThan(viewportWidth);
+});
+
 test("mobile: menu opens, closes, navigates, and responds to repeated use and Escape", async ({ page, isMobile }) => {
   test.skip(!isMobile, "mobile chrome only");
   await hydratedGoto(page, "/", "#main-content");

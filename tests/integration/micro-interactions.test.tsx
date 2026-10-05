@@ -126,4 +126,22 @@ describe("navigation", () => {
     expect(nav.className).toContain("motion-reduce:transition-none");
     expect(nav.className).not.toContain("transition-all");
   });
+
+  // Issue #204: the header paints a floating rounded shell, and the mobile
+  // menu expands inside it so the open state reads as one attached object.
+  it("renders a floating rounded shell that contains the mobile menu", () => {
+    const { container } = render(<Header />);
+    const shell = container.querySelector("header > div")!;
+    expect(shell.className).toContain("rounded-full");
+    expect(shell.className).toContain("max-w-6xl");
+    expect(shell.contains(container.querySelector("#mobile-navigation"))).toBe(true);
+  });
+
+  it("keeps the 44px menu toggle with an accessible expanded state", () => {
+    const { container } = render(<Header />);
+    const toggle = container.querySelector('button[aria-controls="mobile-navigation"]')!;
+    expect(toggle.className).toContain("h-11");
+    expect(toggle.className).toContain("w-11");
+    expect(toggle).toHaveAttribute("aria-expanded", "false");
+  });
 });
