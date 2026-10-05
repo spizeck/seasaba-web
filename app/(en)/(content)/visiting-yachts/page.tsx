@@ -347,7 +347,7 @@ export default function VisitingYachtsPage() {
           <div className="flex items-start gap-3">
             <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-600 dark:text-amber-500" />
             <div className="text-sm text-muted-foreground">
-              <h3 className="font-semibold text-foreground">Dinghy &amp; Dive Boat Safety: Give Dive Boats Plenty of Room</h3>
+              <h3 className="text-base font-semibold text-foreground">Dinghy &amp; Dive Boat Safety: Give Dive Boats Plenty of Room</h3>
               <p className="mt-2 leading-relaxed">
                 When passing a dive vessel, stay at least 150 meters to seaward, especially
                 when the Alpha flag or dive flag is flying. Do not squeeze between a dive
@@ -391,7 +391,7 @@ export default function VisitingYachtsPage() {
           <div className="flex items-start gap-3">
             <Wind className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
             <div className="text-sm text-muted-foreground">
-              <h3 className="font-semibold text-foreground">Sea Saba Tanks on Our Boats</h3>
+              <h3 className="text-base font-semibold text-foreground">Sea Saba Tanks on Our Boats</h3>
               <p className="mt-2 leading-relaxed">
                 If you&apos;re diving from a Sea Saba boat, we&apos;ll provide the tanks.
                 Our boats are set up for our own cylinders, so please leave your

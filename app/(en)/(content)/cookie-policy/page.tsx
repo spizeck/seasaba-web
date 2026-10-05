@@ -31,7 +31,7 @@ export default function CookiePolicyPage() {
       <div className="mt-10 space-y-10">
         <section>
           <h2 className="text-xl font-semibold text-foreground">What Are Cookies?</h2>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-3 text-base leading-relaxed text-muted-foreground">
             Cookies are small text files placed on your device when you visit a website. They
             help the site function correctly, remember your preferences, and let us understand
             how visitors use the site so we can improve it.
@@ -40,11 +40,11 @@ export default function CookiePolicyPage() {
 
         <section>
           <h2 className="text-xl font-semibold text-foreground">Cookie Categories</h2>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-3 text-base leading-relaxed text-muted-foreground">
             We use Cookiebot, an independent consent management platform, to categorize cookies
             and only activate non-essential cookies after you give consent. The categories are:
           </p>
-          <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-relaxed text-muted-foreground">
+          <ul className="mt-3 list-disc space-y-2 pl-5 text-base leading-relaxed text-muted-foreground">
             <li>
               <strong className="text-foreground">Necessary</strong> — required for the website
               and booking process to function. These cannot be switched off.
@@ -67,7 +67,7 @@ export default function CookiePolicyPage() {
 
         <section>
           <h2 className="text-xl font-semibold text-foreground">Cookie Declaration</h2>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-3 text-base leading-relaxed text-muted-foreground">
             The list below is generated automatically by Cookiebot and reflects the cookies
             actually detected on this domain.
           </p>
@@ -92,7 +92,7 @@ export default function CookiePolicyPage() {
 
         <section>
           <h2 className="text-xl font-semibold text-foreground">Managing Your Preferences</h2>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-3 text-base leading-relaxed text-muted-foreground">
             You can change or withdraw your consent at any time using the button below, or via the
             &ldquo;Cookie Settings&rdquo; link in the site footer.
           </p>
@@ -103,7 +103,7 @@ export default function CookiePolicyPage() {
 
         <section>
           <h2 className="text-xl font-semibold text-foreground">Related Policies</h2>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-3 text-base leading-relaxed text-muted-foreground">
             For more information on how we handle personal information generally, see our{" "}
             <Link href="/privacy" className="underline hover:text-foreground">
               Privacy Policy
