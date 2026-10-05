@@ -47,6 +47,8 @@ it("combines filters, recovers from no matches, expands sightings and clears sel
   await userEvent.click(screen.getByRole("button", { name: "Clear selection" }));
   await userEvent.selectOptions(screen.getByLabelText("Guide"), "Sam");
   expect(screen.getByText("No dives match your filters.")).toBeVisible();
+  // The filtered-empty result politely replaces the loaded list for SRs.
+  expect(screen.getByRole("status")).toHaveTextContent("No dives match your filters.");
   await userEvent.click(screen.getByRole("button", { name: "Clear filters and show all time" }));
   expect(screen.getByRole("heading", { name: "3 dives" })).toBeVisible();
 });
@@ -70,11 +72,47 @@ it("shows permission failure without exposing an export action", async () => {
   vi.mocked(fetchDiveLogData).mockRejectedValue(new Error("Missing or insufficient permissions"));
   render(<DiveLogClient />);
   await screen.findByText("Unable to load dive log");
+  // Raw backend error text never reaches the visitor.
+  expect(screen.queryByText(/Missing or insufficient permissions/)).not.toBeInTheDocument();
   expect(screen.queryByRole("button", { name: "Export My Dive Log" })).not.toBeInTheDocument();
 });
-it("handles an empty collection", async () => {
+it("announces a load failure and recovers via Try again", async () => {
+  vi.mocked(fetchDiveLogData).mockRejectedValueOnce(new Error("network down"));
+  render(<DiveLogClient />);
+  const alert = await screen.findByRole("alert");
+  expect(alert).toHaveTextContent("Unable to load dive log");
+  await userEvent.click(screen.getByRole("button", { name: "Try again" }));
+  // Second attempt uses the default fixture resolution.
+  await screen.findByRole("heading", { name: "2 dives" });
+});
+it("distinguishes a truly empty log from filtered-empty", async () => {
   vi.mocked(fetchDiveLogData).mockResolvedValue(diveData([]));
   render(<DiveLogClient />);
-  await waitFor(() => expect(screen.getByText("No dives match your filters.")).toBeVisible());
+  await waitFor(() => expect(screen.getByText("No dives logged yet")).toBeVisible());
+  // A reset-filter action is useless when there is nothing to filter.
+  expect(screen.queryByText("No dives match your filters.")).not.toBeInTheDocument();
+  expect(screen.getByRole("link", { name: "Browse dive sites" })).toHaveAttribute("href", "/dive-sites");
+  // The completed empty state is announced politely after the async fetch.
+  expect(screen.getByRole("status")).toHaveTextContent("No dives logged yet");
+});
+it("politely announces while the PDF is being prepared", async () => {
+  // A never-resolving export holds the pending state for the assertion.
+  vi.mocked(exportDiveLogToPdf).mockReturnValueOnce(new Promise(() => {}));
+  render(<DiveLogClient />);
+  await screen.findByRole("heading", { name: "2 dives" });
+  await userEvent.click(screen.getByRole("button", { name: "Add Tent Reef to my dive log" }));
+  await userEvent.click(screen.getByRole("button", { name: "Export My Dive Log" }));
+  expect(await screen.findByRole("status")).toHaveTextContent("Preparing your dive log PDF");
+  expect(screen.getByRole("button", { name: "Preparing PDF..." })).toBeDisabled();
+});
+it("surfaces a failed PDF export as an alert with no lingering status region", async () => {
+  vi.mocked(exportDiveLogToPdf).mockRejectedValueOnce(new Error("boom"));
+  render(<DiveLogClient />);
+  await screen.findByRole("heading", { name: "2 dives" });
+  await userEvent.click(screen.getByRole("button", { name: "Add Tent Reef to my dive log" }));
+  await userEvent.click(screen.getByRole("button", { name: "Export My Dive Log" }));
+  expect(await screen.findByRole("alert")).toHaveTextContent("couldn't be created");
+  expect(screen.queryByRole("status")).not.toBeInTheDocument();
+  expect(screen.getByRole("button", { name: "Export My Dive Log" })).toBeEnabled();
 });
 
