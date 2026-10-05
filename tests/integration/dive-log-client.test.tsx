@@ -52,6 +52,21 @@ it("combines filters, recovers from no matches, expands sightings and clears sel
   await userEvent.click(screen.getByRole("button", { name: "Clear filters and show all time" }));
   expect(screen.getByRole("heading", { name: "3 dives" })).toBeVisible();
 });
+it("exposes disclosure and toggle states to assistive tech", async () => {
+  render(<DiveLogClient />);
+  await screen.findByRole("heading", { name: "2 dives" });
+  const filterToggle = screen.getByRole("button", { name: "Filter" });
+  expect(filterToggle).toHaveAttribute("aria-expanded", "false");
+  expect(filterToggle).toHaveAttribute("aria-controls", "dive-log-filters");
+  await userEvent.click(filterToggle);
+  expect(screen.getByRole("button", { name: "Hide Filters" })).toHaveAttribute("aria-expanded", "true");
+  // The unit buttons are a single-choice toggle — the active one is pressed.
+  expect(screen.getByRole("button", { name: "Metric units" })).toHaveAttribute("aria-pressed", "true");
+  expect(screen.getByRole("button", { name: "Imperial units" })).toHaveAttribute("aria-pressed", "false");
+  await userEvent.click(screen.getByRole("button", { name: "Imperial units" }));
+  expect(screen.getByRole("button", { name: "Imperial units" })).toHaveAttribute("aria-pressed", "true");
+  expect(screen.getByRole("button", { name: "Metric units" })).toHaveAttribute("aria-pressed", "false");
+});
 it("paginates without losing selection and resets the page when filters change", async () => {
   const today = new Date().toISOString().slice(0, 10);
   vi.mocked(fetchDiveLogData).mockResolvedValue(diveData(Array.from({ length: 21 }, (_, i) => rawDive({ id: `d-${i}`, date: today, boatId: `boat-${i}` }))));

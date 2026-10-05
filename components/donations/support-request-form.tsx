@@ -70,6 +70,23 @@ const DRAFT_FIELD_NAMES = new Set(Object.keys(EMPTY_DRAFT));
 // server's own backend timeout so a normal slow response still lands.
 const CLIENT_TIMEOUT_MS = 20_000;
 
+/** Validatable controls in visual order — the first invalid one gets focus. */
+const FIELD_IDS: Record<string, string> = {
+  name: "sr-name",
+  email: "sr-email",
+  category: "sr-category",
+  // A checkbox group can't take focus itself; land on its first option.
+  supportTypes: `sr-type-${SUPPORT_TYPES[0].value}`,
+  amount: "sr-amount",
+  request: "sr-request",
+  description: "sr-description",
+  beneficiaries: "sr-beneficiaries",
+  timing: "sr-timing",
+  useOfSupport: "sr-use",
+  referenceUrl: "sr-url",
+  acknowledged: "sr-ack",
+};
+
 /**
  * "Request Support from Sea Saba" form (#171, persistence boundary #189).
  * Submits to the Sea Saba-owned route /api/support-requests, which persists
@@ -162,7 +179,16 @@ export function SupportRequestForm() {
     const validationErrors = validateSupportRequest(draft);
     setErrors(validationErrors);
     touchAll();
-    return Object.keys(validationErrors).length === 0;
+    // Move focus to the first invalid field so the error is announced in
+    // context instead of leaving the requester hunting for it.
+    const firstInvalid = Object.keys(FIELD_IDS).find(
+      (key) => validationErrors[key]
+    );
+    if (firstInvalid) {
+      document.getElementById(FIELD_IDS[firstInvalid])?.focus();
+      return false;
+    }
+    return true;
   }, [draft, touchAll]);
 
   // Move focus to the status panel whenever one appears — the announce-
@@ -333,12 +359,13 @@ export function SupportRequestForm() {
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
           <label htmlFor="sr-name" className={labelClass}>
-            Your name <span className="text-destructive">*</span>
+            Your name <span aria-hidden="true" className="text-destructive">*</span>
           </label>
           <input
             id="sr-name"
             name="sr-name"
             type="text"
+            required
             autoComplete="name"
             value={draft.name}
             maxLength={SUPPORT_REQUEST_LIMITS.name}
@@ -374,12 +401,13 @@ export function SupportRequestForm() {
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
           <label htmlFor="sr-email" className={labelClass}>
-            Email <span className="text-destructive">*</span>
+            Email <span aria-hidden="true" className="text-destructive">*</span>
           </label>
           <input
             id="sr-email"
             name="sr-email"
             type="email"
+            required
             autoComplete="email"
             value={draft.email}
             maxLength={SUPPORT_REQUEST_LIMITS.email}
@@ -414,11 +442,12 @@ export function SupportRequestForm() {
 
       <div className="space-y-1.5">
         <label htmlFor="sr-category" className={labelClass}>
-          Category <span className="text-destructive">*</span>
+          Category <span aria-hidden="true" className="text-destructive">*</span>
         </label>
         <select
           id="sr-category"
           name="sr-category"
+          required
           value={draft.category}
           onChange={(e) => setField("category", e.target.value)}
           onBlur={() => handleBlur("category")}
@@ -438,9 +467,18 @@ export function SupportRequestForm() {
         <FieldError id="sr-category-error" message={touched.category ? errors.category : undefined} />
       </div>
 
-      <fieldset className="space-y-1.5">
+      <fieldset
+        className="space-y-1.5"
+        aria-describedby={
+          touched.supportTypes && errors.supportTypes ? "sr-types-error" : undefined
+        }
+      >
         <legend className={labelClass}>
-          Type of support needed <span className="text-destructive">*</span>{" "}
+          Type of support needed{" "}
+          <span aria-hidden="true" className="text-destructive">*</span>
+          {/* The group needs at least one choice but no single checkbox can
+              be `required`, so the cue is spoken here instead. */}
+          <span className="sr-only"> required</span>{" "}
           <span className="font-normal text-muted-foreground">(choose all that apply)</span>
         </legend>
         <div className="grid gap-2 pt-1 sm:grid-cols-2">
@@ -469,7 +507,7 @@ export function SupportRequestForm() {
         <label htmlFor="sr-amount" className={labelClass}>
           Estimated amount or value{" "}
           {wantsFinancial ? (
-            <span className="text-destructive">*</span>
+            <span aria-hidden="true" className="text-destructive">*</span>
           ) : (
             <span className="font-normal text-muted-foreground">(optional)</span>
           )}
@@ -478,6 +516,7 @@ export function SupportRequestForm() {
           id="sr-amount"
           name="sr-amount"
           type="text"
+          required={wantsFinancial}
           value={draft.amount}
           maxLength={SUPPORT_REQUEST_LIMITS.amount}
           onChange={(e) => setField("amount", e.target.value)}
@@ -497,12 +536,13 @@ export function SupportRequestForm() {
 
       <div className="space-y-1.5">
         <label htmlFor="sr-request" className={labelClass}>
-          What are you asking Sea Saba for? <span className="text-destructive">*</span>
+          What are you asking Sea Saba for? <span aria-hidden="true" className="text-destructive">*</span>
         </label>
         <textarea
           id="sr-request"
           name="sr-request"
           rows={2}
+          required
           value={draft.request}
           maxLength={SUPPORT_REQUEST_LIMITS.request}
           onChange={(e) => setField("request", e.target.value)}
@@ -517,12 +557,13 @@ export function SupportRequestForm() {
 
       <div className="space-y-1.5">
         <label htmlFor="sr-description" className={labelClass}>
-          About the project or event <span className="text-destructive">*</span>
+          About the project or event <span aria-hidden="true" className="text-destructive">*</span>
         </label>
         <textarea
           id="sr-description"
           name="sr-description"
           rows={4}
+          required
           value={draft.description}
           maxLength={SUPPORT_REQUEST_LIMITS.description}
           onChange={(e) => setField("description", e.target.value)}
@@ -545,12 +586,13 @@ export function SupportRequestForm() {
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
           <label htmlFor="sr-beneficiaries" className={labelClass}>
-            Who benefits? <span className="text-destructive">*</span>
+            Who benefits? <span aria-hidden="true" className="text-destructive">*</span>
           </label>
           <input
             id="sr-beneficiaries"
             name="sr-beneficiaries"
             type="text"
+            required
             value={draft.beneficiaries}
             maxLength={SUPPORT_REQUEST_LIMITS.beneficiaries}
             onChange={(e) => setField("beneficiaries", e.target.value)}
@@ -565,12 +607,13 @@ export function SupportRequestForm() {
 
         <div className="space-y-1.5">
           <label htmlFor="sr-timing" className={labelClass}>
-            When is it happening? <span className="text-destructive">*</span>
+            When is it happening? <span aria-hidden="true" className="text-destructive">*</span>
           </label>
           <input
             id="sr-timing"
             name="sr-timing"
             type="text"
+            required
             value={draft.timing}
             maxLength={SUPPORT_REQUEST_LIMITS.timing}
             onChange={(e) => setField("timing", e.target.value)}
@@ -587,12 +630,13 @@ export function SupportRequestForm() {
       <div className="space-y-1.5">
         <label htmlFor="sr-use" className={labelClass}>
           How would Sea Saba&apos;s contribution be used?{" "}
-          <span className="text-destructive">*</span>
+          <span aria-hidden="true" className="text-destructive">*</span>
         </label>
         <textarea
           id="sr-use"
           name="sr-use"
           rows={2}
+          required
           value={draft.useOfSupport}
           maxLength={SUPPORT_REQUEST_LIMITS.useOfSupport}
           onChange={(e) => setField("useOfSupport", e.target.value)}
@@ -653,6 +697,7 @@ export function SupportRequestForm() {
               id="sr-ack"
               name="sr-ack"
               type="checkbox"
+              required
               checked={draft.acknowledged}
               onChange={(e) => setField("acknowledged", e.target.checked)}
               onBlur={() => handleBlur("acknowledged")}
@@ -663,7 +708,7 @@ export function SupportRequestForm() {
             <span>
               The information above is accurate, and I understand Sea Saba may ask
               for supporting information before deciding.{" "}
-              <span className="text-destructive">*</span>
+              <span aria-hidden="true" className="text-destructive">*</span>
             </span>
           </label>
           <FieldError id="sr-ack-error" message={touched.acknowledged ? errors.acknowledged : undefined} />
@@ -730,12 +775,19 @@ export function SupportRequestForm() {
           <Button
             type="submit"
             className="w-full sm:w-auto"
-            aria-label="Send request"
             disabled={submitState.status === "submitting"}
           >
             <Send className="h-4 w-4" />
             {submitState.status === "submitting" ? "Sending..." : "Send request"}
           </Button>
+          {/* Pending announcement — the disabled button itself isn't
+              announced, so this polite live text carries the state. Deliberately
+              not role="status": that role belongs to the success panel. */}
+          {submitState.status === "submitting" && (
+            <p aria-live="polite" className="sr-only">
+              Sending your request, please wait.
+            </p>
+          )}
         </div>
 
         <p className="text-xs text-muted-foreground">

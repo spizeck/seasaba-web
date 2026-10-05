@@ -41,6 +41,35 @@ const FIELD_META: Record<ContactField, { id: string; label: string; type: string
 const fieldClass =
   "w-full rounded-md border border-border bg-background px-3 py-2 text-base text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary lg:text-sm";
 
+/** Required controls in visual order — the first invalid one gets focus. */
+const REQUIRED_FIELD_IDS: Record<string, string> = {
+  name: "name",
+  email: "email",
+  inquiryType: "inquiry-type",
+  message: "message",
+};
+
+type CoreField = "name" | "email" | "message";
+
+/** Field → message map for the four validated fields; empty = submittable. */
+function errorsFor(values: {
+  name: string;
+  email: string;
+  inquiryType: string;
+  message: string;
+}): Record<string, string> {
+  const nextErrors: Record<string, string> = {};
+  if (!values.name.trim()) nextErrors.name = "Please enter your name.";
+  if (!values.email.trim()) {
+    nextErrors.email = "Please enter your email address.";
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)) {
+    nextErrors.email = "Please enter a valid email address.";
+  }
+  if (!values.inquiryType) nextErrors.inquiryType = "Please select an inquiry type.";
+  if (!values.message.trim()) nextErrors.message = "Please enter a message.";
+  return nextErrors;
+}
+
 export function ContactForm({ initialInterest }: ContactFormProps) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -92,18 +121,23 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
     loggedDives: setLoggedDives,
   };
 
-  const validate = useCallback(() => {
-    const nextErrors: Record<string, string> = {};
-    if (!name.trim()) nextErrors.name = "Please enter your name.";
-    if (!email.trim()) {
-      nextErrors.email = "Please enter your email address.";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      nextErrors.email = "Please enter a valid email address.";
-    }
-    if (!inquiryType) nextErrors.inquiryType = "Please select an inquiry type.";
-    if (!message.trim()) nextErrors.message = "Please enter a message.";
-    return nextErrors;
-  }, [name, email, inquiryType, message]);
+  const validate = useCallback(
+    () => errorsFor({ name, email, inquiryType, message }),
+    [name, email, inquiryType, message]
+  );
+
+  // `errors` always describes the current values: updating a validated
+  // field refreshes its error immediately, so a shown error clears as the
+  // visitor corrects instead of waiting for the next blur. Untouched fields
+  // stay quiet because errors render only for them.
+  const updateCoreField = useCallback(
+    (key: CoreField, value: string) => {
+      const setter = { name: setName, email: setEmail, message: setMessage }[key];
+      setter(value);
+      setErrors(errorsFor({ name, email, inquiryType, message, [key]: value }));
+    },
+    [name, email, inquiryType, message]
+  );
 
   const handleBlur = useCallback(
     (field: string) => {
@@ -122,25 +156,20 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
     // never leak into a later handoff.
     const keep = new Set<ContactField>(inquiry.fields);
     const clear = (field: ContactField, set: (v: string) => void) => {
-      if (keep.has(field)) return;
-      set("");
-      setErrors((prev) => {
-        const key = PAYLOAD_KEY[field];
-        if (!(key in prev)) return prev;
-        const next = { ...prev };
-        delete next[key];
-        return next;
-      });
+      if (!keep.has(field)) set("");
     };
     clear("whatsapp", (v) => { setWhatsapp(v); if (!v.trim()) setPreferWhatsapp(false); });
     clear("dates", setDates);
     clear("partySize", setStudents);
     clear("certification", setCertification);
     clear("loggedDives", setLoggedDives);
-    if (COURSE_INQUIRIES.some((c) => c.value === value)) {
-      setMessage(buildInitialMessage(value));
-    }
-  }, []);
+    // Selecting a real inquiry satisfies the field — refresh errors at once
+    // (including for the rebuilt course message) without waiting for a blur.
+    const isCourse = COURSE_INQUIRIES.some((c) => c.value === value);
+    const nextMessage = isCourse ? buildInitialMessage(value) : message;
+    if (isCourse) setMessage(nextMessage);
+    setErrors(errorsFor({ name, email, inquiryType: value, message: nextMessage }));
+  }, [name, email, message]);
 
   const buildDraft = useCallback((): InquiryDraft => {
     // Only fields relevant to the selected inquiry go into the email;
@@ -165,6 +194,23 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
     };
   }, [selectedInquiry, name, email, whatsapp, preferWhatsapp, dates, students, certification, loggedDives, inquiryType, message]);
 
+  // Runs full validation, marks every required field touched, and moves
+  // focus to the first invalid field so its error is announced in context
+  // instead of leaving the visitor hunting for it.
+  const guardSubmission = useCallback((): boolean => {
+    const validationErrors = validate();
+    setErrors(validationErrors);
+    setTouched({ name: true, email: true, inquiryType: true, message: true });
+    const firstInvalid = Object.keys(REQUIRED_FIELD_IDS).find(
+      (key) => validationErrors[key]
+    );
+    if (firstInvalid) {
+      document.getElementById(REQUIRED_FIELD_IDS[firstInvalid])?.focus();
+      return false;
+    }
+    return true;
+  }, [validate]);
+
   const buildWhatsAppMessage = useCallback(() => {
     const keep = new Set<ContactField>(selectedInquiry?.fields ?? []);
     const parts: string[] = [];
@@ -186,10 +232,7 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
   // Respond.io attaches the inquiry to the correct contact — a shared
   // server-side sender collapsed every visitor into one contact.
   const handleEmail = useCallback(() => {
-    const validationErrors = validate();
-    setErrors(validationErrors);
-    setTouched({ name: true, email: true, inquiryType: true, message: true });
-    if (Object.keys(validationErrors).length > 0) return;
+    if (!guardSubmission()) return;
     if (Date.now() - lastEmailAt.current < 1000) return;
     lastEmailAt.current = Date.now();
 
@@ -202,13 +245,10 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
     // "_self" delegates to the OS mail handler without opening a blank tab.
     window.open(href, "_self");
     requestAnimationFrame(() => handoffRef.current?.focus());
-  }, [validate, buildDraft, selectedInquiry]);
+  }, [guardSubmission, buildDraft, selectedInquiry]);
 
   const handleWhatsApp = useCallback(() => {
-    const validationErrors = validate();
-    setErrors(validationErrors);
-    setTouched({ name: true, email: true, inquiryType: true, message: true });
-    if (Object.keys(validationErrors).length > 0) return;
+    if (!guardSubmission()) return;
     if (Date.now() - lastWhatsAppAt.current < 1000) return;
     lastWhatsAppAt.current = Date.now();
 
@@ -218,7 +258,7 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
     trackEvent("contact_form_submit", eventParams);
     trackLinkClick("whatsapp_click", whatsappHref, "WhatsApp Sea Saba", eventParams);
     window.open(whatsappHref, "_blank", "noopener,noreferrer");
-  }, [validate, selectedInquiry, buildWhatsAppMessage]);
+  }, [guardSubmission, selectedInquiry, buildWhatsAppMessage]);
 
   // WhatsApp sits beside Inquiry Type when the inquiry asks for it: both
   // are "how should we reach you" fields, and removing it from the
@@ -279,16 +319,17 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
       <div className="grid gap-x-4 gap-y-3 sm:grid-cols-2">
         <div className="space-y-1.5">
           <label htmlFor="name" className="text-sm font-medium text-foreground">
-            Name <span className="text-destructive">*</span>
+            Name <span aria-hidden="true" className="text-destructive">*</span>
           </label>
           <input
             id="name"
             name="name"
             type="text"
+            required
             value={name}
             maxLength={CONTACT_LIMITS.name}
             autoComplete="name"
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => updateCoreField("name", e.target.value)}
             onBlur={() => handleBlur("name")}
             aria-invalid={touched.name && !!errors.name}
             aria-describedby={touched.name && errors.name ? "name-error" : undefined}
@@ -302,16 +343,17 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
 
         <div className="space-y-1.5">
           <label htmlFor="email" className="text-sm font-medium text-foreground">
-            Email <span className="text-destructive">*</span>
+            Email <span aria-hidden="true" className="text-destructive">*</span>
           </label>
           <input
             id="email"
             name="email"
             type="email"
+            required
             value={email}
             maxLength={CONTACT_LIMITS.email}
             autoComplete="email"
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => updateCoreField("email", e.target.value)}
             onBlur={() => handleBlur("email")}
             aria-invalid={touched.email && !!errors.email}
             aria-describedby={touched.email && errors.email ? "email-error" : undefined}
@@ -327,11 +369,12 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
       <div className="grid gap-x-4 gap-y-3 sm:grid-cols-2">
         <div className={`space-y-1.5${showWhatsapp ? "" : " sm:col-span-2"}`}>
           <label htmlFor="inquiry-type" className="text-sm font-medium text-foreground">
-            Inquiry Type <span className="text-destructive">*</span>
+            Inquiry Type <span aria-hidden="true" className="text-destructive">*</span>
           </label>
           <select
             id="inquiry-type"
             name="inquiry-type"
+            required
             value={inquiryType}
             onChange={(e) => handleInquiryChange(e.target.value)}
             onBlur={() => handleBlur("inquiryType")}
@@ -384,15 +427,16 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
 
       <div className="space-y-1.5">
         <label htmlFor="message" className="text-sm font-medium text-foreground">
-          Message <span className="text-destructive">*</span>
+          Message <span aria-hidden="true" className="text-destructive">*</span>
         </label>
         <textarea
           id="message"
           name="message"
           rows={4}
+          required
           value={message}
           maxLength={CONTACT_LIMITS.message}
-          onChange={(e) => setMessage(e.target.value)}
+          onChange={(e) => updateCoreField("message", e.target.value)}
           onBlur={() => handleBlur("message")}
           aria-invalid={touched.message && !!errors.message}
           aria-describedby={touched.message && errors.message ? "message-error" : "message-limit"}
