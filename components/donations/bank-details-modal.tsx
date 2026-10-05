@@ -90,7 +90,7 @@ export function BankDetailsModal({
           ref={closeRef}
           onClick={onClose}
           aria-label="Close donation details"
-          className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-muted text-muted-foreground transition-colors hover:bg-muted/70 hover:text-foreground"
+          className="absolute right-3 top-3 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-muted text-muted-foreground transition-colors hover:bg-muted/70 hover:text-foreground"
         >
           <X className="h-4 w-4" />
         </button>

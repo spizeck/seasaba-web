@@ -66,6 +66,8 @@ export function FindSeaSaba() {
             onClick={(e) => { e.stopPropagation(); openMaps("Google Maps"); }}
             className="relative flex items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-1"
           >
+            {/* Expanded hit area (~46px) around the 22px visual pin. */}
+            <span className="absolute -inset-3" aria-hidden="true" />
             <span
               className="absolute inset-0 animate-ping rounded-full opacity-20 motion-reduce:animate-none"
               style={{ backgroundColor: "#9D2235", animationDuration: "2.8s" }}

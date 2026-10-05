@@ -34,8 +34,9 @@ const EMPTY_DRAFT: SupportRequestDraft = {
   acknowledged: false,
 };
 
+// text-base (16px) below lg so iOS Safari doesn't auto-zoom on focus.
 const inputClass =
-  "w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary";
+  "w-full rounded-md border border-border bg-background px-3 py-2 text-base text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary lg:text-sm";
 const labelClass = "text-sm font-medium text-foreground";
 
 function FieldError({ id, message }: { id: string; message?: string }) {
@@ -338,6 +339,7 @@ export function SupportRequestForm() {
             id="sr-name"
             name="sr-name"
             type="text"
+            autoComplete="name"
             value={draft.name}
             maxLength={SUPPORT_REQUEST_LIMITS.name}
             onChange={(e) => setField("name", e.target.value)}
@@ -359,6 +361,7 @@ export function SupportRequestForm() {
             id="sr-organization"
             name="sr-organization"
             type="text"
+            autoComplete="organization"
             value={draft.organization}
             maxLength={SUPPORT_REQUEST_LIMITS.organization}
             onChange={(e) => setField("organization", e.target.value)}
@@ -377,6 +380,7 @@ export function SupportRequestForm() {
             id="sr-email"
             name="sr-email"
             type="email"
+            autoComplete="email"
             value={draft.email}
             maxLength={SUPPORT_REQUEST_LIMITS.email}
             onChange={(e) => setField("email", e.target.value)}
@@ -398,6 +402,7 @@ export function SupportRequestForm() {
             id="sr-phone"
             name="sr-phone"
             type="tel"
+            autoComplete="tel"
             value={draft.phone}
             maxLength={SUPPORT_REQUEST_LIMITS.phone}
             onChange={(e) => setField("phone", e.target.value)}

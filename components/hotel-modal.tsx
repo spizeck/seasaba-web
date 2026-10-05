@@ -82,14 +82,14 @@ export function HotelModal({ hotel, onClose }: HotelModalProps) {
     >
       <div
         ref={modalRef}
-        className="relative flex w-full max-w-lg flex-col overflow-hidden rounded-2xl bg-card shadow-2xl animate-rise-in motion-reduce:animate-none"
+        className="relative flex max-h-[calc(100dvh-2rem)] w-full max-w-lg flex-col overflow-y-auto rounded-2xl bg-card shadow-2xl animate-rise-in motion-reduce:animate-none sm:max-h-[calc(100dvh-3rem)]"
       >
         {/* Close button */}
         <button
           ref={closeRef}
           onClick={onClose}
           aria-label="Close hotel details"
-          className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm pressable hover:bg-black/60"
+          className="absolute right-3 top-3 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm pressable hover:bg-black/60"
         >
           <X className="h-4 w-4" />
         </button>

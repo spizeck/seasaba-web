@@ -34,7 +34,7 @@ export function EquipmentPartnersSection({ partners }: EquipmentPartnersSectionP
                   rel="noopener noreferrer"
                   onClick={() => trackLinkClick("social_click", partner.website, `Visit ${partner.name}`)}
                   aria-label={`Visit ${partner.name} website, opens in a new tab`}
-                  className="inline-flex items-center gap-1.5 text-sm font-medium text-primary transition-colors hover:text-primary/80"
+                  className="inline-flex items-center gap-1.5 py-2 text-sm font-medium text-primary transition-colors hover:text-primary/80"
                 >
                   Visit Website
                   <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />

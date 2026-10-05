@@ -97,14 +97,14 @@ export function DiveSiteModal({ site, allSites, onClose, onNavigate }: Props) {
     >
       <div
         ref={modalRef}
-        className="relative flex w-full max-w-2xl flex-col overflow-hidden rounded-xl bg-card shadow-2xl animate-rise-in motion-reduce:animate-none"
+        className="relative flex max-h-[calc(100dvh-2rem)] w-full max-w-2xl flex-col overflow-y-auto rounded-xl bg-card shadow-2xl animate-rise-in motion-reduce:animate-none"
       >
         {/* Close button */}
         <button
           ref={closeButtonRef}
           onClick={onClose}
           aria-label="Close"
-          className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-black/50 text-white pressable hover:bg-black/70"
+          className="absolute right-3 top-3 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white pressable hover:bg-black/70"
         >
           <X className="h-4 w-4" />
         </button>
