@@ -54,13 +54,15 @@ export function Header() {
           zero-height band truly reserves no flow space; children simply
           overflow visibly over the hero. */}
       <div className="px-4 pt-4 sm:px-6 lg:px-8">
+      {/* Anchors the floating mobile panel to the pill's box so the shell
+          itself never has to grow to host the open menu. */}
+      <div className="relative mx-auto max-w-6xl">
       {/* The outline is a ring, not a border: ring draws via box-shadow so it
           doesn't add 2px to the shell — the chrome stays exactly 80px tall
-          (16px pad + 64px bar), matching the sticky PageSectionNav's offset. */}
+          (16px pad + 64px bar), matching the sticky PageSectionNav's offset.
+          The shell's geometry is fixed; opening the menu never morphs it. */}
       <div
-        className={`mx-auto max-w-6xl shadow-md ring-1 transition-[background-color,box-shadow,border-radius,color] duration-200 ${
-          mobileOpen ? "rounded-3xl lg:rounded-full" : "rounded-full"
-        } ${
+        className={`rounded-full shadow-md ring-1 transition-[background-color,box-shadow,color] duration-200 motion-reduce:transition-none ${
           transparent
             ? "bg-black/25 ring-white/15 backdrop-blur-md"
             : "bg-background/95 ring-border/50 backdrop-blur supports-backdrop-filter:bg-background/70"
@@ -143,38 +145,31 @@ export function Header() {
           </button>
         </div>
 
-        {/* Mobile nav — expands inside the shell so the open menu stays
-            visually attached to the pill rather than dropping as a detached
-            full-width panel. Always mounted, animated in/out.
+        </div>
 
-            Animation: the grid-row 0fr→1fr trick animates to the menu's real
-            content height instead of a guessed max-height, so the shell's
-            expansion, the rounded-3xl radius morph, and the content's
-            fade/slide all share one timeline (issue #204). The inner content
-            lags 75ms on open so links materialize inside the expanding
-            surface; on close it fades out immediately while the row
-            collapses. The scrollable inner region is bounded by the
-            viewport minus the pill's top offset + bar so Book Now stays
-            reachable on very short viewports. */}
+        {/* Mobile nav — a separate floating surface below the pill, not an
+            expansion of it. The shell keeps its geometry; the panel reveals
+            as one object with a short opacity + 6px settle, matching the
+            pill's glass/ring/shadow/radius language so it reads as attached
+            chrome. Always mounted so the same transition runs in reverse on
+            close; inert + pointer-events-none keep the hidden panel out of
+            the tab order and out from under taps. The scrollable region is
+            bounded by the viewport minus the pill's top offset + bar so
+            Book Now stays reachable on very short viewports. */}
         <nav
           id="mobile-navigation"
           aria-label="Mobile"
           inert={!mobileOpen}
-          className={`grid transition-[grid-template-rows] duration-300 ease-in-out motion-reduce:transition-none lg:hidden ${
-            mobileOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+          className={`absolute inset-x-0 top-full mt-2 max-h-[calc(100dvh-7rem)] overflow-y-auto rounded-3xl bg-background/95 shadow-md ring-1 ring-border/50 transition-[opacity,translate] ease-out motion-reduce:transition-none lg:hidden ${
+            mobileOpen
+              ? "translate-y-0 opacity-100 backdrop-blur duration-[180ms] supports-backdrop-filter:bg-background/70"
+              : "pointer-events-none -translate-y-1.5 opacity-0 duration-[140ms]"
           }`}
         >
-          <div
-            className={`min-h-0 max-h-[calc(100dvh-7rem)] overflow-y-auto transition-[opacity,translate] duration-200 motion-reduce:transition-none ${
-              mobileOpen
-                ? "translate-y-0 border-t border-border/40 opacity-100 delay-75"
-                : "-translate-y-2 opacity-0"
-            }`}
-          >
           {/* Contiguous py-2.5 rows: ~44px tap targets with no dead space
               between items, so the menu stays dense while remaining
               comfortable to hit. */}
-          <div className="flex flex-col px-5 pb-5 pt-2 sm:px-6">
+          <div className="flex flex-col px-5 py-3 sm:px-6">
             {NAV_ITEMS.map((item) => (
               <Link
                 key={item.href}
@@ -193,7 +188,6 @@ export function Header() {
             >
               <Link href="/book" onClick={() => setMobileOpen(false)}>Book Now</Link>
             </Button>
-          </div>
           </div>
         </nav>
       </div>

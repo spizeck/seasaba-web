@@ -125,31 +125,44 @@ describe("decorative animation respects reduced motion", () => {
 });
 
 describe("navigation", () => {
-  it("mobile menu animates open via the grid-row trick, not max-height", () => {
+  it("mobile menu reveals as a floating panel via opacity/translate, not shell expansion", () => {
     mocks.pathname.current = "/about";
     const { container } = render(<Header />);
     const nav = container.querySelector("#mobile-navigation")!;
-    expect(nav.className).toContain("grid");
-    expect(nav.className).toContain("grid-rows-[0fr]");
-    expect(nav.className).toContain("transition-[grid-template-rows]");
+    // Anchored just below the pill — a separate surface, not a growing one.
+    expect(nav.className).toContain("absolute");
+    expect(nav.className).toContain("inset-x-0");
+    expect(nav.className).toContain("top-full");
+    // Reveal is a restrained opacity + 6px settle; no layout animation.
+    expect(nav.className).toContain("transition-[opacity,translate]");
+    expect(nav.className).toContain("ease-out");
     expect(nav.className).toContain("motion-reduce:transition-none");
     expect(nav.className).not.toContain("transition-all");
+    expect(nav.className).not.toContain("grid-rows");
+    // Closed: transparent, lifted 6px, and unreachable by pointer or focus.
+    expect(nav.className).toContain("opacity-0");
+    expect(nav.className).toContain("-translate-y-1.5");
+    expect(nav.className).toContain("pointer-events-none");
     // Open region stays inside short viewports: bounded by 100dvh minus the
     // pill's top offset + bar height, and internally scrollable.
-    const inner = nav.firstElementChild as HTMLElement;
-    expect(inner.className).toContain("max-h-[calc(100dvh-7rem)]");
-    expect(inner.className).toContain("overflow-y-auto");
+    expect(nav.className).toContain("max-h-[calc(100dvh-7rem)]");
+    expect(nav.className).toContain("overflow-y-auto");
     mocks.pathname.current = "/";
   });
 
-  // Issue #204: the header paints a floating rounded shell, and the mobile
-  // menu expands inside it so the open state reads as one attached object.
-  it("renders a floating rounded shell that contains the mobile menu", () => {
+  // Issue #204: the header paints a floating rounded shell. The mobile menu
+  // is a sibling panel beneath it — the shell's box never changes when the
+  // menu opens, it just fades in below.
+  it("renders a fixed floating shell with the mobile menu as a sibling panel", () => {
     const { container } = render(<Header />);
-    const shell = container.querySelector("header > div > div")!;
+    const wrapper = container.querySelector("header > div > div")!;
+    const shell = wrapper.firstElementChild as HTMLElement;
+    const nav = container.querySelector("#mobile-navigation")!;
+    expect(wrapper.className).toContain("relative");
+    expect(wrapper.className).toContain("max-w-6xl");
     expect(shell.className).toContain("rounded-full");
-    expect(shell.className).toContain("max-w-6xl");
-    expect(shell.contains(container.querySelector("#mobile-navigation"))).toBe(true);
+    expect(shell.contains(nav)).toBe(false);
+    expect(wrapper.contains(nav)).toBe(true);
   });
 
   it("keeps the 44px menu toggle with an accessible expanded state", () => {
@@ -182,7 +195,7 @@ describe("navigation", () => {
     mocks.pathname.current = "/";
     const { container } = render(<Header />);
     const header = container.querySelector("header")!;
-    const bar = header.firstElementChild!.firstElementChild!
+    const bar = header.firstElementChild!.firstElementChild!.firstElementChild!
       .firstElementChild as HTMLElement;
     const logo = header.querySelector("img")!;
 
@@ -201,7 +214,7 @@ describe("navigation", () => {
     mocks.pathname.current = "/diving";
     const { container } = render(<Header />);
     const header = container.querySelector("header")!;
-    const bar = header.firstElementChild!.firstElementChild!
+    const bar = header.firstElementChild!.firstElementChild!.firstElementChild!
       .firstElementChild as HTMLElement;
 
     scrollTo(100);

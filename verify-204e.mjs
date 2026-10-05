@@ -34,7 +34,7 @@ for (const vp of [
   });
   // Scroll the menu to its end, then re-check Book Now.
   await page.evaluate(() => {
-    const el = document.getElementById("mobile-navigation").firstElementChild;
+    const el = document.getElementById("mobile-navigation");
     el.scrollTop = el.scrollHeight;
   });
   await page.waitForTimeout(400);
@@ -95,7 +95,7 @@ for (const [route, pill] of [["/plan-your-trip", "Where to Stay"], ["/visiting-y
     const geo = await page.evaluate(() => {
       const nav = document.querySelector('nav[aria-label="On this page"]');
       const navBottom = nav.getBoundingClientRect().bottom;
-      const header = document.querySelector("header > div > div").getBoundingClientRect();
+      const header = document.querySelector("header > div > div > div").getBoundingClientRect();
       // first heading below the nav
       const h = [...document.querySelectorAll("h2")].find((e) => e.getBoundingClientRect().top > 60);
       return { navBottom: Math.round(navBottom), headerBottom: Math.round(header.bottom), headingTop: h ? Math.round(h.getBoundingClientRect().top) : null };
