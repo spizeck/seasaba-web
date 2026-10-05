@@ -23,7 +23,7 @@ test("desktop: primary navigation, logo, and Book Now reach their destinations",
 
 test("header shell floats inside the viewport edges", async ({ page }) => {
   await hydratedGoto(page, "/about", "#main-content");
-  const shell = page.locator("header > div").first();
+  const shell = page.locator("header > div > div").first();
   const viewportWidth = await page.evaluate(() => window.innerWidth);
   const box = await shell.boundingBox();
   expect(box, "floating shell must be measurable").not.toBeNull();

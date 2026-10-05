@@ -136,7 +136,7 @@ describe("navigation", () => {
   // menu expands inside it so the open state reads as one attached object.
   it("renders a floating rounded shell that contains the mobile menu", () => {
     const { container } = render(<Header />);
-    const shell = container.querySelector("header > div")!;
+    const shell = container.querySelector("header > div > div")!;
     expect(shell.className).toContain("rounded-full");
     expect(shell.className).toContain("max-w-6xl");
     expect(shell.contains(container.querySelector("#mobile-navigation"))).toBe(true);
@@ -158,34 +158,45 @@ describe("navigation", () => {
     act(() => window.dispatchEvent(new Event("scroll")));
   };
 
+  it("overlays the homepage pill on the hero with no flow height", () => {
+    mocks.pathname.current = "/";
+    const { container } = render(<Header />);
+    const header = container.querySelector("header")!;
+    // Zero-height band: the pill overlays the hero, so menu open/close and
+    // the compact transition can never push the hero down.
+    expect(header.className).toContain("h-0");
+    expect(header.className).toContain("overflow-visible");
+  });
+
   it("compacts the homepage pill after scroll without changing flow height", () => {
     mocks.pathname.current = "/";
     const { container } = render(<Header />);
     const header = container.querySelector("header")!;
-    const bar = header.firstElementChild!.firstElementChild as HTMLElement;
+    const bar = header.firstElementChild!.firstElementChild!
+      .firstElementChild as HTMLElement;
     const logo = header.querySelector("img")!;
 
     expect(bar.className).toContain("h-16");
     expect(logo.className).toContain("h-10");
-    expect(header.className).not.toContain("pb-2");
 
     scrollTo(100);
 
     expect(bar.className).toContain("h-14");
     expect(logo.className).toContain("h-9");
-    // Bottom padding absorbs the 8px shrink so the band stays 80px tall.
-    expect(header.className).toContain("pb-2");
-    expect(header.className).toContain("motion-reduce:transition-none");
+    expect(header.className).toContain("h-0");
+    expect(bar.className).toContain("motion-reduce:transition-none");
   });
 
-  it("does not compact the pill on interior pages", () => {
+  it("keeps the band in flow and un-compacted on interior pages", () => {
     mocks.pathname.current = "/diving";
     const { container } = render(<Header />);
-    const bar = container.querySelector("header")!.firstElementChild!
+    const header = container.querySelector("header")!;
+    const bar = header.firstElementChild!.firstElementChild!
       .firstElementChild as HTMLElement;
 
     scrollTo(100);
 
+    expect(header.className).not.toContain("h-0");
     expect(bar.className).toContain("h-16");
     mocks.pathname.current = "/";
   });

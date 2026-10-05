@@ -38,22 +38,25 @@ export function Header() {
   const compact = isHome && scrolled;
 
   return (
-    // Sticky band stays full-width (scroll-position-keeper measures it as top
-    // chrome); its transparent padding supplies the breathing room that makes
-    // the inner shell read as a floating object (issue #204). The band is
-    // 16px pad + 64px bar = 80px of flow height — hero.tsx compensates with
-    // -mt-20 so the homepage hero still extends to the viewport top. When the
-    // shell compacts (56px bar) the band gains 8px of bottom padding, keeping
-    // the flow height pinned at 80px so compaction never shifts page content.
+    // On the homepage the sticky band is zero-height: the pill overlays the
+    // hero instead of occupying document flow, so menu open/close and the
+    // compact transition can never push the hero down (issue #204). The
+    // hero's own pt-20 keeps its content clear of the overlaid pill.
+    // Interior pages keep the band in flow — 16px pad + 64px bar = 80px of
+    // top chrome that scroll-position-keeper measures and PageSectionNav
+    // offsets against.
     <header
-      className={`sticky top-0 z-50 w-full px-4 pt-4 transition-[padding-bottom] duration-200 motion-reduce:transition-none sm:px-6 lg:px-8 ${
-        compact ? "pb-2" : "pb-0"
+      className={`sticky top-0 z-50 w-full ${
+        isHome ? "h-0 overflow-visible" : ""
       }`}
     >
+      {/* Outer padding lives on this wrapper (not the band) so the homepage's
+          zero-height band truly reserves no flow space; children simply
+          overflow visibly over the hero. */}
+      <div className="px-4 pt-4 sm:px-6 lg:px-8">
       {/* The outline is a ring, not a border: ring draws via box-shadow so it
           doesn't add 2px to the shell — the chrome stays exactly 80px tall
-          (16px pad + 64px bar), matching hero's -mt-20 and the sticky
-          PageSectionNav's top-20. */}
+          (16px pad + 64px bar), matching the sticky PageSectionNav's offset. */}
       <div
         className={`mx-auto max-w-6xl shadow-md ring-1 transition-[background-color,box-shadow,border-radius,color] duration-200 ${
           mobileOpen ? "rounded-3xl lg:rounded-full" : "rounded-full"
@@ -177,6 +180,7 @@ export function Header() {
             </Button>
           </div>
         </nav>
+      </div>
       </div>
     </header>
   );
