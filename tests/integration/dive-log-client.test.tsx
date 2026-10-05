@@ -47,6 +47,8 @@ it("combines filters, recovers from no matches, expands sightings and clears sel
   await userEvent.click(screen.getByRole("button", { name: "Clear selection" }));
   await userEvent.selectOptions(screen.getByLabelText("Guide"), "Sam");
   expect(screen.getByText("No dives match your filters.")).toBeVisible();
+  // The filtered-empty result politely replaces the loaded list for SRs.
+  expect(screen.getByRole("status")).toHaveTextContent("No dives match your filters.");
   await userEvent.click(screen.getByRole("button", { name: "Clear filters and show all time" }));
   expect(screen.getByRole("heading", { name: "3 dives" })).toBeVisible();
 });
@@ -90,5 +92,27 @@ it("distinguishes a truly empty log from filtered-empty", async () => {
   // A reset-filter action is useless when there is nothing to filter.
   expect(screen.queryByText("No dives match your filters.")).not.toBeInTheDocument();
   expect(screen.getByRole("link", { name: "Browse dive sites" })).toHaveAttribute("href", "/dive-sites");
+  // The completed empty state is announced politely after the async fetch.
+  expect(screen.getByRole("status")).toHaveTextContent("No dives logged yet");
+});
+it("politely announces while the PDF is being prepared", async () => {
+  // A never-resolving export holds the pending state for the assertion.
+  vi.mocked(exportDiveLogToPdf).mockReturnValueOnce(new Promise(() => {}));
+  render(<DiveLogClient />);
+  await screen.findByRole("heading", { name: "2 dives" });
+  await userEvent.click(screen.getByRole("button", { name: "Add Tent Reef to my dive log" }));
+  await userEvent.click(screen.getByRole("button", { name: "Export My Dive Log" }));
+  expect(await screen.findByRole("status")).toHaveTextContent("Preparing your dive log PDF");
+  expect(screen.getByRole("button", { name: "Preparing PDF..." })).toBeDisabled();
+});
+it("surfaces a failed PDF export as an alert with no lingering status region", async () => {
+  vi.mocked(exportDiveLogToPdf).mockRejectedValueOnce(new Error("boom"));
+  render(<DiveLogClient />);
+  await screen.findByRole("heading", { name: "2 dives" });
+  await userEvent.click(screen.getByRole("button", { name: "Add Tent Reef to my dive log" }));
+  await userEvent.click(screen.getByRole("button", { name: "Export My Dive Log" }));
+  expect(await screen.findByRole("alert")).toHaveTextContent("couldn't be created");
+  expect(screen.queryByRole("status")).not.toBeInTheDocument();
+  expect(screen.getByRole("button", { name: "Export My Dive Log" })).toBeEnabled();
 });
 

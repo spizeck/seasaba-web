@@ -478,6 +478,7 @@ export function DiveLogClient() {
               ))
             ) : dives.length === 0 ? (
               <StatePanel
+                role="status"
                 title="No dives logged yet"
                 description="Our guides add new dives after most trips — check back soon. In the meantime, explore the sites we visit."
               >
@@ -490,6 +491,7 @@ export function DiveLogClient() {
               </StatePanel>
             ) : (
               <StatePanel
+                role="status"
                 title="No dives match your filters."
                 description="Try adjusting the date range or clearing your filters to see more results."
               >
@@ -586,6 +588,11 @@ export function DiveLogClient() {
                     <Download className="h-3.5 w-3.5" />
                     {exportState === "exporting" ? "Preparing PDF..." : "Export My Dive Log"}
                   </Button>
+                  {exportState === "exporting" && (
+                    <p role="status" className="sr-only">
+                      Preparing your dive log PDF, please wait.
+                    </p>
+                  )}
                   {exportState === "error" && (
                     <p role="alert" className="mt-2 text-center text-xs text-destructive">
                       The PDF couldn&apos;t be created. Please try again.
