@@ -31,14 +31,25 @@ export function Header() {
   }, [mobileOpen]);
 
   const transparent = isHome && !scrolled && !mobileOpen;
+  // Homepage-only scroll compaction (issue #204): reuse the existing `scrolled`
+  // threshold (scrollY > 48) so the pill's color and size settle at the same
+  // deterministic point — a single boolean flip means no flicker, no per-frame
+  // measurement, and no competing thresholds.
+  const compact = isHome && scrolled;
 
   return (
     // Sticky band stays full-width (scroll-position-keeper measures it as top
     // chrome); its transparent padding supplies the breathing room that makes
     // the inner shell read as a floating object (issue #204). The band is
     // 16px pad + 64px bar = 80px of flow height — hero.tsx compensates with
-    // -mt-20 so the homepage hero still extends to the viewport top.
-    <header className="sticky top-0 z-50 w-full px-4 pt-4 sm:px-6 lg:px-8">
+    // -mt-20 so the homepage hero still extends to the viewport top. When the
+    // shell compacts (56px bar) the band gains 8px of bottom padding, keeping
+    // the flow height pinned at 80px so compaction never shifts page content.
+    <header
+      className={`sticky top-0 z-50 w-full px-4 pt-4 transition-[padding-bottom] duration-200 motion-reduce:transition-none sm:px-6 lg:px-8 ${
+        compact ? "pb-2" : "pb-0"
+      }`}
+    >
       {/* The outline is a ring, not a border: ring draws via box-shadow so it
           doesn't add 2px to the shell — the chrome stays exactly 80px tall
           (16px pad + 64px bar), matching hero's -mt-20 and the sticky
@@ -52,7 +63,14 @@ export function Header() {
             : "bg-background/95 ring-border/50 backdrop-blur supports-backdrop-filter:bg-background/70"
         }`}
       >
-        <div className="flex h-16 items-center justify-between pl-5 pr-2.5 sm:pl-6 sm:pr-3 lg:px-6">
+        {/* Compact browsing state (homepage only): bar 64→56px, logo
+            40→36px, horizontal padding unchanged so the shell keeps its
+            stance; the hamburger retains its 44px target. */}
+        <div
+          className={`flex items-center justify-between pl-5 pr-2.5 transition-[height] duration-200 motion-reduce:transition-none sm:pl-6 sm:pr-3 lg:px-6 ${
+            compact ? "h-14" : "h-16"
+          }`}
+        >
           <Link
             href="/"
             className="relative flex items-center transition-opacity hover:opacity-90"
@@ -63,7 +81,9 @@ export function Header() {
               alt="Sea Saba logo"
               width={180}
               height={40}
-              className="h-10 w-auto"
+              className={`w-auto transition-[height] duration-200 motion-reduce:transition-none ${
+                compact ? "h-9" : "h-10"
+              }`}
             />
           </Link>
 
@@ -92,13 +112,15 @@ export function Header() {
             </Button>
           </nav>
 
-          {/* Mobile toggle — 44px hit area; the subtle fill makes it read as a
-              substantial button inside the rounded shell. */}
+          {/* Mobile toggle — 44px hit area; the fills are translucent washes
+              in the shell's own color family (white on the dark hero pill,
+              Sea Saba blue on the light pill) so the control reads as part of
+              the pill rather than a neutral tile pasted on it. */}
           <button
             className={`pressable relative inline-flex h-11 w-11 items-center justify-center rounded-lg p-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring lg:hidden ${
               transparent
                 ? "bg-white/10 text-white hover:bg-white/20"
-                : "bg-foreground/5 text-muted-foreground hover:bg-foreground/10"
+                : "bg-primary/10 text-primary hover:bg-primary/15"
             }`}
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label={mobileOpen ? "Close menu" : "Open menu"}

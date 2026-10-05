@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
-import { render } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
+import { act, render } from "@testing-library/react";
 import { readFileSync } from "node:fs";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Pill } from "@/components/ui/pill";
@@ -15,6 +15,11 @@ import { DIVE_SITES } from "@/data/dive-site-videos";
 // control transition + restrained press, a `transition-card` surface
 // transition, shared `animate-overlay-in`/`animate-rise-in` dialog entrances,
 // and reduced-motion opt-outs on every nonessential animation.
+
+const mocks = vi.hoisted(() => ({ pathname: { current: "/" } }));
+vi.mock("next/navigation", () => ({
+  usePathname: () => mocks.pathname.current,
+}));
 
 const globalsCss = readFileSync("app/globals.css", "utf8");
 
@@ -143,5 +148,45 @@ describe("navigation", () => {
     expect(toggle.className).toContain("h-11");
     expect(toggle.className).toContain("w-11");
     expect(toggle).toHaveAttribute("aria-expanded", "false");
+  });
+
+  // Issue #204 follow-up: the homepage pill settles into a compact browsing
+  // state on scroll without shrinking the band's 80px flow height, so the
+  // page content below never shifts.
+  const scrollTo = (y: number) => {
+    Object.defineProperty(window, "scrollY", { value: y, configurable: true });
+    act(() => window.dispatchEvent(new Event("scroll")));
+  };
+
+  it("compacts the homepage pill after scroll without changing flow height", () => {
+    mocks.pathname.current = "/";
+    const { container } = render(<Header />);
+    const header = container.querySelector("header")!;
+    const bar = header.firstElementChild!.firstElementChild as HTMLElement;
+    const logo = header.querySelector("img")!;
+
+    expect(bar.className).toContain("h-16");
+    expect(logo.className).toContain("h-10");
+    expect(header.className).not.toContain("pb-2");
+
+    scrollTo(100);
+
+    expect(bar.className).toContain("h-14");
+    expect(logo.className).toContain("h-9");
+    // Bottom padding absorbs the 8px shrink so the band stays 80px tall.
+    expect(header.className).toContain("pb-2");
+    expect(header.className).toContain("motion-reduce:transition-none");
+  });
+
+  it("does not compact the pill on interior pages", () => {
+    mocks.pathname.current = "/diving";
+    const { container } = render(<Header />);
+    const bar = container.querySelector("header")!.firstElementChild!
+      .firstElementChild as HTMLElement;
+
+    scrollTo(100);
+
+    expect(bar.className).toContain("h-16");
+    mocks.pathname.current = "/";
   });
 });
