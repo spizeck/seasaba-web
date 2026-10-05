@@ -123,7 +123,7 @@ export function Header() {
             className={`pressable relative inline-flex h-11 w-11 items-center justify-center rounded-lg p-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring lg:hidden ${
               transparent
                 ? "bg-white/10 text-white hover:bg-white/20"
-                : "bg-primary/10 text-primary hover:bg-primary/15"
+                : "bg-primary/5 text-primary hover:bg-primary/15"
             }`}
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
@@ -145,17 +145,32 @@ export function Header() {
 
         {/* Mobile nav — expands inside the shell so the open menu stays
             visually attached to the pill rather than dropping as a detached
-            full-width panel. Always mounted, animated in/out. */}
+            full-width panel. Always mounted, animated in/out.
+
+            Animation: the grid-row 0fr→1fr trick animates to the menu's real
+            content height instead of a guessed max-height, so the shell's
+            expansion, the rounded-3xl radius morph, and the content's
+            fade/slide all share one timeline (issue #204). The inner content
+            lags 75ms on open so links materialize inside the expanding
+            surface; on close it fades out immediately while the row
+            collapses. The scrollable inner region is bounded by the
+            viewport minus the pill's top offset + bar so Book Now stays
+            reachable on very short viewports. */}
         <nav
           id="mobile-navigation"
           aria-label="Mobile"
           inert={!mobileOpen}
-          className={`transition-[max-height,opacity] duration-300 ease-in-out motion-reduce:transition-none lg:hidden ${
-            mobileOpen
-              ? "max-h-[70dvh] overflow-y-auto border-t border-border/40 opacity-100"
-              : "max-h-0 overflow-hidden opacity-0"
+          className={`grid transition-[grid-template-rows] duration-300 ease-in-out motion-reduce:transition-none lg:hidden ${
+            mobileOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
           }`}
         >
+          <div
+            className={`min-h-0 max-h-[calc(100dvh-7rem)] overflow-y-auto transition-[opacity,translate] duration-200 motion-reduce:transition-none ${
+              mobileOpen
+                ? "translate-y-0 border-t border-border/40 opacity-100 delay-75"
+                : "-translate-y-2 opacity-0"
+            }`}
+          >
           {/* Contiguous py-2.5 rows: ~44px tap targets with no dead space
               between items, so the menu stays dense while remaining
               comfortable to hit. */}
@@ -178,6 +193,7 @@ export function Header() {
             >
               <Link href="/book" onClick={() => setMobileOpen(false)}>Book Now</Link>
             </Button>
+          </div>
           </div>
         </nav>
       </div>

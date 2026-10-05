@@ -125,11 +125,21 @@ describe("decorative animation respects reduced motion", () => {
 });
 
 describe("navigation", () => {
-  it("mobile menu motion stops under reduced motion", () => {
+  it("mobile menu animates open via the grid-row trick, not max-height", () => {
+    mocks.pathname.current = "/about";
     const { container } = render(<Header />);
     const nav = container.querySelector("#mobile-navigation")!;
+    expect(nav.className).toContain("grid");
+    expect(nav.className).toContain("grid-rows-[0fr]");
+    expect(nav.className).toContain("transition-[grid-template-rows]");
     expect(nav.className).toContain("motion-reduce:transition-none");
     expect(nav.className).not.toContain("transition-all");
+    // Open region stays inside short viewports: bounded by 100dvh minus the
+    // pill's top offset + bar height, and internally scrollable.
+    const inner = nav.firstElementChild as HTMLElement;
+    expect(inner.className).toContain("max-h-[calc(100dvh-7rem)]");
+    expect(inner.className).toContain("overflow-y-auto");
+    mocks.pathname.current = "/";
   });
 
   // Issue #204: the header paints a floating rounded shell, and the mobile

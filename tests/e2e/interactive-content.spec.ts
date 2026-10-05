@@ -80,6 +80,34 @@ test("the diving page section nav jumps to the Marine Park guide section", async
   await expect(page.locator("#marine-park")).toBeVisible();
 });
 
+// Issue #204: the section nav is a single row at every width — overflow
+// scrolls horizontally inside the strip rather than wrapping, and the page
+// never gains horizontal overflow.
+test("section nav stays one scrollable row at every width", async ({ page }) => {
+  await hydratedGoto(page, "/plan-your-trip");
+  for (const width of [390, 768, 1024, 1440]) {
+    await page.setViewportSize({ width, height: 800 });
+    const info = await page.evaluate(() => {
+      const nav = document.querySelector('nav[aria-label="On this page"]')!;
+      const row = nav.querySelector("button")!.parentElement as HTMLElement;
+      const tops = new Set(
+        [...nav.querySelectorAll("button")].map((p) =>
+          Math.round(p.getBoundingClientRect().top)
+        )
+      );
+      return {
+        rows: tops.size,
+        scrollable: row.scrollWidth > row.clientWidth,
+        docOverflow:
+          document.documentElement.scrollWidth -
+          document.documentElement.clientWidth,
+      };
+    });
+    expect(info.rows, `pill rows at ${width}px`).toBe(1);
+    expect(info.docOverflow, `page overflow at ${width}px`).toBeLessThanOrEqual(0);
+  }
+});
+
 test("the dive log still renders its UI when Firestore is unreachable", async ({ page }) => {
   // With the backend fully blocked (fixture default), the SDK resolves from an
   // empty offline cache — the page must render its empty state rather than

@@ -25,6 +25,7 @@ type PageSectionNavProps = {
 export function PageSectionNav({ items, className, offset = 96 }: PageSectionNavProps) {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [isSticky, setIsSticky] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
   const observerRef = useRef<IntersectionObserver | null>(null);
   const navRef = useRef<HTMLElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -80,6 +81,24 @@ export function PageSectionNav({ items, className, offset = 96 }: PageSectionNav
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Single-row strip at every width: overflow scrolls horizontally inside
+  // the nav, so the right-edge fade only makes sense while content actually
+  // extends past the visible edge — and lifts when scrolled to the end.
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const update = () =>
+      setCanScrollRight(el.scrollWidth - el.scrollLeft - el.clientWidth > 4);
+    update();
+    el.addEventListener("scroll", update, { passive: true });
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => {
+      el.removeEventListener("scroll", update);
+      ro.disconnect();
+    };
   }, []);
 
   // Keep the active pill visible in the horizontal nav container.
@@ -160,12 +179,19 @@ export function PageSectionNav({ items, className, offset = 96 }: PageSectionNav
       )}
     >
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        {/* Right-edge fade on the scrollable row (mobile only) makes a
-            partially visible next pill read as an intentional scroll
-            affordance rather than a clipped element. */}
+        {/* Always one row — overflow scrolls inside the strip at every
+            width. The right-edge mask fade appears only while content
+            actually extends past the edge, so a partially visible next pill
+            reads as an intentional scroll affordance. scroll-px keeps a
+            comfortable inset when the browser scrolls a focused pill into
+            view. */}
         <div
           ref={containerRef}
-          className="scrollbar-hide flex flex-nowrap gap-2 overflow-x-auto pb-2 [mask-image:linear-gradient(to_right,black_85%,transparent)] sm:flex-wrap sm:overflow-visible sm:[mask-image:none]"
+          className={cn(
+            "scrollbar-hide flex flex-nowrap gap-2 overflow-x-auto scroll-px-4 pb-2",
+            canScrollRight &&
+              "[mask-image:linear-gradient(to_right,black_85%,transparent)]"
+          )}
         >
           {items.map(({ id, label }) => {
             const isActive = activeId === id;
