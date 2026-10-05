@@ -8,7 +8,7 @@ export default function ContentLayout({
   return (
     <div className="mx-auto max-w-6xl px-4 pb-6 pt-4 sm:px-6 sm:pt-6 lg:px-8">
       <Breadcrumbs />
-      <article className="prose prose-slate max-w-none dark:prose-invert [&>*:first-child]:mt-0">{children}</article>
+      <article className="prose prose-slate max-w-none dark:prose-invert [&>*:first-child]:mt-0 [&>p]:max-w-3xl">{children}</article>
     </div>
   );
 }

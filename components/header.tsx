@@ -56,7 +56,7 @@ export function Header() {
         </Link>
 
         {/* Desktop nav */}
-        <nav aria-label="Primary" className="hidden items-center gap-8 md:flex">
+        <nav aria-label="Primary" className="hidden items-center gap-8 lg:flex">
           {NAV_ITEMS.map((item) => (
             <Link
               key={item.href}
@@ -83,7 +83,7 @@ export function Header() {
         {/* Mobile toggle — 44px hit area; -mr-1 keeps the icon visually
             aligned with the container edge. */}
         <button
-          className={`pressable relative -mr-1 inline-flex h-11 w-11 items-center justify-center rounded-md p-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:hidden ${
+          className={`pressable relative -mr-1 inline-flex h-11 w-11 items-center justify-center rounded-md p-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring lg:hidden ${
             transparent ? "text-white" : "text-muted-foreground"
           }`}
           onClick={() => setMobileOpen(!mobileOpen)}
@@ -109,7 +109,7 @@ export function Header() {
         id="mobile-navigation"
         aria-label="Mobile"
         inert={!mobileOpen}
-        className={`border-t border-border/40 bg-background transition-[max-height,opacity] duration-300 ease-in-out motion-reduce:transition-none md:hidden ${
+        className={`border-t border-border/40 bg-background transition-[max-height,opacity] duration-300 ease-in-out motion-reduce:transition-none lg:hidden ${
           mobileOpen
             ? "max-h-[70dvh] overflow-y-auto opacity-100"
             : "max-h-0 overflow-hidden opacity-0"
