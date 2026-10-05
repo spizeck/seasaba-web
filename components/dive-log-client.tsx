@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, useMemo, useEffect, useId } from "react";
+import Link from "next/link";
 import { PageHero } from "@/components/page-hero";
 import { BubbleLoader } from "@/components/bubble-loader";
+import { StatePanel } from "@/components/state-panel";
 import { Button } from "@/components/ui/button";
 import { SpeciesModal } from "@/components/species-modal";
 import { findSpeciesInfo } from "@/data/species";
@@ -46,14 +48,19 @@ function useDiveLogData() {
   const [dives, setDives] = useState<PublicDive[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
+    let cancelled = false;
+
     const timeout = setTimeout(() => {
-      setError("This is taking longer than expected. Please check your connection and try again.");
+      if (cancelled) return;
+      setError("The dive log is taking longer than expected to load. Check your connection and try again.");
       setLoading(false);
     }, LOAD_TIMEOUT_MS);
     fetchDiveLogData()
       .then(({ dives, sites, species, boats }) => {
+        if (cancelled) return;
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const normalized = dives.map((d: any) => normalizeDive(d, sites, species, boats));
         const grouped = groupDivesForDisplay(normalized);
@@ -67,13 +74,31 @@ function useDiveLogData() {
         setLoading(false);
       })
       .catch((err) => {
-        setError(err.message || "Failed to load dive log");
+        // The real error is logged for diagnostics — visitors get a calm,
+        // nontechnical message instead of a raw Firestore/network exception.
+        console.error("Dive log failed to load", err);
+        if (cancelled) return;
+        setError("The dive log couldn't be loaded right now. Please try again.");
         setLoading(false);
       })
       .finally(() => clearTimeout(timeout));
-  }, []);
 
-  return { dives, loading, error };
+    return () => {
+      cancelled = true;
+      clearTimeout(timeout);
+    };
+  }, [attempt]);
+
+  return {
+    dives,
+    loading,
+    error,
+    retry: () => {
+      setLoading(true);
+      setError(null);
+      setAttempt((a) => a + 1);
+    },
+  };
 }
 
 type DateRange = "14" | "30" | "90" | "all";
@@ -254,13 +279,14 @@ function SelectField({
 }
 
 export function DiveLogClient() {
-  const { dives, loading, error } = useDiveLogData();
+  const { dives, loading, error, retry } = useDiveLogData();
   const [unitSystem, setUnitSystem] = useState<UnitSystem>("metric");
   const [dateRange, setDateRange] = useState<DateRange>("14");
   const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState<Filters>({ site: "", boat: "", guide: "", species: "" });
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [exportState, setExportState] = useState<"idle" | "exporting" | "error">("idle");
   const PAGE_SIZE = 20;
 
   const ALL_SITES = useMemo(() => unique(dives.map((d) => d.diveSite)).sort(), [dives]);
@@ -422,15 +448,24 @@ export function DiveLogClient() {
           {/* Dive list */}
           <div className="mt-4 flex flex-col gap-3">
             {loading ? (
-              <div className="rounded-lg border border-border/40 bg-muted/20 p-8 text-center" role="status">
-                <BubbleLoader size="sm" className="mx-auto" />
-                <p className="mt-2 text-sm font-medium text-foreground">Loading recent dives...</p>
-              </div>
+              <StatePanel
+                role="status"
+                leading={<BubbleLoader size="sm" className="mx-auto mb-2" />}
+                title="Loading recent dives..."
+              />
             ) : error ? (
-              <div className="rounded-lg border border-border/40 bg-muted/20 p-8 text-center">
-                <p className="text-sm font-medium text-foreground">Unable to load dive log</p>
-                <p className="mt-1 text-sm text-muted-foreground">{error}</p>
-              </div>
+              <StatePanel
+                role="alert"
+                title="Unable to load dive log"
+                description={error}
+              >
+                <button
+                  onClick={retry}
+                  className="mt-4 text-sm font-medium text-primary hover:underline"
+                >
+                  Try again
+                </button>
+              </StatePanel>
             ) : paginatedDives.length > 0 ? (
               paginatedDives.map((dive) => (
                 <DiveCard
@@ -441,17 +476,30 @@ export function DiveLogClient() {
                   unitSystem={unitSystem}
                 />
               ))
+            ) : dives.length === 0 ? (
+              <StatePanel
+                title="No dives logged yet"
+                description="Our guides add new dives after most trips — check back soon. In the meantime, explore the sites we visit."
+              >
+                <Link
+                  href="/dive-sites"
+                  className="mt-4 inline-block text-sm font-medium text-primary hover:underline"
+                >
+                  Browse dive sites
+                </Link>
+              </StatePanel>
             ) : (
-              <div className="rounded-lg border border-border/40 bg-muted/20 p-8 text-center">
-                <p className="text-sm font-medium text-foreground">No dives match your filters.</p>
-                <p className="mt-1 text-sm text-muted-foreground">Try adjusting the date range or clearing your filters to see more results.</p>
+              <StatePanel
+                title="No dives match your filters."
+                description="Try adjusting the date range or clearing your filters to see more results."
+              >
                 <button
                   onClick={() => { clearFilters(); setDateRange("all"); resetPage(); }}
                   className="mt-4 text-sm font-medium text-primary hover:underline"
                 >
                   Clear filters and show all time
                 </button>
-              </div>
+              </StatePanel>
             )}
           </div>
 
@@ -521,17 +569,28 @@ export function DiveLogClient() {
                         dive_count: selectedDives.length.toString(),
                         unit_system: unitSystem,
                       });
+                      setExportState("exporting");
                       // jsPDF is ~300KB — loaded only when a visitor actually exports.
-                      void import("@/lib/dive-log-export").then((m) =>
-                        m.exportDiveLogToPdf(selectedDives, unitSystem)
-                      );
+                      import("@/lib/dive-log-export")
+                        .then((m) => m.exportDiveLogToPdf(selectedDives, unitSystem))
+                        .then(() => setExportState("idle"))
+                        .catch((err) => {
+                          console.error("Dive log PDF export failed", err);
+                          setExportState("error");
+                        });
                     }}
+                    disabled={exportState === "exporting"}
                     size="sm"
                     className="mt-3 w-full gap-1.5"
                   >
                     <Download className="h-3.5 w-3.5" />
-                    Export My Dive Log
+                    {exportState === "exporting" ? "Preparing PDF..." : "Export My Dive Log"}
                   </Button>
+                  {exportState === "error" && (
+                    <p role="alert" className="mt-2 text-center text-xs text-destructive">
+                      The PDF couldn&apos;t be created. Please try again.
+                    </p>
+                  )}
                   <button
                     onClick={() => setSelectedIds(new Set())}
                     className="mt-3 w-full py-1.5 text-center text-xs text-muted-foreground hover:text-foreground transition-colors"

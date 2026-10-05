@@ -412,6 +412,33 @@ Reusable components should feel:
 - Stable
 - Professional
 
+### Loading, Empty & Error States
+
+Transient and exceptional states are part of the Sea Saba experience —
+calm, clear, and useful, never generic framework fallbacks.
+
+- **Loading:** use `BubbleLoader` (paired with visible text inside a
+  `role="status"` container) only where waiting is real and visible —
+  data fetches, the booking widget. Reserve panel dimensions so content
+  doesn't jump. Never for interactions that resolve instantly.
+- **Empty vs filtered-empty vs unavailable are different states.** Truly
+  empty ("No dives logged yet") gets a next action; filtered-empty
+  ("No dives match your filters") gets a reset action; unavailable gets a
+  retry or alternate path. Never share one generic message across them.
+- **Errors:** plain language, no stack traces, codes, or provider details.
+  Distinguish user-fixable problems from service failures, preserve
+  entered data, and offer a retry or next step. Async failures use
+  `role="alert"` so they're announced.
+- **Success:** unmistakable — a `role="status"` panel that says what
+  happened, what happens next, and whether it's safe to leave. Never
+  just a subtle color change.
+- **Copy tone:** capable and concise. No "Oops!", no cute scuba jokes in
+  failure states.
+- **Shared primitive:** `components/state-panel.tsx` (`StatePanel`)
+  renders the bordered centered panel — title, description, optional
+  leading visual, optional actions — used for dive-log loading, error,
+  and empty states. Reach for it before hand-rolling a new one-off panel.
+
 ---
 
 ## Links

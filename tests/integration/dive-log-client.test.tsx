@@ -70,11 +70,25 @@ it("shows permission failure without exposing an export action", async () => {
   vi.mocked(fetchDiveLogData).mockRejectedValue(new Error("Missing or insufficient permissions"));
   render(<DiveLogClient />);
   await screen.findByText("Unable to load dive log");
+  // Raw backend error text never reaches the visitor.
+  expect(screen.queryByText(/Missing or insufficient permissions/)).not.toBeInTheDocument();
   expect(screen.queryByRole("button", { name: "Export My Dive Log" })).not.toBeInTheDocument();
 });
-it("handles an empty collection", async () => {
+it("announces a load failure and recovers via Try again", async () => {
+  vi.mocked(fetchDiveLogData).mockRejectedValueOnce(new Error("network down"));
+  render(<DiveLogClient />);
+  const alert = await screen.findByRole("alert");
+  expect(alert).toHaveTextContent("Unable to load dive log");
+  await userEvent.click(screen.getByRole("button", { name: "Try again" }));
+  // Second attempt uses the default fixture resolution.
+  await screen.findByRole("heading", { name: "2 dives" });
+});
+it("distinguishes a truly empty log from filtered-empty", async () => {
   vi.mocked(fetchDiveLogData).mockResolvedValue(diveData([]));
   render(<DiveLogClient />);
-  await waitFor(() => expect(screen.getByText("No dives match your filters.")).toBeVisible());
+  await waitFor(() => expect(screen.getByText("No dives logged yet")).toBeVisible());
+  // A reset-filter action is useless when there is nothing to filter.
+  expect(screen.queryByText("No dives match your filters.")).not.toBeInTheDocument();
+  expect(screen.getByRole("link", { name: "Browse dive sites" })).toHaveAttribute("href", "/dive-sites");
 });
 

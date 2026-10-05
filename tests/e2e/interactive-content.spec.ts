@@ -89,7 +89,7 @@ test("the dive log still renders its UI when Firestore is unreachable", async ({
   // cache instead of rejecting.
   await hydratedGoto(page, "/dive-log");
   await expect(page.getByRole("heading", { name: "Sea Saba Dive Log" })).toBeVisible();
-  await expect(page.getByText(/No dives match your filters|Unable to load dive log/)).toBeVisible({ timeout: 25_000 });
+  await expect(page.getByText(/No dives logged yet|Unable to load dive log/)).toBeVisible({ timeout: 25_000 });
 });
 
 // Issue #186: prose underlines every anchor; links rendered as buttons must

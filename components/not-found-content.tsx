@@ -20,6 +20,33 @@ export function NotFoundContent() {
           <Link href="/contact">Contact Us</Link>
         </Button>
       </div>
+      <nav aria-label="Popular pages" className="mt-8">
+        <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+          Popular pages
+        </p>
+        <ul className="mt-3 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm">
+          <li>
+            <Link href="/diving" className="font-medium text-primary underline-offset-2 hover:underline">
+              Diving
+            </Link>
+          </li>
+          <li>
+            <Link href="/dive-sites" className="font-medium text-primary underline-offset-2 hover:underline">
+              Dive Sites
+            </Link>
+          </li>
+          <li>
+            <Link href="/plan-your-trip" className="font-medium text-primary underline-offset-2 hover:underline">
+              Plan Your Trip
+            </Link>
+          </li>
+          <li>
+            <Link href="/book" className="font-medium text-primary underline-offset-2 hover:underline">
+              Book a Dive
+            </Link>
+          </li>
+        </ul>
+      </nav>
     </div>
   );
 }
