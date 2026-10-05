@@ -166,7 +166,7 @@ export default function Home() {
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
 
           {/* Section header */}
-          <div className="mb-16 max-w-2xl">
+          <div className="mb-10 max-w-2xl lg:mb-16">
             <h2 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl">
               The Dives That Made Saba Famous.
             </h2>
@@ -179,7 +179,7 @@ export default function Home() {
           </div>
 
           {/* Experience rows — alternating image/text magazine layout */}
-          <div className="flex flex-col gap-20">
+          <div className="flex flex-col gap-12 lg:gap-20">
             {DIVE_EXPERIENCES.map((exp, i) => (
               <FeatureImage
                 key={exp.title}
@@ -235,7 +235,7 @@ export default function Home() {
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
 
           {/* Section header */}
-          <div className="mb-16 max-w-2xl">
+          <div className="mb-10 max-w-2xl lg:mb-16">
             <h2 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
               Plan Your Trip.
             </h2>
@@ -246,7 +246,7 @@ export default function Home() {
           </div>
 
           {/* Cards */}
-          <div className="flex flex-col gap-16">
+          <div className="flex flex-col gap-12 lg:gap-16">
 
             <FeatureImage
               src="/images/optimized/saba-212.webp"
