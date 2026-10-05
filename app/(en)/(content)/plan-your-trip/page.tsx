@@ -100,7 +100,6 @@ export default function PlanYourTripPage() {
         alt="Aerial view of Saba showing the dramatic approach to Juancho Airport"
         title="Plan Your Trip to Saba"
         subtitle="Everything you need to know before you arrive"
-        objectPosition="center 42%"
       />
 
       {/* Introduction */}
