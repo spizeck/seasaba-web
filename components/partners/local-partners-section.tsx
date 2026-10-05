@@ -18,7 +18,7 @@ interface LocalPartnersSectionProps {
 
 export function LocalPartnersSection({ partners, subcategories }: LocalPartnersSectionProps) {
   return (
-    <section id={partnersAnchors.localPartners} className="mt-14 scroll-mt-32">
+    <section id={partnersAnchors.localPartners} className="mt-14 scroll-mt-40">
       <h2 className="text-xl font-semibold text-foreground">Local Partners</h2>
       <p className="mt-1 text-sm text-muted-foreground">
         Trusted restaurants and transportation we recommend while you are visiting Saba.
@@ -34,7 +34,7 @@ export function LocalPartnersSection({ partners, subcategories }: LocalPartnersS
           const subcategoryId = SUBCATEGORY_ANCHORS[subcategory];
 
           return (
-            <div key={subcategory} id={subcategoryId} className="scroll-mt-32">
+            <div key={subcategory} id={subcategoryId} className="scroll-mt-40">
               <h3 className="text-sm font-semibold uppercase tracking-wider text-primary">{subcategory}</h3>
               <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 {items.map((partner) => {

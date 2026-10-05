@@ -4,7 +4,10 @@ import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Pill } from "@/components/ui/pill";
 
-const HEADER_HEIGHT = 80;
+// Stuck position: the 80px floating-header chrome plus a 12px breathing
+// gap, so the secondary strip reads as a separate, subordinate layer
+// rather than a bar stacked edge-to-edge against the pill (issue #204).
+const STICKY_TOP_PX = 92;
 const SCROLL_END_DEBOUNCE_MS = 100;
 
 export type PageNavItem = {
@@ -71,7 +74,7 @@ export function PageSectionNav({ items, className, offset = 96 }: PageSectionNav
     const handleScroll = () => {
       if (!navRef.current) return;
       const rect = navRef.current.getBoundingClientRect();
-      setIsSticky(rect.top <= HEADER_HEIGHT);
+      setIsSticky(rect.top <= STICKY_TOP_PX);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -144,21 +147,25 @@ export function PageSectionNav({ items, className, offset = 96 }: PageSectionNav
   };
 
   return (
+    // Stuck state stays a light translucent wash — no border or shadow — so
+    // scrolled-under content is frosted out without the strip reading as a
+    // second bar competing with the floating primary shell (issue #204).
     <nav
       ref={navRef}
       aria-label="On this page"
       className={cn(
-        "sticky top-20 z-40 w-full py-2.5 transition-[background-color,border-color,box-shadow] duration-200 sm:py-4",
-        isSticky
-          ? "border-b border-border/40 bg-background/80 shadow-sm backdrop-blur-md"
-          : "bg-transparent",
+        "sticky top-[92px] z-40 w-full py-2.5 transition-[background-color] duration-200 motion-reduce:transition-none sm:py-4",
+        isSticky ? "bg-background/80 backdrop-blur-md" : "bg-transparent",
         className
       )}
     >
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        {/* Right-edge fade on the scrollable row (mobile only) makes a
+            partially visible next pill read as an intentional scroll
+            affordance rather than a clipped element. */}
         <div
           ref={containerRef}
-          className="scrollbar-hide flex flex-nowrap gap-2 overflow-x-auto pb-2 sm:flex-wrap sm:overflow-visible"
+          className="scrollbar-hide flex flex-nowrap gap-2 overflow-x-auto pb-2 [mask-image:linear-gradient(to_right,black_85%,transparent)] sm:flex-wrap sm:overflow-visible sm:[mask-image:none]"
         >
           {items.map(({ id, label }) => {
             const isActive = activeId === id;

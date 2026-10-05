@@ -13,7 +13,7 @@ interface TravelPartnersSectionProps {
 
 export function TravelPartnersSection({ partners }: TravelPartnersSectionProps) {
   return (
-    <section id={partnersAnchors.travelPartners} className="mt-16 scroll-mt-24">
+    <section id={partnersAnchors.travelPartners} className="mt-16 scroll-mt-40">
       <h2 className="text-xl font-semibold text-foreground">Travel & Tour Operators</h2>
       <p className="mt-1 text-sm text-muted-foreground">
         Sea Saba works with travel agencies, wholesalers, and group organizers to make planning dive vacations easy.

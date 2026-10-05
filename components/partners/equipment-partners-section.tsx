@@ -12,7 +12,7 @@ interface EquipmentPartnersSectionProps {
 
 export function EquipmentPartnersSection({ partners }: EquipmentPartnersSectionProps) {
   return (
-    <section id={partnersAnchors.equipmentPartners} className="mt-16 scroll-mt-32">
+    <section id={partnersAnchors.equipmentPartners} className="mt-16 scroll-mt-40">
       <h2 className="text-xl font-semibold text-foreground">Equipment Partners</h2>
       <p className="mt-1 text-sm text-muted-foreground">
         Manufacturers and brands we trust and use at Sea Saba.

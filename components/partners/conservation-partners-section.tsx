@@ -12,7 +12,7 @@ interface ConservationPartnersSectionProps {
 
 export function ConservationPartnersSection({ partners }: ConservationPartnersSectionProps) {
   return (
-    <section id={partnersAnchors.conservationPartners} className="mt-16 scroll-mt-32">
+    <section id={partnersAnchors.conservationPartners} className="mt-16 scroll-mt-40">
       <h2 className="text-xl font-semibold text-foreground">Conservation & Community</h2>
       <p className="mt-1 text-sm text-muted-foreground">
         Organizations protecting and promoting the extraordinary marine and terrestrial environments around Saba.

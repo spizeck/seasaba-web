@@ -889,7 +889,7 @@ export default function DivingPage() {
       </section>
 
       {/* Flying Back to St. Maarten After Diving */}
-      <section id={divingAnchors.altitudeFlying} className="mt-14 scroll-mt-24">
+      <section id={divingAnchors.altitudeFlying} className="mt-14 scroll-mt-40">
         <div className="flex items-center gap-3">
           <HelpCircle className="h-5 w-5 text-primary" />
           <h2 className="text-xl font-semibold text-foreground">Flying Back to St. Maarten After Diving</h2>
@@ -952,7 +952,7 @@ export default function DivingPage() {
       </section>
 
       {/* Technical Diving */}
-      <section id={divingAnchors.technicalDiving} className="mt-14 scroll-mt-24">
+      <section id={divingAnchors.technicalDiving} className="mt-14 scroll-mt-40">
         <div className="flex items-center gap-3">
           <Gauge className="h-5 w-5 text-primary" />
           <h2 className="text-xl font-semibold text-foreground">Technical Diving</h2>
@@ -1058,7 +1058,7 @@ export default function DivingPage() {
       </section>
 
       {/* Emergency Preparedness */}
-      <section className="mt-14 scroll-mt-24">
+      <section className="mt-14 scroll-mt-40">
         <h2 className="text-xl font-semibold text-foreground">Emergency Preparedness</h2>
         <div className="mt-5 grid gap-5 lg:grid-cols-2">
           <div className="rounded-lg border border-border/40 bg-muted/20 p-5">

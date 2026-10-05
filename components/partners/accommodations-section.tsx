@@ -145,7 +145,7 @@ export function AccommodationsSection({ accommodations }: AccommodationsSectionP
   const hasActiveFilters = activeFilters.size > 0 || searchQuery.trim().length > 0;
 
   return (
-    <section id={partnersAnchors.whereToStay} className="mt-14 scroll-mt-32">
+    <section id={partnersAnchors.whereToStay} className="mt-14 scroll-mt-40">
       <h2 className="text-xl font-semibold text-foreground">Where to Stay</h2>
       <p className="mt-1 text-sm text-muted-foreground">
         A curated selection of hotels, cottages, and villas on Saba.
