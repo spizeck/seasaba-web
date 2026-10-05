@@ -205,7 +205,10 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
       (key) => validationErrors[key]
     );
     if (firstInvalid) {
-      document.getElementById(REQUIRED_FIELD_IDS[firstInvalid])?.focus();
+      // Focus after React commits — otherwise the field is announced before
+      // its aria-invalid/aria-describedby attributes reach the DOM.
+      const id = REQUIRED_FIELD_IDS[firstInvalid];
+      requestAnimationFrame(() => document.getElementById(id)?.focus());
       return false;
     }
     return true;

@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { ContactForm } from "@/components/contact-form";
 import { trackEvent, trackLinkClick } from "@/lib/analytics";
@@ -342,13 +342,18 @@ describe("required semantics and error recovery (#218)", () => {
   it("moves focus to the first invalid field on a failed submission", async () => {
     render(<ContactForm />);
     await userEvent.click(emailButton());
-    expect(document.activeElement).toBe(document.getElementById("name"));
+    // Focus is deferred a frame so aria-invalid/aria-describedby commit first.
+    await waitFor(() =>
+      expect(document.activeElement).toBe(document.getElementById("name"))
+    );
   });
 
   it("focuses the next invalid field when earlier ones are already valid", async () => {
     render(<ContactForm />);
     await userEvent.type(screen.getByRole("textbox", { name: /^Name/ }), "Alex Diver");
     await userEvent.click(emailButton());
-    expect(document.activeElement).toBe(document.getElementById("email"));
+    await waitFor(() =>
+      expect(document.activeElement).toBe(document.getElementById("email"))
+    );
   });
 });

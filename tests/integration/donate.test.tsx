@@ -1,7 +1,7 @@
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { track } from "@vercel/analytics";
 import DonatePage, { metadata } from "@/app/(en)/(content)/donate/page";
@@ -922,14 +922,19 @@ describe("support request form", () => {
   it("moves focus to the first invalid field on a failed submission", async () => {
     render(<SupportRequestForm />);
     await userEvent.click(screen.getByRole("button", { name: "Send request" }));
-    expect(document.activeElement).toBe(document.getElementById("sr-name"));
+    // Focus is deferred a frame so aria-invalid/aria-describedby commit first.
+    await waitFor(() =>
+      expect(document.activeElement).toBe(document.getElementById("sr-name"))
+    );
   });
 
   it("focuses the first invalid field in visual order, not error order", async () => {
     render(<SupportRequestForm />);
     await userEvent.type(screen.getByRole("textbox", { name: /your name/i }), "Sentinel Person");
     await userEvent.click(screen.getByRole("button", { name: "Send request" }));
-    expect(document.activeElement).toBe(document.getElementById("sr-email"));
+    await waitFor(() =>
+      expect(document.activeElement).toBe(document.getElementById("sr-email"))
+    );
   });
 
   it("lands on the support-type group when only the checkbox group is missing", { timeout: 20000 }, async () => {
@@ -940,7 +945,9 @@ describe("support request form", () => {
     await userEvent.click(screen.getByRole("checkbox", { name: /goods or supplies/i }));
     await userEvent.click(screen.getByRole("button", { name: "Send request" }));
     // Focus lands on the group's first checkbox — a fieldset can't take focus.
-    expect(document.activeElement).toBe(document.getElementById("sr-type-financial"));
+    await waitFor(() =>
+      expect(document.activeElement).toBe(document.getElementById("sr-type-financial"))
+    );
     expect(fetch).not.toHaveBeenCalled();
   });
 

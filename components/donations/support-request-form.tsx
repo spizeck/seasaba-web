@@ -185,7 +185,10 @@ export function SupportRequestForm() {
       (key) => validationErrors[key]
     );
     if (firstInvalid) {
-      document.getElementById(FIELD_IDS[firstInvalid])?.focus();
+      // Focus after React commits — otherwise the control is announced
+      // before its aria-invalid/aria-describedby attributes reach the DOM.
+      const id = FIELD_IDS[firstInvalid];
+      requestAnimationFrame(() => document.getElementById(id)?.focus());
       return false;
     }
     return true;
@@ -781,13 +784,16 @@ export function SupportRequestForm() {
             {submitState.status === "submitting" ? "Sending..." : "Send request"}
           </Button>
           {/* Pending announcement — the disabled button itself isn't
-              announced, so this polite live text carries the state. Deliberately
-              not role="status": that role belongs to the success panel. */}
-          {submitState.status === "submitting" && (
-            <p aria-live="polite" className="sr-only">
-              Sending your request, please wait.
-            </p>
-          )}
+              announced, so this polite live text carries the state. The region
+              stays mounted empty so the text change is announced; inserting a
+              live region with content already inside is not reliably spoken.
+              Deliberately not role="status": that role belongs to the success
+              panel. */}
+          <p aria-live="polite" className="sr-only">
+            {submitState.status === "submitting"
+              ? "Sending your request, please wait."
+              : ""}
+          </p>
         </div>
 
         <p className="text-xs text-muted-foreground">
