@@ -28,10 +28,10 @@ export default function PrivacyPage() {
       <div className="mt-10 space-y-10">
         <section>
           <h2 className="text-xl font-semibold text-foreground">Information We Collect</h2>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-3 text-base leading-relaxed text-muted-foreground">
             When you contact Sea Saba, make a reservation, or use our website, we may collect:
           </p>
-          <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-relaxed text-muted-foreground">
+          <ul className="mt-3 list-disc space-y-2 pl-5 text-base leading-relaxed text-muted-foreground">
             <li>Name</li>
             <li>Email address</li>
             <li>Phone and WhatsApp number</li>
@@ -48,10 +48,10 @@ export default function PrivacyPage() {
 
         <section>
           <h2 className="text-xl font-semibold text-foreground">How We Use Your Information</h2>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-3 text-base leading-relaxed text-muted-foreground">
             We use your information to:
           </p>
-          <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-relaxed text-muted-foreground">
+          <ul className="mt-3 list-disc space-y-2 pl-5 text-base leading-relaxed text-muted-foreground">
             <li>Respond to inquiries</li>
             <li>Evaluate and manage donation, sponsorship, and community-support requests</li>
             <li>Create and manage reservations</li>
@@ -64,18 +64,18 @@ export default function PrivacyPage() {
             <li>Perform analytics</li>
             <li>Measure and attribute advertising, subject to cookie consent where applicable</li>
           </ul>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-3 text-base leading-relaxed text-muted-foreground">
             Sea Saba does not sell your personal information.
           </p>
         </section>
 
         <section>
           <h2 className="text-xl font-semibold text-foreground">Booking Systems and Third Parties</h2>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-3 text-base leading-relaxed text-muted-foreground">
             Sea Saba uses third-party service providers to help operate the business. Depending on
             how you interact with us, these may include:
           </p>
-          <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-relaxed text-muted-foreground">
+          <ul className="mt-3 list-disc space-y-2 pl-5 text-base leading-relaxed text-muted-foreground">
             <li>Checkfront (reservations and booking management)</li>
             <li>Payment processors used in connection with reservations</li>
             <li>Respond.io (website chat and customer messaging, including WhatsApp)</li>
@@ -86,7 +86,7 @@ export default function PrivacyPage() {
             <li>Cookie and consent-management providers</li>
             <li>Social media platforms</li>
           </ul>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-3 text-base leading-relaxed text-muted-foreground">
             Information necessary to complete and manage a booking may be processed by Checkfront and
             applicable payment providers under their own privacy policies and legal obligations.
             These and other third-party services may collect information according to their own
@@ -96,21 +96,21 @@ export default function PrivacyPage() {
 
         <section>
           <h2 className="text-xl font-semibold text-foreground">Cookies and Analytics</h2>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-3 text-base leading-relaxed text-muted-foreground">
             Depending on the consent choices you make, our website may use cookies and similar
             technologies to:
           </p>
-          <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-relaxed text-muted-foreground">
+          <ul className="mt-3 list-disc space-y-2 pl-5 text-base leading-relaxed text-muted-foreground">
             <li>Operate the website</li>
             <li>Measure traffic and usage</li>
             <li>Improve the website</li>
             <li>Measure advertising effectiveness</li>
             <li>Attribute visits, inquiries, and bookings to advertising campaigns</li>
           </ul>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-3 text-base leading-relaxed text-muted-foreground">
             Depending on the technology and your consent choices, information collected may include:
           </p>
-          <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-relaxed text-muted-foreground">
+          <ul className="mt-3 list-disc space-y-2 pl-5 text-base leading-relaxed text-muted-foreground">
             <li>Pages visited</li>
             <li>Device and browser information</li>
             <li>Approximate location</li>
@@ -118,7 +118,7 @@ export default function PrivacyPage() {
             <li>Website interactions</li>
             <li>Advertising and campaign attribution information</li>
           </ul>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-3 text-base leading-relaxed text-muted-foreground">
             For a full list of cookies used on this site, the categories they belong to, and how
             to change your consent preferences, see our{" "}
             <Link href="/cookie-policy" className="underline hover:text-foreground">
@@ -130,15 +130,15 @@ export default function PrivacyPage() {
 
         <section>
           <h2 className="text-xl font-semibold text-foreground">Email, Chat, and WhatsApp Communication</h2>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-3 text-base leading-relaxed text-muted-foreground">
             If you contact Sea Saba through email, WhatsApp, website chat, or website forms, we may retain those communications to provide customer service and assist with future inquiries.
           </p>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-3 text-base leading-relaxed text-muted-foreground">
             Our website contact form does not transmit your message to us directly. It opens a
             pre-filled email in your own email application, and the message is sent from your
             email account when you choose to send it.
           </p>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-3 text-base leading-relaxed text-muted-foreground">
             The Support Saba request form on our{" "}
             <Link href="/donate" className="underline hover:text-foreground">
               Support Saba
@@ -148,7 +148,7 @@ export default function PrivacyPage() {
             request, follow up with you, and track it through our support program. You receive
             a reference for your request when it is received.
           </p>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-3 text-base leading-relaxed text-muted-foreground">
             The website chat widget is provided by Respond.io. When you open the chat and submit the
             pre-chat form or send messages, the information you enter — such as your first name,
             email address, and message contents — is transmitted directly to Respond.io and processed
@@ -159,41 +159,41 @@ export default function PrivacyPage() {
 
         <section>
           <h2 className="text-xl font-semibold text-foreground">Marketing Communications</h2>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-3 text-base leading-relaxed text-muted-foreground">
             Sea Saba does not send marketing emails without permission.
           </p>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-3 text-base leading-relaxed text-muted-foreground">
             You may contact us at any time to request that we stop future communications.
           </p>
         </section>
 
         <section>
           <h2 className="text-xl font-semibold text-foreground">Data Security</h2>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-3 text-base leading-relaxed text-muted-foreground">
             We take reasonable steps to protect your information. However, no online transmission or storage system can guarantee absolute security.
           </p>
         </section>
 
         <section>
           <h2 className="text-xl font-semibold text-foreground">Third-Party Links</h2>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-3 text-base leading-relaxed text-muted-foreground">
             Our website may contain links to external websites. Sea Saba is not responsible for the privacy practices or content of those sites.
           </p>
         </section>
 
         <section>
           <h2 className="text-xl font-semibold text-foreground">Children&apos;s Privacy</h2>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-3 text-base leading-relaxed text-muted-foreground">
             Sea Saba does not knowingly collect personal information from children without parental consent.
           </p>
         </section>
 
         <section>
           <h2 className="text-xl font-semibold text-foreground">Your Rights</h2>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-3 text-base leading-relaxed text-muted-foreground">
             Subject to applicable law, you may request:
           </p>
-          <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-relaxed text-muted-foreground">
+          <ul className="mt-3 list-disc space-y-2 pl-5 text-base leading-relaxed text-muted-foreground">
             <li>Access to your personal information</li>
             <li>Correction of inaccurate information</li>
             <li>Deletion of personal information where legally permitted</li>
@@ -201,7 +201,7 @@ export default function PrivacyPage() {
             <li>Withdrawal of marketing consent</li>
             <li>Information about how your personal data is used</li>
           </ul>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-3 text-base leading-relaxed text-muted-foreground">
             Requests may be made by contacting us directly at{" "}
             <TrackedContactLink
               href={`mailto:${CONTACT.email}`}
@@ -217,7 +217,7 @@ export default function PrivacyPage() {
 
         <section>
           <h2 className="text-xl font-semibold text-foreground">Contact Information</h2>
-          <div className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          <div className="mt-3 text-base leading-relaxed text-muted-foreground">
             <p className="font-medium text-foreground">Sea Saba Dive Center</p>
             {CONTACT.address.displayLines.map((line) => (
               <p key={line}>{line}</p>

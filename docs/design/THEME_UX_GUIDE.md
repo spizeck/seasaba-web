@@ -122,19 +122,20 @@ The brand red should feel like deliberate punctuation, not a decorative theme co
 
 ## Typography
 
-> **Implementation divergence (Issue #112 audit, Sept 2026):** the font
-> *families* below are now implemented (#115): Open Sans is the rendered
-> body/UI font and Jost is the rendered heading font, both loaded via
-> `next/font`. The *scale* below still does not match the site — component
-> `text-*` utilities produce smaller sizes than declared. See
-> `docs/design/TYPOGRAPHY_AUDIT.md` for the measured inventory and the
-> proposed canonical system, which is not yet approved.
+> **Canonical (Issue #112, implemented):** the scale below is the shipped
+> system as measured in the browser — documentation and implementation
+> agree. `docs/design/TYPOGRAPHY_AUDIT.md` records the full audit and the
+> history of how this system arrived.
 
 ### Font Stack
-- **Headings:** Jost (webfont, deterministic; `"Century Gothic"` then
-  `sans-serif` as fallback) — replaces the former local-font Century Gothic
-  stack
-- **Body / Copy:** Open Sans
+- **Headings:** **Jost** — loaded via `next/font/google` (`lib/fonts.ts`),
+  `display: swap` with a size-adjusted fallback face, so rendering is
+  deterministic on every device with no meaningful CLS. Jost is the OFL
+  geometric-sans stand-in for Century Gothic; `"Century Gothic"` remains in
+  the stack only as a last-resort local fallback if the webfont is blocked.
+- **Body / Copy / UI:** **Open Sans** — loaded via `next/font/google`.
+- Do not add font files or stacks without checking licensing; Century Gothic
+  itself is a paid Monotype webfont and must not be self-hosted.
 
 ### Heading Style
 - Confident and spacious
@@ -153,34 +154,41 @@ The brand red should feel like deliberate punctuation, not a decorative theme co
 - Headlines should feel intentional and restrained, not loud
 
 ### Callout Boxes
-- Use **Open Sans Medium** (`font-sans font-medium`) for all text inside inline callout boxes (warning, info, upsell)
-- Title: `font-bold`, body: `font-medium`
+- Title: `font-semibold` at body-or-larger size (`text-base`+), body:
+  `text-sm font-medium`
 - Inverse white text on brand-colored backgrounds (`bg-destructive` for warnings, `bg-primary` for positive/upsell)
 
-### Typographic Scale
+### Canonical Typographic Scale (rendered)
 
-H1  
-48–56px desktop  
-36–40px mobile
-
-H2  
-32–36px
-
-H3  
-24–28px
-
-Body  
-16–18px
-
-Small text  
-14px
+| Role | Mobile | Desktop | Weight | Implementation |
+|---|---|---|---|---|
+| Display (homepage hero H1) | 30px | 60px | 400 italic | `text-3xl sm:text-5xl lg:text-6xl` |
+| Page H1 (`PageHero`) | 30px | 48px | 700 | `text-3xl sm:text-4xl lg:text-5xl` |
+| Page H1 (utility pages) | 30px | 36px | 700 | `text-3xl sm:text-4xl` |
+| Section H2 (homepage) | 24px | 30px | 600 | `text-2xl sm:text-3xl` |
+| Content H2 (`prose` pages) | 20px | 20px | 600 | `text-xl` |
+| Card / callout title (H3) | 16–18px | 16–18px | 600 | `text-base` / `text-lg` |
+| Micro-label (H3/H4/badges) | 12–14px | 12–14px | 600 | `text-xs`/`text-sm`, often uppercase |
+| Lede / intro | 16px | 18px | 400 | `text-base sm:text-lg` |
+| **Body** | **16px** | **16px** | 400 | `text-base`; also `body` base size |
+| Supporting (card copy, spec lists, dense sections) | 14px | 14px | 400 | `text-sm` — deliberate compact style |
+| Caption / meta / fine print | 12px | 12px | 400 | `text-xs` |
+| Nav link | 16px (drawer) | 14px (bar) | 500 | |
+| Button | 14–16px | 14–16px | 500–600 | per `Button` size variant |
+| Form label | 14px | 14px | 500 | |
+| Form input / select | **16px** | 14px | 400 | 16px below `lg` prevents iOS Safari focus zoom — do not reduce |
 
 Line height:
-- 1.4–1.6 for body copy
-- 1.15–1.3 for headings
+- `leading-relaxed` (1.625) for prose; ~1.2–1.3 for headings (`leading-tight`
+  / `--leading-heading`)
 
 Maximum readable line width:
-- 65–80 characters
+- 65–80 characters; content-page lede paragraphs are capped at `max-w-3xl`
+  (~75ch) by the shared `(content)` layout
+
+Where new text is added, prefer the roles above: `text-base` for primary
+prose, `text-sm` for supporting detail inside cards/specs/badges,
+`text-xs` for captions and metadata.
 
 Avoid large blocks of dense text.
 

@@ -1,11 +1,9 @@
 # Typography Audit — Issue #112
 
-> **Status: Audit findings + recommendations, partially implemented.**
-> Sections 1–7 record the audit as measured on base SHA `f5425a3`
-> (September 2026). The **font-delivery findings (§3.1, §3.2) were resolved
-> in #115** — see §11 for what is now true. The **scale findings (§5–§7)
-> remain open** pending the canonical-scale implementation; Section 8's
-> proposal is still unapproved.
+> **Status: Implemented.** Sections 1–7 record the audit as measured on base
+> SHA `f5425a3` (September 2026). Font delivery was resolved in #115 (§11);
+> the canonical scale was resolved in the #112 follow-up — see §12 for what
+> shipped and what was deliberately left alone.
 >
 > Measurements taken with `scripts/audit-typography.mjs` against a
 > production build (`next build` + `next start`) in headless Chromium on
@@ -525,3 +523,47 @@ in §5–§7 are unchanged and still open.
 - Jost has slightly different metrics than the fonts headings previously
   fell back to on non-Office platforms; wrapping shifts are expected and
   were reviewed (no breakage found).
+
+---
+
+## 12. Canonical scale implementation (#112 follow-up)
+
+Decisions taken and shipped:
+
+- **Heading font: Jost (Option B, ratified).** Already loaded via
+  `next/font` in #115; deterministic on all platforms. `"Century Gothic"`
+  stays in `--font-heading` only as a local-font fallback. No proprietary
+  font files added; no new payload.
+- **Body size: 16px canonical.** `--font-size-body` changed from 18px to
+  1rem so the base `body` rule matches what components actually render —
+  the old 18px value only leaked into un-classed text outside `.prose`
+  containers and contradicted every real paragraph. Long-form ledes remain
+  16→18px (`text-base sm:text-lg`).
+- **Legal pages moved to body size.** `/privacy`, `/terms`,
+  `/cookie-policy` body prose and lists: `text-sm` (14px) → `text-base`
+  (16px). These are pure long-form reading pages; 14px was copy-paste drift
+  (§7). Meta lines ("Last updated") and supporting notices stay 14px.
+- **Em-compounding headings normalized.** Bare h3s that computed to 17.5px
+  (`/visiting-yachts` callouts) or ~20px (`/plan-your-trip` Required/Optional
+  cards, `/about` timeline) received explicit role sizes (`text-base` /
+  `text-lg`), matching same-page siblings.
+- **Structured-info pages unchanged.** `/diving`, `/plan-your-trip`,
+  `/visiting-yachts` card/spec/list copy stays `text-sm` — a deliberate
+  dense supporting-text role, documented as such in THEME_UX_GUIDE.md.
+  A wholesale 14→16 sweep would be ~160 edits churning card layouts for
+  little gain.
+- **Inputs**: already 16px below `lg` (#220 iOS-zoom fix) — preserved.
+- **iOS zoom regression check:** form controls render 16px at mobile widths.
+
+Deliberately deferred / left open:
+
+- The `.prose` plugin still runs its own parallel scale; normalizing or
+  removing it is a larger change than this pass warranted. Sized elements
+  (the vast majority) are unaffected.
+- Homepage H3 spread (12–30px across cards vs feature titles) — each usage
+  was judged role-appropriate; revisit only if a visual problem is observed.
+- `/dive-log` 14px H2s and `/book` 16px sidebar H2 — UI panel labels, not
+  document headings.
+- A shared `.text-lede`/`text-supporting` utility layer — the existing
+  utility vocabulary already expresses the roles; introducing an
+  abstraction would churn without changing output.

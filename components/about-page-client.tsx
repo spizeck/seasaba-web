@@ -407,7 +407,7 @@ export function TimelineItem({ year, title, description, isLast }: { year: strin
       
       {/* Content */}
       <div className="pb-8">
-        <h3 className="font-semibold text-foreground">{title}</h3>
+        <h3 className="text-lg font-semibold text-foreground">{title}</h3>
         <p className="mt-1 text-sm text-muted-foreground leading-relaxed">{description}</p>
       </div>
     </div>

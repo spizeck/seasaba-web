@@ -558,7 +558,7 @@ export default function PlanYourTripPage() {
 
         <div className="mt-6 grid gap-6 sm:grid-cols-2">
           <div className="rounded-lg border border-border/60 bg-card p-6">
-            <h3 className="font-semibold text-foreground">Required</h3>
+            <h3 className="text-lg font-semibold text-foreground">Required</h3>
             <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
               <li className="flex items-start gap-2">
                 <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
@@ -587,7 +587,7 @@ export default function PlanYourTripPage() {
             </ul>
           </div>
           <div className="rounded-lg border border-border/60 bg-card p-6">
-            <h3 className="font-semibold text-foreground">Optional</h3>
+            <h3 className="text-lg font-semibold text-foreground">Optional</h3>
             <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
               <li className="flex items-start gap-2">
                 <Sun className="mt-0.5 h-4 w-4 shrink-0 text-primary" />

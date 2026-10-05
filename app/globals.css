@@ -8,16 +8,24 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  /* Fonts — loaded via next/font in lib/fonts.ts (both locale layouts).
+     Jost is the rendered heading face: the free geometric-sans stand-in for
+     Century Gothic. "Century Gothic" stays in the stack only as a local
+     fallback for devices where the webfont is blocked. */
   --font-sans: var(--font-open-sans), "Open Sans", sans-serif;
   --font-heading: var(--font-jost), "Century Gothic", sans-serif;
   --font-mono: ui-monospace, "SFMono-Regular", monospace;
   
-  /* Typography Scale - docs/design/THEME_UX_GUIDE.md */
-  --font-size-h1-mobile: 2.25rem; /* 36px */
-  --font-size-h1-desktop: 3.5rem; /* 56px */
-  --font-size-h2: 2rem; /* 32px */
-  --font-size-h3: 1.75rem; /* 28px */
-  --font-size-body: 1.125rem; /* 18px */
+  /* Typography fallback scale — docs/design/THEME_UX_GUIDE.md.
+     These tokens size bare h1/h2/h3/body elements only; real component
+     typography is set by Tailwind utilities (see the guide's rendered
+     scale table). Values match the canonical rendered sizes so fallback
+     output still conforms to the system. */
+  --font-size-h1-mobile: 1.875rem; /* 30px */
+  --font-size-h1-desktop: 3rem; /* 48px */
+  --font-size-h2: 1.5rem; /* 24px */
+  --font-size-h3: 1.25rem; /* 20px */
+  --font-size-body: 1rem; /* 16px */
   --font-size-small: 0.875rem; /* 14px */
   
   /* Line Heights - docs/design/THEME_UX_GUIDE.md */
