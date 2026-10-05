@@ -1,7 +1,7 @@
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { track } from "@vercel/analytics";
 import DonatePage, { metadata } from "@/app/(en)/(content)/donate/page";
@@ -895,5 +895,83 @@ describe("support request form", () => {
         expect(payload, `analytics leaked ${pii}`).not.toContain(pii);
       }
     }
+  });
+
+  it("marks required controls so assistive tech announces them", async () => {
+    render(<SupportRequestForm />);
+    expect(screen.getByRole("textbox", { name: /your name/i })).toBeRequired();
+    expect(screen.getByRole("textbox", { name: /^email/i })).toBeRequired();
+    expect(screen.getByRole("combobox", { name: /category/i })).toBeRequired();
+    expect(screen.getByRole("textbox", { name: /what are you asking/i })).toBeRequired();
+    expect(screen.getByRole("textbox", { name: /about the project/i })).toBeRequired();
+    expect(screen.getByRole("textbox", { name: /who benefits/i })).toBeRequired();
+    expect(screen.getByRole("textbox", { name: /when is it happening/i })).toBeRequired();
+    expect(screen.getByRole("textbox", { name: /contribution be used/i })).toBeRequired();
+    expect(screen.getByRole("checkbox", { name: /information above is accurate/i })).toBeRequired();
+    // Optional fields stay optional.
+    expect(screen.getByRole("textbox", { name: /organization, group, or project/i })).not.toBeRequired();
+    expect(screen.getByRole("textbox", { name: /phone or whatsapp/i })).not.toBeRequired();
+    expect(screen.getByRole("textbox", { name: /link to more info/i })).not.toBeRequired();
+    // Amount is required only while a financial request is selected.
+    const amount = screen.getByRole("textbox", { name: /estimated amount or value/i });
+    expect(amount).not.toBeRequired();
+    await userEvent.click(screen.getByRole("checkbox", { name: /financial support or sponsorship/i }));
+    expect(amount).toBeRequired();
+  });
+
+  it("moves focus to the first invalid field on a failed submission", async () => {
+    render(<SupportRequestForm />);
+    await userEvent.click(screen.getByRole("button", { name: "Send request" }));
+    // Focus is deferred a frame so aria-invalid/aria-describedby commit first.
+    await waitFor(() =>
+      expect(document.activeElement).toBe(document.getElementById("sr-name"))
+    );
+  });
+
+  it("focuses the first invalid field in visual order, not error order", async () => {
+    render(<SupportRequestForm />);
+    await userEvent.type(screen.getByRole("textbox", { name: /your name/i }), "Sentinel Person");
+    await userEvent.click(screen.getByRole("button", { name: "Send request" }));
+    await waitFor(() =>
+      expect(document.activeElement).toBe(document.getElementById("sr-email"))
+    );
+  });
+
+  it("lands on the support-type group when only the checkbox group is missing", { timeout: 20000 }, async () => {
+    render(<SupportRequestForm />);
+    await fillValidRequest();
+    // Undo the two support-type selections so only the group error remains.
+    await userEvent.click(screen.getByRole("checkbox", { name: /financial support or sponsorship/i }));
+    await userEvent.click(screen.getByRole("checkbox", { name: /goods or supplies/i }));
+    await userEvent.click(screen.getByRole("button", { name: "Send request" }));
+    // Focus lands on the group's first checkbox — a fieldset can't take focus.
+    await waitFor(() =>
+      expect(document.activeElement).toBe(document.getElementById("sr-type-financial"))
+    );
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it("announces the pending state while the request is in flight", { timeout: 20000 }, async () => {
+    let resolveFetch: ((r: Response) => void) | undefined;
+    vi.mocked(fetch).mockImplementation(
+      () => new Promise<Response>((resolve) => { resolveFetch = resolve; })
+    );
+    render(<SupportRequestForm />);
+    await fillValidRequest();
+    await userEvent.click(screen.getByRole("button", { name: "Send request" }));
+
+    // Immediate acknowledgement: disabled button text changes and a polite
+    // live region announces the in-flight state to screen readers.
+    expect(await screen.findByText("Sending your request, please wait.")).toBeInTheDocument();
+    const sendingButton = screen.getByRole("button", { name: "Sending..." });
+    expect(sendingButton).toBeDisabled();
+    // A second activation during the pending window cannot fire another
+    // request — fireEvent reaches the handler even on the disabled button,
+    // so this exercises the in-flight guard itself.
+    fireEvent.click(sendingButton);
+    expect(fetch).toHaveBeenCalledTimes(1);
+
+    resolveFetch?.(boundarySuccess());
+    await screen.findByRole("status");
   });
 });

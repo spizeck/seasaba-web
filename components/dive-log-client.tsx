@@ -376,6 +376,7 @@ export function DiveLogClient() {
                     unitSystem === "metric" ? "bg-primary text-white" : "text-muted-foreground hover:text-foreground"
                   }`}
                   aria-label="Metric units"
+                  aria-pressed={unitSystem === "metric"}
                 >
                   Metric
                 </button>
@@ -385,6 +386,7 @@ export function DiveLogClient() {
                     unitSystem === "imperial" ? "bg-primary text-white" : "text-muted-foreground hover:text-foreground"
                   }`}
                   aria-label="Imperial units"
+                  aria-pressed={unitSystem === "imperial"}
                 >
                   Imperial
                 </button>
@@ -411,6 +413,8 @@ export function DiveLogClient() {
               </div>
               <button
                 onClick={() => setFiltersOpen((v) => !v)}
+                aria-expanded={filtersOpen}
+                aria-controls="dive-log-filters"
                 className="inline-flex items-center gap-1.5 rounded-md border border-border/60 px-3 py-1.5 text-xs font-medium text-muted-foreground pressable hover:border-primary/40 hover:text-primary"
               >
                 <SlidersHorizontal className="h-3.5 w-3.5" />
@@ -426,7 +430,7 @@ export function DiveLogClient() {
 
           {/* Filter panel */}
           {filtersOpen && (
-            <div className="mt-3 rounded-lg border border-border/40 bg-muted/20 p-4">
+            <div id="dive-log-filters" className="mt-3 rounded-lg border border-border/40 bg-muted/20 p-4">
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <SelectField label="Dive Site" value={filters.site} options={ALL_SITES} onChange={(v) => { setFilters((f) => ({ ...f, site: v })); resetPage(); }} />
                 <SelectField label="Boat" value={filters.boat} options={ALL_BOATS} onChange={(v) => { setFilters((f) => ({ ...f, boat: v })); resetPage(); }} />

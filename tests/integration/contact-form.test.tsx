@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { ContactForm } from "@/components/contact-form";
 import { trackEvent, trackLinkClick } from "@/lib/analytics";
@@ -305,5 +305,55 @@ describe("progressive inquiry fields", () => {
     await userEvent.type(screen.getByRole("textbox", { name: /^Message/ }), "Two seats Friday?");
     await userEvent.click(emailButton());
     expect(lastMailto().body).toContain("Preferred contact method: Email");
+  });
+});
+
+describe("required semantics and error recovery (#218)", () => {
+  it("marks the required controls so assistive tech announces them", () => {
+    render(<ContactForm />);
+    expect(screen.getByRole("textbox", { name: /^Name/ })).toBeRequired();
+    expect(screen.getByRole("textbox", { name: /^Email/ })).toBeRequired();
+    expect(screen.getByRole("combobox")).toBeRequired();
+    expect(screen.getByRole("textbox", { name: /^Message/ })).toBeRequired();
+    // The visual asterisk must not leak "star" into the accessible name —
+    // the required attribute already carries that meaning.
+    for (const el of [
+      screen.getByRole("textbox", { name: /^Name/ }),
+      screen.getByRole("textbox", { name: /^Email/ }),
+      screen.getByRole("combobox"),
+      screen.getByRole("textbox", { name: /^Message/ }),
+    ]) {
+      expect(el).not.toHaveAccessibleName(/required|\*/);
+    }
+    // Contextual fields stay optional.
+    expect(screen.getByRole("textbox", { name: /^Name/ })).not.toHaveAccessibleName(/optional/i);
+  });
+
+  it("clears a shown error as the visitor corrects the field — no blur needed", async () => {
+    render(<ContactForm />);
+    await userEvent.click(emailButton());
+    expect(screen.getByText("Please enter your name.")).toBeVisible();
+    // Typing the fix immediately drops the error while focus stays put.
+    await userEvent.type(screen.getByRole("textbox", { name: /^Name/ }), "Alex Diver");
+    expect(screen.queryByText("Please enter your name.")).toBeNull();
+    expect(screen.getByRole("textbox", { name: /^Name/ })).toHaveAttribute("aria-invalid", "false");
+  });
+
+  it("moves focus to the first invalid field on a failed submission", async () => {
+    render(<ContactForm />);
+    await userEvent.click(emailButton());
+    // Focus is deferred a frame so aria-invalid/aria-describedby commit first.
+    await waitFor(() =>
+      expect(document.activeElement).toBe(document.getElementById("name"))
+    );
+  });
+
+  it("focuses the next invalid field when earlier ones are already valid", async () => {
+    render(<ContactForm />);
+    await userEvent.type(screen.getByRole("textbox", { name: /^Name/ }), "Alex Diver");
+    await userEvent.click(emailButton());
+    await waitFor(() =>
+      expect(document.activeElement).toBe(document.getElementById("email"))
+    );
   });
 });

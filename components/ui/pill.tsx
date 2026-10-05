@@ -4,6 +4,12 @@ import * as React from "react";
 type PillProps = {
   children: React.ReactNode;
   active?: boolean;
+  /**
+   * Toggle/filter semantics: the pill switches something on or off, so the
+   * active state is announced as aria-pressed. Without it, active pills
+   * carry aria-current for "current item in a set" (e.g. section nav).
+   */
+  toggle?: boolean;
   className?: string;
 } & React.ButtonHTMLAttributes<HTMLButtonElement>;
 
@@ -16,11 +22,12 @@ type PillProps = {
  * Inactive state: light background with subtle border.
  */
 export const Pill = React.forwardRef<HTMLButtonElement, PillProps>(
-  ({ children, active = false, className, ...props }, ref) => {
+  ({ children, active = false, toggle = false, className, ...props }, ref) => {
     return (
       <button
         ref={ref}
-        aria-current={active ? "true" : undefined}
+        aria-pressed={toggle ? active : undefined}
+        aria-current={!toggle && active ? "true" : undefined}
         className={cn(
           "inline-flex shrink-0 items-center justify-center rounded-full border px-3 py-1 text-xs font-medium pressable focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50",
           active

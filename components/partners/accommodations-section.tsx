@@ -152,14 +152,20 @@ export function AccommodationsSection({ accommodations }: AccommodationsSectionP
       </p>
 
       {/* Search */}
-      <div className="relative mt-6">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+      <div role="search" className="relative mt-6">
+        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
         <input
-          type="text"
+          id="accommodation-search"
+          name="accommodation-search"
+          type="search"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search accommodations..."
-          className="w-full rounded-md border border-border/60 bg-background py-2 pl-9 pr-9 text-sm text-foreground transition-colors focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30"
+          aria-label="Search accommodations"
+          autoComplete="off"
+          enterKeyHint="search"
+          spellCheck={false}
+          className="w-full rounded-md border border-border/60 bg-background py-2 pl-9 pr-9 text-base text-foreground transition-colors focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30 lg:text-sm"
         />
         {searchQuery && (
           <button
@@ -293,6 +299,7 @@ function FilterGroup({
           <Pill
             key={key}
             active={activeFilters.has(key)}
+            toggle
             onClick={() => onToggle(key)}
           >
             {filterLabel(key)}
