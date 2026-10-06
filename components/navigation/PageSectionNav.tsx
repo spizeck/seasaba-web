@@ -4,7 +4,11 @@ import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Pill } from "@/components/ui/pill";
 
-const HEADER_HEIGHT = 64;
+// Stuck position: the 72px floating-header chrome (16px pad + 56px compact
+// bar) plus a 12px breathing gap, so the secondary strip reads as a
+// separate, subordinate layer rather than a bar stacked edge-to-edge
+// against the pill (issue #204).
+const STICKY_TOP_PX = 84;
 const SCROLL_END_DEBOUNCE_MS = 100;
 
 export type PageNavItem = {
@@ -22,6 +26,7 @@ type PageSectionNavProps = {
 export function PageSectionNav({ items, className, offset = 96 }: PageSectionNavProps) {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [isSticky, setIsSticky] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
   const observerRef = useRef<IntersectionObserver | null>(null);
   const navRef = useRef<HTMLElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -71,12 +76,30 @@ export function PageSectionNav({ items, className, offset = 96 }: PageSectionNav
     const handleScroll = () => {
       if (!navRef.current) return;
       const rect = navRef.current.getBoundingClientRect();
-      setIsSticky(rect.top <= HEADER_HEIGHT);
+      setIsSticky(rect.top <= STICKY_TOP_PX);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Single-row strip at every width: overflow scrolls horizontally inside
+  // the nav, so the right-edge fade only makes sense while content actually
+  // extends past the visible edge — and lifts when scrolled to the end.
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const update = () =>
+      setCanScrollRight(el.scrollWidth - el.scrollLeft - el.clientWidth > 4);
+    update();
+    el.addEventListener("scroll", update, { passive: true });
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => {
+      el.removeEventListener("scroll", update);
+      ro.disconnect();
+    };
   }, []);
 
   // Keep the active pill visible in the horizontal nav container.
@@ -144,21 +167,32 @@ export function PageSectionNav({ items, className, offset = 96 }: PageSectionNav
   };
 
   return (
+    // Stuck state stays a light translucent wash — no border or shadow — so
+    // scrolled-under content is frosted out without the strip reading as a
+    // second bar competing with the floating primary shell (issue #204).
     <nav
       ref={navRef}
       aria-label="On this page"
       className={cn(
-        "sticky top-16 z-40 w-full py-2.5 transition-[background-color,border-color,box-shadow] duration-200 sm:py-4",
-        isSticky
-          ? "border-b border-border/40 bg-background/80 shadow-sm backdrop-blur-md"
-          : "bg-transparent",
+        "sticky top-[84px] z-40 w-full py-2.5 transition-[background-color] duration-200 motion-reduce:transition-none sm:py-4",
+        isSticky ? "bg-background/80 backdrop-blur-md" : "bg-transparent",
         className
       )}
     >
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        {/* Always one row — overflow scrolls inside the strip at every
+            width. The right-edge mask fade appears only while content
+            actually extends past the edge, so a partially visible next pill
+            reads as an intentional scroll affordance. scroll-px keeps a
+            comfortable inset when the browser scrolls a focused pill into
+            view. */}
         <div
           ref={containerRef}
-          className="scrollbar-hide flex flex-nowrap gap-2 overflow-x-auto pb-2 sm:flex-wrap sm:overflow-visible"
+          className={cn(
+            "scrollbar-hide flex flex-nowrap gap-2 overflow-x-auto scroll-px-4 pb-2",
+            canScrollRight &&
+              "[mask-image:linear-gradient(to_right,black_85%,transparent)]"
+          )}
         >
           {items.map(({ id, label }) => {
             const isActive = activeId === id;

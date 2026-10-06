@@ -59,6 +59,7 @@ type Reading = {
   /** The section containing the reading line just below the chrome. */
   section: string | null;
   navH: number;
+  docH: number;
   y: number;
 };
 
@@ -108,31 +109,32 @@ const probeFns = `(() => {
   const nav = document.querySelector('nav[aria-label="On this page"]');
   return { landmark, chromeBottom, section,
     navH: nav ? nav.getBoundingClientRect().height : 0,
+    docH: document.documentElement.scrollHeight,
     y: window.scrollY };
 })()`;
 
 // Tag the element the keeper would anchor on, then read its position.
 async function tagLandmark(page: import("@playwright/test").Page) {
   return page.evaluate(`(() => {
-    const { landmark, chromeBottom, section, navH, y } = ${probeFns};
+    const { landmark, chromeBottom, section, navH, docH, y } = ${probeFns};
     document.querySelectorAll("[data-probe-landmark]").forEach((el) =>
       el.removeAttribute("data-probe-landmark")
     );
-    if (!landmark) return { chromeBottom, landmarkTop: null, landmarkGap: null, section, navH, y };
+    if (!landmark) return { chromeBottom, landmarkTop: null, landmarkGap: null, section, navH, docH, y };
     landmark.setAttribute("data-probe-landmark", "1");
     const top = landmark.getBoundingClientRect().top;
-    return { chromeBottom, landmarkTop: top, landmarkGap: top - chromeBottom, section, navH, y };
+    return { chromeBottom, landmarkTop: top, landmarkGap: top - chromeBottom, section, navH, docH, y };
   })()`) as Promise<Reading>;
 }
 
 // After the resize, find the tagged element and re-measure.
 async function verifyLandmark(page: import("@playwright/test").Page) {
   return page.evaluate(`(() => {
-    const { chromeBottom, section, navH, y } = ${probeFns};
+    const { chromeBottom, section, navH, docH, y } = ${probeFns};
     const landmark = document.querySelector("[data-probe-landmark]");
-    if (!landmark) return { chromeBottom, landmarkTop: null, landmarkGap: null, section, navH, y };
+    if (!landmark) return { chromeBottom, landmarkTop: null, landmarkGap: null, section, navH, docH, y };
     const top = landmark.getBoundingClientRect().top;
-    return { chromeBottom, landmarkTop: top, landmarkGap: top - chromeBottom, section, navH, y };
+    return { chromeBottom, landmarkTop: top, landmarkGap: top - chromeBottom, section, navH, docH, y };
   })()`) as Promise<Reading>;
 }
 
@@ -174,7 +176,8 @@ const BOTTOM_TOLERANCE = 24;
 const LANDMARK_TOLERANCE = 60;
 // UX budget for transient landmark drift during a stepped resize. The
 // keeper pins per frame, so the only legitimate movement is sticky-chrome
-// growth (~34px for a wrapped pill nav) plus a frame of jitter. The previous
+// growth (the section strip is now a single scrollable row) plus a frame of
+// jitter. The previous
 // settle-then-correct design displaced content ~1400–4500px for ~180ms —
 // this bound catches that regression while allowing real chrome reflow.
 const TRANSIENT_TOLERANCE = 150;
@@ -332,7 +335,7 @@ test.describe("bottom preservation", () => {
 });
 
 // The manual failure that widened issue #140's scope: on /diving, resizing
-// 1280→768 wraps the sticky section pills to a second row and reflows the
+// 1280→768 reflows the content column widths and overall document height; the
 // taller Certification section above — a visitor reading Mixed Groups ends
 // up staring at Dive Day / Certification content (measured: the Mixed Groups
 // heading drifted ~1400px below its prior viewport position).
@@ -376,8 +379,10 @@ test.describe("content landmark preservation", () => {
       await waitForStableScroll(page);
       const after = await verifyLandmark(page);
 
-      // The sticky pill nav really did reflow — the scenario under test.
-      expect(after.navH).not.toBe(before.navH);
+      // The page really did reflow across the breakpoint (content gets
+      // taller). The section nav itself stays one scrollable row at every
+      // width — it no longer wraps to a second row (#204).
+      expect(after.docH).not.toBe(before.docH);
       // The visitor is still reading Mixed Groups, not the previous section.
       expect(after.section).toBe("mixed-experience");
       expect(after.landmarkTop).not.toBeNull();

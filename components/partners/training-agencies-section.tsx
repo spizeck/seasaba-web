@@ -12,7 +12,7 @@ interface TrainingAgenciesSectionProps {
 
 export function TrainingAgenciesSection({ partners }: TrainingAgenciesSectionProps) {
   return (
-    <section id={partnersAnchors.trainingAgencies} className="mt-16 scroll-mt-32">
+    <section id={partnersAnchors.trainingAgencies} className="mt-16 scroll-mt-40">
       <h2 className="text-xl font-semibold text-foreground">Training Agencies</h2>
       <p className="mt-1 text-sm text-muted-foreground">
         Sea Saba teaches under the agencies that set the standard for recreational, technical, and public-safety diving.

@@ -21,6 +21,19 @@ test("desktop: primary navigation, logo, and Book Now reach their destinations",
   await expect(page.getByRole("heading", { name: "Book Your Dive" })).toBeVisible();
 });
 
+test("header shell floats inside the viewport edges", async ({ page }) => {
+  await hydratedGoto(page, "/about", "#main-content");
+  const shell = page.locator("header > div > div > div").first();
+  const viewportWidth = await page.evaluate(() => window.innerWidth);
+  const box = await shell.boundingBox();
+  expect(box, "floating shell must be measurable").not.toBeNull();
+  // Breathing room on every side: the painted nav object must not touch
+  // the top, left, or right viewport edge (issue #204).
+  expect(box!.y).toBeGreaterThan(0);
+  expect(box!.x).toBeGreaterThan(0);
+  expect(box!.x + box!.width).toBeLessThan(viewportWidth);
+});
+
 test("mobile: menu opens, closes, navigates, and responds to repeated use and Escape", async ({ page, isMobile }) => {
   test.skip(!isMobile, "mobile chrome only");
   await hydratedGoto(page, "/", "#main-content");
@@ -30,9 +43,16 @@ test("mobile: menu opens, closes, navigates, and responds to repeated use and Es
   // Closed by default: aria-expanded reports the collapsed state.
   await expect(toggle).toHaveAttribute("aria-expanded", "false");
 
-  // Open and navigate via a nav link; menu auto-closes.
+  // The menu is a separate panel below the shell — opening it must not move
+  // or resize the pill (issue #204 follow-up: no accordion growth).
+  const shell = page.locator("header > div > div > div").first();
+  const closedBox = await shell.boundingBox();
   await toggle.click();
   await expect(page.getByRole("button", { name: "Close menu" })).toHaveAttribute("aria-expanded", "true");
+  const openBox = await shell.boundingBox();
+  expect(openBox, "shell geometry must not change when the menu opens").toEqual(closedBox);
+  const panelBox = await mobileNav.boundingBox();
+  expect(panelBox!.y, "menu panel must sit below the shell").toBeGreaterThanOrEqual(openBox!.y + openBox!.height);
   await mobileNav.getByRole("link", { name: "Diving" }).click();
   await expect(page).toHaveURL(/\/diving$/);
   await expect(page.getByRole("heading", { name: "Diving with Sea Saba" })).toBeVisible();

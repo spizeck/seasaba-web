@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
-import { render } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
+import { act, render } from "@testing-library/react";
 import { readFileSync } from "node:fs";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Pill } from "@/components/ui/pill";
@@ -15,6 +15,11 @@ import { DIVE_SITES } from "@/data/dive-site-videos";
 // control transition + restrained press, a `transition-card` surface
 // transition, shared `animate-overlay-in`/`animate-rise-in` dialog entrances,
 // and reduced-motion opt-outs on every nonessential animation.
+
+const mocks = vi.hoisted(() => ({ pathname: { current: "/" } }));
+vi.mock("next/navigation", () => ({
+  usePathname: () => mocks.pathname.current,
+}));
 
 const globalsCss = readFileSync("app/globals.css", "utf8");
 
@@ -120,10 +125,116 @@ describe("decorative animation respects reduced motion", () => {
 });
 
 describe("navigation", () => {
-  it("mobile menu motion stops under reduced motion", () => {
+  it("mobile menu reveals as a floating panel via a positional settle, not shell expansion", () => {
+    mocks.pathname.current = "/about";
     const { container } = render(<Header />);
     const nav = container.querySelector("#mobile-navigation")!;
+    // Anchored just below the pill — a separate surface, not a growing one.
+    expect(nav.className).toContain("absolute");
+    expect(nav.className).toContain("inset-x-0");
+    expect(nav.className).toContain("top-full");
+    // Reveal is a 2px positional settle with only a whisper of opacity
+    // (0.92↔1, never from transparent); visibility joins the transition so
+    // the panel hides exactly when the exit finishes. No layout animation.
+    expect(nav.className).toContain("transition-[opacity,translate,visibility]");
+    expect(nav.className).toContain("ease-out");
     expect(nav.className).toContain("motion-reduce:transition-none");
     expect(nav.className).not.toContain("transition-all");
+    expect(nav.className).not.toContain("grid-rows");
+    // Material stays constant in both states — blur and tint are base
+    // classes, not open-only — so nothing develops mid-transition.
+    expect(nav.className).toContain("backdrop-blur");
+    // Closed: nearly opaque, lifted 2px, and unreachable by pointer or focus.
+    expect(nav.className).toContain("invisible");
+    expect(nav.className).toContain("opacity-[0.92]");
+    expect(nav.className).not.toContain("opacity-0");
+    expect(nav.className).toContain("-translate-y-0.5");
+    expect(nav.className).toContain("pointer-events-none");
+    // Open region stays inside short viewports: bounded by 100dvh minus the
+    // pill's top offset + bar height, and internally scrollable.
+    expect(nav.className).toContain("max-h-[calc(100dvh-7rem)]");
+    expect(nav.className).toContain("overflow-y-auto");
+    mocks.pathname.current = "/";
+  });
+
+  // Issue #204: the header paints a floating rounded shell. The mobile menu
+  // is a sibling panel beneath it — the shell's box never changes when the
+  // menu opens, it just fades in below.
+  it("renders a fixed floating shell with the mobile menu as a sibling panel", () => {
+    const { container } = render(<Header />);
+    const wrapper = container.querySelector("header > div > div")!;
+    const shell = wrapper.firstElementChild as HTMLElement;
+    const nav = container.querySelector("#mobile-navigation")!;
+    expect(wrapper.className).toContain("relative");
+    expect(wrapper.className).toContain("max-w-6xl");
+    expect(shell.className).toContain("rounded-full");
+    expect(shell.contains(nav)).toBe(false);
+    expect(wrapper.contains(nav)).toBe(true);
+  });
+
+  it("keeps the 44px menu toggle with an accessible expanded state", () => {
+    const { container } = render(<Header />);
+    const toggle = container.querySelector('button[aria-controls="mobile-navigation"]')!;
+    expect(toggle.className).toContain("h-11");
+    expect(toggle.className).toContain("w-11");
+    expect(toggle).toHaveAttribute("aria-expanded", "false");
+  });
+
+  // Issue #204 follow-up: the homepage pill settles into the compact browsing
+  // state on scroll — the same geometry interior pages use from first paint —
+  // inside a zero-height band, so the page content below never shifts.
+  const scrollTo = (y: number) => {
+    Object.defineProperty(window, "scrollY", { value: y, configurable: true });
+    act(() => window.dispatchEvent(new Event("scroll")));
+  };
+
+  it("overlays the homepage pill on the hero with no flow height", () => {
+    mocks.pathname.current = "/";
+    const { container } = render(<Header />);
+    const header = container.querySelector("header")!;
+    // Zero-height band: the pill overlays the hero, so menu open/close and
+    // the compact transition can never push the hero down.
+    expect(header.className).toContain("h-0");
+    expect(header.className).toContain("overflow-visible");
+  });
+
+  it("compacts the homepage pill after scroll without changing flow height", () => {
+    mocks.pathname.current = "/";
+    const { container } = render(<Header />);
+    const header = container.querySelector("header")!;
+    const bar = header.firstElementChild!.firstElementChild!.firstElementChild!
+      .firstElementChild as HTMLElement;
+    const logo = header.querySelector("img")!;
+
+    expect(bar.className).toContain("h-16");
+    expect(logo.className).toContain("h-10");
+
+    scrollTo(100);
+
+    expect(bar.className).toContain("h-14");
+    expect(logo.className).toContain("h-9");
+    expect(header.className).toContain("h-0");
+    expect(bar.className).toContain("motion-reduce:transition-none");
+  });
+
+  it("keeps the band in flow at the canonical compact size on interior pages", () => {
+    mocks.pathname.current = "/diving";
+    const { container } = render(<Header />);
+    const header = container.querySelector("header")!;
+    const bar = header.firstElementChild!.firstElementChild!.firstElementChild!
+      .firstElementChild as HTMLElement;
+    const logo = header.querySelector("img")!;
+
+    // Interior pages start at the compact geometry — the same size the
+    // homepage pill settles into after scroll — and never resize on scroll.
+    expect(header.className).not.toContain("h-0");
+    expect(bar.className).toContain("h-14");
+    expect(logo.className).toContain("h-9");
+
+    scrollTo(100);
+
+    expect(bar.className).toContain("h-14");
+    expect(logo.className).toContain("h-9");
+    mocks.pathname.current = "/";
   });
 });

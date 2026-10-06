@@ -86,7 +86,7 @@ export default function DiveSitesPage() {
       {/* Dive Area Sections */}
       <div className="mt-12 space-y-12 lg:space-y-16">
         {DIVE_AREAS.map((area) => (
-          <section key={area.id} id={area.id} className="scroll-mt-20">
+          <section key={area.id} id={area.id} className="scroll-mt-24">
             <FeatureImage
               src={area.image}
               alt={`Diving at ${area.title} in the Saba Marine Park`}

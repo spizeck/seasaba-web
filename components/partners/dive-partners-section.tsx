@@ -12,7 +12,7 @@ interface DivePartnersSectionProps {
 
 export function DivePartnersSection({ partners }: DivePartnersSectionProps) {
   return (
-    <section id={partnersAnchors.divePartners} className="mt-16 scroll-mt-32">
+    <section id={partnersAnchors.divePartners} className="mt-16 scroll-mt-40">
       <h2 className="text-xl font-semibold text-foreground">Caribbean Dive Partners</h2>
       <p className="mt-1 text-sm text-muted-foreground">
         Dive operators that regularly work with Sea Saba or complement trips to the island.
