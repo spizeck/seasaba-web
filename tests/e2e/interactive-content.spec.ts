@@ -108,6 +108,43 @@ test("section nav stays one scrollable row at every width", async ({ page }) => 
   }
 });
 
+// Edge fades are a scroll affordance, not decoration: a narrow fade only at
+// edges that actually have clipped content, so pills never wash out at rest.
+// Computed maskImage serializes "to right" as 90deg, black as
+// rgb(0, 0, 0), and transparent as rgba(0, 0, 0, 0); the first/last stops
+// tell which edges fade.
+test("section nav fades only edges that have clipped content", async ({ page }) => {
+  await hydratedGoto(page, "/plan-your-trip");
+  // Narrow viewport guarantees the strip overflows.
+  await page.setViewportSize({ width: 390, height: 800 });
+  const row = page.locator('nav[aria-label="On this page"] > div > div');
+
+  const mask = () =>
+    row.evaluate((el) => getComputedStyle(el).maskImage);
+  const scrollRow = (x: number) =>
+    row.evaluate((el, v) => {
+      el.scrollLeft = v;
+      el.dispatchEvent(new Event("scroll"));
+    }, x);
+
+  // Start: a right fade hints at more content; the left edge is untouched.
+  await expect
+    .poll(mask, "right-only fade at scroll start")
+    .toMatch(/^linear-gradient\(90deg, rgb\(0, 0, 0\).*rgba\(0, 0, 0, 0\)\)$/);
+
+  // Mid-scroll: both edges fade.
+  await scrollRow(200);
+  await expect
+    .poll(mask, "both edges fade mid-scroll")
+    .toMatch(/^linear-gradient\(90deg, rgba\(0, 0, 0, 0\).*rgba\(0, 0, 0, 0\)\)$/);
+
+  // End: the right fade lifts; only the left affordance remains.
+  await scrollRow(9999);
+  await expect
+    .poll(mask, "left-only fade at scroll end")
+    .toMatch(/^linear-gradient\(90deg, rgba\(0, 0, 0, 0\).*rgb\(0, 0, 0\) 28px\)$/);
+});
+
 test("the dive log still renders its UI when Firestore is unreachable", async ({ page }) => {
   // With the backend fully blocked (fixture default), the SDK resolves from an
   // empty offline cache — the page must render its empty state rather than
