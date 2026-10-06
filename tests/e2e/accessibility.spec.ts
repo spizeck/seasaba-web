@@ -170,6 +170,13 @@ test.describe("keyboard operation", () => {
       await mobileNav.getByRole("link", { name: "Diving" }).focus();
       await expect(mobileNav.getByRole("link", { name: "Diving" })).toBeFocused();
     } else {
+      // `aria-expanded` and the `inert` removal land in the same React
+      // commit, but on slow runners the attribute poll can resolve before
+      // the browser applies the panel's restored focusability — observed
+      // flake: Tab landing on the page's hero CTA instead of entering the
+      // menu. Wait for the panel to be interactive before probing Tab.
+      await expect(mobileNav).not.toHaveAttribute("inert", "");
+      await expect(mobileNav.getByRole("link", { name: "Diving" })).toBeVisible();
       await page.keyboard.press("Tab");
       const focused = page.locator(":focus");
       await expect(focused).toHaveText("Diving");
