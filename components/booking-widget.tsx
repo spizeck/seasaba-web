@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { BubbleLoader } from "@/components/bubble-loader";
+import { StatePanel } from "@/components/state-panel";
 import { buttonVariants } from "@/components/ui/button";
 import { trackLinkClick } from "@/lib/analytics";
 import { cn } from "@/lib/utils";
@@ -157,15 +158,22 @@ export function BookingWidget({ item }: BookingWidgetProps) {
   return (
     <div className="w-full">
       {status === "error" && (
-        <div className="rounded-lg border border-border/40 bg-muted/20 p-10 text-center">
-          <p className="text-lg font-semibold text-foreground">
-            Booking isn&apos;t loading
-          </p>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Open our secure booking page directly
-            {itemId ? ` for ${ITEM_NAMES[itemId]}` : ""}, or reach us another
-            way — we&apos;ll get you booked.
-          </p>
+        // role="alert": the "Loading availability" status region unmounts
+        // when the widget fails, so nothing would announce the failure —
+        // the panel must speak for itself (issue #209).
+        <StatePanel
+          role="alert"
+          className="p-10"
+          title="Booking isn't loading"
+          titleClassName="text-lg font-semibold text-foreground"
+          description={
+            <>
+              Open our secure booking page directly
+              {itemId ? ` for ${ITEM_NAMES[itemId]}` : ""}, or reach us another
+              way — we&apos;ll get you booked.
+            </>
+          }
+        >
           <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <a
               href={fallbackUrl}
@@ -207,7 +215,7 @@ export function BookingWidget({ item }: BookingWidgetProps) {
               Contact us instead
             </a>
           </div>
-        </div>
+        </StatePanel>
       )}
 
       {unknown && (

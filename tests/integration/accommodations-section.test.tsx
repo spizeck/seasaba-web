@@ -67,3 +67,19 @@ it("announces filter pills as toggles, not as current navigation items", async (
   expect(screen.getByRole("heading", { name: "1 accommodation" })).toBeVisible();
   expect(screen.queryByRole("heading", { name: "Bay Cottage" })).toBeNull();
 });
+
+// Issue #209: a filtered-empty result must explain what happened and offer
+// the way back — never a silent zero-result list.
+it("explains an empty filter result and offers a way back", async () => {
+  render(<AccommodationsSection accommodations={FIXTURE} />);
+  await userEvent.type(
+    screen.getByRole("searchbox", { name: "Search accommodations" }),
+    "zzz-no-match"
+  );
+  const panel = screen.getByText("No accommodations match your filters.");
+  expect(panel).toBeVisible();
+  // The recovery action actually restores the list.
+  await userEvent.click(screen.getByRole("button", { name: "Clear all filters" }));
+  expect(screen.getByRole("heading", { name: "2 accommodations" })).toBeVisible();
+  expect(screen.queryByText("No accommodations match your filters.")).toBeNull();
+});

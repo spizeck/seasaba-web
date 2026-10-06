@@ -5,6 +5,7 @@ import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { ExternalLink, MapPin, Search, X } from "lucide-react";
 import { Pill } from "@/components/ui/pill";
+import { StatePanel } from "@/components/state-panel";
 import { buttonVariants } from "@/components/ui/button";
 import { trackLinkClick } from "@/lib/analytics";
 import { cn } from "@/lib/utils";
@@ -237,18 +238,21 @@ export function AccommodationsSection({ accommodations }: AccommodationsSectionP
         )}
       </div>
 
-      {/* No results */}
+      {/* No results — shared StatePanel; no live role, the result count
+          heading already announces the change (issue #209). */}
       {filtered.length === 0 && (
-        <div className="mt-6 rounded-lg border border-border/40 bg-muted/20 p-8 text-center">
-          <p className="text-sm font-medium text-foreground">No accommodations match your filters.</p>
-          <p className="mt-1 text-sm text-muted-foreground">Try clearing a filter or searching for a different term.</p>
+        <StatePanel
+          className="mt-6"
+          title="No accommodations match your filters."
+          description="Try clearing a filter or searching for a different term."
+        >
           <button
             onClick={clearAll}
             className="mt-4 text-sm font-medium text-primary hover:underline"
           >
             Clear all filters
           </button>
-        </div>
+        </StatePanel>
       )}
 
       {/* Hotels */}
