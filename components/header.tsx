@@ -31,20 +31,23 @@ export function Header() {
   }, [mobileOpen]);
 
   const transparent = isHome && !scrolled && !mobileOpen;
-  // Homepage-only scroll compaction (issue #204): reuse the existing `scrolled`
+  // Compact geometry is the site-wide standard (issue #204): the homepage's
+  // scrolled pill is the canonical size, and interior pages render it from
+  // first paint — no oversized start, no scroll-driven shrink. Only the
+  // homepage hero state runs the larger pill. Reuses the existing `scrolled`
   // threshold (scrollY > 48) so the pill's color and size settle at the same
-  // deterministic point — a single boolean flip means no flicker, no per-frame
-  // measurement, and no competing thresholds.
-  const compact = isHome && scrolled;
+  // deterministic point — a single boolean flip means no flicker, no
+  // per-frame measurement, and no competing thresholds.
+  const compact = !isHome || scrolled;
 
   return (
     // On the homepage the sticky band is zero-height: the pill overlays the
     // hero instead of occupying document flow, so menu open/close and the
     // compact transition can never push the hero down (issue #204). The
     // hero's own pt-20 keeps its content clear of the overlaid pill.
-    // Interior pages keep the band in flow — 16px pad + 64px bar = 80px of
-    // top chrome that scroll-position-keeper measures and PageSectionNav
-    // offsets against.
+    // Interior pages keep the band in flow — 16px pad + 56px compact bar =
+    // 72px of top chrome that scroll-position-keeper measures and
+    // PageSectionNav offsets against.
     <header
       className={`sticky top-0 z-50 w-full ${
         isHome ? "h-0 overflow-visible" : ""
@@ -58,9 +61,10 @@ export function Header() {
           itself never has to grow to host the open menu. */}
       <div className="relative mx-auto max-w-6xl">
       {/* The outline is a ring, not a border: ring draws via box-shadow so it
-          doesn't add 2px to the shell — the chrome stays exactly 80px tall
-          (16px pad + 64px bar), matching the sticky PageSectionNav's offset.
-          The shell's geometry is fixed; opening the menu never morphs it. */}
+          doesn't add to the shell — the interior chrome stays exactly 72px
+          tall (16px pad + 56px bar), matching the sticky PageSectionNav's
+          offset. The shell's geometry is fixed; opening the menu never
+          morphs it. */}
       <div
         className={`rounded-full shadow-md ring-1 transition-[background-color,box-shadow,color] duration-200 motion-reduce:transition-none ${
           transparent
@@ -68,8 +72,9 @@ export function Header() {
             : "bg-background/95 ring-border/50 backdrop-blur supports-backdrop-filter:bg-background/70"
         }`}
       >
-        {/* Compact browsing state (homepage only): bar 64→56px, logo
-            40→36px, horizontal padding unchanged so the shell keeps its
+        {/* Compact is the canonical bar geometry: h-14 bar / h-9 logo
+            everywhere except the homepage's unscrolled hero state (h-16 /
+            h-10). Horizontal padding is constant so the shell keeps its
             stance; the hamburger retains its 44px target. */}
         <div
           className={`flex items-center justify-between pl-5 pr-2.5 transition-[height] duration-200 motion-reduce:transition-none sm:pl-6 sm:pr-3 lg:px-6 ${
@@ -117,15 +122,17 @@ export function Header() {
             </Button>
           </nav>
 
-          {/* Mobile toggle — 44px hit area; the fills are translucent washes
-              in the shell's own color family (white on the dark hero pill,
-              Sea Saba blue on the light pill) so the control reads as part of
-              the pill rather than a neutral tile pasted on it. */}
+          {/* Mobile toggle — 44px hit area, but visually a ghost chip of the
+              pill itself: a hairline ring and a barely-there tinted wash in
+              the shell's own color family (white on the dark hero pill, Sea
+              Saba blue on the light pill) with a light backdrop blur. The
+              surface is identical for the hamburger and X states — only the
+              icon crossfades. */}
           <button
-            className={`pressable relative inline-flex h-11 w-11 items-center justify-center rounded-lg p-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring lg:hidden ${
+            className={`pressable relative inline-flex h-11 w-11 items-center justify-center rounded-full p-2 ring-1 backdrop-blur-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring lg:hidden ${
               transparent
-                ? "bg-white/10 text-white hover:bg-white/20"
-                : "bg-primary/5 text-primary hover:bg-primary/15"
+                ? "bg-white/10 text-white ring-white/20 hover:bg-white/20"
+                : "bg-primary/[0.04] text-primary ring-primary/15 hover:bg-primary/10"
             }`}
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
@@ -149,21 +156,26 @@ export function Header() {
 
         {/* Mobile nav — a separate floating surface below the pill, not an
             expansion of it. The shell keeps its geometry; the panel reveals
-            as one object with a short opacity + 6px settle, matching the
-            pill's glass/ring/shadow/radius language so it reads as attached
-            chrome. Always mounted so the same transition runs in reverse on
-            close; inert + pointer-events-none keep the hidden panel out of
-            the tab order and out from under taps. The scrollable region is
-            bounded by the viewport minus the pill's top offset + bar so
-            Book Now stays reachable on very short viewports. */}
+            as one object with a 6px settle while opacity only softens the
+            move (0.92→1 in, 1→0.92 out) — it never fades from nothing. The
+            material itself (glass/ring/shadow/radius) is constant in both
+            states so nothing appears to develop or brighten mid-transition;
+            `visibility` joins the transition list so the panel hides exactly
+            when the exit finishes (discrete flip at the end on close, at the
+            start on open) instead of fading to transparent. Always mounted
+            so the same transition runs in reverse on close; inert +
+            visibility keep the hidden panel out of the tab order and out
+            from under taps. The scrollable region is bounded by the viewport
+            minus the pill's top offset + bar so Book Now stays reachable on
+            very short viewports. */}
         <nav
           id="mobile-navigation"
           aria-label="Mobile"
           inert={!mobileOpen}
-          className={`absolute inset-x-0 top-full mt-2 max-h-[calc(100dvh-7rem)] overflow-y-auto rounded-3xl bg-background/95 shadow-md ring-1 ring-border/50 transition-[opacity,translate] ease-out motion-reduce:transition-none lg:hidden ${
+          className={`absolute inset-x-0 top-full mt-2 max-h-[calc(100dvh-7rem)] overflow-y-auto rounded-3xl bg-background/95 shadow-md ring-1 ring-border/50 backdrop-blur transition-[opacity,translate,visibility] ease-out motion-reduce:transition-none supports-backdrop-filter:bg-background/70 lg:hidden ${
             mobileOpen
-              ? "translate-y-0 opacity-100 backdrop-blur duration-[180ms] supports-backdrop-filter:bg-background/70"
-              : "pointer-events-none -translate-y-1.5 opacity-0 duration-[140ms]"
+              ? "visible translate-y-0 opacity-100 duration-[180ms]"
+              : "invisible pointer-events-none -translate-y-1.5 opacity-[0.92] duration-[140ms]"
           }`}
         >
           {/* Contiguous py-2.5 rows: ~44px tap targets with no dead space

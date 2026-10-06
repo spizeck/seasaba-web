@@ -125,7 +125,7 @@ describe("decorative animation respects reduced motion", () => {
 });
 
 describe("navigation", () => {
-  it("mobile menu reveals as a floating panel via opacity/translate, not shell expansion", () => {
+  it("mobile menu reveals as a floating panel via a positional settle, not shell expansion", () => {
     mocks.pathname.current = "/about";
     const { container } = render(<Header />);
     const nav = container.querySelector("#mobile-navigation")!;
@@ -133,14 +133,21 @@ describe("navigation", () => {
     expect(nav.className).toContain("absolute");
     expect(nav.className).toContain("inset-x-0");
     expect(nav.className).toContain("top-full");
-    // Reveal is a restrained opacity + 6px settle; no layout animation.
-    expect(nav.className).toContain("transition-[opacity,translate]");
+    // Reveal is a 6px positional settle with only a whisper of opacity
+    // (0.92↔1, never from transparent); visibility joins the transition so
+    // the panel hides exactly when the exit finishes. No layout animation.
+    expect(nav.className).toContain("transition-[opacity,translate,visibility]");
     expect(nav.className).toContain("ease-out");
     expect(nav.className).toContain("motion-reduce:transition-none");
     expect(nav.className).not.toContain("transition-all");
     expect(nav.className).not.toContain("grid-rows");
-    // Closed: transparent, lifted 6px, and unreachable by pointer or focus.
-    expect(nav.className).toContain("opacity-0");
+    // Material stays constant in both states — blur and tint are base
+    // classes, not open-only — so nothing develops mid-transition.
+    expect(nav.className).toContain("backdrop-blur");
+    // Closed: nearly opaque, lifted 6px, and unreachable by pointer or focus.
+    expect(nav.className).toContain("invisible");
+    expect(nav.className).toContain("opacity-[0.92]");
+    expect(nav.className).not.toContain("opacity-0");
     expect(nav.className).toContain("-translate-y-1.5");
     expect(nav.className).toContain("pointer-events-none");
     // Open region stays inside short viewports: bounded by 100dvh minus the
@@ -173,9 +180,9 @@ describe("navigation", () => {
     expect(toggle).toHaveAttribute("aria-expanded", "false");
   });
 
-  // Issue #204 follow-up: the homepage pill settles into a compact browsing
-  // state on scroll without shrinking the band's 80px flow height, so the
-  // page content below never shifts.
+  // Issue #204 follow-up: the homepage pill settles into the compact browsing
+  // state on scroll — the same geometry interior pages use from first paint —
+  // inside a zero-height band, so the page content below never shifts.
   const scrollTo = (y: number) => {
     Object.defineProperty(window, "scrollY", { value: y, configurable: true });
     act(() => window.dispatchEvent(new Event("scroll")));
@@ -210,17 +217,24 @@ describe("navigation", () => {
     expect(bar.className).toContain("motion-reduce:transition-none");
   });
 
-  it("keeps the band in flow and un-compacted on interior pages", () => {
+  it("keeps the band in flow at the canonical compact size on interior pages", () => {
     mocks.pathname.current = "/diving";
     const { container } = render(<Header />);
     const header = container.querySelector("header")!;
     const bar = header.firstElementChild!.firstElementChild!.firstElementChild!
       .firstElementChild as HTMLElement;
+    const logo = header.querySelector("img")!;
+
+    // Interior pages start at the compact geometry — the same size the
+    // homepage pill settles into after scroll — and never resize on scroll.
+    expect(header.className).not.toContain("h-0");
+    expect(bar.className).toContain("h-14");
+    expect(logo.className).toContain("h-9");
 
     scrollTo(100);
 
-    expect(header.className).not.toContain("h-0");
-    expect(bar.className).toContain("h-16");
+    expect(bar.className).toContain("h-14");
+    expect(logo.className).toContain("h-9");
     mocks.pathname.current = "/";
   });
 });

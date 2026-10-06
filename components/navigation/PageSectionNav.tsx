@@ -4,10 +4,11 @@ import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Pill } from "@/components/ui/pill";
 
-// Stuck position: the 80px floating-header chrome plus a 12px breathing
-// gap, so the secondary strip reads as a separate, subordinate layer
-// rather than a bar stacked edge-to-edge against the pill (issue #204).
-const STICKY_TOP_PX = 92;
+// Stuck position: the 72px floating-header chrome (16px pad + 56px compact
+// bar) plus a 12px breathing gap, so the secondary strip reads as a
+// separate, subordinate layer rather than a bar stacked edge-to-edge
+// against the pill (issue #204).
+const STICKY_TOP_PX = 84;
 const SCROLL_END_DEBOUNCE_MS = 100;
 
 export type PageNavItem = {
@@ -173,7 +174,7 @@ export function PageSectionNav({ items, className, offset = 96 }: PageSectionNav
       ref={navRef}
       aria-label="On this page"
       className={cn(
-        "sticky top-[92px] z-40 w-full py-2.5 transition-[background-color] duration-200 motion-reduce:transition-none sm:py-4",
+        "sticky top-[84px] z-40 w-full py-2.5 transition-[background-color] duration-200 motion-reduce:transition-none sm:py-4",
         isSticky ? "bg-background/80 backdrop-blur-md" : "bg-transparent",
         className
       )}
