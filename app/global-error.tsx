@@ -42,6 +42,11 @@ export default function GlobalError({
           {/* Escape route for persistent failures — a retry that keeps
               failing shouldn't strand the visitor on a dead-end page. */}
           <p className="mt-4 text-sm">
+            {/* Plain <a> on purpose: this boundary renders when the root
+                layout — and possibly the router context <Link> needs —
+                has already failed. A full navigation re-bootstraps the
+                app, which is the recovery the escape route exists for. */}
+            {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
             <a
               href="/"
               className="font-medium text-muted-foreground underline underline-offset-2 hover:text-foreground"
