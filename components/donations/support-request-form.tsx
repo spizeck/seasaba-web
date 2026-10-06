@@ -505,7 +505,7 @@ export function SupportRequestForm() {
                   // error must be associated with the box itself to be read.
                   touched.supportTypes && errors.supportTypes ? "sr-types-error" : undefined
                 }
-                className="mt-0.5 h-4 w-4 shrink-0 rounded border-border accent-primary focus:ring-1 focus:ring-primary"
+                className="mt-0.5 h-4 w-4 shrink-0 rounded border-border accent-primary focus-visible:ring-1 focus-visible:ring-primary"
               />
               {type.label}
             </label>
