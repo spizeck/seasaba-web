@@ -356,4 +356,12 @@ describe("required semantics and error recovery (#218)", () => {
       expect(document.activeElement).toBe(document.getElementById("email"))
     );
   });
+
+  it("marks single-line fields with next-field keyboard hints (#211)", () => {
+    render(<ContactForm />);
+    expect(screen.getByRole("textbox", { name: /^Name/ })).toHaveAttribute("enterkeyhint", "next");
+    expect(screen.getByRole("textbox", { name: /^Email/ })).toHaveAttribute("enterkeyhint", "next");
+    // The message field is a textarea — Enter inserts a newline there.
+    expect(screen.getByRole("textbox", { name: /^Message/ })).not.toHaveAttribute("enterkeyhint");
+  });
 });

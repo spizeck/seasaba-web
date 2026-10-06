@@ -951,6 +951,53 @@ describe("support request form", () => {
     expect(fetch).not.toHaveBeenCalled();
   });
 
+  it("associates the support-type group error with the checkboxes that receive focus (#211)", async () => {
+    render(<SupportRequestForm />);
+    await userEvent.click(screen.getByRole("button", { name: "Send request" }));
+    // Focus lands on a checkbox, not the fieldset — the group error must be
+    // described by the boxes themselves or it is never announced.
+    const boxes = document.querySelectorAll('input[id^="sr-type-"]');
+    expect(boxes.length).toBeGreaterThan(0);
+    for (const box of boxes) {
+      expect(box).toHaveAttribute("aria-invalid", "true");
+      expect(box).toHaveAttribute("aria-describedby", "sr-types-error");
+    }
+    expect(document.getElementById("sr-types-error")).toHaveTextContent(
+      "Please choose at least one type of support."
+    );
+  });
+
+  it("keeps inline error slots mounted so appearing errors don't shift the layout (#211)", async () => {
+    render(<SupportRequestForm />);
+    // The slot exists — and holds vertical space — before the field can error.
+    const slot = document.getElementById("sr-name-error");
+    expect(slot).not.toBeNull();
+    expect(slot).toHaveClass("invisible");
+    await userEvent.click(screen.getByRole("button", { name: "Send request" }));
+    expect(slot).not.toHaveClass("invisible");
+    expect(slot).toHaveTextContent("Please enter your name.");
+  });
+
+  it("marks single-line fields with next-field keyboard hints (#211)", () => {
+    render(<SupportRequestForm />);
+    for (const id of [
+      "sr-name",
+      "sr-organization",
+      "sr-email",
+      "sr-phone",
+      "sr-amount",
+      "sr-beneficiaries",
+      "sr-timing",
+      "sr-url",
+    ]) {
+      expect(document.getElementById(id)).toHaveAttribute("enterkeyhint", "next");
+    }
+    // Textareas and checkboxes keep their natural keys — a "next" hint
+    // would be wrong where Enter inserts a newline or toggles.
+    expect(document.getElementById("sr-description")).not.toHaveAttribute("enterkeyhint");
+    expect(document.getElementById("sr-ack")).not.toHaveAttribute("enterkeyhint");
+  });
+
   it("announces the pending state while the request is in flight", { timeout: 20000 }, async () => {
     let resolveFetch: ((r: Response) => void) | undefined;
     vi.mocked(fetch).mockImplementation(
