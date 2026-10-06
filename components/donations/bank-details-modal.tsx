@@ -73,8 +73,7 @@ export function BankDetailsModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
-      style={{ background: "rgba(0,0,0,0.65)", backdropFilter: "blur(4px)", WebkitBackdropFilter: "blur(4px)" }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 sm:p-6 animate-overlay-in motion-reduce:animate-none"
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
       role="dialog"
       aria-modal="true"
@@ -82,15 +81,14 @@ export function BankDetailsModal({
     >
       <div
         ref={modalRef}
-        className="relative flex max-h-[calc(100dvh-2rem)] w-full max-w-sm flex-col overflow-y-auto rounded-2xl bg-card shadow-2xl sm:max-h-[calc(100dvh-3rem)]"
-        style={{ animation: "hotelModalIn 0.18s ease-out both" }}
+        className="relative flex max-h-[calc(100dvh-2rem)] w-full max-w-sm flex-col overflow-y-auto rounded-2xl bg-card shadow-2xl animate-rise-in motion-reduce:animate-none sm:max-h-[calc(100dvh-3rem)]"
       >
         {/* Close button */}
         <button
           ref={closeRef}
           onClick={onClose}
           aria-label="Close donation details"
-          className="absolute right-3 top-3 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-muted text-muted-foreground transition-colors hover:bg-muted/70 hover:text-foreground"
+          className="absolute right-3 top-3 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-muted text-muted-foreground pressable hover:bg-muted/70 hover:text-foreground focus-ring"
         >
           <X className="h-4 w-4" />
         </button>
@@ -136,13 +134,6 @@ export function BankDetailsModal({
           </p>
         </div>
       </div>
-
-      <style>{`
-        @keyframes hotelModalIn {
-          from { opacity: 0; transform: scale(0.96) translateY(8px); }
-          to   { opacity: 1; transform: scale(1) translateY(0); }
-        }
-      `}</style>
     </div>
   );
 }
@@ -174,7 +165,7 @@ function CopyValueButton({ value, label }: { value: string; label: string }) {
           // the value stays visible and selectable either way.
         }
       }}
-      className="inline-flex shrink-0 items-center justify-center rounded-md p-1 text-muted-foreground transition-colors hover:bg-background hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary"
+      className="inline-flex shrink-0 items-center justify-center rounded-md p-1 text-muted-foreground pressable hover:bg-background hover:text-foreground focus-ring"
     >
       {copied ? (
         <Check className="size-3.5 text-primary" aria-hidden="true" />

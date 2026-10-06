@@ -6,10 +6,14 @@ import { Pill } from "@/components/ui/pill";
 import { ImageCard } from "@/components/image-card";
 import { FindSeaSaba } from "@/components/find-sea-saba";
 import { Header } from "@/components/header";
+import { Hero } from "@/components/hero";
 import { SpeciesModal } from "@/components/species-modal";
 import { DiveSiteModal } from "@/components/dive-site-modal";
+import { BankDetailsModal } from "@/components/donations/bank-details-modal";
+import { HotelPills } from "@/components/hotel-pills";
 import { SPECIES_CATALOG } from "@/data/species";
 import { DIVE_SITES } from "@/data/dive-site-videos";
+import { DONATION_RECIPIENTS } from "@/data/donations";
 
 // Issue #199: the site shares one small interaction language — a `pressable`
 // control transition + restrained press, a `transition-card` surface
@@ -40,6 +44,18 @@ describe("interaction tokens", () => {
     expect(globalsCss).toContain("--animate-rise-in");
     expect(globalsCss).toContain("--animate-seasaba-float");
   });
+
+  // Issue #215: one focus language — brand blue on light surfaces, a white
+  // ring (with a dark outer edge so it survives bright photography) on dark.
+  it("defines the shared focus-ring utilities", () => {
+    expect(globalsCss).toMatch(/@utility focus-ring\s*{/);
+    expect(globalsCss).toMatch(/@utility focus-ring-light\s*{/);
+    const light = globalsCss.match(
+      /@utility focus-ring-light\s*{([^}]*)}/
+    );
+    expect(light![1]).toContain("#ffffff");
+    expect(light![1]).toContain("focus-visible");
+  });
 });
 
 describe("controls", () => {
@@ -62,6 +78,36 @@ describe("controls", () => {
   it("Pill uses the same tactile treatment", () => {
     const { getByRole } = render(<Pill>Section</Pill>);
     expect(getByRole("button").className).toContain("pressable");
+  });
+
+  it("Pill reads unambiguously as disabled, not merely unstyled", () => {
+    const { getByRole } = render(<Pill disabled>Off</Pill>);
+    const cls = getByRole("button").className;
+    expect(cls).toContain("disabled:opacity-50");
+    expect(cls).toContain("disabled:cursor-default");
+  });
+
+  it("hero CTAs acknowledge hover and stay focusable on photography", () => {
+    const { getAllByRole } = render(<Hero />);
+    const links = getAllByRole("link").filter((a) =>
+      ["Book Diving", "Plan Your Trip", "Explore Dive Sites"].includes(
+        a.textContent ?? ""
+      )
+    );
+    expect(links).toHaveLength(3);
+    for (const link of links) {
+      expect(link.className).toContain("pressable");
+      expect(link.className).toContain("focus-ring-light");
+      expect(link.className).toMatch(/hover:/);
+    }
+  });
+
+  it("hotel picker pills are built on the shared Pill primitive", () => {
+    const { getAllByRole } = render(<HotelPills />);
+    for (const pill of getAllByRole("button")) {
+      expect(pill.className).toContain("pressable");
+      expect(pill.className).toContain("focus-ring");
+    }
   });
 });
 
@@ -104,6 +150,19 @@ describe("dialogs share one entrance language", () => {
     expect(dialog.className).toContain("animate-overlay-in");
     const panel = dialog.firstElementChild as HTMLElement;
     expect(panel.className).toContain("animate-rise-in");
+  });
+
+  it("bank-details modal joins the shared entrance language with reduced-motion opt-out", () => {
+    const recipient = DONATION_RECIPIENTS.find((r) => r.bankDetails)!;
+    const { getByRole } = render(
+      <BankDetailsModal recipient={recipient} onClose={noop} />
+    );
+    const dialog = getByRole("dialog");
+    expect(dialog.className).toContain("animate-overlay-in");
+    expect(dialog.className).toContain("motion-reduce:animate-none");
+    const panel = dialog.firstElementChild as HTMLElement;
+    expect(panel.className).toContain("animate-rise-in");
+    expect(panel.className).toContain("motion-reduce:animate-none");
   });
 });
 

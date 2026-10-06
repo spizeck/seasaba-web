@@ -23,16 +23,18 @@ export function DiveAreaSites({ sites, dark = false, interactive = true }: Props
   };
 
   const pillBase = dark
-    ? "rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium text-white/70 pressable"
-    : "rounded-full px-3 py-1 text-xs font-medium pressable";
+    ? "rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium text-white/70 pressable focus-ring-light"
+    : "rounded-full px-3 py-1 text-xs font-medium pressable focus-ring";
 
   const pillActive = dark
     ? "hover:bg-white/15 hover:text-white cursor-pointer"
     : "bg-primary/10 text-primary hover:bg-primary/20 cursor-pointer";
 
+  // Sites with no modal data are disabled, not just unstyled — dim them so
+  // they can't be mistaken for the interactive pills (issue #215).
   const pillInactive = dark
     ? "cursor-default opacity-50"
-    : "bg-primary/10 text-primary cursor-default";
+    : "bg-primary/10 text-primary cursor-default opacity-50";
 
   return (
     <>

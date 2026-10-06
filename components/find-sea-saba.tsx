@@ -64,7 +64,7 @@ export function FindSeaSaba() {
             type="button"
             aria-label="Open Sea Saba Dive Center in Google Maps, opens in a new tab"
             onClick={(e) => { e.stopPropagation(); openMaps("Google Maps"); }}
-            className="relative flex items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-1"
+            className="relative flex items-center justify-center rounded-full focus-ring-light"
           >
             {/* Expanded hit area (~46px) around the 22px visual pin. */}
             <span className="absolute -inset-3" aria-hidden="true" />

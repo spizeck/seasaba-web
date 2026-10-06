@@ -290,6 +290,13 @@
  * transform + border + shadow only, ~200ms. It replaces broad
  * `transition-all` on cards so layout/visual properties outside the
  * interaction contract can't animate accidentally.
+ *
+ * `focus-ring` is the standard keyboard-focus treatment for controls built
+ * outside the shared Button/Pill (issue #215): a 2px brand-blue outline on
+ * light surfaces. `focus-ring-light` is the same strength in white for
+ * controls rendered on photography or dark overlays, where the blue
+ * outline would disappear. Both rely on :focus-visible, so pointer
+ * interaction never paints them.
  */
 @utility pressable {
   transition-property:
@@ -310,6 +317,25 @@
   transition-property: transform, border-color, box-shadow;
   transition-duration: 200ms;
   transition-timing-function: ease-out;
+}
+
+@utility focus-ring {
+  &:focus-visible {
+    /* A real outline (not a box-shadow ring): outlines also render in
+       forced-colors mode, where box-shadows are dropped entirely. */
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+}
+
+@utility focus-ring-light {
+  &:focus-visible {
+    /* White outline against the control, backed by a soft dark halo so
+       the indicator survives bright regions of photography too. */
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 6px rgb(0 0 0 / 0.45);
+  }
 }
 
 /*

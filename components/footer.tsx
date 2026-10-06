@@ -48,7 +48,8 @@ const RESOURCE_LINKS: { label: string; href: string; external?: boolean; ariaLab
   { label: "Cookie Policy",      href: "/cookie-policy" },
 ];
 
-const linkCls = "text-sm text-muted-foreground transition-colors hover:text-foreground";
+const linkCls =
+  "rounded-sm text-sm text-muted-foreground transition-colors hover:text-foreground focus-ring";
 const headingCls = "text-xs font-semibold uppercase tracking-widest text-foreground";
 
 export function Footer() {
@@ -155,7 +156,7 @@ export function Footer() {
               <Suspense fallback={null}>
                 <LanguageSwitcher className="text-xs text-muted-foreground" />
               </Suspense>
-              <CookieSettingsButton className="text-xs text-muted-foreground transition-colors hover:text-foreground" />
+              <CookieSettingsButton className="rounded-md px-1 text-xs text-muted-foreground pressable hover:text-foreground focus-ring" />
               {SOCIAL_LINKS.map((link) => (
                 <a
                   key={link.label}

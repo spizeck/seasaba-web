@@ -14,16 +14,19 @@ const TRUST_INDICATORS: { stat: string; statMobile?: string; label: string; href
   { stat: "\u2605\u2605\u2605\u2605\u2605 4.8/5", statMobile: "\u2605 4.8/5", label: "Google & TripAdvisor", href: "https://www.google.com/maps/search/?api=1&query=Sea+Saba+Dive+Center+Fort+Bay+Saba&query_place_id=ChIJX0c19WkgDowRn2l3bKbFrRU" },
 ];
 
+// focus-ring-light: every hero control sits on photography, where the blue
+// ring would disappear. Hover fills are restrained surface changes in the
+// button's own color family — never motion-only affordances (issue #215).
 const btnClasses =
-  "inline-flex h-11 items-center justify-center whitespace-nowrap rounded-md px-6 text-[0.9375rem] font-semibold no-underline pressable cursor-pointer";
+  "inline-flex h-11 items-center justify-center whitespace-nowrap rounded-md px-6 text-[0.9375rem] font-semibold no-underline pressable cursor-pointer focus-ring-light";
 
 const primaryCTAClasses =
   HERO_CTA_VARIANT === "A"
-    ? "bg-[#9D2235] text-white"
-    : "bg-white font-bold text-[#9D2235] shadow-[0_4px_12px_rgba(0,0,0,0.15)]";
+    ? "bg-[#9D2235] text-white hover:bg-[#8a1e2e]"
+    : "bg-white font-bold text-[#9D2235] shadow-[0_4px_12px_rgba(0,0,0,0.15)] hover:bg-white/90";
 
 const glassClasses =
-  "border border-white/25 bg-black/35 text-white backdrop-blur-[8px]";
+  "border border-white/25 bg-black/35 text-white backdrop-blur-[8px] hover:border-white/45 hover:bg-black/50";
 
 // Compact-but-legible secondary styling on narrow phones: same 44px touch
 // target, smaller label/padding so the pair fits side-by-side at 320px.
@@ -133,7 +136,7 @@ export function Hero() {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => item.href && trackLinkClick("social_click", item.href, "Google Reviews")}
-                  className="text-center transition-opacity hover:opacity-80"
+                  className="rounded-md text-center transition-opacity hover:opacity-80 focus-ring-light"
                 >
                   {inner}
                 </a>

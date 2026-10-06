@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Anchor, Clock, Users, Fish, Waves } from "lucide-react";
+import { Pill } from "@/components/ui/pill";
 import { DIVE_PRODUCTS, OPERATIONS } from "@/data/operations";
 
 type TimelineEntry =
@@ -78,20 +79,20 @@ export function ExperienceSelector() {
       <h2 className="text-xl font-semibold text-foreground">What to Expect</h2>
       <p className="mt-1 text-sm text-muted-foreground">Select a dive option to see the day schedule.</p>
 
-      {/* Pills */}
+      {/* Pills — shared Pill primitive (issue #215): same press, hover, and
+          focus language as section nav and filter chips; className only
+          restores this control's larger padding/size. */}
       <div className="mt-4 flex flex-wrap gap-2">
         {EXPERIENCES.map((exp) => (
-          <button
+          <Pill
             key={exp.id}
+            active={selected === exp.id}
+            toggle
             onClick={() => setSelected(exp.id)}
-            className={`rounded-full border px-4 py-1.5 text-sm font-medium pressable ${
-              selected === exp.id
-                ? "border-primary bg-primary text-primary-foreground"
-                : "border-border/60 bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground"
-            }`}
+            className="px-4 py-1.5 text-sm"
           >
             {exp.label}
-          </button>
+          </Pill>
         ))}
       </div>
 

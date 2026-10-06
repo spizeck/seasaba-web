@@ -517,6 +517,14 @@ Prefer the shared utilities over one-off values:
 - **`animate-overlay-in` / `animate-rise-in`** — the shared dialog
   entrance: backdrop fades, panel fades + rises ~6px and settles at
   ~200ms. Apply both with `motion-reduce:animate-none`.
+- **`focus-ring` / `focus-ring-light`** — the standard `:focus-visible`
+  treatment for controls built outside the shared Button/Pill (issue
+  #215). `focus-ring` paints a 2px brand-blue outline for light surfaces;
+  `focus-ring-light` paints a white outline with a soft dark halo for
+  controls on photography or dark overlays. Both use real `outline`s so
+  the indicator still renders in forced-colors mode. Focus is never
+  suppressed for aesthetics — every interactive control needs one of the
+  shared focus treatments (Button/Pill carry their own).
 
 #### Button press
 
