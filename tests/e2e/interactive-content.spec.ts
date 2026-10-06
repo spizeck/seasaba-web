@@ -128,9 +128,12 @@ test("section nav fades only edges that have clipped content", async ({ page }) 
     }, x);
 
   // Start: a right fade hints at more content; the left edge is untouched.
+  // The 28px stop pins the fade to a fixed narrow band — a regression to a
+  // width-proportional fade would wash out the last pill again.
   await expect
     .poll(mask, "right-only fade at scroll start")
     .toMatch(/^linear-gradient\(90deg, rgb\(0, 0, 0\).*rgba\(0, 0, 0, 0\)\)$/);
+  await expect.poll(mask, "fixed 28px fade stop").toContain("28px");
 
   // Mid-scroll: both edges fade.
   await scrollRow(200);

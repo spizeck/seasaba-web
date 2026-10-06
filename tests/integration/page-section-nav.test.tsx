@@ -52,6 +52,8 @@ describe("PageSectionNav edge treatment", () => {
     setScrollMetrics(el, { scrollLeft: 0 });
     // Mask present, but the gradient starts opaque — nothing fades left.
     expect(el.className).toContain("mask-image:linear-gradient(to_right,black");
+    // Fixed 28px stop, not a width-proportional fade that washes out pills.
+    expect(el.className).toContain("black_calc(100%_-_28px)");
   });
 
   it("shows both edge affordances while scrolled mid-strip", () => {
@@ -61,6 +63,8 @@ describe("PageSectionNav edge treatment", () => {
     // Gradient opens transparent (left fade) and still closes transparent.
     expect(el.className).toContain("to_right,transparent,black");
     expect(el.className).toMatch(/transparent\)\]/);
+    // Both fades are the fixed 28px stops.
+    expect(el.className).toContain("black_28px,black_calc(100%_-_28px)");
   });
 
   it("drops the right fade at the end but keeps the left affordance", () => {
@@ -68,7 +72,7 @@ describe("PageSectionNav edge treatment", () => {
     const el = strip();
     setScrollMetrics(el, { scrollLeft: 400 });
     // Left fade only: opens transparent, closes opaque — nothing fades right.
-    expect(el.className).toContain("to_right,transparent,black");
+    expect(el.className).toContain("to_right,transparent,black_28px");
     expect(el.className).not.toMatch(/transparent\)\]/);
   });
 
