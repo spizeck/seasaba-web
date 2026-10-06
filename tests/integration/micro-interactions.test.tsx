@@ -106,7 +106,7 @@ describe("controls", () => {
     const { getAllByRole } = render(<HotelPills />);
     for (const pill of getAllByRole("button")) {
       expect(pill.className).toContain("pressable");
-      expect(pill.className).toContain("focus-visible:ring-2");
+      expect(pill.className).toContain("focus-ring");
     }
   });
 });
