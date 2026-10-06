@@ -133,7 +133,7 @@ describe("navigation", () => {
     expect(nav.className).toContain("absolute");
     expect(nav.className).toContain("inset-x-0");
     expect(nav.className).toContain("top-full");
-    // Reveal is a 6px positional settle with only a whisper of opacity
+    // Reveal is a 2px positional settle with only a whisper of opacity
     // (0.92↔1, never from transparent); visibility joins the transition so
     // the panel hides exactly when the exit finishes. No layout animation.
     expect(nav.className).toContain("transition-[opacity,translate,visibility]");
@@ -144,11 +144,11 @@ describe("navigation", () => {
     // Material stays constant in both states — blur and tint are base
     // classes, not open-only — so nothing develops mid-transition.
     expect(nav.className).toContain("backdrop-blur");
-    // Closed: nearly opaque, lifted 6px, and unreachable by pointer or focus.
+    // Closed: nearly opaque, lifted 2px, and unreachable by pointer or focus.
     expect(nav.className).toContain("invisible");
     expect(nav.className).toContain("opacity-[0.92]");
     expect(nav.className).not.toContain("opacity-0");
-    expect(nav.className).toContain("-translate-y-1.5");
+    expect(nav.className).toContain("-translate-y-0.5");
     expect(nav.className).toContain("pointer-events-none");
     // Open region stays inside short viewports: bounded by 100dvh minus the
     // pill's top offset + bar height, and internally scrollable.

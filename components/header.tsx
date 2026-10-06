@@ -122,17 +122,18 @@ export function Header() {
             </Button>
           </nav>
 
-          {/* Mobile toggle — 44px hit area, but visually a ghost chip of the
-              pill itself: a hairline ring and a barely-there tinted wash in
-              the shell's own color family (white on the dark hero pill, Sea
-              Saba blue on the light pill) with a light backdrop blur. The
-              surface is identical for the hamburger and X states — only the
-              icon crossfades. */}
+          {/* Mobile toggle — 44px hit area with no visible chrome of its own:
+              the icon sits directly on the pill surface (Sea Saba blue on the
+              light pill, white on the dark hero pill), so the control reads
+              as part of the navbar rather than a disc bolted onto it. A faint
+              wash on hover is the only surface treatment; the surface is
+              identical for the hamburger and X states — only the icon
+              crossfades. */}
           <button
-            className={`pressable relative inline-flex h-11 w-11 items-center justify-center rounded-full p-2 ring-1 backdrop-blur-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring lg:hidden ${
+            className={`pressable relative inline-flex h-11 w-11 items-center justify-center rounded-full p-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring lg:hidden ${
               transparent
-                ? "bg-white/10 text-white ring-white/20 hover:bg-white/20"
-                : "bg-primary/[0.04] text-primary ring-primary/15 hover:bg-primary/10"
+                ? "text-white hover:bg-white/15"
+                : "text-primary hover:bg-primary/10"
             }`}
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
@@ -156,8 +157,9 @@ export function Header() {
 
         {/* Mobile nav — a separate floating surface below the pill, not an
             expansion of it. The shell keeps its geometry; the panel reveals
-            as one object with a 6px settle while opacity only softens the
-            move (0.92→1 in, 1→0.92 out) — it never fades from nothing. The
+            as one object with a 2px settle while opacity only softens the
+            move (0.92→1 in, 1→0.92 out) — it never fades from nothing, and
+            the close reads as a dismissal rather than a retreat upward. The
             material itself (glass/ring/shadow/radius) is constant in both
             states so nothing appears to develop or brighten mid-transition;
             `visibility` joins the transition list so the panel hides exactly
@@ -175,7 +177,7 @@ export function Header() {
           className={`absolute inset-x-0 top-full mt-2 max-h-[calc(100dvh-7rem)] overflow-y-auto rounded-3xl bg-background/95 shadow-md ring-1 ring-border/50 backdrop-blur transition-[opacity,translate,visibility] ease-out motion-reduce:transition-none supports-backdrop-filter:bg-background/70 lg:hidden ${
             mobileOpen
               ? "visible translate-y-0 opacity-100 duration-[180ms]"
-              : "invisible pointer-events-none -translate-y-1.5 opacity-[0.92] duration-[140ms]"
+              : "invisible pointer-events-none -translate-y-0.5 opacity-[0.92] duration-[140ms]"
           }`}
         >
           {/* Contiguous py-2.5 rows: ~44px tap targets with no dead space
