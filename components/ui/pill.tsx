@@ -29,10 +29,10 @@ export const Pill = React.forwardRef<HTMLButtonElement, PillProps>(
         aria-pressed={toggle ? active : undefined}
         aria-current={!toggle && active ? "true" : undefined}
         className={cn(
-          "inline-flex shrink-0 items-center justify-center rounded-full border px-3 py-1 text-xs font-medium pressable focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 disabled:cursor-default disabled:opacity-50 disabled:hover:border-border/60 disabled:hover:bg-background disabled:hover:text-muted-foreground",
+          "inline-flex shrink-0 items-center justify-center rounded-full border px-3 py-1 text-xs font-medium pressable focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 disabled:cursor-default disabled:opacity-50",
           active
             ? "border-primary bg-primary text-primary-foreground"
-            : "border-border/60 bg-background text-muted-foreground hover:border-primary/30 hover:text-foreground",
+            : "border-border/60 bg-background text-muted-foreground hover:border-primary/30 hover:text-foreground disabled:hover:border-border/60 disabled:hover:bg-background disabled:hover:text-muted-foreground",
           className
         )}
         {...props}

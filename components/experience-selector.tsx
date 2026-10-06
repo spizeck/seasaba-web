@@ -87,6 +87,7 @@ export function ExperienceSelector() {
           <Pill
             key={exp.id}
             active={selected === exp.id}
+            toggle
             onClick={() => setSelected(exp.id)}
             className="px-4 py-1.5 text-sm"
           >
