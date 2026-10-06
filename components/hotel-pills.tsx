@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Pill } from "@/components/ui/pill";
 import { HotelModal } from "@/components/hotel-modal";
 import type { Hotel } from "@/components/hotel-modal";
 
@@ -102,15 +103,13 @@ export function HotelPills() {
 
   return (
     <>
+      {/* Shared Pill primitive (issue #215): one press/hover/focus language
+          for every pill-shaped control on the site. */}
       <div className="mt-4 flex flex-wrap gap-2">
         {HOTELS.map((hotel) => (
-          <button
-            key={hotel.name}
-            onClick={() => setActive(hotel)}
-            className="inline-flex items-center rounded-full border border-border/50 bg-muted/30 px-3 py-1 text-xs font-medium text-foreground pressable hover:border-primary/40 hover:bg-primary/10 hover:text-primary"
-          >
+          <Pill key={hotel.name} onClick={() => setActive(hotel)}>
             {hotel.name}
-          </button>
+          </Pill>
         ))}
       </div>
 

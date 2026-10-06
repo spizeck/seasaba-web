@@ -104,7 +104,7 @@ export function DiveSiteModal({ site, allSites, onClose, onNavigate }: Props) {
           ref={closeButtonRef}
           onClick={onClose}
           aria-label="Close"
-          className="absolute right-3 top-3 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white pressable hover:bg-black/70"
+          className="absolute right-3 top-3 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white pressable hover:bg-black/70 focus-ring-light"
         >
           <X className="h-4 w-4" />
         </button>
@@ -161,7 +161,7 @@ export function DiveSiteModal({ site, allSites, onClose, onNavigate }: Props) {
               onClick={() => prevSite && onNavigate(prevSite)}
               disabled={!prevSite}
               aria-label={prevSite ? `Previous: ${prevSite.name}` : "No previous site"}
-              className="flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground pressable hover:bg-muted hover:text-foreground disabled:pointer-events-none disabled:opacity-30"
+              className="flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground pressable hover:bg-muted hover:text-foreground focus-ring disabled:pointer-events-none disabled:opacity-30"
             >
               <ChevronLeft className="h-4 w-4" />
               {prevSite ? (
@@ -179,7 +179,7 @@ export function DiveSiteModal({ site, allSites, onClose, onNavigate }: Props) {
               onClick={() => nextSite && onNavigate(nextSite)}
               disabled={!nextSite}
               aria-label={nextSite ? `Next: ${nextSite.name}` : "No next site"}
-              className="flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground pressable hover:bg-muted hover:text-foreground disabled:pointer-events-none disabled:opacity-30"
+              className="flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground pressable hover:bg-muted hover:text-foreground focus-ring disabled:pointer-events-none disabled:opacity-30"
             >
               {nextSite ? (
                 <span className="max-w-[120px] truncate">{nextSite.name}</span>

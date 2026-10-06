@@ -32,7 +32,7 @@ export function Breadcrumbs() {
       <nav aria-label="Breadcrumb" className="mb-6 text-sm text-muted-foreground">
       <ol className="flex items-center gap-1.5">
         <li>
-          <Link href="/" className="transition-colors hover:text-foreground">
+          <Link href="/" className="rounded-sm transition-colors hover:text-foreground focus-ring">
             Home
           </Link>
         </li>
@@ -44,7 +44,7 @@ export function Breadcrumbs() {
                 {crumb.label}
               </span>
             ) : (
-              <Link href={crumb.href} className="transition-colors hover:text-foreground">
+              <Link href={crumb.href} className="rounded-sm transition-colors hover:text-foreground focus-ring">
                 {crumb.label}
               </Link>
             )}

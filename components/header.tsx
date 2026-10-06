@@ -83,7 +83,9 @@ export function Header() {
         >
           <Link
             href="/"
-            className="relative flex items-center transition-opacity hover:opacity-90"
+            className={`relative flex items-center rounded-md transition-opacity hover:opacity-90 ${
+              transparent ? "focus-ring-light" : "focus-ring"
+            }`}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -103,10 +105,10 @@ export function Header() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`text-sm font-medium transition-colors ${
+                className={`rounded-sm text-sm font-medium transition-colors ${
                   transparent
-                    ? "text-white/80 hover:text-white"
-                    : "text-muted-foreground hover:text-foreground"
+                    ? "text-white/80 hover:text-white focus-ring-light"
+                    : "text-muted-foreground hover:text-foreground focus-ring"
                 }`}
               >
                 {item.label}
@@ -130,10 +132,10 @@ export function Header() {
               identical for the hamburger and X states — only the icon
               crossfades. */}
           <button
-            className={`pressable relative inline-flex h-11 w-11 items-center justify-center rounded-full p-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring lg:hidden ${
+            className={`pressable relative inline-flex h-11 w-11 items-center justify-center rounded-full p-2 lg:hidden ${
               transparent
-                ? "text-white hover:bg-white/15"
-                : "text-primary hover:bg-primary/10"
+                ? "text-white hover:bg-white/15 focus-ring-light"
+                : "text-primary hover:bg-primary/10 focus-ring"
             }`}
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
@@ -188,7 +190,7 @@ export function Header() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="block py-2.5 text-base font-medium text-muted-foreground transition-colors hover:text-foreground"
+                className="block rounded-md py-2.5 text-base font-medium text-muted-foreground transition-colors hover:text-foreground focus-ring"
                 onClick={() => setMobileOpen(false)}
               >
                 {item.label}
