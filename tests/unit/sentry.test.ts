@@ -5,8 +5,12 @@ import type { ErrorEvent } from "@sentry/nextjs";
 import {
   isClarityIcuError,
   isExtensionSendMessageError,
+  isInjectedCookiebotError,
   isInjectedMediaFilterError,
+  isJsloaderTrackingScriptError,
+  isNativeBridgeProbeError,
   isSentryActive,
+  isTranslateStackOverflow,
   sanitizeSentryEvent,
   sentryDeploymentEnv,
   sentryDsn,
@@ -386,6 +390,370 @@ describe("isExtensionSendMessageError (#176)", () => {
       "runtime.sendMessage is not a function"
     );
     expect(isExtensionSendMessageError(event)).toBe(false);
+    expect(sanitized(event)).toBeDefined();
+  });
+});
+
+describe("isTranslateStackOverflow", () => {
+  function overflowEvent(
+    frames: object[],
+    value = "Maximum call stack size exceeded",
+    type = "RangeError"
+  ): ErrorEvent {
+    return eventWith({
+      exception: {
+        values: [{ type, value, stacktrace: { frames } }],
+      },
+    });
+  }
+
+  it("drops the translate.goog stack-overflow signature observed in production", () => {
+    // Mirrors the /plan-your-trip event: the whole stack is Google
+    // Translate machinery running inside www-seasaba-com.translate.goog.
+    const event = overflowEvent([
+      { filename: "translate_http/.../el_main.js", function: "ka" },
+      { filename: "translate_http/.../el_main.js", function: "ma" },
+      {
+        filename: "https://www-seasaba-com.translate.goog/plan-your-trip",
+      },
+    ]);
+    expect(isTranslateStackOverflow(event)).toBe(true);
+    expect(sanitizeSentryEvent(event)).toBeNull();
+  });
+
+  it("drops the recursion variant whose only evidence is translate_http frames", () => {
+    // Mirrors the /about event: same recursion pattern, Translate-only stack.
+    const event = overflowEvent([
+      { filename: "translate_http/js/element/main/el_main.js" },
+      { filename: "translate_http/js/element/main/el_main.js" },
+    ]);
+    expect(isTranslateStackOverflow(event)).toBe(true);
+  });
+
+  it("retains an app-side RangeError: Maximum call stack size exceeded", () => {
+    const event = overflowEvent([
+      { filename: "https://www.seasaba.com/_next/static/chunks/app.js" },
+      { filename: "webpack://seasaba-web/components/dive-log-client.tsx" },
+    ]);
+    expect(isTranslateStackOverflow(event)).toBe(false);
+    expect(sanitized(event)).toBeDefined();
+  });
+
+  it("retains a stack overflow with unrelated vendor frames", () => {
+    const event = overflowEvent([{ filename: "0.8.70/clarity.js" }]);
+    expect(isTranslateStackOverflow(event)).toBe(false);
+    expect(sanitized(event)).toBeDefined();
+  });
+
+  it("retains a different RangeError even with Translate frames", () => {
+    const event = overflowEvent(
+      [{ filename: "translate_http/js/element/main/el_main.js" }],
+      "Internal error. Icu error."
+    );
+    expect(isTranslateStackOverflow(event)).toBe(false);
+  });
+
+  it("retains a stack overflow reported as a different exception type", () => {
+    const event = overflowEvent(
+      [{ filename: "translate_http/js/element/main/el_main.js" }],
+      "Maximum call stack size exceeded",
+      "InternalError"
+    );
+    expect(isTranslateStackOverflow(event)).toBe(false);
+  });
+
+  it("retains an app overflow on a translate.goog-proxied pageview", () => {
+    // translate.goog is the proxy host on EVERY frame of a translated
+    // pageview — including our own chunks — so it is not machinery
+    // evidence on its own.
+    const event = overflowEvent([
+      {
+        filename:
+          "https://www-seasaba-com.translate.goog/_next/static/chunks/app.js",
+      },
+    ]);
+    expect(isTranslateStackOverflow(event)).toBe(false);
+    expect(sanitized(event)).toBeDefined();
+  });
+
+  it("retains a mixed stack: Translate machinery plus first-party code", () => {
+    // The predicate's conjunction matches, but the first-party veto in
+    // sanitizeSentryEvent keeps any event whose stack still runs our code.
+    const event = overflowEvent([
+      { filename: "translate_http/js/element/main/el_main.js" },
+      {
+        filename:
+          "https://www-seasaba-com.translate.goog/_next/static/chunks/app.js",
+      },
+    ]);
+    expect(isTranslateStackOverflow(event)).toBe(true);
+    expect(sanitized(event)).toBeDefined();
+  });
+});
+
+describe("isInjectedCookiebotError", () => {
+  function illegalInvocationEvent(frames: object[], type = "TypeError"): ErrorEvent {
+    return eventWith({
+      exception: {
+        values: [
+          {
+            type,
+            value: "Illegal invocation",
+            stacktrace: { frames },
+          },
+        ],
+      },
+    });
+  }
+
+  it("drops the injected-content + Cookiebot signature observed in production", () => {
+    const event = illegalInvocationEvent([
+      { filename: "app:///dist/inject_content.js" },
+      { filename: "https://consentcdn.cookiebot.com/uc.js" },
+    ]);
+    expect(isInjectedCookiebotError(event)).toBe(true);
+    expect(sanitizeSentryEvent(event)).toBeNull();
+  });
+
+  it("drops the same signature against the Cookiebot cc.js frame", () => {
+    const event = illegalInvocationEvent([
+      { filename: "app:///dist/inject_content.js" },
+      { filename: "https://consent.cookiebot.com/cc.js" },
+    ]);
+    expect(isInjectedCookiebotError(event)).toBe(true);
+  });
+
+  it("retains an app-side Illegal invocation", () => {
+    const event = illegalInvocationEvent([
+      { filename: "https://www.seasaba.com/_next/static/chunks/app.js" },
+      { filename: "webpack://seasaba-web/lib/analytics.ts" },
+    ]);
+    expect(isInjectedCookiebotError(event)).toBe(false);
+    expect(sanitized(event)).toBeDefined();
+  });
+
+  it("retains a Cookiebot error without injected-content evidence", () => {
+    const event = illegalInvocationEvent([
+      { filename: "https://consentcdn.cookiebot.com/uc.js" },
+      { filename: "https://www.seasaba.com/_next/static/chunks/app.js" },
+    ]);
+    expect(isInjectedCookiebotError(event)).toBe(false);
+    expect(sanitized(event)).toBeDefined();
+  });
+
+  it("retains an injected-script error that does not touch Cookiebot", () => {
+    const event = illegalInvocationEvent([
+      { filename: "app:///dist/inject_content.js" },
+      { filename: "app:///gtm.js" },
+    ]);
+    expect(isInjectedCookiebotError(event)).toBe(false);
+  });
+});
+
+describe("isNativeBridgeProbeError", () => {
+  const bridgeValue =
+    "Cannot read properties of undefined (reading 'webkit.messageHandlers')";
+
+  function bridgeEvent(frames: object[], value = bridgeValue): ErrorEvent {
+    return eventWith({
+      exception: {
+        values: [{ type: "TypeError", value, stacktrace: { frames } }],
+      },
+    });
+  }
+
+  it("drops the opaque injected-bridge signature observed in production", () => {
+    const event = eventWith({
+      exception: {
+        values: [
+          {
+            type: "TypeError",
+            value: "window.webkit.messageHandlers is undefined",
+            stacktrace: {
+              frames: [{ filename: "app:///script.js" }],
+            },
+          },
+        ],
+      },
+    });
+    expect(isNativeBridgeProbeError(event)).toBe(true);
+    expect(sanitizeSentryEvent(event)).toBeNull();
+  });
+
+  it("retains the same probe thrown by first-party bundle code", () => {
+    // A real future native-wrapper integration runs from /_next/ chunks —
+    // those errors must keep reporting.
+    const event = bridgeEvent([
+      { filename: "app:///script.js" },
+      { filename: "app:///_next/static/chunks/app.js" },
+    ]);
+    expect(isNativeBridgeProbeError(event)).toBe(false);
+    expect(sanitized(event)).toBeDefined();
+  });
+
+  it("retains the same message with no foreign-frame evidence", () => {
+    const event = bridgeEvent([
+      { filename: "https://www.seasaba.com/_next/static/chunks/main-app.js" },
+    ]);
+    expect(isNativeBridgeProbeError(event)).toBe(false);
+    expect(sanitized(event)).toBeDefined();
+  });
+
+  it("retains a probe thrown inside gtm.js — our container is ours to fix", () => {
+    const event = bridgeEvent([
+      { filename: "app:///script.js" },
+      { filename: "app:///gtm.js" },
+    ]);
+    expect(isNativeBridgeProbeError(event)).toBe(false);
+    expect(sanitized(event)).toBeDefined();
+  });
+
+  it("retains the probe when the gtm.js frame carries its ?id= query string", () => {
+    const event = bridgeEvent([
+      { filename: "app:///script.js" },
+      { filename: "app:///gtm.js?id=GTM-5PFMJFN" },
+    ]);
+    expect(isNativeBridgeProbeError(event)).toBe(false);
+    expect(sanitized(event)).toBeDefined();
+  });
+
+  it("retains the probe thrown by a webpack module path", () => {
+    const event = bridgeEvent([
+      { filename: "app:///script.js" },
+      { filename: "webpack://seasaba-web/lib/native-bridge.ts" },
+    ]);
+    expect(isNativeBridgeProbeError(event)).toBe(false);
+    expect(sanitized(event)).toBeDefined();
+  });
+
+  it("retains a different error inside an opaque app script", () => {
+    const event = bridgeEvent(
+      [{ filename: "app:///script.js" }],
+      "Cannot read properties of undefined (reading 'foo')"
+    );
+    expect(isNativeBridgeProbeError(event)).toBe(false);
+  });
+});
+
+describe("isJsloaderTrackingScriptError", () => {
+  const jsloaderValue =
+    "Jsloader error (code #0): Error while loading script https://apis.google.com/js/client.js?onload=loadScripts";
+
+  function jsloaderEvent(
+    frames: object[],
+    value = jsloaderValue,
+    type = "CustomError"
+  ): ErrorEvent {
+    return eventWith({
+      exception: {
+        values: [{ type, value, stacktrace: { frames } }],
+      },
+    });
+  }
+
+  it("drops the jsloader + tracking_script signature observed in production", () => {
+    const event = jsloaderEvent([
+      { filename: "app:///tracking_script.js" },
+      { filename: "app:///tracking_script.js" },
+    ]);
+    expect(isJsloaderTrackingScriptError(event)).toBe(true);
+    expect(sanitizeSentryEvent(event)).toBeNull();
+  });
+
+  it("retains a jsloader failure for a different Google script", () => {
+    const event = jsloaderEvent(
+      [{ filename: "app:///tracking_script.js" }],
+      "Jsloader error (code #0): Error while loading script https://apis.google.com/js/plusone.js"
+    );
+    expect(isJsloaderTrackingScriptError(event)).toBe(false);
+  });
+
+  it("retains the same jsloader message without the injected frame", () => {
+    const event = jsloaderEvent([
+      { filename: "https://www.seasaba.com/_next/static/chunks/app.js" },
+    ]);
+    expect(isJsloaderTrackingScriptError(event)).toBe(false);
+    expect(sanitized(event)).toBeDefined();
+  });
+
+  it("retains a different CustomError inside tracking_script.js", () => {
+    const event = jsloaderEvent(
+      [{ filename: "app:///tracking_script.js" }],
+      "Jsloader error (code #1): Timeout"
+    );
+    expect(isJsloaderTrackingScriptError(event)).toBe(false);
+  });
+
+  it("retains the same signature under a different exception type", () => {
+    const event = jsloaderEvent(
+      [{ filename: "app:///tracking_script.js" }],
+      jsloaderValue,
+      "Error"
+    );
+    expect(isJsloaderTrackingScriptError(event)).toBe(false);
+  });
+});
+
+describe("first-party stack veto", () => {
+  it("retains a multi-exception event whose other exception runs our code", () => {
+    // A chained exception: the inner one matches a noise signature, but the
+    // outer one is a genuine app error — the event must not be swallowed.
+    const event = eventWith({
+      exception: {
+        values: [
+          {
+            type: "CustomError",
+            value:
+              "Jsloader error (code #0): Error while loading script https://apis.google.com/js/client.js",
+            stacktrace: {
+              frames: [{ filename: "app:///tracking_script.js" }],
+            },
+          },
+          {
+            type: "TypeError",
+            value: "Cannot read properties of undefined (reading 'dive')",
+            stacktrace: {
+              frames: [
+                {
+                  filename:
+                    "https://www.seasaba.com/_next/static/chunks/app.js",
+                },
+                { filename: "webpack://seasaba-web/lib/dive-log.ts" },
+              ],
+            },
+          },
+        ],
+      },
+    });
+    expect(isJsloaderTrackingScriptError(event)).toBe(true);
+    expect(sanitized(event)).toBeDefined();
+  });
+});
+
+describe("GTM container tag errors stay reporting", () => {
+  it("retains the `$ is not defined` ReferenceError thrown inside gtm.js", () => {
+    // The event fires inside our own GTM-5PFMJFN container — tag/config is
+    // ours to fix, so it must never be suppressed. Breadcrumb context in
+    // production: "GTM PTag v1.4; tagId: 2613447705545" (Pinterest Tag).
+    const event = eventWith({
+      exception: {
+        values: [
+          {
+            type: "ReferenceError",
+            value: "$ is not defined",
+            stacktrace: {
+              frames: [
+                { filename: "app:///gtm.js" },
+                { filename: "app:///gtm.js" },
+              ],
+            },
+          },
+        ],
+      },
+      breadcrumbs: [
+        { category: "console", message: "GTM PTag v1.4; tagId: 2613447705545" },
+      ],
+    });
     expect(sanitized(event)).toBeDefined();
   });
 });
