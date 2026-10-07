@@ -40,13 +40,14 @@ const inputClass =
 const labelClass = "text-sm font-medium text-foreground";
 
 function FieldError({ id, message }: { id: string; message?: string }) {
-  // The slot is always rendered (reserved min-height, like the contact
-  // form): an error that mounts on demand pushes every field below it
-  // down mid-read. `invisible` — not `hidden` — keeps the space so the
-  // form's rhythm never shifts when a message appears.
+  // Mounts only with a message. A permanently reserved slot pads every
+  // untouched field in this long form; a small local expansion when a
+  // message appears is the better trade. `aria-describedby` points here
+  // only under the same condition, so the reference never dangles.
+  if (!message) return null;
   return (
-    <p id={id} className={`min-h-4 text-xs text-destructive${message ? "" : " invisible"}`}>
-      {message || " "}
+    <p id={id} className="text-xs text-destructive">
+      {message}
     </p>
   );
 }

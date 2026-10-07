@@ -967,15 +967,29 @@ describe("support request form", () => {
     );
   });
 
-  it("keeps inline error slots mounted so appearing errors don't shift the layout (#211)", async () => {
+  it("mounts errors on demand — an untouched form reserves no error space (#211)", async () => {
     render(<SupportRequestForm />);
-    // The slot exists — and holds vertical space — before the field can error.
-    const slot = document.getElementById("sr-name-error");
-    expect(slot).not.toBeNull();
-    expect(slot).toHaveClass("invisible");
+    // No error element exists before validation: the untouched form keeps
+    // its compact rhythm instead of padding for errors that may never appear.
+    expect(document.querySelector('[id$="-error"]')).toBeNull();
+    expect(screen.queryByText(/please enter your name/i)).toBeNull();
+
     await userEvent.click(screen.getByRole("button", { name: "Send request" }));
-    expect(slot).not.toHaveClass("invisible");
-    expect(slot).toHaveTextContent("Please enter your name.");
+    // The message mounts directly under its field and stays wired to it.
+    const nameError = document.getElementById("sr-name-error");
+    expect(nameError).toBeVisible();
+    expect(nameError).toHaveTextContent("Please enter your name.");
+    expect(screen.getByRole("textbox", { name: /your name/i })).toHaveAttribute(
+      "aria-describedby",
+      "sr-name-error"
+    );
+
+    // Correcting the field unmounts the message and drops the association.
+    await userEvent.type(screen.getByRole("textbox", { name: /your name/i }), "Sentinel Person");
+    expect(document.getElementById("sr-name-error")).toBeNull();
+    expect(screen.getByRole("textbox", { name: /your name/i })).not.toHaveAttribute(
+      "aria-describedby"
+    );
   });
 
   it("marks single-line fields with next-field keyboard hints (#211)", () => {
