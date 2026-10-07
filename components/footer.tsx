@@ -55,8 +55,9 @@ const headingCls = "text-xs font-semibold uppercase tracking-widest text-foregro
 export function Footer() {
   return (
     <footer className="border-t border-border/40 bg-muted/30">
-      {/* pb clears the fixed launchers' clipped hit region (~80px) plus safe-area */}
-      <div className="mx-auto max-w-6xl px-4 pt-10 pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))] sm:px-6 lg:px-8">
+      {/* pb clears the fixed launchers' clipped hit region (~110px at the
+          shared 43px anchor inset) plus safe-area */}
+      <div className="mx-auto max-w-6xl px-4 pt-10 pb-[calc(7.5rem+env(safe-area-inset-bottom,0px))] sm:px-6 lg:px-8">
         <div className="grid gap-8 sm:grid-cols-2 sm:gap-10 lg:grid-cols-4">
 
           {/* Plan Your Trip */}

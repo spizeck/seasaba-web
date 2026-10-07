@@ -10,9 +10,10 @@ import {
 // Real production geometry (measured on www.seasaba.com):
 //   Respond.io closed iframe, launcher-only: 90x90, right/bottom:49px —
 //     the component marks it `data-launcher-only` (issue #184), which is
-//     what applies the translate(36px, 36px) calibration + hit-region
-//     clip -> box x:[vw-103, vw-13], y:[vh-103, vh-13]; clipped zone
-//     x:[vw-80, vw-13], y:[vh-80, vh-13].
+//     what applies the translate(6px, 6px) anchor nudge + hit-region
+//     clip -> box x:[vw-133, vw-43], y:[vh-133, vh-43]; clipped zone
+//     x:[vw-110.5, vw-43], y:[vh-110.5, vh-43] — the same 43px inset the
+//     prompt and open states rest at, so the circle never moves.
 //   Respond.io closed iframe, prompt card visible: up to ~330x179 at
 //     right/bottom:43px, still state="widgetClose" but NOT marked —
 //     vendor positioning and hit region stay intact so the prompt is
@@ -106,8 +107,8 @@ test("footer bottom bar clears both floating launchers at every width", async ({
     expect(m.blocked, `${width}px links intercepted by iframe`).toEqual([]);
     // Positive breathing room between the last content row and the
     // clipped launcher zone — but bounded so padding can't silently grow
-    // back into an empty slab (zone top ≈ vh-80, so >35px would mean
-    // ~115px+ of dead space).
+    // back into an empty slab (zone top ≈ vh-110.5, so >35px would mean
+    // ~145px+ of dead space).
     expect(m.gapAboveZone, `${width}px gap above launcher zone`).toBeGreaterThan(4);
     expect(m.gapAboveZone, `${width}px gap above launcher zone`).toBeLessThan(35);
   }
