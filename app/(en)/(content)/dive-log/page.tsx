@@ -16,7 +16,7 @@ export default function DiveLogPage() {
           — say so and offer a real next step instead (issue #209). */}
       <noscript>
         <p className="mx-auto max-w-md px-4 pb-10 text-center text-sm text-muted-foreground">
-          The dive log needs JavaScript to load recent dives. You can still{" "}
+          Recent dive activity needs JavaScript to load. You can still{" "}
           <a
             href="/dive-sites"
             className="font-medium text-primary underline underline-offset-2 hover:underline"
