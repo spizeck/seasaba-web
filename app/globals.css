@@ -365,15 +365,21 @@ html[data-hero-in-view] iframe[title="Webchat Widget"][state="widgetClose"] {
 }
 
 /*
- * Resting-position calibration (issue #125) + prompt-safety (issue #184).
- * Measured on production: the closed launcher iframe is 90x90 at
- * right/bottom:49px (vendor 25px + dashboard spacing), while the visible
- * blue circle (~57-59px) sits ~4-5px inside the iframe's corner — an
- * effective ~53-54px of clearance vs Cookiebot's ~10-11px. Shifting the
- * launcher 36px right/down puts the circle ~17-18px from the viewport
- * edges. `transform` is safe: the vendor positions via inline
- * left/right/bottom and does not use transform, and transforms never
- * create document overflow.
+ * Fixed launcher anchor (issue #125 calibration, reworked) +
+ * prompt-safety (issue #184).
+ *
+ * The launcher circle must sit at one screen position in every state:
+ * Measured on production, the vendor anchors the same iframe at
+ * right/bottom:49px while launcher-only (90x90) and at right/bottom:43px
+ * while the promotional prompt card is showing (~330x179) — the circle
+ * stays bottom-right-anchored inside the iframe in both, so its center
+ * sits ~6px farther in from the corner during the prompt state. The
+ * prompt/open inset is the comfortable resting inset the launcher should
+ * keep, so the marked launcher-only iframe is nudged 6px toward the
+ * corner: its edge lands on the same 43px anchor as every other state and
+ * the circle never moves when the teaser or panel appears. `transform` is
+ * safe: the vendor positions via inline left/right/bottom and does not
+ * use transform, and transforms never create document overflow.
  *
  * The launcher iframe's transparent top/left still intercepts pointer
  * events (verified via elementFromPoint on production). `clip-path`
@@ -391,6 +397,6 @@ html[data-hero-in-view] iframe[title="Webchat Widget"][state="widgetClose"] {
  * positioning and hit region untouched.
  */
 iframe[title="Webchat Widget"][data-launcher-only] {
-  transform: translate(36px, 36px);
+  transform: translate(6px, 6px);
   clip-path: inset(25% 0 0 25%);
 }

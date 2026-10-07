@@ -79,17 +79,19 @@ it("hides only the closed widget launcher while the homepage hero is in view", (
   expect(globalsCss).not.toContain("translateY(calc(-60px");
 });
 
-// Launcher resting-position calibration (issue #125) + prompt-safety
+// Fixed launcher anchor (#125 calibration, reworked) + prompt-safety
 // (issue #184): the vendor reuses the closed-state iframe for the
 // promotional prompt, growing it far beyond the 90x90 launcher — so the
 // translate/clip contract must key off the loader-maintained
 // `data-launcher-only` geometry marker, never the bare widgetClose state.
-it("shifts only the marked launcher-only iframe to its calibrated resting position", () => {
+it("nudges only the marked launcher-only iframe onto the shared 43px anchor", () => {
   const bodies = [...globalsCss.matchAll(
     /iframe\[title="Webchat Widget"\]\[data-launcher-only\]\s*{([^}]+)}/g
   )].map((m) => m[1]);
   const combined = bodies.join("\n");
-  expect(combined).toContain("transform: translate(36px, 36px)");
+  // Vendor closed inset is 49px; the prompt/open inset is 43px. The 6px
+  // nudge lands the launcher circle on the same anchor in every state.
+  expect(combined).toContain("transform: translate(6px, 6px)");
   // clip-path shrinks the transparent hit area to the circle's quarter.
   expect(combined).toContain("clip-path: inset(25% 0 0 25%)");
   expect(combined).not.toContain("!important");
