@@ -223,9 +223,12 @@ export function AccommodationsSection({ accommodations }: AccommodationsSectionP
         </div>
       )}
 
-      {/* Results header */}
+      {/* Results header — the count is a polite live region so a filter
+          change to zero results is announced while focus stays on the
+          filter. aria-atomic reads the whole new count, not just the
+          changed digit. */}
       <div className="mt-8 flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-foreground">
+        <h3 className="text-sm font-semibold text-foreground" aria-live="polite" aria-atomic="true">
           {filtered.length} accommodation{filtered.length !== 1 ? "s" : ""}
         </h3>
         {hasActiveFilters && (
@@ -238,8 +241,9 @@ export function AccommodationsSection({ accommodations }: AccommodationsSectionP
         )}
       </div>
 
-      {/* No results — shared StatePanel; no live role, the result count
-          heading already announces the change (issue #209). */}
+      {/* No results — shared StatePanel; no live role of its own, the
+          live result-count heading above already announces the change
+          (issue #209). */}
       {filtered.length === 0 && (
         <StatePanel
           className="mt-6"

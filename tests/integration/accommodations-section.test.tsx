@@ -76,6 +76,11 @@ it("explains an empty filter result and offers a way back", async () => {
     screen.getByRole("searchbox", { name: "Search accommodations" }),
     "zzz-no-match"
   );
+  // The always-mounted result count is a polite live region, so the zero
+  // state is announced while focus stays on the filter control.
+  const count = screen.getByRole("heading", { name: "0 accommodations" });
+  expect(count).toHaveAttribute("aria-live", "polite");
+  expect(count).toHaveAttribute("aria-atomic", "true");
   const panel = screen.getByText("No accommodations match your filters.");
   expect(panel).toBeVisible();
   // The recovery action actually restores the list.
