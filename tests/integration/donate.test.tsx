@@ -951,6 +951,67 @@ describe("support request form", () => {
     expect(fetch).not.toHaveBeenCalled();
   });
 
+  it("associates the support-type group error with the checkboxes that receive focus (#211)", async () => {
+    render(<SupportRequestForm />);
+    await userEvent.click(screen.getByRole("button", { name: "Send request" }));
+    // Focus lands on a checkbox, not the fieldset — the group error must be
+    // described by the boxes themselves or it is never announced.
+    const boxes = document.querySelectorAll('input[id^="sr-type-"]');
+    expect(boxes.length).toBeGreaterThan(0);
+    for (const box of boxes) {
+      expect(box).toHaveAttribute("aria-invalid", "true");
+      expect(box).toHaveAttribute("aria-describedby", "sr-types-error");
+    }
+    expect(document.getElementById("sr-types-error")).toHaveTextContent(
+      "Please choose at least one type of support."
+    );
+  });
+
+  it("mounts errors on demand — an untouched form reserves no error space (#211)", async () => {
+    render(<SupportRequestForm />);
+    // No error element exists before validation: the untouched form keeps
+    // its compact rhythm instead of padding for errors that may never appear.
+    expect(document.querySelector('[id$="-error"]')).toBeNull();
+    expect(screen.queryByText(/please enter your name/i)).toBeNull();
+
+    await userEvent.click(screen.getByRole("button", { name: "Send request" }));
+    // The message mounts directly under its field and stays wired to it.
+    const nameError = document.getElementById("sr-name-error");
+    expect(nameError).toBeVisible();
+    expect(nameError).toHaveTextContent("Please enter your name.");
+    expect(screen.getByRole("textbox", { name: /your name/i })).toHaveAttribute(
+      "aria-describedby",
+      "sr-name-error"
+    );
+
+    // Correcting the field unmounts the message and drops the association.
+    await userEvent.type(screen.getByRole("textbox", { name: /your name/i }), "Sentinel Person");
+    expect(document.getElementById("sr-name-error")).toBeNull();
+    expect(screen.getByRole("textbox", { name: /your name/i })).not.toHaveAttribute(
+      "aria-describedby"
+    );
+  });
+
+  it("marks single-line fields with next-field keyboard hints (#211)", () => {
+    render(<SupportRequestForm />);
+    for (const id of [
+      "sr-name",
+      "sr-organization",
+      "sr-email",
+      "sr-phone",
+      "sr-amount",
+      "sr-beneficiaries",
+      "sr-timing",
+      "sr-url",
+    ]) {
+      expect(document.getElementById(id)).toHaveAttribute("enterkeyhint", "next");
+    }
+    // Textareas and checkboxes keep their natural keys — a "next" hint
+    // would be wrong where Enter inserts a newline or toggles.
+    expect(document.getElementById("sr-description")).not.toHaveAttribute("enterkeyhint");
+    expect(document.getElementById("sr-ack")).not.toHaveAttribute("enterkeyhint");
+  });
+
   it("announces the pending state while the request is in flight", { timeout: 20000 }, async () => {
     let resolveFetch: ((r: Response) => void) | undefined;
     vi.mocked(fetch).mockImplementation(

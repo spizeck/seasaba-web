@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils";
  */
 export function StatePanel({
   title,
+  titleClassName,
   description,
   leading,
   role,
@@ -23,6 +24,8 @@ export function StatePanel({
   className,
 }: {
   title: string;
+  /** Override for prominent failures — default is the quiet text-sm title. */
+  titleClassName?: string;
   description?: ReactNode;
   /** Visual shown above the title — BubbleLoader, icon, etc. */
   leading?: ReactNode;
@@ -40,7 +43,7 @@ export function StatePanel({
       )}
     >
       {leading}
-      <p className="text-sm font-medium text-foreground">{title}</p>
+      <p className={cn("text-sm font-medium text-foreground", titleClassName)}>{title}</p>
       {description && (
         <p className="mt-1 text-sm text-muted-foreground">{description}</p>
       )}

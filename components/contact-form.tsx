@@ -288,6 +288,7 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
           maxLength={meta.maxLength}
           autoComplete={meta.autoComplete}
           inputMode={meta.inputMode}
+          enterKeyHint="next"
           onChange={(e) => contextualSetters[field](e.target.value)}
           aria-invalid={!!error}
           aria-describedby={error ? `${meta.id}-error` : undefined}
@@ -332,6 +333,7 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
             value={name}
             maxLength={CONTACT_LIMITS.name}
             autoComplete="name"
+            enterKeyHint="next"
             onChange={(e) => updateCoreField("name", e.target.value)}
             onBlur={() => handleBlur("name")}
             aria-invalid={touched.name && !!errors.name}
@@ -356,6 +358,7 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
             value={email}
             maxLength={CONTACT_LIMITS.email}
             autoComplete="email"
+            enterKeyHint="next"
             onChange={(e) => updateCoreField("email", e.target.value)}
             onBlur={() => handleBlur("email")}
             aria-invalid={touched.email && !!errors.email}
