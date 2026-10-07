@@ -26,6 +26,7 @@ type PageSectionNavProps = {
 export function PageSectionNav({ items, className, offset = 96 }: PageSectionNavProps) {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [isSticky, setIsSticky] = useState(false);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
   const observerRef = useRef<IntersectionObserver | null>(null);
   const navRef = useRef<HTMLElement>(null);
@@ -85,13 +86,16 @@ export function PageSectionNav({ items, className, offset = 96 }: PageSectionNav
   }, []);
 
   // Single-row strip at every width: overflow scrolls horizontally inside
-  // the nav, so the right-edge fade only makes sense while content actually
-  // extends past the visible edge — and lifts when scrolled to the end.
+  // the nav. Edge fades only make sense where content is actually clipped:
+  // the right fade lifts when scrolled to the end, and a subtler left
+  // affordance appears only once pills have scrolled off the start edge.
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
-    const update = () =>
+    const update = () => {
       setCanScrollRight(el.scrollWidth - el.scrollLeft - el.clientWidth > 4);
+      setCanScrollLeft(el.scrollLeft > 4);
+    };
     update();
     el.addEventListener("scroll", update, { passive: true });
     const ro = new ResizeObserver(update);
@@ -181,17 +185,26 @@ export function PageSectionNav({ items, className, offset = 96 }: PageSectionNav
     >
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         {/* Always one row — overflow scrolls inside the strip at every
-            width. The right-edge mask fade appears only while content
-            actually extends past the edge, so a partially visible next pill
-            reads as an intentional scroll affordance. scroll-px keeps a
-            comfortable inset when the browser scrolls a focused pill into
-            view. */}
+            width. The clip region bleeds 12px into the page gutter
+            (-mx-3/px-3), so at rest the first pill still aligns with the
+            content inset while its focus ring and approaching pills get
+            runway inside the clip; -mt-1/pt-1 gives the same headroom for
+            focus outlines above the pills. scroll-px-3 makes
+            focus-into-view land pills at that same inset. Edge fades are a
+            narrow fixed 28px mask — enough to hint that content continues,
+            never enough to wash a pill out — applied only at edges that
+            actually have clipped content. */}
         <div
           ref={containerRef}
           className={cn(
-            "scrollbar-hide flex flex-nowrap gap-2 overflow-x-auto scroll-px-4 pb-2",
-            canScrollRight &&
-              "[mask-image:linear-gradient(to_right,black_85%,transparent)]"
+            "scrollbar-hide -mx-3 -mt-1 flex flex-nowrap gap-2 overflow-x-auto scroll-px-3 px-3 pb-2 pt-1",
+            canScrollLeft && canScrollRight
+              ? "[mask-image:linear-gradient(to_right,transparent,black_28px,black_calc(100%_-_28px),transparent)]"
+              : canScrollRight
+                ? "[mask-image:linear-gradient(to_right,black_calc(100%_-_28px),transparent)]"
+                : canScrollLeft
+                  ? "[mask-image:linear-gradient(to_right,transparent,black_28px)]"
+                  : ""
           )}
         >
           {items.map(({ id, label }) => {
