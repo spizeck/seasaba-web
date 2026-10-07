@@ -40,6 +40,10 @@ const inputClass =
 const labelClass = "text-sm font-medium text-foreground";
 
 function FieldError({ id, message }: { id: string; message?: string }) {
+  // Mounts only with a message. A permanently reserved slot pads every
+  // untouched field in this long form; a small local expansion when a
+  // message appears is the better trade. `aria-describedby` points here
+  // only under the same condition, so the reference never dangles.
   if (!message) return null;
   return (
     <p id={id} className="text-xs text-destructive">
@@ -378,6 +382,7 @@ export function SupportRequestForm() {
             aria-describedby={touched.name && errors.name ? "sr-name-error" : undefined}
             className={inputClass}
             placeholder="Your full name"
+            enterKeyHint="next"
           />
           <FieldError id="sr-name-error" message={touched.name ? errors.name : undefined} />
         </div>
@@ -397,6 +402,7 @@ export function SupportRequestForm() {
             onChange={(e) => setField("organization", e.target.value)}
             className={inputClass}
             placeholder="e.g. Saba youth football club"
+            enterKeyHint="next"
           />
         </div>
       </div>
@@ -420,6 +426,7 @@ export function SupportRequestForm() {
             aria-describedby={touched.email && errors.email ? "sr-email-error" : undefined}
             className={inputClass}
             placeholder="you@example.com"
+            enterKeyHint="next"
           />
           <FieldError id="sr-email-error" message={touched.email ? errors.email : undefined} />
         </div>
@@ -439,6 +446,7 @@ export function SupportRequestForm() {
             onChange={(e) => setField("phone", e.target.value)}
             className={inputClass}
             placeholder="+599 416 0000"
+            enterKeyHint="next"
           />
         </div>
       </div>
@@ -470,12 +478,7 @@ export function SupportRequestForm() {
         <FieldError id="sr-category-error" message={touched.category ? errors.category : undefined} />
       </div>
 
-      <fieldset
-        className="space-y-1.5"
-        aria-describedby={
-          touched.supportTypes && errors.supportTypes ? "sr-types-error" : undefined
-        }
-      >
+      <fieldset className="space-y-1.5">
         <legend className={labelClass}>
           Type of support needed{" "}
           <span aria-hidden="true" className="text-destructive">*</span>
@@ -497,7 +500,13 @@ export function SupportRequestForm() {
                 type="checkbox"
                 checked={draft.supportTypes.includes(type.value)}
                 onChange={() => toggleSupportType(type.value)}
-                className="mt-0.5 h-4 w-4 shrink-0 rounded border-border accent-primary focus:ring-1 focus:ring-primary"
+                aria-invalid={touched.supportTypes && !!errors.supportTypes}
+                aria-describedby={
+                  // Focus lands on a checkbox, not the fieldset — the group
+                  // error must be associated with the box itself to be read.
+                  touched.supportTypes && errors.supportTypes ? "sr-types-error" : undefined
+                }
+                className="mt-0.5 h-4 w-4 shrink-0 rounded border-border accent-primary focus-visible:ring-1 focus-visible:ring-primary"
               />
               {type.label}
             </label>
@@ -530,6 +539,7 @@ export function SupportRequestForm() {
           }
           className={inputClass}
           placeholder="e.g. USD 250, or two sets of snorkel gear"
+          enterKeyHint="next"
         />
         <p id="sr-amount-hint" className="text-xs text-muted-foreground">
           Required when asking for financial support or sponsorship. A rough figure is fine.
@@ -604,6 +614,7 @@ export function SupportRequestForm() {
             aria-describedby={touched.beneficiaries && errors.beneficiaries ? "sr-beneficiaries-error" : undefined}
             className={inputClass}
             placeholder="e.g. About 30 kids aged 8–14"
+            enterKeyHint="next"
           />
           <FieldError id="sr-beneficiaries-error" message={touched.beneficiaries ? errors.beneficiaries : undefined} />
         </div>
@@ -625,6 +636,7 @@ export function SupportRequestForm() {
             aria-describedby={touched.timing && errors.timing ? "sr-timing-error" : undefined}
             className={inputClass}
             placeholder="e.g. October 2026, or ongoing"
+            enterKeyHint="next"
           />
           <FieldError id="sr-timing-error" message={touched.timing ? errors.timing : undefined} />
         </div>
@@ -689,6 +701,7 @@ export function SupportRequestForm() {
               aria-describedby={touched.referenceUrl && errors.referenceUrl ? "sr-url-error" : undefined}
               className={inputClass}
               placeholder="https://… event page, club site, or social post"
+              enterKeyHint="next"
             />
             <FieldError id="sr-url-error" message={touched.referenceUrl ? errors.referenceUrl : undefined} />
           </div>
