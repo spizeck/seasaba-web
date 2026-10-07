@@ -5,14 +5,18 @@ import {
 } from "@/data/community-support";
 
 /**
- * Client-email handoff for the /donate "Request Support from Sea Saba" form —
- * the same submission mechanism as the contact form. The site builds a
- * pre-populated `mailto:` draft (or a WhatsApp message); the visitor's own
- * email app sends it, so Respond.io sees the visitor's real From address and
- * the request lands on the correct contact. Server-side sending was removed
- * site-wide because a common `From` address collapsed all visitors into one
- * Respond.io contact — see issue #104 for the deferred Custom Channel
- * architecture. Do not reintroduce a shared-sender server endpoint here.
+ * Validation and fallback handoffs for the /donate "Request Support from
+ * Sea Saba" form. The primary submission path is the first-party
+ * persistence boundary POST /api/support-requests (#189), which saves the
+ * request in the Community Support system and returns a reference. These
+ * helpers cover the recoverable-failure path: when the boundary can't be
+ * reached, the site builds a pre-populated `mailto:` draft (or a WhatsApp
+ * message); the visitor's own email app sends it, so Respond.io sees the
+ * visitor's real From address and the request lands on the correct
+ * contact. A shared-sender server endpoint must not be reintroduced for
+ * the email path — a common `From` address collapsed all visitors into one
+ * Respond.io contact (see issue #104 for the deferred Custom Channel
+ * architecture).
  *
  * Pure functions — no Next.js or provider imports — so the submission
  * contract is unit-testable in isolation.

@@ -77,9 +77,10 @@ test.describe("automated axe scans", () => {
     test.skip(isMobile || browserName !== "chromium", "representative scan on desktop-chromium");
     await hydratedGoto(page, "/donate", "#sr-name");
     await page.getByRole("button", { name: "Send request" }).click();
-    // Error text is always mounted but `invisible` until the field is touched.
-    await expect(page.locator("#sr-name-error")).not.toHaveClass(/invisible/);
-    await expect(page.locator("#sr-email-error")).not.toHaveClass(/invisible/);
+    // Errors mount on demand under each field once validation runs.
+    await expect(page.locator("#sr-name-error")).toBeVisible();
+    await expect(page.locator("#sr-email-error")).toBeVisible();
+    await expect(page.locator("#sr-types-error")).toBeVisible();
     await expectNoAxeViolations(page);
   });
 

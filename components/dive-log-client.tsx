@@ -186,7 +186,7 @@ function DiveCard({
           <button
             onClick={onToggle}
             aria-label={selected ? `Remove ${dive.diveSite} from my dive log` : `Add ${dive.diveSite} to my dive log`}
-            className={`shrink-0 rounded-md border px-3 py-1.5 text-xs font-medium pressable ${
+            className={`shrink-0 rounded-md border px-3 py-1.5 text-xs font-medium pressable focus-ring ${
               selected
                 ? "border-primary bg-primary text-white hover:bg-primary/90"
                 : "border-border/60 text-muted-foreground hover:border-primary/40 hover:text-primary"
@@ -198,7 +198,8 @@ function DiveCard({
 
         <button
           onClick={() => setExpanded((v) => !v)}
-          className="mt-3 flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+          aria-expanded={expanded}
+          className="mt-3 flex items-center gap-1 rounded-md text-xs text-muted-foreground pressable hover:text-foreground focus-ring"
         >
           {expanded ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
           {expanded ? "Hide sightings" : `${dive.sightings.length} species sighted`}
@@ -222,7 +223,7 @@ function DiveCard({
                 <button
                   key={s.speciesName}
                   onClick={() => openSpecies(s.speciesName)}
-                  className="inline-flex items-center rounded-md bg-muted/60 px-2 py-1 text-xs text-muted-foreground pressable hover:bg-primary/10 hover:text-primary"
+                  className="inline-flex items-center rounded-md bg-muted/60 px-2 py-1 text-xs text-muted-foreground pressable hover:bg-primary/10 hover:text-primary focus-ring"
                 >
                   {chip}
                 </button>
@@ -372,7 +373,7 @@ export function DiveLogClient() {
               <div className="inline-flex items-center gap-1 rounded-md border border-border/60 p-0.5 text-xs">
                 <button
                   onClick={() => setUnitSystem("metric")}
-                  className={`rounded px-2 py-1 pressable ${
+                  className={`rounded px-2 py-1 pressable focus-ring ${
                     unitSystem === "metric" ? "bg-primary text-white" : "text-muted-foreground hover:text-foreground"
                   }`}
                   aria-label="Metric units"
@@ -382,7 +383,7 @@ export function DiveLogClient() {
                 </button>
                 <button
                   onClick={() => setUnitSystem("imperial")}
-                  className={`rounded px-2 py-1 pressable ${
+                  className={`rounded px-2 py-1 pressable focus-ring ${
                     unitSystem === "imperial" ? "bg-primary text-white" : "text-muted-foreground hover:text-foreground"
                   }`}
                   aria-label="Imperial units"
@@ -415,7 +416,7 @@ export function DiveLogClient() {
                 onClick={() => setFiltersOpen((v) => !v)}
                 aria-expanded={filtersOpen}
                 aria-controls="dive-log-filters"
-                className="inline-flex items-center gap-1.5 rounded-md border border-border/60 px-3 py-1.5 text-xs font-medium text-muted-foreground pressable hover:border-primary/40 hover:text-primary"
+                className="inline-flex items-center gap-1.5 rounded-md border border-border/60 px-3 py-1.5 text-xs font-medium text-muted-foreground pressable hover:border-primary/40 hover:text-primary focus-ring"
               >
                 <SlidersHorizontal className="h-3.5 w-3.5" />
                 {filtersOpen ? "Hide Filters" : "Filter"}
@@ -440,7 +441,7 @@ export function DiveLogClient() {
               {hasActiveFilters && (
                 <button
                   onClick={() => { clearFilters(); resetPage(); }}
-                  className="mt-4 flex items-center gap-1 py-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                  className="mt-4 flex items-center gap-1 rounded-md py-1.5 text-xs text-muted-foreground pressable hover:text-foreground focus-ring"
                 >
                   <X className="h-3.5 w-3.5" />
                   Clear all filters
@@ -465,7 +466,7 @@ export function DiveLogClient() {
               >
                 <button
                   onClick={retry}
-                  className="mt-4 text-sm font-medium text-primary hover:underline"
+                  className="mt-4 rounded-md px-2 py-1 text-sm font-medium text-primary pressable hover:underline focus-ring"
                 >
                   Try again
                 </button>
@@ -501,7 +502,7 @@ export function DiveLogClient() {
               >
                 <button
                   onClick={() => { clearFilters(); setDateRange("all"); resetPage(); }}
-                  className="mt-4 text-sm font-medium text-primary hover:underline"
+                  className="mt-4 rounded-md px-2 py-1 text-sm font-medium text-primary pressable hover:underline focus-ring"
                 >
                   Clear filters and show all time
                 </button>
@@ -515,7 +516,7 @@ export function DiveLogClient() {
               <button
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
-                className="rounded-md border border-border/60 px-3 py-1.5 text-xs font-medium text-muted-foreground pressable hover:border-primary/40 hover:text-primary disabled:opacity-40 disabled:hover:border-border/60 disabled:hover:text-muted-foreground"
+                className="rounded-md border border-border/60 px-3 py-1.5 text-xs font-medium text-muted-foreground pressable hover:border-primary/40 hover:text-primary focus-ring disabled:opacity-40 disabled:hover:border-border/60 disabled:hover:text-muted-foreground"
               >
                 Previous
               </button>
@@ -525,7 +526,7 @@ export function DiveLogClient() {
               <button
                 onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages}
-                className="rounded-md border border-border/60 px-3 py-1.5 text-xs font-medium text-muted-foreground pressable hover:border-primary/40 hover:text-primary disabled:opacity-40 disabled:hover:border-border/60 disabled:hover:text-muted-foreground"
+                className="rounded-md border border-border/60 px-3 py-1.5 text-xs font-medium text-muted-foreground pressable hover:border-primary/40 hover:text-primary focus-ring disabled:opacity-40 disabled:hover:border-border/60 disabled:hover:text-muted-foreground"
               >
                 Next
               </button>
@@ -557,7 +558,7 @@ export function DiveLogClient() {
                       <button
                         onClick={() => toggleDive(d.id)}
                         aria-label={`Remove ${d.diveSite}`}
-                        className="-mx-1.5 -mb-1.5 -mt-1 shrink-0 p-1.5 text-muted-foreground hover:text-foreground transition-colors"
+                        className="-mx-1.5 -mb-1.5 -mt-1 shrink-0 rounded-md p-1.5 text-muted-foreground pressable hover:text-foreground focus-ring"
                       >
                         <X className="h-3.5 w-3.5" />
                       </button>
@@ -604,7 +605,7 @@ export function DiveLogClient() {
                   )}
                   <button
                     onClick={() => setSelectedIds(new Set())}
-                    className="mt-3 w-full py-1.5 text-center text-xs text-muted-foreground hover:text-foreground transition-colors"
+                    className="mt-3 w-full rounded-md py-1.5 text-center text-xs text-muted-foreground pressable hover:text-foreground focus-ring"
                   >
                     Clear selection
                   </button>

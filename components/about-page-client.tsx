@@ -270,7 +270,7 @@ export function TeamCarousel() {
             prev();
             setIsPaused(true);
           }}
-          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 sm:-translate-x-5 z-10 w-9 h-9 rounded-full bg-card border border-border/60 shadow-sm flex items-center justify-center text-muted-foreground pressable hover:text-foreground hover:shadow-md focus-visible:ring-2 focus-visible:ring-ring"
+          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 sm:-translate-x-5 z-10 w-9 h-9 rounded-full bg-card border border-border/60 shadow-sm flex items-center justify-center text-muted-foreground pressable hover:text-foreground hover:shadow-md focus-ring"
           aria-label="Previous team members"
         >
           <ChevronLeft className="h-4 w-4" />
@@ -282,7 +282,7 @@ export function TeamCarousel() {
             next();
             setIsPaused(true);
           }}
-          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 sm:translate-x-5 z-10 w-9 h-9 rounded-full bg-card border border-border/60 shadow-sm flex items-center justify-center text-muted-foreground pressable hover:text-foreground hover:shadow-md focus-visible:ring-2 focus-visible:ring-ring"
+          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 sm:translate-x-5 z-10 w-9 h-9 rounded-full bg-card border border-border/60 shadow-sm flex items-center justify-center text-muted-foreground pressable hover:text-foreground hover:shadow-md focus-ring"
           aria-label="Next team members"
         >
           <ChevronRight className="h-4 w-4" />
@@ -347,7 +347,7 @@ export function TeamCarousel() {
                 goTo(i);
                 setIsPaused(true);
               }}
-              className={`rounded-full transition-[width,background-color] duration-200 focus-visible:ring-2 focus-visible:ring-ring ${
+              className={`rounded-full transition-[width,background-color] duration-200 focus-ring ${
                 i === index
                   ? "w-5 h-2 bg-primary"
                   : "w-2 h-2 bg-border hover:bg-muted-foreground/40"

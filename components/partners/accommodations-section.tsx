@@ -172,7 +172,7 @@ export function AccommodationsSection({ accommodations }: AccommodationsSectionP
           <button
             onClick={() => setSearchQuery("")}
             aria-label="Clear search"
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
+            className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-0.5 text-muted-foreground pressable hover:text-foreground focus-ring"
           >
             <X className="h-3.5 w-3.5" />
           </button>
@@ -208,7 +208,7 @@ export function AccommodationsSection({ accommodations }: AccommodationsSectionP
             <button
               key={key}
               onClick={() => clearFilter(key)}
-              className="inline-flex items-center gap-1 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-medium text-primary transition-colors hover:bg-primary/20"
+              className="inline-flex items-center gap-1 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-medium text-primary pressable hover:bg-primary/20 focus-ring"
             >
               {filterLabel(key)}
               <X className="h-3 w-3" aria-hidden="true" />
@@ -216,7 +216,7 @@ export function AccommodationsSection({ accommodations }: AccommodationsSectionP
           ))}
           <button
             onClick={clearAll}
-            className="text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+            className="rounded-md px-1 text-xs font-medium text-muted-foreground pressable hover:text-foreground focus-ring"
           >
             Clear All
           </button>
@@ -231,7 +231,7 @@ export function AccommodationsSection({ accommodations }: AccommodationsSectionP
         {hasActiveFilters && (
           <button
             onClick={clearAll}
-            className="text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+            className="rounded-md px-1 text-xs font-medium text-muted-foreground pressable hover:text-foreground focus-ring"
           >
             Clear All
           </button>
@@ -248,7 +248,7 @@ export function AccommodationsSection({ accommodations }: AccommodationsSectionP
         >
           <button
             onClick={clearAll}
-            className="mt-4 text-sm font-medium text-primary hover:underline"
+            className="mt-4 rounded-md px-2 py-1 text-sm font-medium text-primary pressable hover:underline focus-ring"
           >
             Clear all filters
           </button>
