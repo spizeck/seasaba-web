@@ -110,6 +110,18 @@ it("keeps the error fallback free of the loading treatment", () => {
   expect(document.querySelector(".animate-bubble-rise")).toBeNull();
 });
 
+it("announces the failure — the loading status unmounts, so the panel speaks for itself (#209)", () => {
+  render(<BookingWidget />);
+  fireEvent.error(script());
+  const alert = screen.getByRole("alert");
+  expect(alert).toHaveTextContent("Booking isn't loading");
+  expect(alert).toHaveTextContent(/secure booking page/i);
+  // The recovery paths stay inside the announced region.
+  expect(alert).toContainElement(
+    screen.getByRole("link", { name: /continue to secure booking system/i })
+  );
+});
+
 it("reuses the script on navigation and stops polling after unmount", () => {
   const existing = document.createElement("script");
   existing.id = "checkfront-interface-script";

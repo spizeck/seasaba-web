@@ -5,6 +5,7 @@ import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { ExternalLink, MapPin, Search, X } from "lucide-react";
 import { Pill } from "@/components/ui/pill";
+import { StatePanel } from "@/components/state-panel";
 import { buttonVariants } from "@/components/ui/button";
 import { trackLinkClick } from "@/lib/analytics";
 import { cn } from "@/lib/utils";
@@ -222,9 +223,12 @@ export function AccommodationsSection({ accommodations }: AccommodationsSectionP
         </div>
       )}
 
-      {/* Results header */}
+      {/* Results header — the count is a polite live region so a filter
+          change to zero results is announced while focus stays on the
+          filter. aria-atomic reads the whole new count, not just the
+          changed digit. */}
       <div className="mt-8 flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-foreground">
+        <h3 className="text-sm font-semibold text-foreground" aria-live="polite" aria-atomic="true">
           {filtered.length} accommodation{filtered.length !== 1 ? "s" : ""}
         </h3>
         {hasActiveFilters && (
@@ -237,18 +241,22 @@ export function AccommodationsSection({ accommodations }: AccommodationsSectionP
         )}
       </div>
 
-      {/* No results */}
+      {/* No results — shared StatePanel; no live role of its own, the
+          live result-count heading above already announces the change
+          (issue #209). */}
       {filtered.length === 0 && (
-        <div className="mt-6 rounded-lg border border-border/40 bg-muted/20 p-8 text-center">
-          <p className="text-sm font-medium text-foreground">No accommodations match your filters.</p>
-          <p className="mt-1 text-sm text-muted-foreground">Try clearing a filter or searching for a different term.</p>
+        <StatePanel
+          className="mt-6"
+          title="No accommodations match your filters."
+          description="Try clearing a filter or searching for a different term."
+        >
           <button
             onClick={clearAll}
             className="mt-4 rounded-md px-2 py-1 text-sm font-medium text-primary pressable hover:underline focus-ring"
           >
             Clear all filters
           </button>
-        </div>
+        </StatePanel>
       )}
 
       {/* Hotels */}
