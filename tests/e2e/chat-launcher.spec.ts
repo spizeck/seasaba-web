@@ -1,8 +1,8 @@
 import type { Page } from "@playwright/test";
 import { test, expect, hydratedGoto } from "./fixtures";
 
-// Homepage chat-launcher suppression (#123), resting-position
-// calibration (#125), and prompt-safety (#184).
+// Homepage chat-launcher suppression (#123), fixed launcher anchor
+// (#125 calibration, reworked), and prompt-safety (#184).
 //
 // The real Respond.io iframe is third-party and asynchronous, so these
 // tests inject deterministic stand-ins matching the vendor's contract: an
@@ -14,12 +14,15 @@ import { test, expect, hydratedGoto } from "./fixtures";
 // card inflates the same widgetClose iframe to ~330x179 at
 // right/bottom:43px). What we own is the mechanism —
 // IntersectionObserver toggling `data-hero-in-view` on <html>, the CSS
-// rule hiding `[state="widgetClose"]` while it is set, and the 36px
-// resting-position translate scoped to `data-launcher-only` — and that is
-// what these assertions exercise. The visible bubble sits inset inside
-// the iframe, so iframe-box clearance (13px) intentionally differs from
-// visible-bubble clearance (~17-18px). Real-widget verification was done
-// manually against production.
+// rule hiding `[state="widgetClose"]` while it is set, and the 6px
+// anchor-alignment translate scoped to `data-launcher-only` — and that is
+// what these assertions exercise. The translate lands the closed
+// launcher's edge on the same 43px inset the prompt and open states use,
+// so the launcher circle keeps one fixed screen position in every state.
+// The visible bubble sits inset inside the iframe, so iframe-box
+// clearance (43px) intentionally differs from visible-bubble clearance
+// (~47-48px). Real-widget verification was done manually against
+// production.
 
 async function injectLauncher(page: Page, state = "widgetClose") {
   await page.evaluate((s) => {
@@ -71,11 +74,12 @@ test("homepage: closed launcher hides on hero, appears past it, hides again", as
   await page.evaluate((y) => window.scrollTo(0, y + 10), heroBottom);
   await expect.poll(() => launcherState(page)).toMatchObject({
     visibility: "visible",
-    // Vendor 49px offset minus the 36px calibration translate = 13px of
-    // iframe-box clearance (the visible bubble insets ~5px more).
-    bottom: 13,
-    right: 13,
-    transform: "matrix(1, 0, 0, 1, 36, 36)",
+    // Vendor 49px offset minus the 6px anchor translate = 43px of
+    // iframe-box clearance — the same inset the prompt state uses, so the
+    // launcher circle stays put when the teaser appears.
+    bottom: 43,
+    right: 43,
+    transform: "matrix(1, 0, 0, 1, 6, 6)",
   });
 
   // Back to the hero — closed launcher hides again.
@@ -89,7 +93,7 @@ test("an open conversation is never forcibly hidden on the hero", async ({ page 
   await injectLauncher(page, "widgetOpen");
   const s = await launcherState(page);
   expect(s?.visibility).toBe("visible");
-  // The calibration translate is scoped to data-launcher-only — the open
+  // The anchor translate is scoped to data-launcher-only — the open
   // conversation is never repositioned.
   expect(s?.transform).toBe("none");
 });
@@ -113,6 +117,10 @@ test("prompt card hides on the hero but is never clipped or repositioned", async
   const s = await launcherState(page);
   expect(s?.transform).toBe("none");
   expect(s?.clipPath).toBe("none");
+  // The prompt's iframe edge pins the shared 43px anchor — the same
+  // effective inset the marked launcher-only state lands on.
+  expect(s?.bottom).toBe(43);
+  expect(s?.right).toBe(43);
 });
 
 test("interior pages show the launcher immediately", async ({ page }) => {
@@ -120,9 +128,9 @@ test("interior pages show the launcher immediately", async ({ page }) => {
   await injectLauncher(page);
   const s = await launcherState(page);
   expect(s?.visibility).toBe("visible");
-  expect(s?.bottom).toBe(13);
-  expect(s?.right).toBe(13);
-  expect(s?.transform).toBe("matrix(1, 0, 0, 1, 36, 36)");
+  expect(s?.bottom).toBe(43);
+  expect(s?.right).toBe(43);
+  expect(s?.transform).toBe("matrix(1, 0, 0, 1, 6, 6)");
   // Transforms never create document overflow — pin that here.
   const overflow = await page.evaluate(
     () => document.documentElement.scrollWidth - document.documentElement.clientWidth
