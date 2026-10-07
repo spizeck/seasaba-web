@@ -143,6 +143,147 @@ export function isExtensionSendMessageError(event: ErrorEvent): boolean {
   return false;
 }
 
+/**
+ * Google Translate stack overflow: machine-translated pageviews (e.g.
+ * `www-seasaba-com.translate.goog`) run Google's `translate_http` /
+ * `el_main` scripts, whose DOM rewriting can recurse until the browser
+ * throws `RangeError: Maximum call stack size exceeded`. The filter
+ * requires the overflow message AND a Translate-machinery stack signature
+ * — an app-side stack overflow, a different RangeError inside Translate
+ * code, or an overflow in any other vendor still reports. `translate.goog`
+ * is deliberately not evidence: it is the proxy host on every frame of a
+ * translated pageview, including our own `/_next/` code.
+ */
+export function isTranslateStackOverflow(event: ErrorEvent): boolean {
+  for (const exception of event.exception?.values ?? []) {
+    const isStackOverflow =
+      exception.type === "RangeError" &&
+      typeof exception.value === "string" &&
+      exception.value.includes("Maximum call stack size exceeded");
+    if (!isStackOverflow) continue;
+
+    if (
+      stackContains(exception, "translate_http") ||
+      stackContains(exception, "el_main")
+    ) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Injected content-script collision with Cookiebot: `TypeError: Illegal
+ * invocation` thrown inside `app:///dist/inject_content.js` while touching
+ * Cookiebot's `cc.js`/`uc.js`. `inject_content.js` is a known
+ * extension/content-script artifact that exists nowhere in our bundle.
+ * Both foreign frames are required: a Cookiebot defect without the
+ * injected frame (and any app-side Illegal invocation) still reports.
+ */
+export function isInjectedCookiebotError(event: ErrorEvent): boolean {
+  for (const exception of event.exception?.values ?? []) {
+    const isIllegalInvocation =
+      exception.type === "TypeError" &&
+      typeof exception.value === "string" &&
+      exception.value.includes("Illegal invocation");
+    if (!isIllegalInvocation) continue;
+
+    if (
+      stackContains(exception, "inject_content") &&
+      (stackContains(exception, "cc.js") || stackContains(exception, "uc.js"))
+    ) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Opaque native-bridge probe: `window.webkit.messageHandlers` referenced
+ * from a foreign `app:///…` script with no first-party frame in the stack.
+ * The site has no WKWebView bridge; injected scripts probing for one throw
+ * outside their expected native context. The conjunction keeps this
+ * narrow: the same message thrown by first-party code (a real future
+ * native-wrapper integration would run from `/_next/` chunks) or with no
+ * foreign frame evidence still reports. `gtm.js` frames count as
+ * first-party presence — the container is ours, so a probe touched by GTM
+ * tag code keeps reporting like any other own-stack failure.
+ */
+export function isNativeBridgeProbeError(event: ErrorEvent): boolean {
+  for (const exception of event.exception?.values ?? []) {
+    const isBridgeProbe =
+      typeof exception.value === "string" &&
+      exception.value.includes("webkit.messageHandlers");
+    if (!isBridgeProbe) continue;
+
+    const frames = exception.stacktrace?.frames ?? [];
+    const hasForeignScriptFrame = frames.some(
+      (frame) =>
+        typeof frame.filename === "string" &&
+        stripUrlSensitiveParts(frame.filename).startsWith("app:///") &&
+        !isFirstPartyFrameFilename(frame.filename)
+    );
+    const hasFirstPartyFrame = frames.some(
+      (frame) =>
+        typeof frame.filename === "string" &&
+        isFirstPartyFrameFilename(frame.filename)
+    );
+    if (hasForeignScriptFrame && !hasFirstPartyFrame) return true;
+  }
+  return false;
+}
+
+/**
+ * Google jsloader failure inside an injected `tracking_script.js`: the
+ * observed event is `CustomError: Jsloader error (code #0): Error while
+ * loading script https://apis.google.com/js/client.js` with a stack
+ * entirely in `app:///tracking_script.js` — a foreign tracker script, not
+ * a repo or deployed-bundle file. The exact error type + exact jsloader
+ * prefix + the injected frame are all required, so a jsloader failure for
+ * any other script, the same message from first-party code, or a
+ * different CustomError still reports.
+ */
+export function isJsloaderTrackingScriptError(event: ErrorEvent): boolean {
+  for (const exception of event.exception?.values ?? []) {
+    const isJsloaderFailure =
+      exception.type === "CustomError" &&
+      typeof exception.value === "string" &&
+      exception.value.startsWith(
+        "Jsloader error (code #0): Error while loading script https://apis.google.com/js/client.js"
+      );
+    if (!isJsloaderFailure) continue;
+
+    if (stackContains(exception, "tracking_script.js")) return true;
+  }
+  return false;
+}
+
+/**
+ * First-party frame evidence: our compiled chunks (`/_next/` on any host —
+ * including `translate.goog` proxied pageviews), `webpack://` module paths,
+ * and the GTM runtime (`gtm.js`; our container is ours to fix, and the URL
+ * always carries `?id=…`, so compare the sanitized filename).
+ */
+function isFirstPartyFrameFilename(filename: string): boolean {
+  const normalized = stripUrlSensitiveParts(filename);
+  return (
+    normalized.includes("/_next/") ||
+    normalized.startsWith("webpack://") ||
+    normalized.endsWith("/gtm.js")
+  );
+}
+
+/** True when any exception value's stack carries a first-party frame. */
+function hasFirstPartyStackFrame(event: ErrorEvent): boolean {
+  return (event.exception?.values ?? []).some((exception) =>
+    (exception.stacktrace?.frames ?? []).some(
+      (frame) =>
+        typeof frame.filename === "string" &&
+        isFirstPartyFrameFilename(frame.filename)
+    )
+  );
+}
+
 /** True when any stack frame's filename or function name contains `needle`. */
 function stackContains(
   exception: {
@@ -169,6 +310,10 @@ const KNOWN_FOREIGN_NOISE: ReadonlyArray<(event: ErrorEvent) => boolean> = [
   isInjectedMediaFilterError,
   isClarityIcuError,
   isExtensionSendMessageError,
+  isTranslateStackOverflow,
+  isInjectedCookiebotError,
+  isNativeBridgeProbeError,
+  isJsloaderTrackingScriptError,
 ];
 
 /**
@@ -189,8 +334,14 @@ export function sanitizeSentryEvent(event: ErrorEvent): ErrorEvent | null {
   // Drop events proven to originate from foreign injected/vendor code (see
   // KNOWN_FOREIGN_NOISE — #174 mediafilter, #176 Clarity ICU, #176
   // extension runtime.sendMessage). Each rule requires its full signature;
-  // anything else falls through untouched.
-  if (KNOWN_FOREIGN_NOISE.some((isForeignNoise) => isForeignNoise(event))) {
+  // anything else falls through untouched. The first-party veto comes
+  // first: an event whose exception chain still carries our own frames —
+  // a real app error alongside matching noise, or our code running inside
+  // a translated pageview — is never swallowed by a noise rule.
+  if (
+    !hasFirstPartyStackFrame(event) &&
+    KNOWN_FOREIGN_NOISE.some((isForeignNoise) => isForeignNoise(event))
+  ) {
     return null;
   }
 

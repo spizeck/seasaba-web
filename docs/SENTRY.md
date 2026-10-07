@@ -146,6 +146,45 @@ Source maps do not change this posture: they reveal *code structure* (already
 shipped publicly in minified form), never runtime data. Auth token and upload
 traffic stay inside the build — nothing secret reaches the browser bundle.
 
+## Foreign-noise filters
+
+`sanitizeSentryEvent` also returns `null` for a small list of confirmed
+injected/external noise signatures (`KNOWN_FOREIGN_NOISE` in `lib/sentry.ts`).
+Every predicate is a conjunction of an exact error signature AND
+foreign/vendor evidence — never a broad error class — and each has paired
+unit tests proving the observed event drops while a similar legitimate
+error retains. A global veto also applies: any `/_next/`, `webpack://` or
+`gtm.js` frame anywhere in the event's exception chain keeps it
+reporting, so a genuine app error can never be swallowed by a noise rule.
+
+| Predicate | Drops | Requires |
+|---|---|---|
+| `isInjectedMediaFilterError` | extension media-filter errors | `DataCloneError` postMessage/`HTMLIFrameElement`/`could not be cloned` message + `mediafilter` frame |
+| `isClarityIcuError` | Clarity `Internal error. Icu error.` | `RangeError` + exact message + `clarity.js` frame + `Intl.DateTimeFormat` frame |
+| `isExtensionSendMessageError` | extension `runtime.sendMessage` failures | exact `Invalid call to runtime.sendMessage(). Tab not found` message + `auto.browser.global_handlers.onunhandledrejection` mechanism |
+| `isTranslateStackOverflow` | Google Translate stack overflow | `RangeError` + "Maximum call stack size exceeded" + `translate_http`/`el_main` frame (`translate.goog` is only the proxy host, not evidence) |
+| `isInjectedCookiebotError` | extension collision with Cookiebot | `TypeError: Illegal invocation` + `inject_content` frame + `cc.js`/`uc.js` frame |
+| `isNativeBridgeProbeError` | injected `webkit.messageHandlers` probes | `webkit.messageHandlers` message + foreign `app:///` frame + no first-party frame |
+| `isJsloaderTrackingScriptError` | injected `tracking_script.js` jsloader failure | `CustomError` + exact jsloader/client.js prefix + `tracking_script.js` frame |
+
+Deliberately **kept reporting** (retain tests pin these):
+
+- `SyntaxError: Invalid or unexpected token` from
+  `app:///0aa4d9c5efab527d/script.js` — a real Vercel Web Analytics delivery
+  anomaly we own (#176).
+- `ReferenceError: $ is not defined` inside `app:///gtm.js` — our own GTM
+  container (`GTM-5PFMJFN`), so the tag is ours to fix, not suppress.
+  Production breadcrumb: `GTM PTag v1.4; tagId: 2613447705545` — `__pntr`
+  identifies the Pinterest Tag gallery template, so this is a Pinterest tag
+  configured in the GTM dashboard whose code appears to assume jQuery
+  (which the site intentionally does not ship). The container is not
+  versioned in this repo. Owner checklist: in the GTM container, search
+  tags/templates for the Pinterest template or tag ID `2613447705545`,
+  inspect its trigger and custom code for `$(`/`jQuery(`, confirm whether
+  Pinterest tracking is a current business requirement, then either remove
+  the tag, update the template, or rewrite it with native DOM APIs —
+  publish only after consent validation. Do not add jQuery or a fake `$`.
+
 ## CSP
 
 `connect-src` gains exactly one origin: the `https:` origin parsed out of
