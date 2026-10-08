@@ -90,7 +90,7 @@ maintenance pass.
 | Override | Reason | Verification |
 | --- | --- | --- |
 | `postcss` | Pre-existing — pins a known-good PostCSS for Tailwind v4 toolchain | unchanged |
-| `@grpc/grpc-js@^1.13.6` | `@firebase/firestore@4.17.1` pins `~1.9.0`, but only `>=1.13.6` is patched (GHSA-m9gg-hp2v-232j, GHSA-f596-whhp-79r4). Both advisories are server-side code paths; this app only uses Firestore via the browser webchannel transport, but the override removes the vulnerable version from the tree entirely. | Smoke-tested: `getFirestore` + `getDoc` opened a real gRPC `Listen` stream against the Firestore backend on `1.14.5` |
+| `@grpc/grpc-js@^1.14.5` | `@firebase/firestore@4.17.1` pins `~1.9.0`. Patched releases are `1.13.6` and `1.14.5` — `1.14.0`–`1.14.4` remain affected (GHSA-m9gg-hp2v-232j, GHSA-f596-whhp-79r4), so the floor is `1.14.5`. Both advisories are server-side code paths; this app only uses Firestore via the browser webchannel transport, but the override removes the vulnerable version from the tree entirely. | Smoke-tested: `getFirestore` + `getDoc` opened a real gRPC `Listen` stream against the Firestore backend on `1.14.5` |
 | `postcss-selector-parser@^7.1.6` | `@tailwindcss/typography@0.5.20` pins `6.0.10` exactly; `>=7.1.6` is the only fixed line (GHSA-rj75-hqrm-r3gf). | `prose` classes used on production pages; `next build` compiles the typography plugin cleanly on 7.1.6 |
 
 ## Queue hygiene
