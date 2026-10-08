@@ -59,6 +59,40 @@ follow different rules than version updates:
 - Treat them as prompt, merge-soon work, not weekly maintenance. See
   `SECURITY.md` for reporting.
 
+## Security audit residuals
+
+As of the October 2026 audit cleanup, `npm audit` reports **11 high-severity
+findings, all rooted at `braces` (GHSA-vfj7-8cjw-p6xm, stack-exhaustion DoS via
+deeply nested glob patterns)**. Every released version of `braces` is affected —
+there is no patched release to upgrade to yet, so the chain is flagged through
+`micromatch` → `fast-glob` into `shadcn`, `ts-morph`, `@ts-morph/common`,
+`@shadcn/registry`, `@next/eslint-plugin-next` (and therefore
+`eslint-config-next`), and `find-yarn-workspace-root` → `patch-package`.
+
+Why this is accepted:
+
+- **Dev-tooling only.** Every affected consumer lives in `devDependencies`
+  (`shadcn`, `patch-package`, `eslint-config-next`). None of these packages are
+  bundled into or executed by the production site.
+- **Trigger requires attacker-controlled glob input** fed to the CLI/ESLint
+  tooling at develop or build time — not reachable from site traffic.
+- `npm audit fix --force` proposes breaking downgrades
+  (`patch-package@6.0.7`, `eslint-config-next@14.2.35`, `shadcn@1.0.0`,
+  `@tailwindcss/typography@0.5.4`) — rejected per policy; they do not fix
+  `braces` anyway, they only cut the dependency paths.
+
+Remediation path: upgrade `braces` when a patched release ships, then let the
+`micromatch`/`fast-glob` ranges re-resolve. Re-check on each dependency
+maintenance pass.
+
+### Active `overrides` and why they exist
+
+| Override | Reason | Verification |
+| --- | --- | --- |
+| `postcss` | Pre-existing — pins a known-good PostCSS for Tailwind v4 toolchain | unchanged |
+| `@grpc/grpc-js@^1.13.6` | `@firebase/firestore@4.17.1` pins `~1.9.0`, but only `>=1.13.6` is patched (GHSA-m9gg-hp2v-232j, GHSA-f596-whhp-79r4). Both advisories are server-side code paths; this app only uses Firestore via the browser webchannel transport, but the override removes the vulnerable version from the tree entirely. | Smoke-tested: `getFirestore` + `getDoc` opened a real gRPC `Listen` stream against the Firestore backend on `1.14.5` |
+| `postcss-selector-parser@^7.1.6` | `@tailwindcss/typography@0.5.20` pins `6.0.10` exactly; `>=7.1.6` is the only fixed line (GHSA-rj75-hqrm-r3gf). | `prose` classes used on production pages; `next build` compiles the typography plugin cleanly on 7.1.6 |
+
 ## Queue hygiene
 
 A Dependabot PR that sits open unmerged is noise. When a routine PR stalls,
