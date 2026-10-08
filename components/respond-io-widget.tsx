@@ -29,13 +29,14 @@ import {
  */
 export function RespondIoWidget() {
   useEffect(() => {
-    const cId = process.env.NEXT_PUBLIC_RESPOND_IO_CID;
-    if (!cId) return;
-
-    // Geometry watcher runs even when the script element already exists
-    // (remount after client-side navigation): the vendor iframe keeps
-    // living in the DOM, so `data-launcher-only` must be maintained too.
+    // Geometry watcher is unconditional: the vendor iframe can outlive
+    // this component (remount after client-side navigation) or arrive by
+    // paths other than our injection, so `data-launcher-only` and the
+    // shared-anchor translate must be maintained whenever it exists.
     const stopWatching = watchRespondIoIframe();
+
+    const cId = process.env.NEXT_PUBLIC_RESPOND_IO_CID;
+    if (!cId) return stopWatching;
 
     let cancelled = false;
 

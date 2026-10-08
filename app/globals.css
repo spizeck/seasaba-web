@@ -368,35 +368,43 @@ html[data-hero-in-view] iframe[title="Webchat Widget"][state="widgetClose"] {
  * Fixed launcher anchor (issue #125 calibration, reworked) +
  * prompt-safety (issue #184).
  *
- * The launcher circle must sit at one screen position in every state:
+ * The launcher circle must sit at one screen position in every state.
  * Measured on production, the vendor anchors the same iframe at
- * right/bottom:49px while launcher-only (90x90) and at right/bottom:43px
- * while the promotional prompt card is showing (~330x179) — the circle
- * stays bottom-right-anchored inside the iframe in both, so its center
- * sits ~6px farther in from the corner during the prompt state. The
- * prompt/open inset is the comfortable resting inset the launcher should
- * keep, so the marked launcher-only iframe is nudged 6px toward the
- * corner: its edge lands on the same 43px anchor as every other state and
- * the circle never moves when the teaser or panel appears. `transform` is
- * safe: the vendor positions via inline left/right/bottom and does not
- * use transform, and transforms never create document overflow.
+ * right/bottom:43px in every steady state — launcher-only (90x90),
+ * the promotional prompt card (~330x178), and the desktop open panel
+ * (~400x600) — with a brief right/bottom:25px transient before remote
+ * config lands, and a full-bleed right/bottom:0 open panel on small
+ * viewports. The ~58px circle stays bottom-right-aligned inside the
+ * iframe with ~4px of internal padding in every state.
  *
- * The launcher iframe's transparent top/left still intercepts pointer
- * events (verified via elementFromPoint on production). `clip-path`
+ * The fixed anchor lives in JS, not here: the watcher (lib/respond-io.ts)
+ * measures the vendor's own right/bottom inset on every sync and applies
+ * an inline translate that lands the iframe edge at
+ * RESPOND_IO_ANCHOR_RIGHT_PX / RESPOND_IO_ANCHOR_BOTTOM_PX (18px / 6px),
+ * so the visible circle keeps ~22px right / ~10px bottom clearance —
+ * closed, teaser, open, and closing — and the mount transient plus
+ * future vendor spacing changes land on the same anchor.
+ * A full-bleed mobile open panel (vendor inset ~0) keeps vendor
+ * geometry. `transform` is safe: the vendor positions via inline
+ * right/bottom and does not use transform, and transforms never create
+ * document overflow.
+ *
+ * What remains in this rule is only the launcher-only hit-region clip:
+ * the launcher iframe's transparent top/left still intercepts pointer
+ * events (verified via elementFromPoint on production), so `clip-path`
  * shrinks the hit area to the bottom-right quarter that actually contains
- * the circle (~58px circle inset ~5px, so 25% leaves ~5px of slack),
+ * the circle (~58px circle inset ~4px, so 25% leaves ~4px of slack),
  * letting clicks pass through to page content beneath.
  *
  * Why `data-launcher-only` instead of `state="widgetClose"`: the vendor
  * reuses the same closed-state iframe for its promotional prompt card,
- * growing it to ~179px tall and up to ~330px wide — the prompt renders in
+ * growing it to ~178px tall and up to ~330px wide — the prompt renders in
  * the region a blanket clip would cut off. CSS cannot read element size,
  * so respond-io-widget.tsx marks the iframe `data-launcher-only` only
  * while it measures launcher-sized (see lib/respond-io.ts). The prompt
- * and the open conversation panel (`widgetOpen`) keep the vendor's own
- * positioning and hit region untouched.
+ * and the open conversation panel (`widgetOpen`) keep the vendor's full
+ * hit region untouched.
  */
 iframe[title="Webchat Widget"][data-launcher-only] {
-  transform: translate(6px, 6px);
   clip-path: inset(25% 0 0 25%);
 }
