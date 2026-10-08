@@ -302,7 +302,10 @@ describe("Turbopack patch from #162 remains applied", () => {
   it("patch-package still runs on install and the patch file exists", () => {
     const pkg = JSON.parse(readFileSync(join(process.cwd(), "package.json"), "utf8"));
     expect(pkg.scripts.postinstall).toContain("patch-package");
-    expect(existsSync(join(process.cwd(), "patches/next+16.3.5.patch"))).toBe(true);
+    const { version } = JSON.parse(
+      readFileSync(join(process.cwd(), "node_modules/next/package.json"), "utf8")
+    );
+    expect(existsSync(join(process.cwd(), `patches/next+${version}.patch`))).toBe(true);
   });
 
   it("the installed next build carries the document.currentScript fallback", () => {
