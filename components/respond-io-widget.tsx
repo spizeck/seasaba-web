@@ -31,8 +31,10 @@ export function RespondIoWidget() {
   useEffect(() => {
     // Geometry watcher is unconditional: the vendor iframe can outlive
     // this component (remount after client-side navigation) or arrive by
-    // paths other than our injection, so `data-launcher-only` and the
-    // shared-anchor translate must be maintained whenever it exists.
+    // paths other than our injection, so the `data-launcher-only` marker
+    // (which scopes the hit-region clip) must be maintained whenever it
+    // exists. Positioning is entirely vendor-owned — the watcher never
+    // writes styles.
     const stopWatching = watchRespondIoIframe();
 
     const cId = process.env.NEXT_PUBLIC_RESPOND_IO_CID;

@@ -365,36 +365,19 @@ html[data-hero-in-view] iframe[title="Webchat Widget"][state="widgetClose"] {
 }
 
 /*
- * Fixed launcher anchor (issue #125 calibration, reworked) +
- * prompt-safety (issue #184).
+ * Launcher-only hit-region clip (issue #184). Positioning is entirely
+ * vendor-owned — Respond.io's dashboard alignment/spacing settings place
+ * the iframe, and no rule here may set `transform`, `right`, `bottom`,
+ * or any other positioning property on it.
  *
- * The launcher circle must sit at one screen position in every state.
- * Measured on production, the vendor anchors the same iframe at
- * right/bottom:43px in every steady state — launcher-only (90x90),
- * the promotional prompt card (~330x178), and the desktop open panel
- * (~400x600) — with a brief right/bottom:25px transient before remote
- * config lands, and a full-bleed right/bottom:0 open panel on small
- * viewports. The ~58px circle stays bottom-right-aligned inside the
- * iframe with ~4px of internal padding in every state.
- *
- * The fixed anchor lives in JS, not here: the watcher (lib/respond-io.ts)
- * measures the vendor's own right/bottom inset on every sync and applies
- * an inline translate that lands the iframe edge at
- * RESPOND_IO_ANCHOR_RIGHT_PX / RESPOND_IO_ANCHOR_BOTTOM_PX (18px / 6px),
- * so the visible circle keeps ~22px right / ~10px bottom clearance —
- * closed, teaser, open, and closing — and the mount transient plus
- * future vendor spacing changes land on the same anchor.
- * A full-bleed mobile open panel (vendor inset ~0) keeps vendor
- * geometry. `transform` is safe: the vendor positions via inline
- * right/bottom and does not use transform, and transforms never create
- * document overflow.
- *
- * What remains in this rule is only the launcher-only hit-region clip:
- * the launcher iframe's transparent top/left still intercepts pointer
- * events (verified via elementFromPoint on production), so `clip-path`
- * shrinks the hit area to the bottom-right quarter that actually contains
- * the circle (~58px circle inset ~4px, so 25% leaves ~4px of slack),
- * letting clicks pass through to page content beneath.
+ * What remains is only the launcher-only hit-region clip: the launcher
+ * iframe's transparent top/left still intercepts pointer events
+ * (verified via elementFromPoint on production), so `clip-path` shrinks
+ * the hit area to the bottom-right quarter that actually contains the
+ * circle (~58px circle inset ~4px, so 25% leaves ~4px of slack),
+ * letting clicks pass through to page content beneath. The clip is
+ * relative to the iframe's own box, so it follows wherever the vendor
+ * positions the widget.
  *
  * Why `data-launcher-only` instead of `state="widgetClose"`: the vendor
  * reuses the same closed-state iframe for its promotional prompt card,
