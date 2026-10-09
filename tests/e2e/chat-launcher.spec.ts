@@ -44,6 +44,7 @@ async function injectLauncher(
     width?: number;
     height?: number;
     style?: string;
+    maxWidth?: string;
   } = {}
 ) {
   const geo = {
@@ -51,6 +52,7 @@ async function injectLauncher(
     width: opts.width ?? 90,
     height: opts.height ?? 90,
     style: opts.style ?? VENDOR_STYLE,
+    maxWidth: opts.maxWidth ?? "calc(100% - 86px)",
   };
   await page.evaluate((g) => {
     document.querySelector('iframe[title="Webchat Widget"]')?.remove();
@@ -58,7 +60,7 @@ async function injectLauncher(
     f.title = "Webchat Widget";
     f.setAttribute("state", g.state);
     f.style.cssText =
-      g.style + `;width:${g.width}px;height:${g.height}px;max-width:calc(100% - 86px)`;
+      g.style + `;width:${g.width}px;height:${g.height}px;max-width:${g.maxWidth}`;
     document.body.appendChild(f);
   }, geo);
 }
@@ -71,6 +73,8 @@ async function launcherState(page: Page) {
     const r = f.getBoundingClientRect();
     return {
       visibility: cs.visibility,
+      width: Math.round(r.width),
+      height: Math.round(r.height),
       bottom: +(innerHeight - r.bottom).toFixed(1),
       right: +(innerWidth - r.right).toFixed(1),
       transform: cs.transform,
@@ -184,6 +188,9 @@ test("a full-bleed mobile open panel skips the nudge and stays edge-to-edge", as
     state: "widgetOpen",
     width: 390,
     height: 844,
+    // max-width: unset — a real full-bleed panel, not the 86px-clamped
+    // default the other stand-ins use.
+    maxWidth: "unset",
     style: "position:fixed;bottom:0;right:0;border:0;z-index:2147483000",
   });
   await page.waitForFunction(() => {
@@ -198,6 +205,10 @@ test("a full-bleed mobile open panel skips the nudge and stays edge-to-edge", as
   expect(s?.inlineTransform).toBe("");
   expect(s?.inlineRight).toBe("0px");
   expect(s?.inlineBottom).toBe("0px");
+  // Truly viewport-sized: a translated panel would read -18 on the
+  // right/bottom gaps or leave a gap at top/left.
+  expect(s?.width).toBe(390);
+  expect(s?.height).toBe(844);
   expect(s?.bottom).toBe(0);
   expect(s?.right).toBe(0);
 });
