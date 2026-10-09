@@ -58,10 +58,12 @@ export function wireRespondAnalytics(
 // scopes the hit-region clip to that marker. Anything larger — prompt or
 // open panel — is never clipped so no content is ever cut off.
 //
-// Positioning is fully vendor-owned: Respond.io's dashboard spacing and
-// alignment settings place the iframe (inline right/bottom plus whatever
-// transform it chooses), and nothing here may write `transform`,
-// `right`, or `bottom` on it.
+// Positioning is vendor-owned: Respond.io's dashboard spacing and
+// alignment settings place the iframe via inline right/bottom, and no
+// code here may write `transform`, `right`, or `bottom` on it. The only
+// positioning touch anywhere is a fixed stylesheet nudge in globals.css
+// (`translate(18px, 18px)`, skipped for the mobile full-bleed open
+// panel) — CSS, not JS.
 export const RESPOND_IO_LAUNCHER_EDGE_PX = 120;
 
 export function isLauncherOnlyGeometry(
