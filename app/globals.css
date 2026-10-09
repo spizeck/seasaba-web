@@ -365,10 +365,37 @@ html[data-hero-in-view] iframe[title="Webchat Widget"][state="widgetClose"] {
 }
 
 /*
- * Launcher-only hit-region clip (issue #184). Positioning is entirely
- * vendor-owned — Respond.io's dashboard alignment/spacing settings place
- * the iframe, and no rule here may set `transform`, `right`, `bottom`,
- * or any other positioning property on it.
+ * Fixed visual nudge (final placement calibration). Respond.io owns the
+ * iframe's `right`/`bottom` insets — a 25px base plus the dashboard
+ * spacing, currently 0 — and nothing here or in JS ever writes
+ * `right`, `bottom`, or an inline style on it. At the configured 0px
+ * spacing the vendor still floats the visible launcher ~25px off the
+ * corner, so a single constant `translate(18px, 18px)` pulls every
+ * state toward the corner by the same amount — no per-state logic.
+ * `!important` outranks the vendor's non-important inline transform,
+ * so the nudge replaces (rather than compounds) whatever the vendor
+ * sets; the gap between widget edge and viewport corner lands at ~7px
+ * in every state, verified live on production.
+ *
+ * Narrow exception: at viewport widths <= 600px the vendor renders the
+ * open panel edge-to-edge (measured: 600px full-bleed, 601px corner-
+ * anchored — the vendor's own breakpoint). A translate would push the
+ * full-screen panel off-screen, so the nudge skips `widgetOpen` at that
+ * breakpoint only; the closed launcher and teaser still get it.
+ */
+iframe[title="Webchat Widget"] {
+  transform: translate(18px, 18px) !important;
+}
+@media (max-width: 600px) {
+  iframe[title="Webchat Widget"][state="widgetOpen"] {
+    transform: none !important;
+  }
+}
+
+/*
+ * Launcher-only hit-region clip (issue #184). `clip-path` is relative
+ * to the iframe's own box, so it follows wherever the nudge and the
+ * vendor insets place the widget; it never repositions anything.
  *
  * What remains is only the launcher-only hit-region clip: the launcher
  * iframe's transparent top/left still intercepts pointer events

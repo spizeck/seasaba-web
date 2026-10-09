@@ -10,11 +10,13 @@ import {
 // Real production geometry (measured on www.seasaba.com):
 //   Respond.io iframe — launcher-only (90x90), prompt card (~330x178),
 //   desktop open panel (~400x600) — carries vendor-owned inline
-//   positioning (inline right/bottom plus an inline transform), which the
-//   site must never rewrite. Launcher-only geometry gets marked
-//   `data-launcher-only` by the watcher, which applies the hit-region
-//   clip -> the clipped zone is the iframe's bottom-right quarter
-//   (inset 25% top + left), wherever the vendor's own box lands.
+//   positioning (right/bottom insets, plus an inline transform in some
+//   builds), which no JS may rewrite. The stylesheet adds one fixed
+//   translate(18px, 18px) nudge toward the corner, so the clipped zone
+//   follows wherever the vendor's own box lands. Launcher-only geometry
+//   gets marked `data-launcher-only` by the watcher, which applies the
+//   hit-region clip -> the clipped zone is the iframe's bottom-right
+//   quarter (inset 25% top + left).
 //   Cookiebot icon: 48x48 at left:10, bottom:11 -> x:[10,58], y:[vh-59, vh-11].
 // These tests use deterministic stand-ins and assert the real UX contract:
 // no element inside the clipped zones, every bottom-bar link clickable via
@@ -22,11 +24,13 @@ import {
 
 const WIDTHS = [320, 375, 390, 430, 640, 768, 1024, 1280, 1360, 1440] as const;
 
-// Vendor positioning contract measured on production — inline
-// right/bottom plus the vendor's own inline transform. The tests assert
-// these styles survive our watcher byte-for-byte.
+// Vendor inline contract measured on production at 0/0 dashboard
+// spacing — 25px insets, plus an inline transform the way the vendor
+// sets one in some builds. The tests assert these styles survive our
+// watcher byte-for-byte while the stylesheet nudge wins the computed
+// transform.
 const VENDOR_STYLE =
-  "position:fixed;bottom:43px;right:43px;border:0;z-index:2147483000;transform:translate(25px, 37px)";
+  "position:fixed;bottom:25px;right:25px;border:0;z-index:2147483000;transform:translate(25px, 37px)";
 
 async function injectLaunchers(page: import("@playwright/test").Page) {
   await page.evaluate((vendorStyle) => {
@@ -111,8 +115,8 @@ test("footer bottom bar clears both floating launchers at every width", async ({
     expect(m.blocked, `${width}px links intercepted by iframe`).toEqual([]);
     // Positive breathing room between the last content row and the
     // clipped launcher zone — but bounded so padding can't silently grow
-    // back into an empty slab (zone top ≈ vh-73.5, so >35px would mean
-    // ~110px+ of dead space).
+    // back into an empty slab (zone top ≈ vh-74.5 with the 18px nudge,
+    // so >35px would mean ~110px+ of dead space).
     expect(m.gapAboveZone, `${width}px gap above launcher zone`).toBeGreaterThan(4);
     expect(m.gapAboveZone, `${width}px gap above launcher zone`).toBeLessThan(35);
   }
@@ -161,6 +165,7 @@ test("prompt-sized closed iframe keeps vendor geometry and is never clipped", as
       const hit = document.elementFromPoint(r.left + 8, r.top + 8);
       return {
         clipPath: cs.clipPath,
+        transform: cs.transform,
         launcherOnly: f.hasAttribute("data-launcher-only"),
         inlineTransform: f.style.transform,
         inlineRight: f.style.right,
@@ -173,12 +178,16 @@ test("prompt-sized closed iframe keeps vendor geometry and is never clipped", as
 
     expect(m.launcherOnly, `${width}px prompt must stay unmarked`).toBe(false);
     expect(m.clipPath, `${width}px prompt must not be clipped`).toBe("none");
-    // Vendor positioning is ours only to observe, never to change.
+    // The prompt is widgetClose, so the fixed nudge applies at every
+    // width — while vendor inline styles stay byte-for-byte untouched.
+    expect(m.transform, `${width}px prompt gets the fixed nudge`).toBe(
+      "matrix(1, 0, 0, 1, 18, 18)"
+    );
     expect(m.inlineTransform, `${width}px vendor transform untouched`).toBe(
       "translate(25px, 37px)"
     );
-    expect(m.inlineRight).toBe("43px");
-    expect(m.inlineBottom).toBe("43px");
+    expect(m.inlineRight).toBe("25px");
+    expect(m.inlineBottom).toBe("25px");
     expect(m.hitIsIframe, `${width}px prompt corner must be clickable`).toBe(true);
     expect(m.docOverflow, `${width}px document overflow`).toBeLessThanOrEqual(0);
   }

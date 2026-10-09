@@ -80,24 +80,47 @@ it("hides only the closed widget launcher while the homepage hero is in view", (
 });
 
 // Positioning ownership boundary: Respond.io owns the widget iframe's
-// placement (dashboard alignment/spacing), so no stylesheet rule may set
-// a positioning property on it — no transform, no right/bottom/top/left,
-// no position, no !important. Prompt-safety (issue #184): the vendor
-// reuses one closed-state iframe for launcher, prompt, and panel — so
-// the hit-region clip must key off the loader-maintained
-// `data-launcher-only` geometry marker, never the bare widgetClose state.
-it("never repositions the widget iframe — Respond.io owns placement", () => {
-  // Every rule that targets the widget iframe, whatever the selector.
+// insets (dashboard alignment/spacing) and no JS may write positioning.
+// The one sanctioned stylesheet override is a single fixed visual nudge —
+// `transform: translate(18px, 18px) !important` — plus its narrow
+// exception: at viewport widths <= 600px the vendor renders the open
+// panel edge-to-edge, so the nudge skips `state="widgetOpen"` there.
+// No rule may set right/bottom/top/left/position/inset/margin, and no
+// transform other than those two bodies may appear. Prompt-safety
+// (issue #184): the vendor reuses one closed-state iframe for launcher,
+// prompt, and panel — so the hit-region clip must key off the
+// loader-maintained `data-launcher-only` geometry marker, never the
+// bare widgetClose state.
+it("applies exactly the fixed corner nudge — vendor owns insets", () => {
+  // The single positive rule: a constant nudge on the bare selector.
+  expect(globalsCss).toMatch(
+    /iframe\[title="Webchat Widget"\]\s*{\s*transform:\s*translate\(18px,\s*18px\)\s*!important;?\s*}/
+  );
+  // The narrow exception: the vendor's full-bleed mobile open panel
+  // (<=600px viewport) must not be shifted off-screen.
+  expect(globalsCss).toMatch(
+    /@media \(max-width: 600px\)\s*{\s*iframe\[title="Webchat Widget"\]\[state="widgetOpen"\]\s*{\s*transform:\s*none\s*!important;?\s*}\s*}/
+  );
+  // Every rule that targets the widget iframe, whatever the selector —
+  // inside media blocks too. Bodies may only be the two sanctioned
+  // transforms or non-positioning declarations.
   const rules = [...globalsCss.matchAll(
     /iframe\[title="Webchat Widget"\][^{]*{([^}]+)}/g
   )];
   expect(rules.length).toBeGreaterThan(0);
+  const allowedTransforms = new Set([
+    "transform: translate(18px, 18px) !important;",
+    "transform: none !important;",
+  ]);
   for (const m of rules) {
-    // Positioning declarations start a rule body or follow a `;`.
-    expect(m[1]).not.toMatch(
-      /(^|;)\s*(transform|translate|top|right|bottom|left|position|inset|margin)\s*:/i
+    const body = m[1].trim().replace(/\s+/g, " ");
+    // Insets and layout offsets are vendor-owned — never ours.
+    expect(body).not.toMatch(
+      /(^|;)\s*(translate|top|right|bottom|left|position|inset|margin)\s*:/i
     );
-    expect(m[1]).not.toContain("!important");
+    if (/\btransform\s*:/i.test(body)) {
+      expect(allowedTransforms.has(body)).toBe(true);
+    }
   }
 });
 
