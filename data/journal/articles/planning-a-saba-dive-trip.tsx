@@ -11,7 +11,7 @@ export const article: JournalArticle = {
   slug: "planning-a-saba-dive-trip",
   title: "Planning a Dive Trip to Saba: Where to Start",
   description:
-    "Saba rewards a little planning. A short orientation to the decisions that matter — getting there, where to stay, and when to come.",
+    "Saba rewards a little planning. A short orientation to the decisions that matter: getting there, where to stay, and when to come.",
   publishedAt: "2026-09-25",
   category: "Trip Planning",
   author: { name: "Sea Saba", type: "Organization" },
@@ -21,11 +21,11 @@ export const article: JournalArticle = {
   },
   demo: true,
   related: ["a-dive-day-on-saba", "why-saba-dives-differently"],
-  cta: { label: "Plan your trip", href: "/plan-your-trip" },
+  cta: { label: "Plan your Saba trip", href: "/plan-your-trip" },
   body: (
     <>
       <p>
-        Saba is a small island with no beaches and no cruise-ship pier — which
+        Saba is a small island with no beaches and no cruise-ship pier, which
         is exactly why the diving is the way it is. It also means a trip here
         is planned a little differently than a trip to a larger Caribbean
         destination.
@@ -33,7 +33,7 @@ export const article: JournalArticle = {
       <h2>The three decisions that matter</h2>
       <ul>
         <li>
-          <strong>Getting there.</strong> Saba is reached via St. Maarten — by
+          <strong>Getting there.</strong> Saba is reached via St. Maarten, by
           a famously short flight or by ferry. The{" "}
           <Link href={`/plan-your-trip#${planYourTripAnchors.gettingHere}`}>
             getting here guide
@@ -50,7 +50,7 @@ export const article: JournalArticle = {
         </li>
         <li>
           <strong>When to come.</strong> Saba dives year-round, but seasons
-          shift the topside experience more than the underwater one — see{" "}
+          shift the topside experience more than the underwater one. See{" "}
           <Link href={`/plan-your-trip#${planYourTripAnchors.whenToVisit}`}>
             when to visit
           </Link>
@@ -60,7 +60,7 @@ export const article: JournalArticle = {
       <h2>How much diving to plan for</h2>
       <p>
         Most visiting divers plan consecutive dive days rather than single
-        trips — the package structure on the{" "}
+        trips. The package structure on the{" "}
         <Link href="/diving">diving page</Link> is built around that pattern,
         and it&apos;s what most repeat guests end up doing.
       </p>

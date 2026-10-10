@@ -17,7 +17,7 @@ export const JOURNAL_NAME = "Sea Saba Journal";
 export const JOURNAL_PATH = "/journal";
 export const JOURNAL_FEED_PATH = "/journal/feed.xml";
 export const JOURNAL_DESCRIPTION =
-  "Notes on diving Saba — sites and seasons, marine life, trip planning, conservation, and dispatches from the Sea Saba boats.";
+  "Notes on diving Saba: sites and seasons, marine life, trip planning, conservation, and Dive Notes from recent Sea Saba dives.";
 
 /**
  * The content API. Route UI, the sitemap and the feed consume only these

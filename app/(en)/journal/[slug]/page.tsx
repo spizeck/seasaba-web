@@ -5,7 +5,6 @@ import { Breadcrumbs } from "@/components/breadcrumbs";
 import { JsonLd } from "@/components/structured-data";
 import { JournalCard } from "@/components/journal/article-card";
 import { InlineImage } from "@/components/inline-image";
-import { Button } from "@/components/ui/button";
 import { createMetadata } from "@/lib/metadata";
 import {
   JOURNAL_FEED_PATH,
@@ -126,7 +125,7 @@ export default async function JournalArticlePage({
         <div className="mx-auto mt-10 max-w-3xl">
           {article.demo && (
             <p className="not-prose mb-8 rounded-lg border border-dashed border-border bg-muted/20 px-4 py-3 text-xs italic leading-relaxed text-muted-foreground">
-              Demonstration article — placeholder copy shipped with the
+              Demonstration article: placeholder copy shipped with the
               Journal foundation to exercise layout and metadata, not a
               published Sea Saba story.
             </p>
@@ -136,12 +135,15 @@ export default async function JournalArticlePage({
           </div>
 
           {article.cta && (
-            <div className="mt-12 flex items-center justify-between gap-4 rounded-lg border border-border/40 bg-muted/20 px-5 py-4">
-              <p className="text-sm text-muted-foreground">Keep exploring</p>
-              <Button asChild variant="outline" size="sm">
-                <Link href={article.cta.href}>{article.cta.label}</Link>
-              </Button>
-            </div>
+            <p className="not-prose mt-12 border-t border-border/40 pt-6 text-sm">
+              <Link
+                href={article.cta.href}
+                className="font-medium text-primary underline underline-offset-4 decoration-primary/30 transition-colors hover:text-foreground focus-ring"
+              >
+                {article.cta.label}
+                <span aria-hidden="true"> →</span>
+              </Link>
+            </p>
           )}
         </div>
       </article>

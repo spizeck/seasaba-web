@@ -36,7 +36,7 @@ export function JournalIndex({ articles }: { articles: JournalArticle[] }) {
             href={JOURNAL_FEED_PATH}
             className="rounded-sm text-muted-foreground underline underline-offset-4 decoration-muted-foreground/40 transition-colors hover:text-foreground focus-ring"
           >
-            Subscribe via RSS
+            RSS feed
           </a>
         </p>
       </header>

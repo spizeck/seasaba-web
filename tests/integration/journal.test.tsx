@@ -40,7 +40,7 @@ describe("journal index", () => {
       screen.getByRole("heading", { level: 1, name: "Sea Saba Journal" })
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("link", { name: "Subscribe via RSS" })
+      screen.getByRole("link", { name: "RSS feed" })
     ).toHaveAttribute("href", "/journal/feed.xml");
   });
 

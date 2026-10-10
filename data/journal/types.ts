@@ -10,12 +10,16 @@ import type { ReactNode } from "react";
  * See data/journal/README.md for authoring rules and the future CMS seam.
  */
 
-/** Editorial categories — the Phase 1 taxonomy from the Journal epic (#242). */
+/**
+ * Editorial categories — the Phase 1 taxonomy from the Journal epic (#242).
+ * "Dive Notes" is the recurring editorial format for short accounts of
+ * recent dives (see the dive log).
+ */
 export const JOURNAL_CATEGORIES = [
   "Diving Saba",
   "Marine Life",
   "Trip Planning",
-  "From the Boats",
+  "Dive Notes",
   "Conservation",
   "Sea Saba News",
 ] as const;

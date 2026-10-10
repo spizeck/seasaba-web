@@ -11,7 +11,7 @@ export const article: JournalArticle = {
   slug: "why-saba-dives-differently",
   title: "Why Saba Dives Differently",
   description:
-    "Pinnacles rising out of deep blue, walls, and volcanic reef — the shape of the island below the waterline is what makes diving here distinct.",
+    "Pinnacles rising out of deep blue, walls, and volcanic reef: the shape of the island below the waterline is what makes diving here distinct.",
   publishedAt: "2026-09-29",
   category: "Diving Saba",
   author: { name: "Sea Saba", type: "Organization" },
@@ -20,7 +20,7 @@ export const article: JournalArticle = {
     alt: "Divers above a volcanic pinnacle dive site off Saba",
   },
   demo: true,
-  cta: { label: "Browse the dive sites", href: "/dive-sites" },
+  cta: { label: "Explore Saba dive sites", href: "/dive-sites" },
   body: (
     <>
       <p>
@@ -32,7 +32,7 @@ export const article: JournalArticle = {
       <h2>Pinnacles and walls</h2>
       <p>
         The island&apos;s signature dive areas are offshore pinnacles and
-        seamounts — structures that rise from deep water toward the surface,
+        seamounts, structures that rise from deep water toward the surface,
         attracting the kind of life that follows current and depth. Closer to
         shore, walls and volcanic reef formations offer a different profile:
         shallower, structured, and easier to linger on.
@@ -40,12 +40,12 @@ export const article: JournalArticle = {
       <JournalFigure
         src="/images/optimized/diver-volcanic-pinnacle-saba.webp"
         alt="A diver in trim over a volcanic pinnacle structure off Saba"
-        caption="Volcanic structure shapes every Saba dive — demonstration caption."
+        caption="Volcanic structure shapes every Saba dive (demonstration caption)."
         aspectRatio="16/9"
       />
       <p>
         That mix is why the <Link href="/dive-sites">dive sites guide</Link>{" "}
-        is organized by area rather than as one flat list — The Pinnacles
+        is organized by area rather than as one flat list. The Pinnacles
         genuinely are a different kind of dive than Tent Reef or the bay
         sites, and the site descriptions carry the details.
       </p>
@@ -53,7 +53,7 @@ export const article: JournalArticle = {
       <p>
         Pinnacle dives run deeper and see more blue-water life; the shallower
         structure sites reward slow, observant diving. The practical result is
-        that a week of diving here doesn&apos;t repeat itself — different
+        that a week of diving here doesn&apos;t repeat itself: different
         sites suit different experience levels, which the{" "}
         <Link href="/diving">diving overview</Link> maps to the daily
         schedule.

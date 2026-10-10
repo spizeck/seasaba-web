@@ -29,6 +29,22 @@ fails `next build` / `npm test` with a named list of problems.
   (captioned image) and `JournalCallout` ("good to know" aside). Link to the
   canonical pages (`/diving`, `/dive-sites`, `/plan-your-trip`, …) rather
   than duplicating facts; pull operational values from `data/operations.ts`.
+- `cta` — optional, at most one. It renders as a quiet text link at the
+  article foot, so write the label as the natural next step for *that*
+  article (e.g. a trip-planning piece points at "Plan your Saba trip", a
+  Dive Notes piece at "See recent dives"). Never a generic "Learn more" or
+  a booking push.
+
+### Editorial style rules
+
+- **No em dashes in public-facing Journal copy** — titles, descriptions,
+  body, captions, notices, CTA labels, the index intro. Prefer commas,
+  colons, parentheses, or splitting into shorter sentences.
+- Avoid repetitive headline constructions of the `X — Y` / `X: Y` shape
+  unless there is a specific editorial reason; most titles read better
+  plain.
+- Keep descriptions (deks) to one or two disciplined sentences; they are
+  also the meta description.
 - `demo` — marks placeholder content and renders a small notice on the
   article page. **Every article currently in this directory is a demo
   fixture** — neutral placeholder copy written to prove the system, not

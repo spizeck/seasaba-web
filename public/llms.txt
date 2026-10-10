@@ -21,7 +21,7 @@ informational pages are server-rendered HTML and readable without JavaScript.
 - [Recommended Partners](https://www.seasaba.com/partners): accommodations, restaurants, transportation, and local services
 - [Support Saba](https://www.seasaba.com/donate): Sea Saba's community-giving page, covering ways for visitors to support island organizations directly and how Saba groups can request a donation or sponsorship from Sea Saba
 - [Sea Saba Dive Log](https://www.seasaba.com/dive-log): recent dives and sightings from Sea Saba boats
-- [Sea Saba Journal](https://www.seasaba.com/journal): editorial notes on diving Saba — marine life, trip planning, conservation, and news
+- [Sea Saba Journal](https://www.seasaba.com/journal): editorial notes on diving Saba covering sites and seasons, marine life, trip planning, conservation, and Dive Notes from recent Sea Saba dives
 
 ## Policies
 
