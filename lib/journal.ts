@@ -35,6 +35,14 @@ const RESERVED_SLUGS = new Set(["feed.xml", "feed"]);
 
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 
+// Shape check plus a real calendar day — Date.parse alone rolls overflow
+// dates like "2026-02-30" forward instead of rejecting them.
+const isIsoDate = (value: string | undefined): value is string => {
+  if (!value || !ISO_DATE.test(value)) return false;
+  const ms = Date.parse(`${value}T00:00:00Z`);
+  return !Number.isNaN(ms) && new Date(ms).toISOString().slice(0, 10) === value;
+};
+
 /** All problems found in one article, human-readable and author-facing. */
 export function validateArticle(article: JournalArticle): string[] {
   const problems: string[] = [];
@@ -53,12 +61,12 @@ export function validateArticle(article: JournalArticle): string[] {
   }
 
   const published = Date.parse(article.publishedAt ?? "");
-  if (!ISO_DATE.test(article.publishedAt ?? "") || Number.isNaN(published)) {
+  if (!isIsoDate(article.publishedAt)) {
     problems.push(`${where}: publishedAt must be an ISO date (YYYY-MM-DD)`);
   }
   if (article.updatedAt !== undefined) {
     const updated = Date.parse(article.updatedAt);
-    if (!ISO_DATE.test(article.updatedAt) || Number.isNaN(updated)) {
+    if (!isIsoDate(article.updatedAt)) {
       problems.push(`${where}: updatedAt must be an ISO date (YYYY-MM-DD)`);
     } else if (!Number.isNaN(published) && updated < published) {
       problems.push(`${where}: updatedAt cannot predate publishedAt`);
@@ -276,7 +284,7 @@ export function journalFeedXml(articles: JournalArticle[]): string {
       <pubDate>${rfc822(a.publishedAt)}</pubDate>
       <description>${escapeXml(a.excerpt ?? a.description)}</description>
       <category>${escapeXml(a.category)}</category>
-      <author>${escapeXml(a.author.name)}</author>
+      <dc:creator>${escapeXml(a.author.name)}</dc:creator>
     </item>`
     )
     .join("\n");
@@ -291,7 +299,7 @@ export function journalFeedXml(articles: JournalArticle[]): string {
     : new Date(0).toUTCString();
 
   return `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <channel>
     <title>${escapeXml(JOURNAL_NAME)}</title>
     <link>${SITE_URL}${JOURNAL_PATH}</link>

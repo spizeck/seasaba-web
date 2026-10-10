@@ -89,6 +89,15 @@ describe("article schema validation", () => {
     );
   });
 
+  it("rejects impossible calendar dates that Date.parse rolls over", () => {
+    expect(
+      validateArticle(fixture({ publishedAt: "2026-02-30" })).join("\n")
+    ).toMatch(/publishedAt must be an ISO date/);
+    expect(
+      validateArticle(fixture({ updatedAt: "2026-13-01" })).join("\n")
+    ).toMatch(/updatedAt must be an ISO date/);
+  });
+
   it("rejects updatedAt before publishedAt and non-ISO updatedAt", () => {
     expect(
       validateArticle(fixture({ updatedAt: "2025-12-31" })).join("\n")
