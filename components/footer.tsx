@@ -15,6 +15,7 @@ const PLAN_LINKS = [
   { label: "When to Visit",  href: `/plan-your-trip#${planYourTripAnchors.whenToVisit}` },
   { label: "What to Bring",  href: `/plan-your-trip#${planYourTripAnchors.whatToBring}` },
   { label: "Good to Know",   href: `/plan-your-trip#${planYourTripAnchors.goodToKnow}` },
+  { label: "Book Diving",    href: "/book" },
   { label: "Recommended Partners", href: "/partners" },
   { label: "Support Saba", href: "/donate" },
 ] as const;
@@ -23,6 +24,7 @@ const EXPLORE_LINKS = [
   { label: "Dive Sites",  href: "/dive-sites" },
   { label: "Diving",      href: "/diving" },
   { label: "Dive Log",    href: "/dive-log" },
+  { label: "Journal",     href: "/journal" },
   { label: "Courses",     href: "/courses" },
   { label: "Visiting Yachts", href: "/visiting-yachts" },
   { label: "About",       href: "/about" },
