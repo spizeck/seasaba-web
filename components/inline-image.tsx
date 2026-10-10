@@ -9,6 +9,8 @@ interface InlineImageProps {
   objectPosition?: string;
   sizes?: string;
   className?: string;
+  /** LCP candidates only (e.g. article heroes). Defaults to lazy. */
+  priority?: boolean;
 }
 
 const ASPECT_CLASSES: Record<AspectRatio, string> = {
@@ -31,6 +33,7 @@ export function InlineImage({
   objectPosition = "center",
   sizes = "(max-width: 1024px) 100vw, 60vw",
   className = "",
+  priority = false,
 }: InlineImageProps) {
   return (
     <div
@@ -43,6 +46,7 @@ export function InlineImage({
         className="object-cover"
         style={{ objectPosition }}
         sizes={sizes}
+        priority={priority}
       />
     </div>
   );

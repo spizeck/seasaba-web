@@ -5,11 +5,12 @@ import {
   CONTACT,
   OG_IMAGE,
   SOCIAL_LINKS,
+  BUSINESS_ID,
 } from "@/lib/constants";
 import { OPERATIONS } from "@/data/operations";
 
-/** Stable entity identifier — lets other schema nodes reference the business. */
-export const BUSINESS_ID = `${SITE_URL}/#business`;
+/** Re-exported from lib/constants — existing imports of this module keep working. */
+export { BUSINESS_ID };
 
 /**
  * Render a JSON-LD block. `data` is a plain schema.org object; callers pass
