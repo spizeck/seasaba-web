@@ -135,9 +135,9 @@ for (const p of REQUIRED_PATHS) {
   }
 }
 
-// Top-level Markdown is limited to the three canonical entry points; all
+// Top-level Markdown is limited to the canonical entry points; all
 // other docs live under docs/. Add to this list only deliberately.
-const ALLOWED_ROOT_DOCS = new Set(["README.md", "AI_INSTRUCTIONS.md", "SECURITY.md"]);
+const ALLOWED_ROOT_DOCS = new Set(["README.md", "AI_INSTRUCTIONS.md", "AGENTS.md", "SECURITY.md"]);
 for (const file of trackedFiles) {
   if (!file.includes("/") && file.endsWith(".md") && !ALLOWED_ROOT_DOCS.has(file)) {
     failures.push(
