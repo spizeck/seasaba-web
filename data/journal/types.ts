@@ -95,6 +95,14 @@ export interface JournalArticle {
    * real, owner-approved article replaces the fixture.
    */
   demo?: boolean;
+  /**
+   * Unpublished editorial draft (#245 — e.g. a generated Dive Notes piece
+   * awaiting human review). Draft articles may be registered for validation
+   * and review, but the public loader never lists, resolves, routes, feeds,
+   * or maps them. Removing `draft` — after review and edits — is the
+   * publication step.
+   */
+  draft?: boolean;
   /** Article body JSX — see the interface docblock above. */
   body: ReactNode;
 }

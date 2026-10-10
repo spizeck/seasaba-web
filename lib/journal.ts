@@ -159,16 +159,28 @@ export function validateRegistry(articles: JournalArticle[]): JournalArticle[] {
  */
 const ARTICLES = validateRegistry(JOURNAL_ARTICLES).slice();
 
+/**
+ * The public-facing slice — drafts (#245) validate against the registry like
+ * everything else, but can never be listed, resolved, routed, fed, or mapped
+ * until a human removes `draft: true` and re-commits.
+ */
+const PUBLISHED = ARTICLES.filter((a) => !a.draft);
+
 const byNewest = (a: JournalArticle, b: JournalArticle) =>
   b.publishedAt.localeCompare(a.publishedAt) || a.slug.localeCompare(b.slug);
 
-/** All articles, newest first (publishedAt desc, slug as a stable tiebreak). */
-export function listArticles(): JournalArticle[] {
-  return [...ARTICLES].sort(byNewest);
+/** Published articles, newest first (publishedAt desc, slug tiebreak). */
+export function listArticles(
+  articles: JournalArticle[] = PUBLISHED
+): JournalArticle[] {
+  return articles.filter((a) => !a.draft).sort(byNewest);
 }
 
-export function getArticle(slug: string): JournalArticle | undefined {
-  return ARTICLES.find((a) => a.slug === slug);
+export function getArticle(
+  slug: string,
+  articles: JournalArticle[] = PUBLISHED
+): JournalArticle | undefined {
+  return articles.find((a) => a.slug === slug && !a.draft);
 }
 
 export function listCategories(): readonly JournalCategory[] {

@@ -1,0 +1,94 @@
+{
+  "_comment": "Synthetic dive-log snapshot for the Dive Notes generator (#245). All records are fabricated test data — the createdBy/diveGuide values exist only to prove they never reach generated output.",
+  "dives": [
+    {
+      "id": "fx-001",
+      "date": "2026-09-07",
+      "diveSlot": "10:30 am",
+      "boatId": "fx-boat-1",
+      "diveSiteId": "fx-site-tent",
+      "diveGuides": ["Test Guide One"],
+      "maxDepth": 21,
+      "waterTemperature": 28,
+      "sightings": [{ "speciesId": "fx-turtle", "count": 2 }],
+      "createdBy": "staff@example.invalid",
+      "createdAt": { "seconds": 1789000000 }
+    },
+    {
+      "id": "fx-002",
+      "date": "2026-09-07",
+      "diveSlot": "10:30 am",
+      "boatId": "fx-boat-1",
+      "diveSiteId": "fx-site-tent",
+      "diveGuides": ["Test Guide Two"],
+      "maxDepth": 18,
+      "waterTemperature": 28,
+      "sightings": [{ "speciesId": "fx-turtle", "count": 1 }],
+      "createdBy": "staff@example.invalid"
+    },
+    {
+      "id": "fx-003",
+      "date": "2026-09-07",
+      "diveSlot": "2:00 pm",
+      "boatId": "fx-boat-1",
+      "diveSiteId": "fx-site-tent",
+      "diveGuide": "Test Guide One",
+      "waterTemperature": 28,
+      "sightings": []
+    },
+    {
+      "id": "fx-004",
+      "date": "2026-09-09",
+      "diveSlot": "9:00 am",
+      "boatId": "fx-boat-2",
+      "diveSiteId": "fx-site-pinnacle",
+      "diveGuides": ["Test Guide One"],
+      "maxDepth": 30,
+      "waterTemperature": 27,
+      "sightings": [
+        { "speciesId": "fx-shark", "count": 3 },
+        { "speciesId": "fx-turtle", "count": 1 },
+        { "speciesId": "fx-lionfish", "count": 2 }
+      ]
+    },
+    {
+      "id": "fx-005",
+      "date": { "seconds": 1789200000 },
+      "diveSlot": "9:00 am drift",
+      "boatId": "fx-boat-2",
+      "diveSiteId": "fx-site-offmap",
+      "maxDepth": 24,
+      "sightings": [{ "speciesId": "fx-shark", "count": 1 }]
+    },
+    {
+      "id": "fx-006",
+      "date": "2026-09-11",
+      "diveSiteId": "fx-site-tent",
+      "boatId": "fx-boat-1",
+      "sightings": []
+    },
+    {
+      "id": "fx-007",
+      "date": "2026-09-20",
+      "diveSlot": "10:30 am",
+      "boatId": "fx-boat-1",
+      "diveSiteId": "fx-site-tent",
+      "waterTemperature": 26,
+      "sightings": [{ "speciesId": "fx-turtle", "count": 4 }]
+    }
+  ],
+  "sites": [
+    { "id": "fx-site-tent", "name": "Tent Reef", "region": "Tent Reef" },
+    { "id": "fx-site-pinnacle", "name": "Third Encounter", "region": "The Pinnacles" },
+    { "id": "fx-site-offmap", "name": "Fixture Shoal" }
+  ],
+  "species": [
+    { "id": "fx-turtle", "name": "Green Turtle" },
+    { "id": "fx-shark", "name": "Caribbean Reef Shark" },
+    { "id": "fx-lionfish", "name": "Lionfish" }
+  ],
+  "boats": [
+    { "id": "fx-boat-1", "name": "Fin & Tonic" },
+    { "id": "fx-boat-2", "name": "Deep Blue" }
+  ]
+}
