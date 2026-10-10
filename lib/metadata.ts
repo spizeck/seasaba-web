@@ -24,7 +24,7 @@ interface PageMetadataOptions {
   ogType?: "website" | "article";
   /** OG/Twitter image override (e.g. an article hero) instead of the site default. */
   ogImage?: { url: string; alt: string; width?: number; height?: number };
-  /** Article metadata — emitted as openGraph.article when ogType is "article". */
+  /** Article metadata — emitted as article:* OG tags when ogType is "article". */
   article?: {
     publishedTime: string;
     modifiedTime?: string;
@@ -140,14 +140,13 @@ export function createMetadata({
           alt: image.alt,
         },
       ],
+      // Next.js emits article:* OG tags from flat openGraph fields.
       ...(ogType === "article" &&
         article && {
-          article: {
-            publishedTime: article.publishedTime,
-            modifiedTime: article.modifiedTime,
-            section: article.section,
-            authors: article.authors,
-          },
+          publishedTime: article.publishedTime,
+          modifiedTime: article.modifiedTime,
+          section: article.section,
+          authors: article.authors,
         }),
     },
     twitter: {

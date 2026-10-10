@@ -42,5 +42,5 @@ Routes, sitemap, RSS and components consume the Journal only through
 That module is the entire storage boundary: a CMS-backed implementation can
 swap `JOURNAL_ARTICLES` for a remote fetch and render remote bodies through
 the same `JournalArticle` shape without touching `app/(en)/journal/*`, the
-public URLs, or any component. Keep new consumers on the `lib/journal` API —
+public URLs, or any component. Keep new consumers on the `lib/journal.ts` API —
 do not import `data/journal` modules from routes or components.

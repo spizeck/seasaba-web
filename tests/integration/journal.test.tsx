@@ -176,21 +176,24 @@ describe("journal article metadata", () => {
     expect(meta.title).toBe(`${latest.title} — Sea Saba Journal`);
     expect(meta.description).toBe(latest.description);
     expect(meta.alternates?.canonical).toBe(articleUrl(latest));
-    // OpenGraph is a discriminated union; narrow to the article shape.
+    // OpenGraph is a discriminated union; narrow to the article shape —
+    // Next emits article:* tags from flat fields on openGraph.
     const og = meta.openGraph as {
       type?: string;
       url?: string;
-      article?: Record<string, unknown>;
+      publishedTime?: string;
+      modifiedTime?: string;
+      section?: string;
+      authors?: string[];
       images?: { url: string; alt?: string }[];
     };
     expect(og.type).toBe("article");
     expect(og.url).toBe(articleUrl(latest));
     // Article OG tags + hero image.
-    const article = og.article!;
-    expect(article.publishedTime).toBe(latest.publishedAt);
-    expect(article.modifiedTime).toBe(latest.updatedAt ?? latest.publishedAt);
-    expect(article.section).toBe(latest.category);
-    expect(article.authors).toEqual([latest.author.name]);
+    expect(og.publishedTime).toBe(latest.publishedAt);
+    expect(og.modifiedTime).toBe(latest.updatedAt ?? latest.publishedAt);
+    expect(og.section).toBe(latest.category);
+    expect(og.authors).toEqual([latest.author.name]);
     const images = og.images!;
     expect(images[0].url).toBe(latest.hero.src);
     expect(images[0].alt).toBe(latest.hero.alt);
