@@ -1,0 +1,7 @@
+needs:
+  # The artifact procedures themselves (shared with sentry-instrument / sentry-get-started).
+  - debug-artifacts/*.md
+  - auth-token.md
+  # Platform detection + the docs holding the build-tool config (chosen at runtime).
+  - sdk-docs.md
+  - setup-verification.md

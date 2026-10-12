@@ -1,0 +1,6 @@
+# Vendored agent skills are byte-compared against installer provenance
+# (.devin/agent-skills-state.json). Pin LF so Windows checkouts with
+# core.autocrlf=true do not rewrite them to CRLF and trip the check.
+.devin/** text eol=lf
+.agents/** text eol=lf
+skills-lock.json text eol=lf

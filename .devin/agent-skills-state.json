@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "managedBy": "app-foundations",
+  "skills": {
+    "engineering-standards": {
+      "hash": "a832c966d691a5222b4adcec38851c3ec539fb72045ccbdf90bf088a85794fd4",
+      "files": {
+        "SKILL.md": "83dd5710ecae175057cc01fa2c68fc43df31931c6d21271092a8dc1e25b8544e"
+      },
+      "installedAt": "2026-10-10T01:42:31.019Z"
+    },
+    "pr-workflow": {
+      "hash": "64d343451130ecc8be48510d3b7770d0d10add37773da3436ac087a47edc8a0f",
+      "files": {
+        "SKILL.md": "32eb4680eeb205a2e1a79a327656d2c1cf275f6187c93f393834f44281f87eba"
+      },
+      "installedAt": "2026-10-10T01:42:31.021Z"
+    },
+    "ui-ux-standards": {
+      "hash": "4e0acb3684a582b90b0583ce8c3e679ad8bf0a73ef6a2437913501b9e4d98ecb",
+      "files": {
+        "SKILL.md": "d597a2d0d37cacadf5e0d30ee35c59ba55ff9f1ba24f50e9a6c55b480d0e33f0"
+      },
+      "installedAt": "2026-10-10T01:42:31.023Z"
+    },
+    "production-readiness": {
+      "hash": "695fffbadfae084aab79331fc3ef17346cc34caac05e3cc4dc22f3d62b5c321e",
+      "files": {
+        "SKILL.md": "91efa48b6f33ad76a5ba006d31b6091498ef7f4bb77ce4701b982374f08bee7a"
+      },
+      "installedAt": "2026-10-10T01:42:31.025Z"
+    },
+    "privacy-consent": {
+      "hash": "1d033d13260ace320ba6c1332673c2ed1cc8d15cecf6c326939ea89fb27fe0f1",
+      "files": {
+        "SKILL.md": "ec3895ba0332afa0125369092a2851eda0b33add85c5b759985fdec2027ba74a"
+      },
+      "installedAt": "2026-10-10T01:42:31.026Z"
+    },
+    "discovery-first-development": {
+      "hash": "935ac1d1e4af0088993eebd75ca3d8889f01990b51d41479d6e65957ad8934d9",
+      "files": {
+        "references/explore-build-harden.md": "909aa10eb93f7f3a0516059cc80135fc6642d09e6b574fbc6a9aa498e09502ca",
+        "references/feedback-and-decisions.md": "af6e90c23459ae7263d8a9ff2f2385ca83310767eec0edad67f2d55e87dddbda",
+        "references/guided-testing.md": "301b5f459ade3bf77eb0d154e7b86ed4136a4c590a8f4e287a95a7447595890d",
+        "SKILL.md": "a862d2e67f210494bbdd342e5ed80f1e4f4b7a4c333bde2ad2005a3f2d018e5f",
+        "templates/discovery-record.md": "dc415fadd29572dae069e65b631ae737d298b3cf5fdf03223a15e4ae4ac366e4",
+        "templates/feedback-log.md": "077b9a64b5c1546930b66ea60f1f80b6f40dd3bc852c051a8c1eed6400156b6c",
+        "templates/guided-test-plan.md": "fffa3f8298244a48210173cd2f2cca63555308f595fbe468c793f845a18c9d29",
+        "templates/morning-review.md": "17cd4ee1a8bb35cd27d800ee0bf9efc0f669ccdd55ef2ef89fb4d36850b446a4"
+      },
+      "installedAt": "2026-10-10T18:38:56.403Z"
+    }
+  },
+  "source": {
+    "repo": "spizeck/app-foundations",
+    "revision": "a505234eac3752f52a97ff8b1f8f367aa0bc81b5",
+    "manifestVersion": 1
+  }
+}
