@@ -3,6 +3,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { createMetadata } from "@/lib/metadata";
 import { legacyRedirects } from "@/data/redirects";
+import { articlePath, listArticles } from "@/lib/journal";
 import sitemap from "@/app/sitemap";
 import robots from "@/app/robots";
 
@@ -14,6 +15,7 @@ const CANONICAL_ROUTES = [
   "/plan-your-trip",
   "/courses",
   "/dive-log",
+  "/journal",
   "/visiting-yachts",
   "/about",
   "/contact",
@@ -48,8 +50,10 @@ it("preserves unique single-hop permanent legacy redirects", () => {
 describe("sitemap", () => {
   it("lists exactly the canonical public routes on the canonical host", () => {
     const urls = sitemap().map((entry) => entry.url);
+    const articlePaths = listArticles().map(articlePath);
+    const expected = [...CANONICAL_ROUTES, ...articlePaths];
     expect([...urls].sort()).toEqual(
-      CANONICAL_ROUTES.map((p) => `https://www.seasaba.com${p}`).sort()
+      expected.map((p) => `https://www.seasaba.com${p}`).sort()
     );
     expect(new Set(urls).size).toBe(urls.length);
   });
@@ -64,10 +68,22 @@ describe("sitemap", () => {
   });
 
   it("does not emit a mechanically generated lastModified", () => {
-    // Issue #108: build/request-time `new Date()` is a fake freshness signal;
-    // the field stays absent until a real content-modification source exists.
+    // Issue #108: build/request-time `new Date()` is a fake freshness signal.
+    // Static pages still omit it; Journal articles are the exception — they
+    // carry declared published/updated dates, which are real content dates.
+    const declaredDates = new Map(
+      listArticles().map((a) => [
+        `https://www.seasaba.com${articlePath(a)}`,
+        a.updatedAt ?? a.publishedAt,
+      ])
+    );
     for (const entry of sitemap()) {
-      expect(entry.lastModified).toBeUndefined();
+      const declared = declaredDates.get(entry.url);
+      if (declared) {
+        expect(entry.lastModified).toBe(declared);
+      } else {
+        expect(entry.lastModified).toBeUndefined();
+      }
     }
   });
 });

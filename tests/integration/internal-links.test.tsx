@@ -169,16 +169,17 @@ describe("specific-purpose links carry canonical fragments", () => {
     expect(planNav.contains(links[0])).toBe(true);
   });
 
-  it("the footer Plan and Explore columns balance at seven links each", () => {
+  it("the footer Plan and Explore columns balance at eight links each", () => {
     render(<Footer />);
+    // #243 added Journal to Explore; Book Diving keeps the Plan column level.
     const planNav = screen.getByRole("navigation", {
       name: /trip planning links/i,
     });
     const exploreNav = screen.getByRole("navigation", {
       name: /site navigation/i,
     });
-    expect(planNav.querySelectorAll("a")).toHaveLength(7);
-    expect(exploreNav.querySelectorAll("a")).toHaveLength(7);
+    expect(planNav.querySelectorAll("a")).toHaveLength(8);
+    expect(exploreNav.querySelectorAll("a")).toHaveLength(8);
   });
 
   it("the footer Explore column links to the yacht guide", () => {

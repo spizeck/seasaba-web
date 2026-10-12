@@ -3,6 +3,9 @@ export const SITE_DESCRIPTION =
   "Professional scuba diving in Saba, Dutch Caribbean. Expert-guided dives, certifications, and underwater experiences on one of the Caribbean's best-kept secrets.";
 export const SITE_URL = "https://www.seasaba.com";
 
+/** Stable schema.org entity identifier — lets other JSON-LD nodes reference the business without redeclaring it. */
+export const BUSINESS_ID = `${SITE_URL}/#business`;
+
 export const NAV_ITEMS = [
   { label: "Diving", href: "/diving" },
   { label: "Dive Sites", href: "/dive-sites" },

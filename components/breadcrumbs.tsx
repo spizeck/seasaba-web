@@ -5,21 +5,26 @@ import { usePathname } from "next/navigation";
 import { ChevronRight } from "lucide-react";
 import { BreadcrumbListJsonLd } from "@/components/structured-data";
 
-export function Breadcrumbs() {
+interface Crumb {
+  label: string;
+  /** Every crumb carries its URL so the BreadcrumbList JSON-LD stays complete — the last crumb is the current page and renders as text, not a link. */
+  href: string;
+}
+
+export function Breadcrumbs({ items }: { items?: Crumb[] }) {
   const pathname = usePathname();
   const segments = pathname.split("/").filter(Boolean);
 
-  if (segments.length === 0) return null;
+  const crumbs: Crumb[] =
+    items ??
+    segments.map((segment, index) => ({
+      href: "/" + segments.slice(0, index + 1).join("/"),
+      label: segment
+        .replace(/-/g, " ")
+        .replace(/\b\w/g, (c) => c.toUpperCase()),
+    }));
 
-  const crumbs = segments.map((segment, index) => {
-    const href = "/" + segments.slice(0, index + 1).join("/");
-    const label = segment
-      .replace(/-/g, " ")
-      .replace(/\b\w/g, (c) => c.toUpperCase());
-    const isLast = index === segments.length - 1;
-
-    return { href, label, isLast };
-  });
+  if (crumbs.length === 0) return null;
 
   return (
     <>
@@ -36,10 +41,10 @@ export function Breadcrumbs() {
             Home
           </Link>
         </li>
-        {crumbs.map((crumb) => (
+        {crumbs.map((crumb, index) => (
           <li key={crumb.href} className="flex items-center gap-1.5">
             <ChevronRight className="h-3.5 w-3.5" />
-            {crumb.isLast ? (
+            {index === crumbs.length - 1 ? (
               <span className="text-foreground" aria-current="page">
                 {crumb.label}
               </span>
