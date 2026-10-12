@@ -49,7 +49,10 @@ const failures = [];
 const trackedMarkdown = execSync("git ls-files", { cwd: ROOT, encoding: "utf8" })
   .split("\n")
   .map((l) => l.trim())
-  .filter((f) => f.endsWith(".md"));
+  .filter((f) => f.endsWith(".md"))
+  // Vendored agent skills (.agents/, .devin/) are upstream-managed content,
+  // not project docs — their internal links are maintained by upstream.
+  .filter((f) => !f.startsWith(".agents/") && !f.startsWith(".devin/"));
 
 const stripFenced = (text) => text.replace(/```[\s\S]*?(```|$)/g, "");
 const stripInlineCode = (text) => text.replace(/`[^`\n]*`/g, "");
