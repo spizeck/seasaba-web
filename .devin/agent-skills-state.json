@@ -50,11 +50,19 @@
         "templates/morning-review.md": "17cd4ee1a8bb35cd27d800ee0bf9efc0f669ccdd55ef2ef89fb4d36850b446a4"
       },
       "installedAt": "2026-10-10T18:38:56.403Z"
+    },
+    "web-design-guidelines": {
+      "hash": "caaa5838ca5ea37ca25db2c6e9d03c1e1de93a302b894036a7254eabdcd0aa74",
+      "files": {
+        "references/web-interface-guidelines.md": "2d13e8a93e8af41b3f7a14e7e1118a6919b7bb0af25caf323663c51b4793a7a9",
+        "SKILL.md": "ad1ef39735686e47f0069c7974d95499bfe1ee13c1076beb751c9f33753f0388"
+      },
+      "installedAt": "2026-10-13T00:35:09.780Z"
     }
   },
   "source": {
     "repo": "spizeck/app-foundations",
-    "revision": "a505234eac3752f52a97ff8b1f8f367aa0bc81b5",
+    "revision": "4208eb4ce0b944c74374bce19b00de23faaed34d",
     "manifestVersion": 1
   }
 }
