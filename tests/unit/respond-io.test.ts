@@ -2,9 +2,6 @@ import { readFileSync } from "node:fs";
 import { expect, it, vi } from "vitest";
 import {
   isLauncherOnlyGeometry,
-  launcherAnchorDelta,
-  RESPOND_IO_ANCHOR_BOTTOM_PX,
-  RESPOND_IO_ANCHOR_RIGHT_PX,
   RESPOND_IO_CDN,
   RESPOND_IO_LAUNCHER_EDGE_PX,
   RESPOND_IO_SCRIPT_ID,
@@ -82,59 +79,68 @@ it("hides only the closed widget launcher while the homepage hero is in view", (
   expect(globalsCss).not.toContain("translateY(calc(-60px");
 });
 
-// Fixed launcher anchor (corrective rework after #235) + prompt-safety
+// Positioning ownership boundary: Respond.io owns the widget iframe's
+// insets (dashboard alignment/spacing) and no JS may write positioning.
+// The one sanctioned stylesheet override is a single fixed visual nudge —
+// `transform: translate(18px, 18px) !important` — plus its narrow
+// exception: at viewport widths <= 600px the vendor renders the open
+// panel edge-to-edge, so the nudge skips `state="widgetOpen"` there.
+// No rule may set right/bottom/top/left/position/inset/margin, and no
+// transform other than those two bodies may appear. Prompt-safety
 // (issue #184): the vendor reuses one closed-state iframe for launcher,
 // prompt, and panel — so the hit-region clip must key off the
-// loader-maintained `data-launcher-only` geometry marker, never the bare
-// widgetClose state, and the shared-anchor translate must live in the
-// watcher (it adapts to the measured vendor inset) rather than a static
-// CSS value that can drift from the real iframe geometry.
-it("clips only the marked launcher-only iframe; the anchor translate is JS-managed", () => {
+// loader-maintained `data-launcher-only` geometry marker, never the
+// bare widgetClose state.
+it("applies exactly the fixed corner nudge — vendor owns insets", () => {
+  // The single positive rule: a constant nudge on the bare selector.
+  expect(globalsCss).toMatch(
+    /iframe\[title="Webchat Widget"\]\s*{\s*transform:\s*translate\(18px,\s*18px\)\s*!important;?\s*}/
+  );
+  // The narrow exception: the vendor's full-bleed mobile open panel
+  // (<=600px viewport) must not be shifted off-screen.
+  expect(globalsCss).toMatch(
+    /@media \(max-width: 600px\)\s*{\s*iframe\[title="Webchat Widget"\]\[state="widgetOpen"\]\s*{\s*transform:\s*none\s*!important;?\s*}\s*}/
+  );
+  // Every rule that targets the widget iframe, whatever the selector —
+  // inside media blocks too. Bodies may only be the two sanctioned
+  // transforms or non-positioning declarations.
+  const rules = [...globalsCss.matchAll(
+    /iframe\[title="Webchat Widget"\][^{]*{([^}]+)}/g
+  )];
+  expect(rules.length).toBeGreaterThan(0);
+  const allowedTransforms = new Set([
+    "transform: translate(18px, 18px) !important;",
+    "transform: none !important;",
+  ]);
+  for (const m of rules) {
+    const body = m[1].trim().replace(/\s+/g, " ");
+    // Insets and layout offsets are vendor-owned — never ours.
+    expect(body).not.toMatch(
+      /(^|;)\s*(translate|top|right|bottom|left|position|inset|margin)\s*:/i
+    );
+    if (/\btransform\s*:/i.test(body)) {
+      expect(allowedTransforms.has(body)).toBe(true);
+    }
+  }
+});
+
+it("clips only the marked launcher-only iframe's hit region", () => {
   const bodies = [...globalsCss.matchAll(
     /iframe\[title="Webchat Widget"\]\[data-launcher-only\]\s*{([^}]+)}/g
   )].map((m) => m[1]);
   const combined = bodies.join("\n");
   // clip-path shrinks the transparent hit area to the circle's quarter.
   expect(combined).toContain("clip-path: inset(25% 0 0 25%)");
-  // No static translate in CSS — the watcher computes the delta from the
-  // measured vendor inset so closed/teaser/open land on one anchor.
-  expect(combined).not.toContain("transform");
-  expect(combined).not.toContain("!important");
-  // Regression for #184: no rule may translate or clip a widgetClose
-  // iframe unconditionally — the same state also hosts the prompt card.
+  // The clip is the only thing the rule does.
+  expect(combined.trim()).toBe("clip-path: inset(25% 0 0 25%);");
+  // Regression for #184: no rule may clip a widgetClose iframe
+  // unconditionally — the same state also hosts the prompt card.
   const closedBodies = [...globalsCss.matchAll(
     /iframe\[title="Webchat Widget"\]\[state="widgetClose"\]\s*{([^}]+)}/g
   )].map((m) => m[1]).join("\n");
-  expect(closedBodies).not.toContain("transform:");
   expect(closedBodies).not.toContain("clip-path");
-  // The open conversation panel is never repositioned or clipped.
-  expect(globalsCss).not.toMatch(/state="widgetOpen"\]\s*{[^}]*transform/);
+  // The open conversation panel is never clipped.
   expect(globalsCss).not.toMatch(/state="widgetOpen"\]\s*{[^}]*clip-path/);
-});
-
-// Anchor contract: the right edge targets RESPOND_IO_ANCHOR_RIGHT_PX
-// (18px → ~22px visible circle clearance) and the bottom edge targets
-// RESPOND_IO_ANCHOR_BOTTOM_PX (6px → ~10px, matching the rolled-back
-// production resting point). The delta adapts to whatever inset the
-// vendor reports — steady 43px, the 25px mount transient, or a future
-// dashboard change — while full-bleed mobile open-panel geometry (~0px
-// inset) keeps vendor positioning.
-it("computes the anchor delta from the measured vendor inset", () => {
-  expect(RESPOND_IO_ANCHOR_RIGHT_PX).toBe(18);
-  expect(RESPOND_IO_ANCHOR_BOTTOM_PX).toBe(6);
-  // Steady production inset: 43 − 18 = 25px right, 43 − 6 = 37px bottom.
-  expect(launcherAnchorDelta(43, RESPOND_IO_ANCHOR_RIGHT_PX)).toBe(25);
-  expect(launcherAnchorDelta(43, RESPOND_IO_ANCHOR_BOTTOM_PX)).toBe(37);
-  // Mount transient (25px vendor inset): 7px right, 19px bottom.
-  expect(launcherAnchorDelta(25, RESPOND_IO_ANCHOR_RIGHT_PX)).toBe(7);
-  expect(launcherAnchorDelta(25, RESPOND_IO_ANCHOR_BOTTOM_PX)).toBe(19);
-  // Mobile full-bleed open panel (~0 inset) is left at vendor geometry.
-  expect(launcherAnchorDelta(0, RESPOND_IO_ANCHOR_RIGHT_PX)).toBe(0);
-  expect(launcherAnchorDelta(0, RESPOND_IO_ANCHOR_BOTTOM_PX)).toBe(0);
-  // Already on the anchor — no correction, keeps sync idempotent.
-  expect(launcherAnchorDelta(18, RESPOND_IO_ANCHOR_RIGHT_PX)).toBe(0);
-  // A vendor inset tighter than the target expands back out to it.
-  expect(launcherAnchorDelta(10, RESPOND_IO_ANCHOR_RIGHT_PX)).toBe(-8);
 });
 
 // Geometry contract the watcher enforces (issue #184): production
