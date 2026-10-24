@@ -23,6 +23,7 @@ import { DONATION_RECIPIENTS } from "@/data/donations";
 const mocks = vi.hoisted(() => ({ pathname: { current: "/" } }));
 vi.mock("next/navigation", () => ({
   usePathname: () => mocks.pathname.current,
+  useSearchParams: () => new URLSearchParams(),
 }));
 
 const globalsCss = readFileSync("app/globals.css", "utf8");
