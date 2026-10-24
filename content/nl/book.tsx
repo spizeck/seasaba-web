@@ -24,8 +24,8 @@ export const nlMetadata = {
 const DISCOUNT_HIGHLIGHTS = [
   "Kortingen worden automatisch toegepast op opeenvolgende Classic- en Advanced 2-Tank-duikdagen",
   "Eén rustdag mag worden ingelast zonder dat de pakketprijs opnieuw begint",
-  "Middagduiken kunnen worden toegevoegd om triple-tank-dagen te maken",
-  "Afzonderlijke middagduiken krijgen geen korting",
+  "Middag duiken kunnen worden toegevoegd om triple-tank-dagen te maken",
+  "Afzonderlijke middag duiken krijgen geen korting",
 ];
 
 export function NlBook({ item }: { item?: string }) {
@@ -35,10 +35,7 @@ export function NlBook({ item }: { item?: string }) {
         Boek je duiken
       </h1>
       <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-        Bekijk de beschikbaarheid en reserveer hieronder je duiken, cursussen
-        of pakketten. Alle boekingen worden veilig verwerkt via Checkfront —
-        het boekingssysteem zelf is in het Engels.
-      </p>
+        Bekijk de beschikbaarheid en reserveer hieronder je duiken, cursussen of pakketten. Alle boekingen worden veilig verwerkt via Checkfront, het boekingssysteem zelf is in het Engels.</p>
 
       {/* Multi-day discounts section */}
       <section className="mt-8 rounded-lg border border-border/40 bg-muted/20 p-5">
@@ -46,11 +43,7 @@ export function NlBook({ item }: { item?: string }) {
           Langer blijven. Meer duiken. Meer besparen.
         </h2>
         <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-          De meeste gasten duiken meerdere dagen langs Saba&apos;s wereldberoemde
-          pinnacles, wanden en riffen. Oplopende meerdaagse kortingen worden
-          automatisch toegepast op kwalificerende two-tank-duikpakketten, met
-          extra korting op huuruitrusting.
-        </p>
+          De meeste gasten duiken meerdere dagen langs Saba&apos;s wereldberoemde pinnacles, wanden en riffen. Oplopende meerdaagse kortingen worden automatisch toegepast op kwalificerende two-tank-duikpakketten, met extra korting op huur uitrusting.</p>
 
         <ul className="mt-3 space-y-1.5">
           {DISCOUNT_HIGHLIGHTS.map((item) => (

@@ -45,7 +45,7 @@ const WHY_SABA_FEATURED = [
   },
   {
     heading: "Klein Eiland, Hartverwarmend",
-    body: "Ons grootste goed ligt niet onder water. Het is de lokale bevolking. De vriendelijke gezichten, de verwelkomende gemeenschap en de oprechte gastvrijheid op het eiland, zorgen ervoor dat bezoekers zich vanaf het eerste moment thuis voelen.",
+    body: "Ons grootste goed ligt niet onder water. Het is de lokale bevolking. De vriendelijke gezichten, de gastvrije gemeenschap en de oprechte gastvrijheid op het eiland, zorgen ervoor dat bezoekers zich vanaf het eerste moment thuis voelen.",
     image: "/images/optimized/windwardside-village-saba.webp",
     imageAlt: "Kleurrijke huisjes met de bekende rode daken in Windwardside op de groene heuvels van Saba.",
     bgPosition: "center",
@@ -55,7 +55,7 @@ const WHY_SABA_FEATURED = [
 const WHY_SABA_SECONDARY = [
   {
     heading: "Beschermd Sinds 1987",
-    body: "Saba Marine Park beschermt de lokale wateren al sinds 1987 actief. Gezonde riffen en een overvloed aan zeeleven zijn het directe resultaat van tientallen jaren consequent beheer.",
+    body: "Het Saba Marine Park beschermt de lokale wateren al sinds 1987 actief. Gezonde riffen en een overvloed aan zeeleven zijn het directe resultaat van tientallen jaren consequent beheer.",
   },
   {
     heading: "Duik Belevenissen In Het “Wild”",
@@ -133,7 +133,7 @@ export function NlHome() {
           {/* Section header */}
           <div className="mb-12 max-w-2xl">
             <h2 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-              Saba is gewoon uniek.
+              Saba is écht anders.
             </h2>
             <p className="mt-4 text-base leading-relaxed text-muted-foreground">
               De meeste bezoekers kunnen lastig uitleggen waarom. Saba voelt gewoon heel anders aan dan de andere eilanden van het Caraïbisch gebied. Zowel boven als onder water.

@@ -18,7 +18,7 @@ export const ui: UiDictionary = {
     languageSwitcherLabel: "Kies je taal",
     items: {
       "/diving": "Duiken",
-      "/dive-sites": "Duikplekken",
+      "/dive-sites": "Duikspots",
       "/courses": "Cursussen",
       "/plan-your-trip": "Plan je reis",
       "/about": "Over ons",
@@ -33,7 +33,7 @@ export const ui: UiDictionary = {
     },
     navLabels: {
       tripPlanning: "Links voor het plannen van je reis",
-      siteNav: "Sitenavigatie",
+      siteNav: "Site navigatie",
       resources: "Reisinformatie",
     },
     planLinks: {
@@ -46,7 +46,7 @@ export const ui: UiDictionary = {
       supportSaba: "Steun Saba",
     },
     exploreLinks: {
-      diveSites: "Duikplekken",
+      diveSites: "Duikspots",
       diving: "Duiken",
       diveLog: "Duiklogboek",
       courses: "Cursussen",
@@ -69,12 +69,12 @@ export const ui: UiDictionary = {
     phone: "Telefoon",
     whatsappAria: "Neem contact op met Sea Saba via WhatsApp, opent in een nieuw tabblad",
     cookieSettings: "Cookie-instellingen",
-    copyrightSuffix: "Sea Saba, NV • The Bottom, Saba, Caribisch Nederland",
+    copyrightSuffix: "Sea Saba, NV The Bottom, Saba, Caribisch Nederland",
   },
   hero: {
     headline: "Duik in het uitzonderlijke.",
-    taglineA: "Slechts 13 km² groot, hoog boven de zee.",
-    taglineB: "Daaronder ligt een van de meest bijzondere duikgebieden van het Caraïbisch gebied.",
+    taglineA: "Slechts 5 vierkante mijl boven water.",
+    taglineB: "Daaronder vind je de meest unieke duikspots van de Caraïben. Maak kennis met Saba.",
     bookDiving: "Boek je duiken",
     planTrip: "Plan je reis",
     exploreSites: "Ontdek de duikplekken",
@@ -110,14 +110,14 @@ export const ui: UiDictionary = {
       message: "Typ een bericht.",
     },
     handoff: {
-      title: "Je e-mailapp opent met je aanvraag klaar om te verzenden.",
-      bodyA: "Controleer het bericht en druk op Verzenden — het gaat naar",
+      title: "Je e-mailapp zou moeten openen met je aanvraag klaar om te verzenden.",
+      bodyA: "Controleer het bericht en druk op Verzenden, het gaat naar",
       bodyB: "vanaf je eigen e-mailadres. Als er niets opent,",
       tryAgain: "probeer het opnieuw",
       bodyC: "of mail ons rechtstreeks op",
-      bodyD: ". Je kunt alles hierboven eerst aanpassen — je wijzigingen blijven bewaard.",
+      bodyD: ". Je kunt alles hierboven eerst aanpassen, je wijzigingen blijven bewaard.",
       footnote:
-        "Dit opent je e-mailapp met de aanvraag klaar om te verzenden — wij reageren per e-mail, meestal binnen een dag. WhatsApp is handig voor korte vragen.",
+        "Dit opent je e-mailapp met de aanvraag klaar om te verzenden, wij reageren per e-mail, meestal binnen een dag. WhatsApp is handig voor korte vragen.",
     },
     inquiries: {
       "try-scuba": { label: "Try Scuba", subject: "Aanvraag Try Scuba", partyLabel: "Aantal deelnemers" },
@@ -130,10 +130,10 @@ export const ui: UiDictionary = {
       general: { label: "Algemene vraag", subject: "Algemene vraag" },
       "book-diving": { label: "Duiken boeken", subject: "Aanvraag duiken boeken", partyLabel: "Aantal duikers" },
       "course-inquiry": { label: "Cursusaanvraag", subject: "Cursusaanvraag", partyLabel: "Aantal cursisten" },
-      "private-charter": { label: "Privécharter", subject: "Aanvraag privécharter", partyLabel: "Groepsgrootte" },
+      "private-charter": { label: "Privécharter", subject: "Aanvraag privé charter", partyLabel: "Groepsgrootte" },
       "visiting-yacht": { label: "Aankomst per jacht / zeilboot", subject: "Aanvraag aankomst per jacht", partyLabel: "Aantal gasten" },
       "group-travel": { label: "Groepsreis", subject: "Aanvraag groepsreis", partyLabel: "Groepsgrootte" },
-      "sunset-cruise": { label: "Sunsetcruise", subject: "Aanvraag sunsetcruise", partyLabel: "Aantal gasten" },
+      "sunset-cruise": { label: "Sunset cruise", subject: "Aanvraag sunset cruise", partyLabel: "Aantal gasten" },
       "saba-lace": { label: "Saba Lace", subject: "Aanvraag Saba Lace", partyLabel: "Aantal deelnemers" },
       "jewelry-making": { label: "Sieraden maken", subject: "Aanvraag sieraden maken", partyLabel: "Aantal deelnemers" },
       "glass-art": { label: "Glaskunst", subject: "Aanvraag glaskunst", partyLabel: "Aantal deelnemers" },
@@ -142,16 +142,16 @@ export const ui: UiDictionary = {
     },
     fields: {
       whatsapp: { label: "WhatsApp-nummer", placeholder: "+31 6 1234 5678" },
-      dates: { label: "Geplande reisdata", placeholder: "bijv. 10–17 maart 2027" },
+      dates: { label: "Geplande reisdata", placeholder: "bijv. 10 - 17 maart 2027" },
       partySize: { label: "Aantal personen", placeholder: "1" },
-      certification: { label: "Brevetniveau", placeholder: "bijv. Open Water, Advanced" },
+      certification: { label: "Brevet niveau", placeholder: "bijv. Open Water, Advanced" },
       loggedDives: { label: "Gelogde duiken", placeholder: "bijv. 25" },
     },
     handoffMessage: {
       greeting: "Hallo Sea Saba, mijn naam is",
       interestedIn: "Ik heb interesse in",
       travelDates: "Mijn geplande reisdata zijn",
-      certificationIs: "Mijn brevetniveau is",
+      certificationIs: "Mijn brevet niveau is",
       loggedDives: "Ik heb",
       loggedDivesSuffix: "gelogde duiken",
       emailHeader: "Aanvraag via de Sea Saba-website",
@@ -162,7 +162,7 @@ export const ui: UiDictionary = {
         preferredContact: "Voorkeur voor contact",
         whatsapp: "WhatsApp",
         dates: "Geplande reisdata",
-        certification: "Brevetniveau",
+        certification: "Brevet niveau",
         loggedDives: "Gelogde duiken",
         message: "Bericht",
       },
@@ -186,11 +186,11 @@ export const ui: UiDictionary = {
   },
   experienceSelector: {
     heading: "Wat kun je verwachten",
-    subtext: "Kies een duikoptie om de planning van de dag te zien.",
+    subtext: "Kies een duik optie om de planning van de dag te zien.",
     taxiPickup: "Sta klaar voor de taxi",
     lunchBreak: "Lunchpauze",
     footnote:
-      "De pickuptijden zijn het moment waarop de taxi's beginnen — zorg dat je klaarstaat; de exacte aankomst hangt af van de route. Alle tijden zijn bij benadering en kunnen afwijken afhankelijk van de omstandigheden.",
+      "De pickup tijden zijn het moment waarop de taxi's beginnen, zorg dat je klaarstaat; de exacte aankomst hangt af van de route. Alle tijden zijn bij benadering en kunnen afwijken afhankelijk van de omstandigheden.",
     bringLunchTitle: "Neem je eigen lunch mee",
     bringLunchClassic:
       "Lunch is in Fort Bay Harbor niet altijd beschikbaar, dus neem iets mee voordat je komt. De trip loopt zonder stop door tot in de middag.",
@@ -198,7 +198,7 @@ export const ui: UiDictionary = {
       "Lunch is in Fort Bay Harbor niet altijd beschikbaar, dus neem iets mee voordat je komt.",
     thirdDiveTitle: "Nog een derde duik?",
     thirdDiveBody:
-      "Vraag naar een upgrade naar onze Triple Tank-optie voor een langere dag. Als je de derde duik toevoegt, is het verstandig een lunch mee te nemen — de dag loopt door tot na de normale lunchtijd en eten bij de haven is niet altijd beschikbaar.",
+      "Vraag naar een upgrade naar onze Triple Tank-optie voor een langere dag. Als je de derde duik toevoegt, is het verstandig een lunch mee te nemen. De dag loopt door tot na de normale lunchtijd en eten bij de haven is niet altijd beschikbaar.",
     pills: {
       classic: "Classic 2-Tank",
       advanced: "Advanced 2-Tank",
@@ -207,13 +207,13 @@ export const ui: UiDictionary = {
       tryscuba: "Try Scuba",
     },
     steps: {
-      classicDeparture: "Boot vertrekt vanuit {harbor} voor twee ontspannen duiken in het Saba Marine Park (~70 ft / 21 m)",
+      classicDeparture: "Boot vertrekt vanuit de haven voor twee ontspannen duiken in het Saba Marine Park (~70 ft / 21 m)",
       advancedDeparture: "Boot vertrekt voor twee duiken (duik 1 tot ~110 ft / 33 m, duik 2 tot ~70 ft / 21 m)",
       afternoonDeparture: "Boot vertrekt voor één duik tot ~70 ft / 21 m",
-      snorkelDeparture: "Boot vertrekt; snorkel aan de oppervlakte terwijl de duikers dieper gaan",
-      tryScubaTheory: "Theorie en vaardigheden in beschermd water in {harbor}",
+      snorkelDeparture: "Boot vertrekt; snorkel aan de oppervlakte terwijl de duikers de diepe wateren verkennen",
+      tryScubaTheory: "Theorie en vaardigheden in beschermd water in de haven",
       tryScubaDive: "Vaart mee met de middagboot voor een begeleide duik op het rif",
-      returnTo: "Terug in {harbor}",
+      returnTo: "Terug in de haven",
     },
   },
   insurance: {
@@ -232,7 +232,7 @@ export const ui: UiDictionary = {
   contactPage: {
     defaultHeadline: "Contact",
     defaultSubtitle:
-      "Vragen over duiken op Saba, cursusbeschikbaarheid of iets anders? We helpen je graag.",
+      "Vragen over duiken op Saba, cursus beschikbaarheid of iets anders? We helpen je graag.",
     coursesSubtitle:
       "Vertel ons kort over je plannen, dan helpt ons team je de beste planning te kiezen.",
     visitHeading: "Bezoek Sea Saba",

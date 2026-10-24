@@ -31,7 +31,7 @@ export const review: TranslationReview = {
 export const nlMetadata = {
   title: "Duiken op Saba",
   description:
-    `De praktische gids voor duiken op Saba met Sea Saba: bootduiken in het Marine Park, kleine begeleide groepen, duik opties voor elk niveau en gratis ${OPERATIONS.nitroxBlend} Nitrox.`,
+    `De praktische gids voor duiken op Saba met Sea Saba: bootduiken in het Marine Park, kleine gegidste groepen, duik opties voor elk niveau en gratis 32% Nitrox.`,
 };
 
 const TRUST_SIGNALS = [
@@ -83,7 +83,7 @@ const DIVE_EXPERIENCES = [
     title: DIVE_PRODUCTS.afternoon.name,
     subtitle: "EEN ONTSPANNEN MIDDAG DUIK",
     description:
-      "Eén middagduik op een van Saba's bekendste stekken. Ideaal om een extra duik toe te voegen of voor een rustigere dag.",
+      "Eén middag duik op een van Saba's bekendste duikspots. Ideaal om een extra duik toe te voegen of voor een rustigere dag.",
     details: [
       `Vertrek ${DIVE_PRODUCTS.afternoon.schedule.departure}`,
       `Terug rond ${DIVE_PRODUCTS.afternoon.schedule.returns}`,
@@ -106,7 +106,7 @@ const DIVE_EXPERIENCES = [
       `Terug rond ${DIVE_PRODUCTS.snorkel.schedule.returns}`,
       "Uitrusting inbegrepen",
       "Voor comfortabele zwemmers",
-      "Niet gegidst",
+      "Snorkelen op eigen gelegenheid",
     ],
     cta: "Boek Snorkeling",
     href: bookingHref("snorkel"),
@@ -146,24 +146,18 @@ const DIVING_FAQS = [
     question: "Welke duiktrip moet ik kiezen?",
     answer: (
       <>
-        De meeste gebrevetteerde duikers boeken de {DIVE_PRODUCTS.classic.name}. Voldoe je aan de
-        ervaringseisen en wil je diepere duikprofielen, dan ben je welkom op de {DIVE_PRODUCTS.advanced.name} die eerder
-        uitgaat. Voor één duik en een rustigere dag kies je de {DIVE_PRODUCTS.afternoon.name}. Nog niet
-        gebrevetteerd? Bekijk onze{" "}
-        <Link href={localeHref("nl", "/courses")} className="font-medium text-primary hover:underline underline-offset-4">cursussen</Link>.
-      </>
+        De meeste gebrevetteerde duikers boeken de {DIVE_PRODUCTS.classic.name}. Voldoe je aan de ervaringseisen en wil je diepere duikprofielen, dan ben je welkom op de {DIVE_PRODUCTS.advanced.name}  die eerder uitgaat. Voor één duik en een rustigere dag kies je de {DIVE_PRODUCTS.afternoon.name}.{" "}
+        Nog niet gebrevetteerd? Bekijk onze <Link href={localeHref("nl", "/courses")} className="font-medium text-primary hover:underline underline-offset-4">cursussen</Link>.</>
     ),
   },
   {
     question: "Kan ik met Sea Saba duiken als ik een Scuba Diver-brevet heb?",
     answer: (
       <>
-        Ja. Gasten met een Scuba Diver-brevet kunnen de {DIVE_PRODUCTS.classic.name} of{" "}
-        {DIVE_PRODUCTS.afternoon.name} boeken zonder minimum aantal gelogde duiken, je duikt dan met
-        een privégids.{" "}
-        <Link href={localeHref("nl", "/contact?interest=book-diving")} className="font-medium text-primary hover:underline underline-offset-4">Neem contact op</Link>{" "}
-        zodat wij dit voor je kunnen regelen.
-      </>
+        Ja. Gasten met een Scuba Diver-brevet kunnen de {DIVE_PRODUCTS.classic.name} {" "}
+        of {DIVE_PRODUCTS.afternoon.name} {" "}
+        boeken zonder minimum aantal gelogde duiken, je duikt dan met een privégids. <Link href={localeHref("nl", "/contact?interest=book-diving")} className="font-medium text-primary hover:underline underline-offset-4">Neem contact op</Link>{" "}
+        zodat wij dit voor je kunnen regelen.</>
     ),
   },
   {
@@ -178,46 +172,37 @@ const DIVING_FAQS = [
     question: "Heb ik een Nitrox-brevet nodig?",
     answer: (
       <>
-        Nee. Een Nitrox-brevet is niet vereist voor de meeste trips. Gebrevetteerde
-        Nitrox-duikers duiken gratis {OPERATIONS.nitroxBlend} Nitrox. Nitrox is wel verplicht
-        op duik 1 van de {DIVE_PRODUCTS.advanced.name}. Voor die trip heb je dus een
-        Nitrox-brevet nodig.
-      </>
+        Nee. Een Nitrox-brevet is niet vereist voor de meeste trips. Gebrevetteerde Nitrox-duikers duiken gratis {OPERATIONS.nitroxBlend}  Nitrox. Nitrox is wel verplicht op duik 1 van de {DIVE_PRODUCTS.advanced.name}. Voor die trip heb je dus een Nitrox-brevet nodig.</>
     ),
   },
   {
-    question: "Kunnen we samen duiken als onze ervaringsniveaus verschillen?",
+    question: "Kunnen we als buddies duiken als onze ervaringsniveaus verschillen?",
     answer: (
       <>
-        Meestal wel. De beste regeling hangt af van het verschil in ervaring. Zie{" "}“<Link href={`#${divingAnchors.mixedExperience}`} className="font-medium text-primary hover:underline underline-offset-4">Samen duiken met verschillende ervaringsniveaus</Link>”{" "}
-        hierboven, of vraag het ons gewoon.
-      </>
+        Meestal{" "}wel. De beste regeling hangt af van het verschil in ervaring. Zie “<Link href={`#${divingAnchors.mixedExperience}`} className="font-medium text-primary hover:underline underline-offset-4">Samen duiken met verschillende ervaringsniveaus</Link>”{" "}
+        hierboven, of vraag het ons gewoon.</>
     ),
   },
   {
-    question: "Wat gebeurt er als een geplande duikstek door de omstandigheden niet gedoken kan worden?",
+    question: "Wat gebeurt er als een geplande duikspot door de omstandigheden niet gedoken kan worden?",
     answer: (
       <>
-        De duikstekken worden elke dag gekozen op basis van het actuele weer en de stroming, dus de crew kan een geplande stek verruilen voor een betere en veiligere. Je krijgt dezelfde trip en hetzelfde aantal duiken.
-      </>
+        De duikstekken worden elke dag gekozen op basis van het actuele weer en de stroming, dus de crew kan een geplande spot verruilen voor een betere en veiligere. Je krijgt dezelfde trip en hetzelfde aantal duiken.</>
     ),
   },
   {
     question: "Wat moet ik meenemen?",
     answer: (
       <>
-        Brevetkaart, duikcomputer, logboek, zwemkleding en een handdoek; al het andere is te
-        huur. Volledige lijst:{" "}
-        <Link href={localeHref("nl", `/plan-your-trip#${planYourTripAnchors.whatToBring}`)} className="font-medium text-primary hover:underline underline-offset-4">Wat neem je mee</Link>.
-      </>
+        Brevetkaart,{" "}
+        duikcomputer, logboek, zwemkleding en een handdoek; al het andere is te huur. Volledige lijst: <Link href={localeHref("nl", `/plan-your-trip#${planYourTripAnchors.whatToBring}`)} className="font-medium text-primary hover:underline underline-offset-4">Wat neem je mee</Link>.</>
     ),
   },
   {
     question: "Duiken jullie altijd vanaf een mooring?",
     answer: (
       <>
-        De meeste duiken gebruiken de moorings van het Marine Park, maar niet altijd. We maken ook driftduiken als de omstandigheden daarom vragen of als dat een betere duik oplevert. Een driftduik kan lopen van mooring naar mooring, van een mooring met een live pickup, of met zowel een live drop als een live pickup.
-      </>
+        Bij de meeste duiken gebruiken we de moorings van het Marine Park, maar niet altijd. We maken ook driftduiken als de omstandigheden daarom vragen of als dat een betere duik oplevert. Een driftduik kan lopen van mooring naar mooring, van een mooring met een live pickup, of met zowel een live drop als een live pickup.</>
     ),
   },
 ] as const;
@@ -235,7 +220,7 @@ export function NlDiving() {
 
       <p className="text-base leading-relaxed text-muted-foreground">
         Sinds {OPERATIONS.establishedYear} is Sea Saba hét vertrouwde gezicht voor duikers op Saba. Als het enige
-        continu actieve duikcentrum van het eiland combineren we tientallen jaren lokale kennis en
+        non-stop actieve duikcentrum van het eiland combineren we tientallen jaren lokale kennis en
         ervaring in kleine groepen, met comfortabele boten en persoonlijke service.
       </p>
 
@@ -283,20 +268,16 @@ export function NlDiving() {
           <div>
             <h2 className="text-xl font-semibold text-foreground">De Sea Saba-Ervaring</h2>
             <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-              Al sinds {OPERATIONS.establishedYear} neemt Sea Saba generaties duikers mee op ontdekkingstocht rond Saba. Onze
-              op maat gemaakte 38-voets catamarans zijn gebouwd voor Caribische condities en zijn
-              speciaal ontworpen voor het comfort van de duiker, met een ruim overdekt dek, camera tafel,
-              zoetwater-spoelbak, grote ladder en ervaren lokale crew.
-            </p>
+              Al sinds {OPERATIONS.establishedYear}  neemt Sea Saba generaties duikers mee op ontdekkingstocht rond Saba. Onze op maat gemaakte 38-voets catamarans zijn gebouwd voor Caribische condities en zijn speciaal ontworpen voor het comfort van de duiker, met een ruim overdekt dek, camera tafel, zoetwater-spoelbak, grote ladder en ervaren lokale crew.</p>
           </div>
         </FeatureImage>
 
         {/* Feature checklist — full-width 2-col grid below the media row */}
         <ul className="mt-6 grid gap-3 sm:grid-cols-2 text-sm text-muted-foreground">
-          <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Gratis taxi pickup overal op Saba</span></li>
-          <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Gratis {OPERATIONS.nitroxBlend} Nitrox voor gebrevetteerde duikers</span></li>
-          <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Saba&apos;s enige continu actieve duikcentrum sinds {OPERATIONS.establishedYear}</span></li>
-          <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Maximaal {OPERATIONS.maxRecreationalDiversPerGuide} duikers per gids op recreatieve duiken</span></li>
+          <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Gratis taxi pickup naar en van je duiken op Saba</span></li>
+          <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Gratis {OPERATIONS.nitroxBlend}  Nitrox voor gebrevetteerde duikers</span></li>
+          <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Saba&apos;s enige non-stop actieve duikcentrum sinds {OPERATIONS.establishedYear}</span></li>
+          <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Maximaal {OPERATIONS.maxRecreationalDiversPerGuide}  duikers per gids op recreatieve duiken</span></li>
           <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Grote stabiele catamarans met schaduw en marine toilet</span></li>
           <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Uitrusting gespoeld en terugbezorgd bij je accommodatie</span></li>
         </ul>
@@ -372,33 +353,22 @@ export function NlDiving() {
           <h2 className="text-xl font-semibold text-foreground">Hoe duiken op Saba eruitziet</h2>
         </div>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          Saba is een slapende vulkaan die recht uit het diepe water omhoog rijst, en dat kenmerkt het
-          duiken. In plaats van vlakke koraaltuinen bestaan de duikstekken uit vulkanisch gesteente:
-          pinnacles die uit de diepte richting het wateroppervlak reiken, wanden, rotsblok velden en lava ruggen.
-          Alle duikplekken die we duiken liggen binnen het Saba Marine Park, een korte boottocht vanuit{" "}
-          {OPERATIONS.harbor}.
-        </p>
+          Saba{" "}
+          is een slapende vulkaan die recht uit het diepe water omhoog rijst, en dat kenmerkt het duiken. In plaats van vlakke koraaltuinen bestaan de duikstekken uit vulkanisch gesteente: pinnacles die uit de diepte richting het wateroppervlak reiken, wanden, rotsblokvelden en lava ruggen. Alle duikplekken die we duiken liggen binnen het Saba Marine Park, een korte boottocht vanuit {OPERATIONS.harbor}.</p>
 
         <div className="mt-6 grid gap-5 sm:grid-cols-2">
           <div className="rounded-lg border border-border/40 bg-muted/20 p-5">
             <h3 className="text-sm font-semibold text-foreground">Vulkanisch terrein, heel gevarieerd</h3>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              De duikstekken van Saba omvatten pinnacles voor de kust, wanden, rotsblok velden en
-              lava ruggen. Third Encounter, Shark Shoal en Twilight Zone behoren tot de diepere
-              duikstekken, terwijl duikstekken dichter bij de kust, zoals Tent Reef, ondiep beginnen en
-              afdalen naar richels en wanden. Man O&apos; War Shoals en Diamond Rock rijzen net zo
-              dramatisch op, hoewel beiden dicht bij de kust liggen. De dieptes en duikprofielen zijn zo
-              variërend dat je je gedurende een week duiken niet zult vervelen.
-            </p>
+              De duikspots van Saba omvatten pinnacles voor de kust, wanden, rotsblok velden en lava ruggen. Third Encounter, Shark Shoal en Twilight Zone behoren tot de diepere duikstekken, terwijl duikstekken dichter bij de kust, zoals Tent Reef, ondiep beginnen en afdalen naar richels en wanden. Man O&apos; War Shoals en Diamond Rock rijzen net zo dramatisch op, hoewel beiden dicht bij de kust liggen. De dieptes en duikspots zijn enorm variërend. Je zult je  gedurende een week duiken absoluut niet vervelen.</p>
           </div>
           <div className="rounded-lg border border-border/40 bg-muted/20 p-5">
             <h3 className="text-sm font-semibold text-foreground">Condities verschillen per duikstek en per dag</h3>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              Saba ligt in de open oceaan, dus de omstandigheden kunnen uitdagend zijn. Exposed pinnacles kunnen stroming hebben, duikstekken aan de lijzijde zijn meestal rustiger en de oostkant kan alleen gedoken worden bij rustig weer. Onze crew kiest de duikstekken per dag op basis van de condities en omstandigheden en het comfort aan boord. Niet iedere duikstek past bij elke duiker of elke dag.
+              Saba ligt in het midden van de oceaan, dus de omstandigheden kunnen uitdagend zijn. Pinnacles kunnen stroming hebben, duikspots aan de lijzijde zijn meestal rustiger en de oostkant kan alleen gedoken worden bij rustig weer. Onze crew kiest de duikstekken per dag op basis van de condities en omstandigheden en het comfort aan boord. Niet iedere duikstek past bij elke duiker of elke dag.
             </p>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              De meeste duiken zijn Marine Park mooring duiken, maar we maken ook driftduiken als de omstandigheden daarom vragen of als dat een betere duik oplevert. Wat kan dit betekenen? Driften van mooring naar mooring, starten bij een mooring met een live pickup, of zowel een live drop als een live pickup. Het water in gaan gebeurt altijd vanaf de boot, en onze grote diepe ladders maken het weer terug aan boord komen heel eenvoudig.
-            </p>
+              De meeste duiken zijn Marine Park mooring duiken, maar we maken ook driftduiken als de omstandigheden daarom vragen of als dat een betere duik oplevert. Wat kan dit betekenen? Driften van mooring naar mooring, starten bij een mooring met een live pickup, of zowel een live drop als een live pickup. Het water in gaan gebeurt altijd vanaf de boot, en onze grote diepe ladders maken het “aan boord komen” heel eenvoudig.</p>
           </div>
         </div>
       </section>
@@ -476,7 +446,7 @@ export function NlDiving() {
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-primary">✓</span>
-                <span>Meer tijd om van Saba te genieten in plaats van je natte duikmateriaal over het eiland te moeten sjouwen</span>
+                <span>Meer tijd om van Saba te genieten in plaats van zelf met je natte duikmateriaal over het eiland te moeten sjouwen</span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-primary">✓</span>
@@ -501,44 +471,27 @@ export function NlDiving() {
           <div className="rounded-lg border border-border/40 bg-muted/20 p-5">
             <h3 className="text-sm font-semibold text-foreground">Open Water-gebrevetteerd? Begin met de Classic 2 Tank</h3>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              De {DIVE_PRODUCTS.classic.name} past bij de meeste gebrevetteerde duikers: twee
-              begeleide duiken op duikstekken naar ongeveer 70 ft / 21 m, in een ontspannen tempo. De{" "}
-              {DIVE_PRODUCTS.afternoon.name} werkt hetzelfde als je maar één duik en een rustigere dag
-              wilt.
-            </p>
+              De {DIVE_PRODUCTS.classic.name} {" "}
+              past bij de meeste gebrevetteerde duikers: twee begeleide duiken op duikstekken naar ongeveer 70 ft / 21 m, in een ontspannen tempo. De {DIVE_PRODUCTS.afternoon.name}  werkt hetzelfde als je maar één duik en een rustigere dag wilt.</p>
           </div>
           <div className="rounded-lg border border-border/40 bg-muted/20 p-5">
             <h3 className="text-sm font-semibold text-foreground">Diepere profielen? Dan is de Advanced-trip voor jou.</h3>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              De {DIVE_PRODUCTS.advanced.name} trip vaart eerder uit, de duik is dieper op de eerste duik en
-              vereist Nitrox op duik 1. Toelatingseis: AOW + 20 gelogde duiken OF OW + 50 gelogde duiken.
-              De toelatingseis is een combinatie van brevettering en goede duikervaring. Niet alleen een kaartcontrole.
-            </p>
+              De {DIVE_PRODUCTS.advanced.name}  trip vaart eerder uit, de duik is dieper op de eerste duik en vereist Nitrox op duik 1. Toelatingseis: AOW + 20 gelogde duiken of OW + 50 gelogde duiken. De toelatingseis is een combinatie van brevettering en goede duikervaring. Niet alleen een kaartcontrole.</p>
           </div>
           <div className="rounded-lg border border-border/40 bg-muted/20 p-5">
             <h3 className="text-sm font-semibold text-foreground">Scuba Diver-gebrevetteerd? Je bent welkom.</h3>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              Scuba Diver is een brevet met begeleiding, dus je mag er niet zelfstandig met een buddy mee duiken
-              zoals met Open Water. Je kunt wel de {DIVE_PRODUCTS.classic.name} of{" "}
-              {DIVE_PRODUCTS.afternoon.name} boeken zonder minimum aantal gelogde duiken, je duikt
-              dan wel met een privégids. Vermeld het bij je boeking zodat wij dit kunnen regelen.
-            </p>
+              Scuba Diver is een brevet met begeleiding, dus je mag er niet zelfstandig met een buddy mee duiken zoals met Open Water. Je kunt wel de {DIVE_PRODUCTS.classic.name} {" "}
+              of {DIVE_PRODUCTS.afternoon.name}  boeken zonder minimum aantal gelogde duiken, je duikt dan wel met een privégids. Vermeld het bij je boeking zodat wij dit kunnen regelen.</p>
           </div>
           <div className="rounded-lg border border-border/40 bg-muted/20 p-5">
             <h3 className="text-sm font-semibold text-foreground">Nog niet gebrevetteerd, of is het een tijd geleden?</h3>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              Informatie over Try Scuba en volledige duik opleidingen vind je op onze{" "}
-              <Link href={localeHref("nl", "/courses")} className="font-medium text-primary hover:underline underline-offset-4">cursuspagina</Link>.
-              Is je laatste duik meer dan {OPERATIONS.refresher.recommendedAfterYears} jaar geleden,
-              dan raden we je een refresher aan om weer comfortabel te geraken. Na grofweg{" "}
-              {OPERATIONS.refresher.generallyRequiredAfterYears} jaar moet je erop rekenen dat een refresher
-              vereist is. Het is echter geen harde grens. Welke optie het beste past, bepaalt Sea
-              Saba op basis van je werkelijke ervaring, recente duikgeschiedenis, comfortniveau en
-              de duiken die je hebt gepland. Soms is een privégids het betere antwoord. Vermeld het
-              bij je boeking of{" "}
-              <Link href={localeHref("nl", "/contact?interest=book-diving")} className="font-medium text-primary hover:underline underline-offset-4">stuur ons een bericht</Link>,
-              dan adviseren we je wat het beste past bij jou.
-            </p>
+              Informatie{" "}
+              over Try Scuba en volledige duik opleidingen vind je op onze <Link href={localeHref("nl", "/courses")} className="font-medium text-primary hover:underline underline-offset-4">cursuspagina</Link>. Is je laatste duik meer dan {OPERATIONS.refresher.recommendedAfterYears} {" "}
+              jaar geleden, dan raden we je een refresher aan om weer comfortabel te geraken. Na grofweg {OPERATIONS.refresher.generallyRequiredAfterYears} {" "}
+              jaar moet je erop rekenen dat een refresher vereist is. Het is echter geen harde grens. Welke optie het beste past, bepaalt Sea Saba op basis van je werkelijke ervaring, recente duikgeschiedenis, comfortniveau en de duiken die je hebt gepland. Soms is een privégids het betere antwoord. Vermeld het bij je boeking of <Link href={localeHref("nl", "/contact?interest=book-diving")} className="font-medium text-primary hover:underline underline-offset-4">stuur ons een bericht</Link>, dan adviseren we je wat het beste past bij jou.</p>
           </div>
         </div>
       </section>
@@ -562,7 +515,7 @@ export function NlDiving() {
               <span className="mt-1.5 block space-y-1.5">
                 <span className="block">Boek allebei de {DIVE_PRODUCTS.classic.name} en duik samen beide duiken.</span>
                 <span className="block">
-                  Of de duiker die aan de eis voldoet begint eerder op de {DIVE_PRODUCTS.advanced.name} (duik 1)
+                  óf de duiker die aan de eis voldoet begint eerder op de {DIVE_PRODUCTS.advanced.name} (duik 1)
                   en deelt duik 2 met de Classic-groep. Voegt diegene de middag duik toe, dan wordt het
                   een dag met drie duiken, waarvan duik 2 en 3 gedeeld worden met zijn/haar buddy. De
                   middag duik kan spontaan op dezelfde dag worden toegevoegd, mits er plek is.
@@ -574,14 +527,12 @@ export function NlDiving() {
             <span className="text-primary">✓</span>
             <span>
               <strong className="font-medium text-foreground">Scuba Diver + zelfstandige duikers.</strong>{" "}
-              Een privégids kan de duiker met het Scuba Diver gebrevetteerde begeleiden vanaf dezelfde boot. De
-              groep blijft bij elkaar terwijl elke duiker binnen de grenzen van zijn of haar brevet duikt.
-            </span>
+              Een privégids kan de duiker met het Scuba Diver gebrevetteerde begeleiden vanaf dezelfde boot. De groep blijft bij elkaar terwijl elke duiker binnen de grenzen van zijn of haar brevet duikt.</span>
           </li>
           <li className="flex items-start gap-3">
             <span className="text-primary">✓</span>
             <span>
-              <strong className="font-medium text-foreground">Een duiker en een snorkelaar.</strong>{" "}
+              <strong className="font-medium text-foreground">Een duiker en een snorkeler.</strong>{" "}
               De {DIVE_PRODUCTS.snorkel.name} deelt de boot met de{" "}
               {DIVE_PRODUCTS.afternoon.name}, dus niet-duikende familie of vrienden kunnen de middag samen met
               de duiker in het water doorbrengen.
@@ -591,9 +542,7 @@ export function NlDiving() {
             <span className="text-primary">✓</span>
             <span>
               <strong className="font-medium text-foreground">Grotere of bijzondere groepen.</strong>{" "}
-              Op een {DIVE_PRODUCTS.private.name.toLowerCase()} heeft jouw groep een eigen boot, wat meer
-              flexibiliteit in tijden en programma biedt.
-            </span>
+              Op een {DIVE_PRODUCTS.private.name.toLowerCase()}  heeft jouw groep een eigen boot, wat meer flexibiliteit in tijden en programma biedt.</span>
           </li>
         </ul>
 
@@ -619,9 +568,8 @@ export function NlDiving() {
         </div>
 
         <p className="mt-4 text-sm text-muted-foreground">
-          Reis je met jonge duikers? Zie{" "}“<Link href={`#${divingAnchors.juniorDivers}`} className="font-medium text-primary hover:underline underline-offset-4">Duiken met Kinderen en Junior-duikers</Link>”{" "}
-          hieronder.
-        </p>
+          Reis{" "}je met jonge duikers? Zie “<Link href={`#${divingAnchors.juniorDivers}`} className="font-medium text-primary hover:underline underline-offset-4">Duiken met Kinderen en Junior-duikers</Link>”{" "}
+          hieronder.</p>
       </section>
 
       {/* Diving with Kids & Junior Divers */}
@@ -634,11 +582,8 @@ export function NlDiving() {
           Duiken met jonge duikers is iets waar wij persoonlijk ervaring mee hebben. Onze eigen twee kinderen werden op hun tiende gebrevetteerd en groeiden op met duiken op Saba. Junior-duikers zijn welkom op onze trips en duiken binnen de diepte-, begeleidings- en andere grenzen van hun brevet.
         </p>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          Gezinnen met jongere duikers zijn vaak het beste af met een eigen gids. We raden een
-          privégids vooral aan bij kinderen onder de{" "}
-          {OPERATIONS.juniorPrivateGuideRecommendedUnderAge}: zo bepaalt het gezin zelf het tempo en
-          het duikprofiel in plaats van mee te moeten met de rest van de groep.
-        </p>
+          Gezinnen{" "}
+          met jongere duikers zijn vaak het beste af met een eigen gids. We raden een privégids vooral aan bij kinderen onder de {OPERATIONS.juniorPrivateGuideRecommendedUnderAge}: zo bepaalt het gezin zelf het tempo en het duikprofiel in plaats van mee te moeten met de rest van de groep.</p>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
           Elke jonge duiker is anders. Informeer ons over hun brevet, duikervaring en comfort in het
           water, dan helpen we je het juiste programma te kiezen.{" "}
@@ -681,9 +626,9 @@ export function NlDiving() {
           <div className="rounded-lg border border-border/40 bg-muted/20 p-5">
             <h3 className="text-sm font-semibold text-foreground">Flessen &amp; gas</h3>
             <ul className="mt-3 space-y-2.5 text-sm text-muted-foreground">
-              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>AL80-flessen standaard; AL100&apos;s op aanvraag</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>AL80 tanks standaard; AL100&apos;s op aanvraag en tegen meerprijs</span></li>
               <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>PRO-kranen werken met zowel DIN- als yoke-ademautomaten</span></li>
-              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Gratis {OPERATIONS.nitroxBlend} Nitrox voor gebrevetteerde duikers (details in de <Link href={`#${divingAnchors.nitrox}`} className="font-medium text-primary hover:underline underline-offset-4">Nitrox-sectie</Link>)</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Gratis {OPERATIONS.nitroxBlend}  Nitrox voor gebrevetteerde duikers (details in de <Link href={`#${divingAnchors.nitrox}`} className="font-medium text-primary hover:underline underline-offset-4">Nitrox-sectie</Link>)</span></li>
             </ul>
           </div>
           <div className="rounded-lg border border-border/40 bg-muted/20 p-5">
@@ -713,18 +658,13 @@ export function NlDiving() {
         </div>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
           Sea Saba voorziet alle duikers met een Nitrox-brevet van gratis {OPERATIONS.nitroxBlend}{" "}
-          Nitrox: geen extra kosten, geen huurprijs. Neem wel een bewijs van je Nitrox-brevet mee.
-        </p>
+          Nitrox: geen extra kosten, geen huurprijs. Neem wel een bewijs van je Nitrox-brevet mee.</p>
 
         <div className="mt-6 grid gap-5 sm:grid-cols-2">
           <div className="rounded-lg border border-border/40 bg-muted/20 p-5">
             <h3 className="text-sm font-semibold text-foreground">Waarom Nitrox op Saba?</h3>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              De duikprofielen van Saba kunnen dieper zijn dan gemiddeld. Vulkanische pinnacles zoals
-              Third Encounter en Shark Shoal brengen duikers tot ongeveer 30 m / 100 ft. Bij een
-              meerdaags duikprogramma met twee duiken per dag waarderen veel duikers de extra
-              nuldecompressietijd die Nitrox op deze dieptes geeft.
-            </p>
+              De duikprofielen van Saba kunnen dieper zijn dan gemiddeld. Vulkanische pinnacles zoals Third Encounter en Shark Shoal brengen duikers tot ongeveer 30 m / 100 ft. Bij een meerdaags duikprogramma met twee duiken per dag waarderen veel duikers de extra nul-decompressietijd die Nitrox op deze dieptes geeft.</p>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
               Nitrox past ook goed bij Saba&apos;s repeterende duikschema: het vermindert de
               stikstofbelasting vergeleken met perslucht op hetzelfde duikprofiel.
@@ -733,17 +673,13 @@ export function NlDiving() {
           <div className="rounded-lg border border-border/40 bg-muted/20 p-5">
             <h3 className="text-sm font-semibold text-foreground">Onze standaard voor luchtkwaliteit</h3>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              Sea Saba vult alle flessen — perslucht én Nitrox — met hogedruk-ademluchtcompressoren
-              die volgens IANTD-normen worden onderhouden. Onze vulinstallatie wordt regelmatig
-              getest om schoon, droog en veilig ademgas te garanderen. We produceren onze{" "}
-              {OPERATIONS.nitroxBlend} Nitrox met een eigen membraansysteem in plaats van te blenden
-              met industriële zuurstof.
-            </p>
+              Sea{" "}
+              Saba vult alle flessen — perslucht én Nitrox — met hogedruk-ademluchtcompressoren die volgens IANTD-normen worden onderhouden. Onze vulinstallatie wordt regelmatig getest om schoon, droog en veilig ademgas te garanderen. We produceren onze {OPERATIONS.nitroxBlend}  Nitrox met een eigen membraansysteem in plaats van te blenden met industriële zuurstof.</p>
             <ul className="mt-3 space-y-1.5 text-sm text-muted-foreground">
               <li className="flex items-center gap-2"><Droplets className="h-3.5 w-3.5 shrink-0 text-primary" />Gratis 32% Nitrox op alle duiken die ervoor in aanmerking komen</li>
               <li className="flex items-center gap-2"><Droplets className="h-3.5 w-3.5 shrink-0 text-primary" />Membraansysteem levert een consistent, schoon mengsel</li>
               <li className="flex items-center gap-2"><Droplets className="h-3.5 w-3.5 shrink-0 text-primary" />Bewijs van Nitrox-brevet vereist</li>
-              <li className="flex items-center gap-2"><Droplets className="h-3.5 w-3.5 shrink-0 text-primary" />SDI-/TDI-Nitroxcursussen beschikbaar op Saba</li>
+              <li className="flex items-center gap-2"><Droplets className="h-3.5 w-3.5 shrink-0 text-primary" />SDI-/TDI-Nitrox cursussen beschikbaar op Saba</li>
             </ul>
           </div>
         </div>
@@ -766,45 +702,35 @@ export function NlDiving() {
           <h2 className="text-xl font-semibold text-foreground">Het Saba Marine Park</h2>
         </div>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          Alles waar we duiken ligt binnen het Saba National Marine Park, opgericht in 1987 en
-          beheerd door de Saba Conservation Foundation. Het park omringt het hele eiland, van de
-          hoogwaterlijn tot 60 m (200 ft) diep, en het is een van de weinige zelfvoorzienende
-          marineparken ter wereld. Bijdragen van bezoekers, verkopen van souvenirs en donaties
-          financieren de moorings, patrouilles en het beschermingswerk dat de riffen gezond houdt.
-        </p>
+          Alles waar we duiken ligt binnen het Saba National Marine Park, opgericht in 1987 en beheerd door de Saba Conservation Foundation. Het park omringt het hele eiland, van de hoogwaterlijn tot 60 m (200 ft) diep, en het is een van de weinige zelfvoorzienende marineparken ter wereld. Bijdragen van bezoekers, verkopen van souvenirs en donaties financieren de moorings, patrouilles en het beschermings werk dat de riffen gezond houdt.</p>
 
         <div className="mt-6 grid gap-5 sm:grid-cols-2">
           <div className="rounded-lg border border-border/40 bg-muted/20 p-5">
-            <h3 className="text-sm font-semibold text-foreground">Parkregels die voor elke duiker gelden</h3>
+            <h3 className="text-sm font-semibold text-foreground">Parkregels die voor elke duiker van toepassing zijn</h3>
             <ul className="mt-3 space-y-2.5 text-sm text-muted-foreground">
               <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Geen handschoenen — zo verdwijnt de verleiding om het rif aan te raken</span></li>
-              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Kijken, niet aanraken; koralen, sponzen en zeeleven zijn beschermd</span></li>
-              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Niet verzamelen, geen speervissen op scuba, geen vissen voeren</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Alleen kijken, niet aanraken; koralen, sponzen en zeeleven zijn beschermd</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Niets meenemen, geen speervissen op scuba, geen vissen voeren</span></li>
               <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Goed drijfvermogen is belangrijk: oefen voordat je dicht bij het rif duikt</span></li>
             </ul>
           </div>
           <div className="rounded-lg border border-border/40 bg-muted/20 p-5">
             <h3 className="text-sm font-semibold text-foreground">Hoe Sea Saba in het park duikt</h3>
             <ul className="mt-3 space-y-2.5 text-sm text-muted-foreground">
-              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Boten leggen vast aan permanente moorings — niemand ankert op het rif</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Boten leggen aan, aan permanente moorings — niemand ankert op het rif</span></li>
               <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Alleen begeleid duiken; geen soloduiken</span></li>
-              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Recreatieve trips blijven binnen de nuldecompressiegrenzen</span></li>
-              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Duikplekken worden elke dag gekozen op de omstandigheden en de groep aan boord</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Recreatieve trips blijven binnen de nul-decompressiegrenzen</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Duikspots worden elke dag gekozen op basis van de omstandigheden en het niveau van de groep aan boord</span></li>
             </ul>
           </div>
         </div>
 
         <div className="mt-5 rounded-lg border border-primary/20 bg-primary/5 px-5 py-4">
           <p className="text-sm text-muted-foreground">
-            Duiken brengt een beschermingsbijdrage mee van{" "}
-            ${OPERATIONS.conservationFees.marineParkPerDiveUsd + OPERATIONS.conservationFees.chamberContributionPerDiveUsd}{" "}
-            per duiker, per duik: ${OPERATIONS.conservationFees.marineParkPerDiveUsd} gaat naar het
-            Saba Marine Park en ${OPERATIONS.conservationFees.chamberContributionPerDiveUsd} naar het
-            decompressiekamerfonds van het eiland. Snorkelen is{" "}
-            ${OPERATIONS.conservationFees.snorkelParkPerPersonUsd} per persoon. Deze bijdragen
-            worden vastgesteld door het park en de decompressiekamer, niet door Sea Saba, en
-            financieren direct de moorings, patrouilles en nooddekking die hierboven staan beschreven.
-          </p>
+            Duiken{" "}
+            brengt een marine park beschermings bijdrage mee van ${OPERATIONS.conservationFees.marineParkPerDiveUsd + OPERATIONS.conservationFees.chamberContributionPerDiveUsd}{" "}
+            per duiker, per duik: ${OPERATIONS.conservationFees.marineParkPerDiveUsd}  gaat naar het Saba Marine Park en ${OPERATIONS.conservationFees.chamberContributionPerDiveUsd} {" "}
+            naar het decompressiekamer fonds van het eiland. Snorkelen is ${OPERATIONS.conservationFees.snorkelParkPerPersonUsd}  per persoon. Deze bijdragen worden vastgesteld door het park en de decompressiekamer, niet door Sea Saba, en financieren direct de moorings, patrouilles en nood dekking die hierboven staan beschreven.</p>
         </div>
 
         <p className="mt-4 text-sm text-muted-foreground">
@@ -827,10 +753,8 @@ export function NlDiving() {
             <h2 className="text-xl font-semibold text-foreground">Meer duiken. Meer besparen.</h2>
             <p className="mt-1 text-sm text-muted-foreground">Blijf langer. Beleef meer.</p>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              De meeste gasten duiken meerdere dagen langs Saba&apos;s wereldberoemde pinnacles,
-              wanden en riffen. Meerdaagse prijzen belonen een aaneengesloten duikschema, en gratis{" "}
-              {OPERATIONS.nitroxBlend} Nitrox is inbegrepen op duiken die ervoor in aanmerking komen.
-            </p>
+              De{" "}
+              meeste gasten duiken meerdere dagen langs Saba&apos;s wereldberoemde pinnacles, wanden en riffen. Meerdaagse prijzen belonen een aaneengesloten duikschema, en gratis {OPERATIONS.nitroxBlend}  Nitrox is inbegrepen op de duiken die ervoor in aanmerking komen.</p>
           </div>
         </FeatureImage>
 
@@ -846,7 +770,7 @@ export function NlDiving() {
           <div className="flex items-start gap-3 rounded-lg border border-border/40 bg-muted/20 p-3">
             <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">✓</span>
             <div>
-              <h3 className="text-sm font-medium text-foreground">Gratis {OPERATIONS.nitroxBlend} Nitrox</h3>
+              <h3 className="text-sm font-medium text-foreground">Gratis {OPERATIONS.nitroxBlend}  Nitrox</h3>
               <p className="text-xs text-muted-foreground">Inbegrepen op kwalificerende duiken voor gebrevetteerde duikers.</p>
             </div>
           </div>
@@ -867,8 +791,8 @@ export function NlDiving() {
           <div className="flex items-start gap-3 rounded-lg border border-border/40 bg-muted/20 p-3">
             <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">✓</span>
             <div>
-              <h3 className="text-sm font-medium text-foreground">Huuruitrusting beschikbaar</h3>
-              <p className="text-xs text-muted-foreground">Complete huurpakketten zijn beschikbaar als je ze nodig hebt.</p>
+              <h3 className="text-sm font-medium text-foreground">Huur uitrusting beschikbaar</h3>
+              <p className="text-xs text-muted-foreground">Complete huur pakketten zijn beschikbaar als je ze nodig hebt.</p>
             </div>
           </div>
           <div className="flex items-start gap-3 rounded-lg border border-border/40 bg-muted/20 p-3">
@@ -904,34 +828,22 @@ export function NlDiving() {
           terug te vliegen naar St. Maarten.
         </p>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          Anders dan een typische lijnvlucht is de Winair Twin Otter-route tussen Saba en St.
-          Maarten een korte vlucht tussen de eilanden. Het toestel bereikt ongeveer 2.000 voet
-          (610 m), maar slechts enkele minuten, voordat het daalt voor de landing.
-        </p>
+          Anders dan een typische lijnvlucht is de Winair Twin Otter-route tussen Saba en St. Maarten, een korte vlucht tussen de eilanden. Het toestel bereikt ongeveer 2.000 voet (610 m), maar slechts voor enkele minuten, voordat het daalt voor de landing.</p>
 
         <div className="mt-5 rounded-lg border border-border/40 bg-muted/20 p-5">
           <h3 className="text-sm font-semibold text-foreground">Een ander soort vlucht</h3>
           <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-            Al tientallen jaren vliegen duikers routinematig tussen Saba en St. Maarten als
-            onderdeel van hun duikvakantie. Sea Saba vaart deze schema&apos;s sinds{" "}
-            {OPERATIONS.establishedYear}, en veel gasten vliegen na het duiken terug naar St.
-            Maarten binnen ons normale vaarschema.
-          </p>
+            Al{" "}
+            tientallen jaren vliegen duikers routinematig tussen Saba en St. Maarten als onderdeel van hun duikvakantie. Sea Saba draait deze schema&apos;s sinds {OPERATIONS.establishedYear}, en veel gasten vliegen na het duiken terug naar St. Maarten binnen ons normale duikschema.</p>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-            Deze korte vlucht op lage hoogte is fundamenteel anders dan een typische vlucht in een
-            straalvliegtuig, dat veel langer op een veel hogere kabinehoogte onder druk wordt
-            gehouden.
-          </p>
+            Deze korte vlucht op lage hoogte is fundamenteel anders dan een typische vlucht in een straalvliegtuig, dat veel langer op een veel hogere cabinehoogte onder druk blijft.</p>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-            Zoals bij elke duikplanning is elke duiker uiteindelijk zelf verantwoordelijk voor
-            beslissingen op basis van zijn of haar gezondheid, duikprofiel en — bij medische
-            twijfels — het advies van een arts of DAN.
-          </p>
+            Zoals bij elke duikplanning is elke duiker uiteindelijk zelf verantwoordelijk voor beslissingen op basis van zijn of haar gezondheid, duikprofiel en, bij medische twijfels, het advies van een arts of van DAN.</p>
         </div>
 
         <div className="mt-5 grid gap-5 lg:grid-cols-2">
           <div className="rounded-lg border border-border/40 bg-muted/20 p-5">
-            <h3 className="text-sm font-semibold text-foreground">Waar je op moet letten</h3>
+            <h3 className="text-sm font-semibold text-foreground">Waar moet je op letten</h3>
             <ul className="mt-4 space-y-2.5 text-sm text-muted-foreground">
               <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>De Winair-vlucht is een korte vlucht tussen de eilanden op lage hoogte.</span></li>
               <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Plan een conservatief duikprofiel.</span></li>
@@ -944,17 +856,12 @@ export function NlDiving() {
           <div className="rounded-lg border border-primary/20 bg-primary/5 p-5">
             <div className="flex items-center gap-2">
               <Mountain className="h-5 w-5 text-primary" />
-              <h3 className="text-sm font-semibold text-foreground">Beklim Mt. Scenery niet na het duiken</h3>
+              <h3 className="text-sm font-semibold text-foreground">Beklim Mt. Scenery niet na het duiken!</h3>
             </div>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              Hoewel de vlucht naar St. Maarten voor veel duikers een normaal onderdeel van de reis
-              is, wordt wandelen naar de top van Mt. Scenery na het duiken afgeraden.
-            </p>
+              Hoewel de vlucht naar St. Maarten voor veel duikers een normaal onderdeel van de reis is, wordt wandelen naar de top van Mt. Scenery na het duiken op dezelfde dag afgeraden.</p>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              De trail vergt flinke inspanning tijdens de klim naar Saba&apos;s hoogste punt op
-              ongeveer 2.910 voet (887 m). Zware lichamelijke inspanning combineren met toenemende
-              hoogte na het duiken kan het decompressierisico vergroten.
-            </p>
+              De trail vergt flinke inspanning tijdens de klim naar Saba&apos;s hoogste punt op ongeveer 2.910 voet (887 m). Zware lichamelijke inspanning combineren met toenemende hoogte na het duiken kan het decompressie risico vergroten.</p>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
               Wil je Mt. Scenery beklimmen tijdens je bezoek, plan dat dan op een dag waarop je niet
               duikt.
@@ -994,14 +901,10 @@ export function NlDiving() {
           <div className="rounded-lg border border-border/40 bg-muted/20 p-5">
             <h3 className="text-sm font-semibold text-foreground">Diepe vulkanische pinnacles</h3>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              Saba&apos;s diepe pinnacles en wanden lenen zich uitstekend voor ervaren
-              decompressieduikers. Duikplekken zoals Third Encounter, Outer Limits en Tent Wall bieden
-              dramatische verticale profielen, uitstekend zicht en het soort vulkanische topografie
-              waarvoor technische duikers uit het hele Caraïbisch gebied komen.
-            </p>
+              Saba&apos;s diepe pinnacles en wanden lenen zich uitstekend voor ervaren decompressieduikers. Stekken zoals Third Encounter, Outer Limits en Tent Wall bieden dramatische verticale profielen, uitstekend zicht en het soort vulkanische topografie waarvoor technische duikers uit het hele Caraïbisch gebied komen.</p>
             <ul className="mt-4 space-y-2.5 text-sm text-muted-foreground">
               <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Diepe pinnacles die oprijzen uit de diepte</span></li>
-              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Dramatische wandduiken</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Dramatische wand duiken</span></li>
               <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Uitstekend zicht</span></li>
               <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Unieke vulkanische topografie</span></li>
               <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Ideaal voor ervaren decompressieduikers</span></li>
@@ -1011,18 +914,14 @@ export function NlDiving() {
           <div className="rounded-lg border border-border/40 bg-muted/20 p-5">
             <h3 className="text-sm font-semibold text-foreground">Ondersteuning voor technische uitrusting</h3>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              Sea Saba levert flessen- en gassupport voor technisch duiken, waaronder backmount-dubbelsets,
-              sidemount-flessen, stage- en decompressieflessen en vullingen met zuivere zuurstof.
-              Rebreatherduikers vinden ook kleine zuurstofflessen en een booster die zuurstof tot
-              3.000 psi kan vullen.
-            </p>
+              Sea Saba levert flessen- en gas support voor technisch duiken, waaronder backmount-dubbelsets, sidemount-flessen, stage- en decompressie flessen en vullingen met zuivere zuurstof. Rebreather duikers vinden ook kleine zuurstofflessen en een booster pomp, die zuurstof tot 3.000 psi kan vullen.</p>
             <ul className="mt-4 space-y-2.5 text-sm text-muted-foreground">
               <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Vier backmount-dubbelsets</span></li>
               <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Aluminium sidemount-flessen</span></li>
               <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Aluminium 40 cu ft stage-/decompressieflessen</span></li>
-              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Zuurstofvullingen tot 100% voor decompressieflessen</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Zuurstofvullingen tot 100% voor decompressie tanks.</span></li>
               <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Vier kleine zuurstofflessen geschikt voor rebreathers</span></li>
-              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Zuurstofbooster die zuurstof tot 3.000 psi kan comprimeren</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Zuurstof booster die zuurstof tot 3.000 psi kan comprimeren</span></li>
             </ul>
             <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
               Duikers nemen hun eigen trimvest, harnas, ademautomaten, computers en overige
@@ -1049,11 +948,7 @@ export function NlDiving() {
           <div className="rounded-lg border border-border/40 bg-muted/20 p-5">
             <h3 className="text-sm font-semibold text-foreground">Vooraf plannen vereist</h3>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              Technische duiken moeten voor aankomst worden afgestemd, zodat het team de juiste
-              flessen en supportmateriaal kan klaarmaken. Neem vooraf contact op met Sea Saba om
-              brevetten, ervaringsniveau, geplande duikprofielen, materiaalvereisten,
-              flesconfiguratie en zuurstofbehoefte te bespreken.
-            </p>
+              Technische duiken moeten voor aankomst worden afgestemd, zodat het team de juiste flessen en support materiaal kan klaarmaken. Neem vooraf contact op met Sea Saba om brevetten, ervaringsniveau, geplande duikprofielen, materiaalvereisten, fles configuratie en zuurstofbehoefte te bespreken.</p>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
               Sea Saba gebruikt{" "}
               <Link href="https://www.hhssoftware.com/multideco/" target="_blank" rel="noopener noreferrer" className="font-medium text-primary hover:underline underline-offset-4">
@@ -1067,10 +962,7 @@ export function NlDiving() {
         <div className="mt-5 rounded-lg border border-border/40 bg-muted/20 p-5">
           <h3 className="text-sm font-semibold text-foreground">Vereisten voor technisch duiken</h3>
           <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-            Technisch duiken is alleen beschikbaar voor duikers met de juiste brevetten. Sea Saba
-            verzorgt geen technische opleidingen en verhuurt geen technische trimvesten en
-            harnassystemen.
-          </p>
+            Technisch duiken is alleen beschikbaar voor duikers met de juiste brevetten. Sea Saba verzorgt geen technische opleidingen en verhuurt geen technische trimvesten en harnas systemen.</p>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
             Duikers wordt verwacht hun eigen levensondersteunende uitrusting mee te nemen,
             waaronder:
@@ -1083,17 +975,13 @@ export function NlDiving() {
             <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Persoonlijke accessoires</span></li>
           </ul>
           <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-            Sea Saba levert flessen en zuurstofsupport zoals hierboven beschreven.
-          </p>
+            Sea Saba levert flessen en zuurstof support zoals hierboven beschreven.</p>
         </div>
 
         <div className="mt-5 rounded-lg border border-primary/20 bg-primary/5 p-5">
           <h3 className="text-sm font-semibold text-foreground">Plan je een technische duikexpeditie?</h3>
           <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-            Of je nu diepe vulkanische pinnacle-duiken, decompressieduiken of CCR-verkenning in het
-            Caraïbisch gebied plant — we bespreken graag de logistiek en helpen bepalen of Saba de
-            juiste bestemming is voor je volgende avontuur.
-          </p>
+            Of je nu diepe vulkanische pinnacle-duiken, decompressieduiken of CCR-verkenning in het Caraïbisch gebied plant, we bespreken graag de logistiek en helpen bepalen of Saba de juiste bestemming is voor je volgende avontuur.</p>
           <Button asChild variant="outline" className="mt-4">
             <Link href={localeHref("nl", "/contact?interest=tdi-technical")}>Vraag naar technisch duiken</Link>
           </Button>
@@ -1102,7 +990,7 @@ export function NlDiving() {
 
       {/* Emergency Preparedness */}
       <section className="mt-14 scroll-mt-24">
-        <h2 className="text-xl font-semibold text-foreground">Noodvoorbereiding</h2>
+        <h2 className="text-xl font-semibold text-foreground">Nood voorbereiding</h2>
         <div className="mt-5 grid gap-5 lg:grid-cols-2">
           <div className="rounded-lg border border-border/40 bg-muted/20 p-5">
             <p className="text-sm leading-relaxed text-muted-foreground">
@@ -1111,10 +999,7 @@ export function NlDiving() {
               decompressiekamer bij de faciliteit van de Saba Conservation Foundation in Fort Bay.
             </p>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              De kapiteins en duikprofessionals van Sea Saba zijn getraind in noodprocedures, elke
-              duikboot heeft zuurstof en EHBO-materiaal aan boord, en ons team hanteert vaste
-              noodplannen in afstemming met de lokale medische diensten.
-            </p>
+              De kapiteins en duik professionals van Sea Saba zijn getraind in noodprocedures, elke duikboot heeft zuurstof en EHBO-materiaal aan boord, en ons team hanteert vaste noodplannen in afstemming met de lokale medische diensten.</p>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
               Hoewel ernstige duikincidenten uiterst zeldzaam zijn, geeft het weten dat deze middelen
               beschikbaar zijn zowel nieuwe als ervaren duikers extra gemoedsrust.
@@ -1127,7 +1012,7 @@ export function NlDiving() {
               <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Gelegen in Fort Bay</span></li>
               <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Zuurstof op elke duikboot</span></li>
               <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>EHBO-materiaal aan boord</span></li>
-              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Ervaren professioneel duikpersoneel</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Ervaren en professionele duik crew</span></li>
               <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Noodplannen voor alle duikactiviteiten</span></li>
             </ul>
           </div>
@@ -1170,12 +1055,9 @@ export function NlDiving() {
       {/* CTA Section */}
       <section className="mt-20 text-center">
         <h2 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-          Klaar om op Saba te duiken?
-        </h2>
+          Klaar om op Saba te duiken?</h2>
         <p className="mt-3 text-base text-muted-foreground">
-          Kies de trip die past, vertel ons je brevet, en wij regelen de rest: taxi, flessen en de
-          route naar de juiste duikplekken.
-        </p>
+          Kies de trip die past, vertel ons je brevetteringsniveau, en wij regelen de rest: taxi, flessen en de route naar de juiste stekken.</p>
         <div className="mt-6 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
           <TrackedInternalButton
             size="lg"
@@ -1188,7 +1070,7 @@ export function NlDiving() {
             Boek je duiken
           </TrackedInternalButton>
           <Button asChild variant="outline" size="lg" className="text-base font-semibold">
-            <Link href="/dive-sites">Bekijk de duikplekken</Link>
+            <Link href="/dive-sites">Bekijk de duikstekken</Link>
           </Button>
         </div>
         <p className="mt-5 text-sm text-muted-foreground">
@@ -1198,7 +1080,7 @@ export function NlDiving() {
           </Link>
           . Kom je met je eigen boot? Zie onze{" "}
           <Link href="/visiting-yachts" className="font-medium text-primary hover:underline underline-offset-4">
-            gids voor jachtbezoekers
+            gids voor jacht bezoekers
           </Link>{" "}
           (Engels).
         </p>

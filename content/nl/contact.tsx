@@ -26,7 +26,7 @@ export const review: TranslationReview = {
 export const nlMetadata = {
   title: "Contact",
   description:
-    "Neem contact op met Sea Saba. Vragen over duiken, cursussen of boeken? We helpen je graag.",
+    "Neem contact op met Sea Saba. Vragen over duiken, cursussen of boekingen? We helpen je graag.",
 };
 
 export function NlContact({ interest }: { interest?: string }) {

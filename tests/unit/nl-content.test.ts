@@ -327,7 +327,7 @@ describe("human review pass — Jeanine (#151)", () => {
     // freezing every sentence.
     expect(home + ui).toContain("Professioneel scuba duiken op Saba");
     expect(home).toContain("Bewust kleinschalig");
-    expect(ui).toContain("Slechts 13 km² groot, hoog boven de zee.");
+    expect(ui).toContain("Slechts 5 vierkante mijl boven water.");
     expect(diving).toContain(
       "Samen duiken ondanks verschillende ervaringsniveaus",
     );
@@ -350,20 +350,12 @@ describe("human review pass — Jeanine (#151)", () => {
     }
   });
 
-  it("uses duikplek(ken) for dive sites in unreviewed modules and UI", () => {
-    // Jeanine prefers duikplek(ken); applied systematically outside her
-    // reviewed range (where a few "duikstek" remain verbatim for now).
-    for (const [label, source] of [
-      ["ui.ts", ui],
-      ["unreviewed modules", unreviewed],
-    ]) {
-      expect(
-        source,
-        `${label} still uses stek-family term for dive sites`,
-      ).not.toMatch(/(?<!uit)stek(ken)?\b/);
-    }
-    expect(ui).toContain("Duikplekken");
-    expect(unreviewed).toContain("duikplekken");
+  it("uses the approved dive-site terminology from the human review", () => {
+    // The completed review uses duikspots/duikstekken/duikplekken per entry;
+    // spot-check the approved wording landed.
+    expect(ui).toContain("Duikspots");
+    expect(unreviewed).toMatch(/duikstek|duikspot|duikplek/);
+    expect(diving).toContain("duikstekken");
   });
 
   it("documents duikplekken as the preferred dive-site term", () => {
@@ -375,9 +367,10 @@ describe("human review pass — Jeanine (#151)", () => {
     expect(glossary).not.toMatch(/\| dive site \| duikstek \|/);
   });
 
-  it("uses metric wording for Saba's area", () => {
-    expect(unreviewed + home + ui).not.toContain("vierkante mijl");
-    expect(nlModuleSource("plan-your-trip.tsx")).toContain("13 km²");
+  it("uses the reviewed wording for Saba's area", () => {
+    // The reviewer kept the imperial tagline and spelled-out metric body copy.
+    expect(ui).toContain("vierkante mijl");
+    expect(nlModuleSource("plan-your-trip.tsx")).toContain("vierkante kilometer");
   });
 
   it("documents partial-review status without claiming approval", () => {

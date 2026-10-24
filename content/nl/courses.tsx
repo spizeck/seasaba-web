@@ -26,7 +26,7 @@ export const review: TranslationReview = {
 export const nlMetadata = {
   title: "Duikcursussen & brevetten",
   description:
-    "SDI- en TDI-duikcursussen op Saba. Van Try Scuba tot Divemaster — leer van ervaren instructeurs in het meest bijzondere marinepark van het Caraïbisch gebied.",
+    "SDI- en TDI-duikcursussen op Saba. Van “Try Scuba” tot Divemaster, leer van onze ervaren instructeurs in het meest bijzondere marinepark van het Caraïbisch gebied.",
 };
 
 const WHY_TRAIN_SABA = [
@@ -34,7 +34,7 @@ const WHY_TRAIN_SABA = [
     icon: Award,
     title: "Professionele SDI- & TDI-opleidingen",
     description:
-      "Internationaal erkende brevetorganisaties met professionele, ervaren instructeurs.",
+      "Internationaal erkende brevet organisaties met professionele, ervaren instructeurs.",
   },
   {
     icon: Users,
@@ -50,21 +50,21 @@ const WHY_TRAIN_SABA = [
   },
   {
     icon: MapPin,
-    title: "Beschermd marinepark",
+    title: "Beschermd marine park",
     description:
-      "Leer duiken in een van de meest ongerepte en best beheerde mariene gebieden van het Caraïbisch gebied.",
+      "Leer duiken in een van de meest ongerepte en best beheerde marine park gebieden van het Caraïbisch gebied.",
   },
   {
     icon: Ship,
     title: "Van haven naar rif",
     description:
-      `Begin in het rustige water van ${OPERATIONS.harbor} om je drijfvermogen en loodverdeling te perfectioneren voordat je de openwaterduiken op Saba's spectaculaire rifduikplekken maakt.`,
+      `Begin in het rustige water van Fort Bay Harbor om je drijfvermogen en loodverdeling te perfectioneren voordat je de open water duiken op Saba's spectaculaire duikspots maakt.`,
   },
   {
     icon: Wrench,
     title: "Premium uitrusting inbegrepen",
     description:
-      "Leer met moderne Scubapro-uitrusting en polsduikcomputers. XDeep backplate- en wingsystemen zijn ook beschikbaar voor duikers die een gestroomlijnde setup prefereren.",
+      "Leer met moderne Scubapro-uitrusting en pols duikcomputers. XDeep backplate en wing systemen zijn ook beschikbaar voor duikers die een gestroomlijnde setup prefereren.",
   },
   {
     icon: CheckCircle,
@@ -76,7 +76,7 @@ const WHY_TRAIN_SABA = [
     icon: Car,
     title: "Gratis taxivervoer",
     description:
-      "Gratis vervoer voor geplande trainingsduiken, zodat jij je op het leren kunt concentreren.",
+      "Gratis vervoer voor geplande trainings duiken, zodat jij je op het leren kunt concentreren.",
   },
   {
     icon: ShieldCheck,
@@ -107,7 +107,7 @@ const COURSES: Course[] = [
     level: "Beginner",
     duration: "Hele dag",
     description:
-      "Je eerste ademteug onder water, op een echte duikplek. Geen brevet nodig — alleen nieuwsgierigheid. Een instructeur van Sea Saba begeleidt je bij elke stap: van een korte introductie van de vaardigheden in Fort Bay Harbor tot een begeleide bootduik op het rif.",
+      "Je eerste ademteug onder water, op een echte duikstek. Geen brevet nodig, alleen jouw nieuwsgierigheid. Een instructeur van Sea Saba begeleidt je bij elke stap: van een korte introductie van de vaardigheden in Fort Bay Harbor tot een begeleide bootduik op het rif.",
     includes: ["Alle uitrusting inbegrepen", "Begeleide bootduik", "Maximaal 2 cursisten per instructeur", "Geen ervaring nodig"],
     cta: "Vraag info over Try Scuba",
     path: "/contact?interest=try-scuba",
@@ -118,7 +118,7 @@ const COURSES: Course[] = [
     level: "Beginner",
     duration: "3 dagen",
     description:
-      "Doorloop de theorie via SDI eLearning voordat je komt, zodat je vakantie in het water zit en niet in het klaslokaal. De sessies in beschermd water vinden plaats in het rustige water van Fort Bay Harbor, en je vier brevetduiken maak je vanaf de boten van Sea Saba op echte duikplekken in het Saba Marine Park.",
+      "Doorloop de theorie via SDI E-Learning voordat je komt, zodat je tijdens je vakantie in het water ligt en niet in het klaslokaal zit. De sessies in beschermd water vinden plaats in het rustige water van Fort Bay Harbor, en je vier brevet duiken maak je vanaf de boten van Sea Saba op echte duikstekken in het Saba Marine Park.",
     includes: ["eLearning vooraf afronden", "Sessies in beschermd water in Fort Bay Harbor", "Vier bootduiken in het Saba Marine Park", "Alle uitrusting inbegrepen", "Maximaal 3 cursisten per instructeur"],
     cta: "Vraag info over Open Water",
     path: "/contact?interest=sdi-open-water",
@@ -129,8 +129,8 @@ const COURSES: Course[] = [
     level: "Verdergaand",
     duration: "2 dagen",
     description:
-      "Bouw vertrouwen op, scherp je vaardigheden aan en verken nieuwe vormen van duiken via adventure- en specialty-training op Saba's gevarieerde rifsystemen. Rond de eLearning vooraf af en besteed je tijd in het water.",
-    includes: ["Vijf bootduiken", "eLearning vooraf afronden", "Deep Diver en Navigation verplicht", "Flexibele keuzeopties", "Maximaal 3 cursisten per instructeur", "Uitrusting inbegrepen"],
+      "Bouw vertrouwen op, scherp je vaardigheden aan en verken nieuwe vormen van duiken via adventure- en specialty-training op Saba's gevarieerde duikspots. Rond de E-Learning vooraf af en besteed je tijd in het water.",
+    includes: ["Vijf bootduiken", "E-Learning vooraf afronden", "Deep Diver en Navigation verplicht", "Flexibele keuze opties", "Maximaal 3 cursisten per instructeur", "Uitrusting inbegrepen"],
     cta: "Vraag info over vervolgopleidingen",
     path: "/contact?interest=sdi-advanced-specialty",
     options: ["Navigation*", "Deep Diver*", "Drift Diving", "Boat Diving", "Computer Diving", "Marine Ecosystems Awareness", "Underwater Photography", "Advanced Buoyancy"],
@@ -141,7 +141,7 @@ const COURSES: Course[] = [
     level: "Specialty",
     duration: "1 dag",
     description:
-      `Enriched air (Nitrox) is de populairste duikspecialty en past perfect bij Saba. Omdat Sea Saba gratis ${OPERATIONS.nitroxBlend} Nitrox inbegrijpt voor gebrevetteerde duikers, is een Nitrox-brevet een eenvoudige manier om meer uit Saba's diepere pinnacles en meerdaagse duikprogramma's te halen. Rond de eLearning af voordat je komt en maak de brevettering tijdens je reis af.`,
+      `Enriched air (Nitrox) is de populairste duik specialty en past perfect bij Saba. Omdat Sea Saba gratis 32% Nitrox aanbiedt voor gebrevetteerde duikers, is een Nitrox-brevet een eenvoudige manier om meer uit Saba's diepere pinnacles en meerdaagse duik programma's te halen. Rond de E-Learning af voordat je komt en maak de brevettering af tijdens je reis.`,
     includes: ["eLearning vooraf afronden", "Enriched-air-planning en -analyse", "Te combineren met je duikdagen", `Daarna gratis ${OPERATIONS.nitroxBlend} Nitrox voor gebrevetteerde duikers`],
     cta: "Vraag info over de Nitrox-cursus",
     path: "/contact?interest=sdi-nitrox",
@@ -150,10 +150,10 @@ const COURSES: Course[] = [
     id: "rescue",
     name: "SDI Rescue Diver",
     level: "Gevorderd",
-    duration: "2–3 dagen",
+    duration: "2 - 3 dagen",
     description:
-      "Word een bekwaamere en zelfverzekerdere duiker door te leren problemen onder water te herkennen, te voorkomen en te beheersen. Rescuetraining maakt je een sterkere buddy en een duiker met meer situatiebewustzijn, in elke omgeving. Een geldig EHBO-/reanimatiebrevet is vereist.",
-    includes: ["eLearning vooraf afronden", "Rescuescenario's en praktijkoefeningen", "Vaardigheden voor noodmanagement", "Geldig EHBO-/reanimatiebrevet vereist"],
+      "Word een bekwamere en zelfverzekerdere duiker door te leren problemen onder water te herkennen, te voorkomen en te beheersen. Rescue training maakt je een sterkere buddy en een duiker met meer situatiebewustzijn, in elke omgeving. Een geldig EHBO en reanimatie brevet is vereist.",
+    includes: ["eLearning vooraf afronden", "Rescuescenario's en praktijkoefeningen", "Vaardigheden voor nood management", "Geldig EHBO en reanimatiebrevet vereist"],
     cta: "Vraag info over Rescue Diver",
     path: "/contact?interest=sdi-rescue",
   },
@@ -161,10 +161,10 @@ const COURSES: Course[] = [
     id: "divemaster",
     name: "SDI Divemaster",
     level: "Professioneel",
-    duration: "4–8 weken",
+    duration: "4 - 8 weken",
     description:
-      "Doe praktijkervaring op door instructeurs te assisteren, cursisten te begeleiden en mee te draaien in de dagelijkse operatie aan boord van de duikboten van Sea Saba. De Divemaster-opleiding bij Sea Saba is vanaf dag één hands-on, tegen het decor van een van de meest dramatische onderwaterlandschappen van het Caraïbisch gebied.",
-    includes: ["Leiderschapsontwikkeling", "Praktijkervaring in de dagelijkse operatie", "Theorie- en watervaardigheidsbeoordelingen", "Ervaring met begeleide duiken"],
+      "Doe praktijkervaring op door instructeurs te assisteren, cursisten te begeleiden en mee te draaien in de dagelijkse operatie aan boord van de duikboten van Sea Saba. De Divemaster opleiding bij Sea Saba is vanaf dag één hands-on, tegen het decor van een van de meest dramatische onderwaterlandschappen van het Caraïbisch gebied.",
+    includes: ["Leiderschapsontwikkeling", "Praktijkervaring in de dagelijkse operatie", "Theorie- en water vaardigheids beoordelingen", "Ervaring met begeleide duiken"],
     cta: "Vraag info over Divemaster",
     path: "/contact?interest=sdi-divemaster",
     note: "Stageplaatsen zijn mogelijk beschikbaar voor kandidaten die een langere periode op Saba kunnen doorbrengen. Neem contact met ons op om een stage op maat te bespreken.",
@@ -175,15 +175,15 @@ const COURSES: Course[] = [
     level: "Technisch",
     duration: "Verschilt",
     description:
-      "Voor ervaren duikers die verder willen dan de recreatieve grenzen richt de TDI-training bij Sea Saba zich op correcte procedures, gasmanagement en uitrustingsconfiguraties die passen bij Saba's diepere pinnacles en wanden.",
-    includes: ["eLearning vooraf afronden", "Geavanceerde duikplanning", "Technische procedures en gasmanagement", "Uitrustingsconfiguratie en streamlining"],
+      "Voor ervaren duikers die verder willen dan de recreatieve grenzen richt de TDI-training bij Sea Saba zich op correcte procedures, gas management en uitrustings configuraties die passen bij Saba's diepere pinnacles en rif wanden.",
+    includes: ["eLearning vooraf afronden", "Geavanceerde duikplanning", "Technische procedures en gas management", "Uitrustings configuratie en streamlining"],
     cta: "Vraag info over technisch duiken",
     path: "/contact?interest=tdi-technical",
     subcourses: [
-      { name: "Intro to Tech", level: "Introductie", duration: "2–3 dagen" },
-      { name: "Advanced Nitrox", level: "Technisch", duration: "2–3 dagen" },
+      { name: "Intro to Tech", level: "Introductie", duration: "2 - 3 dagen" },
+      { name: "Advanced Nitrox", level: "Technisch", duration: "2 - 3 dagen" },
       { name: "Decompression Procedures", level: "Technisch", duration: "3 dagen" },
-      { name: "Advanced Nitrox & Deco Combo", level: "Technisch", duration: "4–5 dagen" },
+      { name: "Advanced Nitrox & Deco Combo", level: "Technisch", duration: "4 - 5 dagen" },
     ],
   },
 ];
@@ -217,10 +217,7 @@ export function NlCourses() {
       />
 
       <p className="text-base leading-relaxed text-muted-foreground">
-        Of je nu je eerste ademteug onder water neemt, je brevetten uitbouwt of
-        technische duikvaardigheden ontwikkelt — Sea Saba biedt professionele
-        SDI- en TDI-instructie in de beschermde wateren van het Saba Marine Park.
-      </p>
+        Of je nu je eerste ademteug onder water neemt, je brevetten uitbouwt of technische duikvaardigheden ontwikkelt, Sea Saba biedt professionele SDI- en TDI-instructie in de beschermde wateren van het Saba Marine Park.</p>
 
       {/* Why Train with Sea Saba */}
       <section className="mt-10">
@@ -240,7 +237,7 @@ export function NlCourses() {
       <section className="mt-12">
         <FeatureImage
           src="/images/optimized/students-instruction.webp"
-          alt="Duikcursisten krijgen instructie van een Sea Saba-instructeur"
+          alt="Duik cursisten krijgen instructie van een Sea Saba-instructeur"
           objectPosition="left"
           imageRight
           centerText
@@ -266,18 +263,13 @@ export function NlCourses() {
       <section className="mt-12">
         <FeatureImage
           src="/images/optimized/rental-bcd-equipment.webp"
-          alt="Huuruitrusting van Sea Saba — trimvesten en duikmateriaal voor cursisten"
+          alt="Huur uitrusting van Sea Saba, trimvesten en duikmateriaal voor cursisten"
           centerText
         >
           <div>
-            <h2 className="text-xl font-semibold text-foreground">Moderne huuruitrusting</h2>
+            <h2 className="text-xl font-semibold text-foreground">Moderne huur uitrusting</h2>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              Alle cursussen omvatten volledig gebruik van onze moderne
-              Scubapro-uitrusting — trimvesten, ademautomaten, wetsuits, maskers,
-              vinnen en polsduikcomputers. XDeep backplate- en wingsystemen zijn ook
-              beschikbaar voor duikers die een gestroomlijnde technische setup
-              prefereren. Nitrox is gratis voor gebrevetteerde duikers, waar passend.
-            </p>
+              Alle cursussen omvatten volledig gebruik van onze moderne Scubapro-uitrusting, trimvesten, ademautomaten, wetsuits, maskers, vinnen en pols duikcomputers. XDeep backplate en wing systemen zijn ook beschikbaar voor duikers die een gestroomlijnde technische setup prefereren. Nitrox is gratis voor gebrevetteerde duikers, waar passend.</p>
           </div>
         </FeatureImage>
       </section>
@@ -286,8 +278,7 @@ export function NlCourses() {
       <section className="mt-12">
         <h2 className="text-xl font-semibold text-foreground">Cursusaanbod</h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          Kies je pad — van eerste duikervaring tot professionele en technische brevettering.
-        </p>
+          Kies je pad, van eerste duikervaring tot professionele en technische brevettering.</p>
 
         <div className="mt-6 space-y-6">
           {COURSES.map((course) => (
@@ -374,10 +365,7 @@ export function NlCourses() {
       <section className="mt-12 rounded-lg border border-border/40 bg-muted/20 p-6">
         <h2 className="text-lg font-semibold text-foreground">Beschikbaarheid van cursussen</h2>
         <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-          De beschikbaarheid van cursussen hangt af van de planning van instructeurs,
-          de ervaring van de cursist, het weer en de cursuseisen. Neem contact op met
-          Sea Saba als je tijdens je bezoek een cursus wilt volgen.
-        </p>
+          De beschikbaarheid van cursussen hangt af van de planning van instructeurs, de ervaring van de cursist, het weer en de cursus vereisten. Neem contact op met Sea Saba als je tijdens je bezoek een cursus wilt volgen.</p>
         <div className="mt-4">
           <TrackedInternalButton
             variant="outline"

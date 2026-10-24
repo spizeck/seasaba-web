@@ -33,19 +33,19 @@ export const review: TranslationReview = {
 export const nlMetadata = {
   title: "Plan je reis naar Saba",
   description:
-    "Hoe kom je op Saba, waar overnacht je, wanneer ga je en wat kun je verwachten. Alles om je duikreis naar het best bewaarde geheim van het Caraïbisch gebied te plannen.",
+    "Hoe kom je op Saba, waar overnacht je, wanneer reis je en wat kun je verwachten. Alles om je duikreis naar het best bewaarde geheim van het Caraïbisch gebied te plannen.",
 };
 
 const GOOD_TO_KNOW = [
   {
     icon: Bus,
-    title: "Gratis taxishuttle",
+    title: "Gratis taxi shuttle",
     description: "Gratis ophalen en terugbrengen tussen je accommodatie en het duikcentrum is inbegrepen voor duikers.",
   },
   {
     icon: Ban,
     title: "Geen cruiseschepen",
-    description: "Rustige eilandsfeer, weinig drukte op het water en geen massatoerisme.",
+    description: "Rustige eiland sfeer, weinig drukte op het water en geen massatoerisme.",
   },
   {
     icon: DollarSign,
@@ -54,7 +54,7 @@ const GOOD_TO_KNOW = [
   },
   {
     icon: MessageCircle,
-    title: "Overal Engels",
+    title: "Overal wordt Engels gesproken",
     description: "Engels is de voertaal, dus communicatie is makkelijk voor internationale bezoekers.",
   },
   {
@@ -75,18 +75,18 @@ const GOOD_TO_KNOW = [
   {
     icon: Timer,
     title: "Korte boottochten",
-    description: "De meeste duikplekken liggen 5–15 minuten van Fort Bay Harbor.",
+    description: "De meeste duikstekken liggen 5–15 minuten van Fort Bay Harbor.",
   },
 ] as const;
 
 const FAQS = [
   {
     question: "Hoe kom ik op Saba?",
-    answer: "De meeste bezoekers reizen via St. Maarten en gaan met een Winair-vlucht of de Makana Ferry door naar Saba. Sea Saba ligt aan Fort Bay Harbor, waar de meeste duiktrips vertrekken.",
+    answer: "De meeste bezoekers reizen via St. Maarten en gaan met een Winair-vlucht of de Makana Ferry door naar Saba. Sea Saba ligt aan Fort Bay Harbor, waar alle duiktrips vertrekken.",
   },
   {
-    question: "Hoeveel dagen moet ik blijven?",
-    answer: "De meeste duikers zijn het gelukkigst met 5–7 dagen op Saba. Zo heb je tijd voor meerdere duikdagen, een buffer voor het weer en de kans om te wandelen, uit eten te gaan en het eiland te verkennen.",
+    question: "Hoeveel dagen zal ik blijven?",
+    answer: "De meeste duikers zijn het best af met 5–7 dagen op Saba. Zo heb je tijd voor meerdere duikdagen, een buffer voor het weer en de kans om te wandelen, uit eten te gaan en het eiland te verkennen.",
   },
   {
     question: "Is Nitrox inbegrepen?",
@@ -98,11 +98,11 @@ const FAQS = [
   },
   {
     question: "Is Saba druk?",
-    answer: "Nee. Saba heeft geen cruiseschepen, geen megaresorts en nauwelijks massatoerisme. Het eiland is rustig en natuurlijk en past het best bij reizigers die iets anders zoeken.",
+    answer: "Nee. Saba heeft geen cruiseschepen, geen mega resorts en nauwelijks massatoerisme. Het eiland is rustig en natuurlijk en past het best bij reizigers die iets anders zoeken dan het normale.",
   },
   {
     question: "Is Saba leuk voor niet-duikers?",
-    answer: "Ja. Wandelen, restaurants, vogels kijken, kunstworkshops, glaskunst, mooie uitzichten en een relaxte eilandsfeer maken Saba ook voor niet-duikers de moeite waard.",
+    answer: "Ja. Wandelen, restaurants, vogels kijken, kunstworkshops, glaskunst, mooie uitzichten en een relaxte eiland sfeer maken Saba ook voor niet-duikers de moeite waard.",
   },
 ] as const;
 
@@ -118,10 +118,7 @@ export function NlPlanYourTrip() {
 
       {/* Introduction */}
       <p className="text-base leading-relaxed text-muted-foreground">
-        Saba is een 13 km² groot vulkanisch eiland in Caribisch Nederland. Zonder
-        cruiseschepen en zonder grote resorts biedt Saba een rustige, authentieke Caribische
-        ervaring die duikers consequent tot een van hun favoriete bestemmingen rekenen.
-      </p>
+        Saba is een dertien vierkante kilometer groot vulkanisch eiland in Caribisch Nederland. Zonder cruiseschepen en zonder grote resorts biedt Saba een rustige, authentieke Caribische ervaring die duikers consequent tot een van hun favoriete bestemmingen rekenen.</p>
 
       {/* On This Page */}
       <PageSectionNav
@@ -155,10 +152,7 @@ export function NlPlanYourTrip() {
                 <h3 className="text-lg font-semibold text-foreground">Winair</h3>
               </div>
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                De meeste bezoekers komen aan via St. Maarten (SXM) en stappen over op
-                Winair&apos;s iconische Twin Otter. De korte vlucht biedt een van de
-                spectaculairste luchtaanvliegroutes ter wereld.
-              </p>
+                De meeste bezoekers komen aan via St. Maarten (SXM) en stappen over op Winair’s iconische Twin Otter. De korte vlucht biedt een van de spectaculairste aanvliegroutes ter wereld.</p>
               <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
                 <span aria-hidden="true">⭐</span>
                 Meest gekozen optie
@@ -188,7 +182,7 @@ export function NlPlanYourTrip() {
               href="https://www.winair.sx/"
               eventName="social_click"
               buttonText="Check Flight Schedule"
-              aria-label="Bekijk het vluchtschema van Winair, opent in een nieuw tabblad"
+              aria-label="Bekijk het vluchtschema van Winair, via een nieuw tabblad"
             >
               Bekijk vluchtschema ↗
             </TrackedOutboundButton>
@@ -204,9 +198,7 @@ export function NlPlanYourTrip() {
                 <h3 className="text-lg font-semibold text-foreground">Makana Ferry</h3>
               </div>
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                De Makana Ferry biedt een comfortabele en mooie verbinding tussen St. Maarten en
-                Saba, met prachtig Caribisch uitzicht onderweg.
-              </p>
+                De Makana Ferry biedt een comfortabele en mooie verbinding tussen St. Maarten en Saba, met prachtige Caribische uitzichten onderweg.</p>
               <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
                 <span aria-hidden="true">🌊</span>
                 Mooiste overtocht
@@ -236,7 +228,7 @@ export function NlPlanYourTrip() {
               href="https://makanaferryservice.com/"
               eventName="ferry_link_click"
               buttonText="View Ferry Schedule"
-              aria-label="Bekijk de dienstregeling van de Makana Ferry, opent in een nieuw tabblad"
+              aria-label="Bekijk de dienstregeling van de Makana Ferry, via een nieuw tabblad"
             >
               Bekijk veerdienst ↗
             </TrackedOutboundButton>
@@ -252,9 +244,7 @@ export function NlPlanYourTrip() {
                 <h3 className="text-lg font-semibold text-foreground">West Indies Helicopters</h3>
               </div>
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                West Indies Helicopters biedt luxe helikoptertransfers vanaf St. Maarten en St.
-                Barths — de snelste en meest flexibele manier om Saba te bereiken.
-              </p>
+                West Indies Helicopters biedt luxe helikopter transfers vanaf St. Maarten en St. Barths, de snelste en meest flexibele manier om Saba te bereiken.</p>
               <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
                 <span aria-hidden="true">⚡</span>
                 Snelst &amp; meest flexibel
@@ -274,8 +264,7 @@ export function NlPlanYourTrip() {
                 </li>
                 <li className="flex items-center gap-2">
                   <Check className="h-3.5 w-3.5 text-primary" />
-                  Ideaal voor privétransfers
-                </li>
+                  Ideaal voor privé transfers</li>
               </ul>
             </div>
             <TrackedOutboundButton
@@ -284,10 +273,9 @@ export function NlPlanYourTrip() {
               href="https://westindieshelicopters.com/"
               eventName="social_click"
               buttonText="Request Helicopter Charter"
-              aria-label="Vraag een helikoptercharter aan, opent in een nieuw tabblad"
+              aria-label="Vraag een helikopter charter aan, via een nieuw tabblad"
             >
-              Vraag helikoptercharter aan ↗
-            </TrackedOutboundButton>
+              Vraag helikopter charter aan</TrackedOutboundButton>
           </div>
 
           {/* SXM Airways */}
@@ -300,14 +288,10 @@ export function NlPlanYourTrip() {
                 <h3 className="text-lg font-semibold text-foreground">SXM Airways</h3>
               </div>
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                SXM Airways vliegt gepland tussen St. Maarten en Saba met de iconische
-                Britten-Norman Islander — een klassieke Caribische islandhopper-ervaring met
-                betrouwbare regionale dienst.
-              </p>
+                SXM Airways vliegt geplande vluchten tussen St. Maarten en Saba met de iconische Britten-Norman Islander, een klassieke Caribische eilandhopper ervaring met betrouwbare regionale dienst.</p>
               <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
                 <span aria-hidden="true">👥</span>
-                Beste voor kleine groepen &amp; charters
-              </div>
+                Beste voor kleine groepen &amp; charters</div>
               <ul className="mt-4 space-y-1.5 text-sm text-muted-foreground">
                 <li className="flex items-center gap-2">
                   <Check className="h-3.5 w-3.5 text-primary" />
@@ -319,8 +303,7 @@ export function NlPlanYourTrip() {
                 </li>
                 <li className="flex items-center gap-2">
                   <Check className="h-3.5 w-3.5 text-primary" />
-                  Klassieke islandhopper-ervaring
-                </li>
+                  Klassieke eilandhopper ervaring</li>
                 <li className="flex items-center gap-2">
                   <Check className="h-3.5 w-3.5 text-primary" />
                   Betrouwbare regionale vervoerder
@@ -333,7 +316,7 @@ export function NlPlanYourTrip() {
               href="https://fly-sxmairways.com/"
               eventName="social_click"
               buttonText="Book SXM Airways"
-              aria-label="Boek SXM Airways, opent in een nieuw tabblad"
+              aria-label="Boek SXM Airways, opent via een nieuw tabblad"
             >
               Boek SXM Airways ↗
             </TrackedOutboundButton>
@@ -354,11 +337,7 @@ export function NlPlanYourTrip() {
                   Aankomst met eigen vaartuig
                 </div>
                 <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                  Zeiljachten en cruisende schepen klaren in bij Fort Bay, op loopafstand van ons
-                  duikcentrum. De speciale gids behandelt aankomst en inklaring, moorings van het
-                  Marine Park, aan wal gaan en hoe je met Sea Saba duikt terwijl je vaartuig op
-                  Saba ligt. (De gids is in het Engels.)
-                </p>
+                  Zeiljachten en cruisende schepen klaren in bij Fort Bay, op loopafstand van ons duikcentrum. De speciale gids behandelt aankomst en inklaring, moorings van het Marine Park, aan wal gaan en hoe je met Sea Saba duikt terwijl je vaartuig bij Saba ligt. (De gids is in het Engels.)</p>
               </div>
               <Button
                 asChild
@@ -378,8 +357,8 @@ export function NlPlanYourTrip() {
             <h3 className="text-sm font-semibold text-foreground">Als je reisplannen veranderen</h3>
           </div>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-            Vluchten en veerboten tussen St. Maarten en Saba varen betrouwbaar, maar weer en
-            aansluitingen kunnen af en toe schema&apos;s verschuiven — dat hoort bij het bereiken
+            Vluchten en veerboten tussen St. Maarten en Saba varen betrouwbaar, maar weersomstandigheden en
+            aansluitingen kunnen af en toe schema&apos;s wijzigen, dat hoort bij het bereiken
             van een klein eiland. Is je vlucht vertraagd, vaart de veerboot niet, of kom je later
             aan dan verwacht,{" "}
             <Link href={localeHref("nl", "/contact?interest=general")} className="font-medium text-primary hover:underline underline-offset-4">
@@ -395,13 +374,13 @@ export function NlPlanYourTrip() {
             >
               WhatsApp
             </TrackedContactLink>{" "}
-            zodra je het weet.
+            zodra je dit weet.
           </p>
           <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
             Als de omstandigheden op zee ons dwingen een trip te wijzigen, zoeken we samen een
             nieuwe datum of betalen we het betreffende deel terug. Een reisverzekering die
             vertragingen dekt wordt sterk aangeraden (zie Beste reistijd), en onze annulerings- en
-            omboekvoorwaarden staan op de{" "}
+            omboekings voorwaarden staan op de{" "}
             <Link href={`/terms#${termsAnchors.scheduleChanges}`} className="font-medium text-primary hover:underline underline-offset-4">
               Terms-pagina (Engels)
             </Link>
@@ -420,13 +399,13 @@ export function NlPlanYourTrip() {
           <div className="not-prose rounded-xl border border-border/50 bg-card p-5 flex flex-col gap-3">
             <div>
               <p className="text-xs font-semibold uppercase tracking-widest text-primary">December &ndash; april</p>
-              <h3 className="mt-1 text-base font-semibold text-foreground">Helder water &amp; bultruggen</h3>
+              <h3 className="mt-1 text-base font-semibold text-foreground">Helder water &amp; bultrug walvissen</h3>
             </div>
             <ul className="w-full space-y-2">
               {[
                 "Helderste water en uitstekend zicht.",
                 "Bultruggen worden regelmatig gezien van januari tot en met april.",
-                "De Christmas winds brengen winderig weer en af en toe ruwere zee.",
+                "De “Christmas winds” brengt winderig weer en af en toe ruwere zee.",
                 "Saba Day is de eerste vrijdag van december.",
               ].map((item) => (
                 <li key={item} className="flex items-start gap-2 text-sm text-muted-foreground">
@@ -441,7 +420,7 @@ export function NlPlanYourTrip() {
           <div className="not-prose rounded-xl border border-border/50 bg-card p-5 flex flex-col gap-3">
             <div>
               <p className="text-xs font-semibold uppercase tracking-widest text-primary">Mei &ndash; juni</p>
-              <h3 className="mt-1 text-base font-semibold text-foreground">Warm water &amp; minder druk</h3>
+              <h3 className="mt-1 text-base font-semibold text-foreground">Warm water &amp; minder drukte</h3>
             </div>
             <ul className="w-full space-y-2">
               {[
@@ -467,7 +446,7 @@ export function NlPlanYourTrip() {
             </div>
             <ul className="w-full space-y-2">
               {[
-                "Late zomer en herfst brengen vaak rustige zee en uitstekende duikomstandigheden, zolang er geen tropische systemen in de buurt zijn.",
+                "De late zomer en herfst brengen vaak rustige zee en uitstekende duikomstandigheden, zolang er geen tropische stormen in de buurt zijn.",
                 "Juli: Carnival.",
                 "Oktober: Sea & Learn.",
                 "November: Rum & Lobster Fest.",
@@ -504,7 +483,7 @@ export function NlPlanYourTrip() {
             <Calendar className="mx-auto h-5 w-5 text-primary" />
             <p className="mt-2 text-xs font-semibold text-foreground">Festivals</p>
             <p className="mt-1 text-xs text-muted-foreground">Juli, oktober, november &amp; december</p>
-            <p className="mt-0.5 text-xs text-muted-foreground">Carnival, Sea &amp; Learn, Rum &amp; Lobster Fest en Saba Day.</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">November: Rum &amp; Lobster Fest.</p>
           </div>
         </div>
 
@@ -516,9 +495,9 @@ export function NlPlanYourTrip() {
               <p className="text-sm font-semibold text-foreground">Reisverzekering aanbevolen</p>
               <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
                 Omdat Saba een klein eiland is dat wordt bediend door vluchten en veerboten, kan
-                het weer af en toe reisplannen beïnvloeden. We raden alle bezoekers een
-                reisverzekering sterk aan, ongeacht het seizoen. Dekking voor vertraagde reizen,
-                weeronderbrekingen en medische noodgevallen geeft gemoedsrust. Een
+                het weer af en toe reisplannen beïnvloeden. We raden alle bezoekers sterk aan een
+                reisverzekering af te sluiten, ongeacht het seizoen. Dekking voor vertraagde reizen,
+                onderbrekingen door extreme weersomstandigheden en medische noodgevallen geeft gemoedsrust. Een
                 duikverzekering en dekking voor medische evacuatie raden we eveneens sterk aan.
               </p>
               <div className="mt-4">
@@ -545,18 +524,14 @@ export function NlPlanYourTrip() {
               <h3 className="text-lg font-semibold text-foreground">Accommodatie</h3>
             </div>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              Saba biedt boetiekhotels, charmante cottages en privévilla&apos;s in plaats van grote
-              resorts. Of je nu een hotel met volledige service zoekt of een rustige
-              eilandretraite — elke accommodatie ligt op korte afstand van Fort Bay Harbor.
-            </p>
+              Saba biedt boetiekhotels, charmante cottages en privé villa&apos;s in plaats van grote resorts. Of je nu een hotel met volledige service zoekt of een rustige eiland retraite, elke accommodatie ligt op korte afstand van Fort Bay Harbor.</p>
             {/* Hotel names/descriptions stay English — partner copy, flagged in REVIEW.md */}
             <HotelPills />
           </div>
         </FeatureImage>
 
         <div className="mt-4 rounded-lg border border-border/40 bg-muted/20 px-5 py-4 text-sm text-muted-foreground">
-          Selecteer hierboven een hotel voor foto&apos;s, voorzieningen en een korte beschrijving
-          (Engels). Persoonlijk advies nodig?{" "}
+          Selecteer hierboven een hotel voor foto&apos;s, voorzieningen en een korte beschrijving (Engels). Persoonlijk advies nodig? Vraag het ons! Ons team denkt graag mee over de beste plek om te verblijven, op basis van je budget, reisstijl, persoonlijke voorkeur en duik plannen.{" "}
           <Link href={localeHref("nl", "/contact?interest=general")} className="font-medium text-primary hover:underline underline-offset-4">
             Vraag het ons
           </Link>{" "}
@@ -594,8 +569,7 @@ export function NlPlanYourTrip() {
               </li>
               <li className="flex items-start gap-2">
                 <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                Duikcomputer — verplicht bij elke duik; te huur
-              </li>
+                Duikcomputer - verplicht bij elke duik; computers te huur</li>
               <li className="flex items-start gap-2">
                 <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
                 Logboek of digitale duikgeschiedenis
@@ -627,8 +601,7 @@ export function NlPlanYourTrip() {
               </li>
               <li className="flex items-start gap-2">
                 <Sun className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                Rifvriendelijke zonnebrand
-              </li>
+                Rif vriendelijke zonnebrand</li>
               <li className="flex items-start gap-2">
                 <Sun className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
                 Hoed of licht jack voor op de boot
@@ -642,7 +615,7 @@ export function NlPlanYourTrip() {
                 Reisziekte-medicijn indien nodig
               </li>
             </ul>
-            <p className="mt-4 text-xs text-muted-foreground">Huuruitrusting is beschikbaar, inclusief trimvest, ademautomaat, wetsuit, masker, vinnen en duikcomputer.</p>
+            <p className="mt-4 text-xs text-muted-foreground">Huur uitrusting is beschikbaar, inclusief trimvest, ademautomaat, wetsuit, masker, vinnen en duikcomputer.</p>
           </div>
         </div>
       </section>
@@ -655,7 +628,7 @@ export function NlPlanYourTrip() {
         </div>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
           Saba heeft een kleine maar verrassend goede eetscene. De meeste restaurants zijn intiem,
-          eigenaar-run en weerspiegelen het karakter van het eiland. Omdat het eiland klein is en
+          gerund door de eigenaar en weerspiegelen het karakter van het eiland. Omdat het eiland klein is en
           de voorraden per boot binnenkomen, veranderen menu&apos;s met de beschikbaarheid en is
           niet elk restaurant elke avond open.
         </p>
@@ -667,7 +640,7 @@ export function NlPlanYourTrip() {
           </div>
           <ul className="space-y-2 text-sm text-muted-foreground">
             <li className="flex items-start gap-2"><Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />Reserveren wordt sterk aangeraden, zeker voor het diner. Veel restaurants zijn klein en zitten snel vol.</li>
-            <li className="flex items-start gap-2"><Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />Openingsdagen verschillen en kunnen per seizoen wijzigen. Bel vooraf of vraag je accommodatie het te bevestigen.</li>
+            <li className="flex items-start gap-2"><Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />Openings dagen verschillen en kunnen per seizoen wijzigen. Bel vooraf of vraag je accommodatie het te bevestigen.</li>
             <li className="flex items-start gap-2"><Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />De meeste restaurants liggen in Windwardside, op loopafstand van de belangrijkste hotels.</li>
             <li className="flex items-start gap-2"><Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />Saba heeft een eigen brouwerij: Deep Dive Brewing Co. Koude biertjes zijn verkrijgbaar bij de meeste restaurants en bij het duikcentrum na je duiken.</li>
           </ul>
@@ -682,13 +655,7 @@ export function NlPlanYourTrip() {
             <div>
               <h3 className="text-lg font-semibold text-foreground">Lokaal eten</h3>
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                De eetscene van Saba is net zo gastvrij als het eiland zelf. Van verse kreeft met
-                uitzicht over de Caribische Zee tot casual cafés en gezellige lokale favorieten —
-                ondanks het formaat van het eiland vind je een verrassende variatie aan
-                uitstekende restaurants. De meeste zijn onafhankelijk, reserveren is aan te raden
-                in drukke periodes en vrijwel alles ligt op korte afstand van je accommodatie of
-                de haven.
-              </p>
+                De “dinner scene” op Saba is net zo gastvrij als het eiland zelf. Van verse kreeft met uitzicht over de Caribische Zee tot casual cafés en gezellige lokale favorieten. Ondanks het kleine formaat van het eiland vind je een verrassende variatie aan uitstekende restaurants. De meeste zijn onafhankelijk, reserveren is aan te raden in drukke periodes en vrijwel alles ligt op korte afstand van je accommodatie of de haven.</p>
             </div>
           </FeatureImage>
           <FeatureImage
@@ -704,11 +671,7 @@ export function NlPlanYourTrip() {
                 Zoek je onze favoriete plekken om te eten, te slapen en te verkennen?
               </p>
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                We hebben een selectie gemaakt van restaurants, accommodaties, vervoerders en
-                lokale ervaringen die we onze gasten met vertrouwen aanbevelen. Blader door onze
-                favoriete lokale bedrijven om je perfecte verblijf op Saba te plannen.
-                (De partnerspagina is in het Engels.)
-              </p>
+                We hebben een selectie gemaakt van restaurants, accommodaties, vervoerders en lokale ervaringen die we onze gasten met vertrouwen aanbevelen. Blader door onze favoriete lokale bedrijven om je perfecte verblijf op Saba te plannen. (De partners pagina is in het Engels.)</p>
               <Button asChild className="mt-4">
                 <Link href="/partners">Bekijk aanbevolen partners &rarr;</Link>
               </Button>
@@ -721,13 +684,10 @@ export function NlPlanYourTrip() {
       <section id={planYourTripAnchors.experiences} className="mt-12 scroll-mt-40">
         <div className="flex items-center gap-3">
           <Compass className="h-5 w-5 text-primary" />
-          <h2 className="text-xl font-semibold text-foreground">Te doen op Saba</h2>
+          <h2 className="text-xl font-semibold text-foreground">Wat te doen op Saba</h2>
         </div>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          Saba biedt veel meer dan duiken van wereldklasse. Wandel een dag door nevelwouden,
-          verken lokale kunstgalerijen, snorkel in kristalhelder water, maak een sunsetcruise of
-          ontdek een van de meest bijzondere eilandgemeenschappen van het Caraïbisch gebied.
-        </p>
+          Saba biedt veel meer dan duiken van wereldklasse. Wandel een dag door nevelwouden, verken lokale kunstgalerijen, snorkel in kristalhelder water, maak een sunset cruise of ontdek een van de meest bijzondere eiland gemeenschappen van het Caraïbisch gebied.</p>
 
         <div className="mt-5 rounded-lg border border-border/40 bg-muted/20 p-5">
           <div className="flex items-center gap-2">
@@ -735,18 +695,18 @@ export function NlPlanYourTrip() {
             <h3 className="text-sm font-semibold text-foreground">Reis je met een niet-duiker?</h3>
           </div>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-            Saba is ook een belonende bestemming als je nooit een fles om zet. Terwijl jij duikt,
+            Saba is ook een alles belonende bestemming als je niet duikt. Terwijl jij duikt,
             kan je metgezel mee op de{" "}
             <Link href={`#${planYourTripAnchors.snorkeling}`} className="font-medium text-primary hover:underline underline-offset-4">
-              middag-snorkeltrip
-            </Link>{" "}
-            — die deelt de boot met de middagduik, zodat jullie toch samen op het water zijn. Aan
+              snorkeltrip in de middag
+            </Link>
+            , die deelt de boot met de middag duik, zodat jullie toch samen op het water zijn. Aan
             land vullen het{" "}
             <Link href={`#${planYourTripAnchors.hiking}`} className="font-medium text-primary hover:underline underline-offset-4">
-              trailnetwerk
+              trail netwerk
             </Link>
-            , dorpscafés, galerijen en ambachtswinkels makkelijk een dag, en een sunsetcruise is
-            een avond uit die iedereen deelt. Voor meer ideeën, bekijk onze{" "}
+            , dorpscafés, galerijen en ambachtswinkels makkelijk een dag, en een sunset cruise is
+            een avond uit die je met elkaar kunt beleven. Voor meer ideeën, bekijk onze{" "}
             <Link href="/partners" className="font-medium text-primary hover:underline underline-offset-4">
               aanbevolen partners
             </Link>{" "}
@@ -764,11 +724,7 @@ export function NlPlanYourTrip() {
             <div>
               <h3 className="text-lg font-semibold text-foreground">Sunsetcruise</h3>
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                Sea Saba biedt zowel gedeelde als privé-sunsetcruises langs Saba&apos;s dramatische
-                kustlijn. Ontspan met een drankje in de hand terwijl de zon over het Caraïbisch
-                gebied zakt, geniet van het spectaculaire uitzicht vanaf het water en ervaar het
-                eiland vanuit een heel ander perspectief.
-              </p>
+                Sea Saba biedt zowel gedeelde als privé-sunset cruises langs Saba&apos;s dramatische kustlijn. Ontspan met een drankje in de hand terwijl de zon in de Caraïbische zee zakt, geniet van het spectaculaire uitzicht vanaf het water en ervaar het eiland vanuit een heel ander perspectief.</p>
               <div className="mt-4 flex flex-wrap items-center gap-3">
                 <TrackedInternalButton
                   href={bookingHref("sunset-cruise")}
@@ -777,8 +733,7 @@ export function NlPlanYourTrip() {
                   buttonLocation="plan_your_trip_sunset"
                   bookingItem="sunset-cruise"
                 >
-                  Boek een sunsetcruise &rarr;
-                </TrackedInternalButton>
+                  Boek een sunset cruise &rarr;</TrackedInternalButton>
                 <TrackedInternalButton
                   variant="outline"
                   href={bookingHref("private-sunset-cruise")}
@@ -787,29 +742,22 @@ export function NlPlanYourTrip() {
                   buttonLocation="plan_your_trip_sunset_private"
                   bookingItem="private-sunset-cruise"
                 >
-                  Boek een privé-sunsetcruise &rarr;
-                </TrackedInternalButton>
+                  Boek een privé-sunset cruise &rarr;</TrackedInternalButton>
               </div>
             </div>
           </FeatureImage>
 
           <FeatureImage
             src="/images/optimized/saba-hiking-signs.webp"
-            alt="Trailborden markeren wandelroutes door Saba's regenwoud en nevelwoud"
+            alt="Trail borden markeren wandelroutes door Saba's regenwoud en nevelwoud"
             centerText
           >
             <div>
               <h3 id={planYourTripAnchors.hiking} className="scroll-mt-40 text-lg font-semibold text-foreground">Wandelen op Saba</h3>
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                Saba&apos;s bekroonde trailnetwerk slingert door droge kustheuvels, weelderig
-                regenwoud en mistige nevelwouden bij de top van Mount Scenery. Gratis trailkaarten
-                zijn beschikbaar.
-              </p>
+                Saba&apos;s bekroonde trail netwerk slingert door droge kust heuvels, weelderig regenwoud en mistige nevelwouden bij de top van Mount Scenery. Gratis trail kaarten zijn beschikbaar.</p>
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                Hoogtepunten zijn de klim naar Mt. Scenery, de ruige Sandy Cruz Trail en
-                kustwandelingen met uitzicht op Statia, St. Kitts en Nevis. De trails lopen van
-                makkelijke kustwandelingen tot zware regenwoudhikes.
-              </p>
+                Hoogtepunten zijn de klim naar Mt. Scenery, de ruige Sandy Cruz Trail en kustwandelingen met uitzicht op Statia, St. Kitts en Nevis. De trails lopen van makkelijke kustwandelingen tot zware regenwoud hikes.</p>
               <Button asChild variant="outline" className="mt-4">
                 <Link href="https://www.sabatourism.com/hiking" target="_blank" rel="noopener noreferrer">
                   Verken de wandelroutes van Saba &rarr;
@@ -828,10 +776,7 @@ export function NlPlanYourTrip() {
             <div>
               <h3 className="text-lg font-semibold text-foreground">Snorkelen</h3>
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                Saba&apos;s ondiepe riffen zijn uitstekend om te snorkelen. De
-                middag-snorkeltrip vaart mee met de duikboten, dus snorkelaars blijven aan de
-                oppervlakte terwijl duikers dieper gaan. Geen brevet nodig.
-              </p>
+                Saba&apos;s ondiepe riffen zijn uitstekend om te snorkelen. De snorkeltrip in de middag is gepland op de duikboten, dus snorkelaars blijven aan de oppervlakte terwijl duikers het diepe water verkennen. Geen brevet nodig.</p>
               <TrackedInternalButton
                 className="mt-4"
                 href={bookingHref("snorkel")}
@@ -857,7 +802,7 @@ export function NlPlanYourTrip() {
 
           <FeatureImage
             src="/images/optimized/saba-lace.webp"
-            alt="Traditionele Saba Lace, een delicaat handgemaakte eilandtraditie"
+            alt="Traditionele Saba Lace, een delicaat handgemaakte eiland traditie"
             centerText
           >
             <div>
@@ -937,11 +882,7 @@ export function NlPlanYourTrip() {
       <section id={planYourTripAnchors.history} className="mt-12 scroll-mt-40">
         <h2 className="text-xl font-semibold text-foreground">Het eiland Saba</h2>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          Saba is een vulkanisch eiland van 13 km² en bijzondere gemeente van
-          Nederland, dat dramatisch oprijst uit de Caribische Zee tot de 887 meter (2.910 voet)
-          hoge top van Mount Scenery. Met circa 2.000 inwoners en vrijwel geen vlakke grond heeft
-          het dramatische landschap de geschiedenis, cultuur en levenswijze van het eiland gevormd.
-        </p>
+          Saba is een vulkanisch eiland van dertien vierkante kilometer groot en is een bijzondere gemeente van Nederland, dat dramatisch oprijst uit de Caribische Zee tot de 887 meter (2.910 voet) hoge top van Mount Scenery. Met circa 2.000 inwoners en vrijwel geen vlakke grond heeft het dramatische landschap de geschiedenis, cultuur en levenswijze van het eiland gevormd.</p>
         <div className="mt-8 flex flex-col gap-16 lg:gap-20">
           <FeatureImage
             src="/images/optimized/saba-ladder-bay.webp"
@@ -953,16 +894,9 @@ export function NlPlanYourTrip() {
               <h3 className="text-lg font-semibold text-foreground">The Ladder</h3>
               <div className="space-y-4">
                 <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                  Lang voordat Saba wegen of een haven had, bereikten mensen en goederen het eiland
-                  via The Ladder: bijna 800 in de rotsen uitgehouwen stenen treden. Van voedsel tot
-                  bouwmaterialen — alles werd met de hand van de kust naar de dorpen bovenop
-                  gedragen.
-                </p>
+                  Lang voordat Saba wegen of een haven had, bereikten mensen en goederen het eiland via The Ladder: bijna 800 in de rotsen uitgehouwen stenen treden. Van voedsel tot bouwmaterialen, alles werd met de hand van de kust naar de dorpen bovenop gedragen.</p>
                 <p className="text-sm leading-relaxed text-muted-foreground">
-                  The Ladder is nog steeds een van Saba&apos;s belangrijkste historische
-                  monumenten. Het gerestaureerde pad is een belonende hike die geschiedenis
-                  combineert met spectaculaire kustuitzichten.
-                </p>
+                  The Ladder is nog steeds een van Saba&apos;s belangrijkste historische monumenten. Het gerestaureerde pad is een belonende hike die geschiedenis combineert met spectaculaire kust uitzichten.</p>
               </div>
             </div>
           </FeatureImage>
@@ -975,17 +909,9 @@ export function NlPlanYourTrip() {
               <h3 className="text-lg font-semibold text-foreground">The Road That Couldn&apos;t Be Built</h3>
               <div className="space-y-4">
                 <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                  Generaties lang beweerden experts dat Saba&apos;s steile vulkanische hellingen
-                  een weg onmogelijk maakten — vandaar de bijnaam &quot;The Road That Couldn&apos;t
-                  Be Built.&quot; De Saban ingenieur Josephus Lambert Hassell leerde zichzelf
-                  wegenbouw en leidde de inspanning om de dorpen van het eiland te verbinden.
-                </p>
+                  Generaties lang beweerden experts dat Saba&apos;s steile vulkanische hellingen een weg onmogelijk maakten, vandaar de bijnaam &quot;The Road That Couldn&apos;t Be Built.&quot; De Sabaanse ingenieur Josephus Lambert Hassell leerde zichzelf wegenbouw en leidde het gigantische en inspannende project om de dorpen van het eiland te verbinden.</p>
                 <p className="text-sm leading-relaxed text-muted-foreground">
-                  In fases voltooid in het midden van de 20e eeuw, veranderde de weg het leven op
-                  Saba door Windwardside, The Bottom, Hell&apos;s Gate, St. Johns en Fort Bay met
-                  elkaar te verbinden. Vandaag is het een van de mooiste wegen van het Caraïbisch
-                  gebied en een eerbetoon aan Saban volharding.
-                </p>
+                  In fases, voltooid in het midden van de 20e eeuw, veranderde de weg het leven op Saba door Windwardside, The Bottom, Hell&apos;s Gate, St. Johns en Fort Bay door ze met elkaar te verbinden. Vandaag is het een van de mooiste wegen van het Caraïbisch gebied en een eerbetoon aan Sabaanse volharding.</p>
               </div>
             </div>
           </FeatureImage>
@@ -994,24 +920,21 @@ export function NlPlanYourTrip() {
           <div className="rounded-lg border border-border/40 bg-muted/20 p-4">
             <h3 className="text-sm font-semibold text-foreground">Een unieke Caribische geschiedenis</h3>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              Saba is onafgebroken bewoond sinds de jaren 1640, toen Nederlandse kolonisten de
-              kenmerkende architectuur van witte huisjes met rode daken vestigden — een stijl die
+              Saba is onafgebroken bewoond geweest, toen Nederlandse kolonisten, in de jaren 1640, de
+              kenmerkende architectuur van witte huisjes met rode daken vestigden. Een stijl die
               je vandaag nog overal in Windwardside en The Bottom ziet. Het eiland wisselde
-              meerdere keren van Europese machthebber voordat het definitief onder Nederlands
+              meerdere keren van Europese macht hebber voordat het definitief onder Nederlands
               bestuur kwam.
             </p>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              Omdat het eiland geen natuurlijke haven heeft, kwamen alle lading en bezoekers
-              historisch per kleine boot via Fort Bay binnen — Saba was daardoor eeuwenlang een
-              van de meest geïsoleerde gemeenschappen van het Caraïbisch gebied.
-            </p>
+              Omdat het eiland geen natuurlijke haven heeft, kwamen alle lading en bezoekers historisch per kleine boot via Fort Bay binnen. Saba was daardoor eeuwenlang een van de meest geïsoleerde gemeenschappen van het Caraïbisch gebied.</p>
           </div>
           <div className="rounded-lg border border-border/40 bg-muted/20 p-4">
             <h3 className="text-sm font-semibold text-foreground">Saba vandaag</h3>
             <ul className="mt-2 space-y-2 text-sm text-muted-foreground">
               <li className="flex items-start gap-2"><Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />Bijzondere gemeente van Nederland sinds 2010</li>
               <li className="flex items-start gap-2"><Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />Geen cruiseschepen, geen casino&apos;s, geen grote resorts</li>
-              <li className="flex items-start gap-2"><Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />Huisvest de Saba University School of Medicine</li>
+              <li className="flex items-start gap-2"><Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />Saba huisvest de “Saba University School of Medicine”</li>
               <li className="flex items-start gap-2"><Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />Bekend om ambachtelijke producten, waaronder Saba Lace en glaskunst</li>
               <li className="flex items-start gap-2"><Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />The Bottom is de hoofdstad; Windwardside is het belangrijkste toeristische dorp</li>
               <li className="flex items-start gap-2"><Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />Beschermd door het Saba Marine Park, opgericht in 1987</li>
@@ -1054,9 +977,7 @@ export function NlPlanYourTrip() {
       <section className="mt-14 rounded-lg border border-border/40 bg-muted/20 p-8 text-center">
         <h2 className="text-xl font-semibold text-foreground">Klaar voor Saba?</h2>
         <p className="mt-3 text-base text-muted-foreground">
-          Wij helpen met accommodatie, vervoer en duiken, zodat jij je kunt concentreren op een
-          van de meest ongerepte marineparken van het Caraïbisch gebied.
-        </p>
+          Wij helpen je graag met accommodatie, vervoer en duiken, zodat jij je kunt concentreren op een van de meest ongerepte marineparken van het Caraïbisch gebied.</p>
         <div className="mt-6 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
           <TrackedInternalButton
             size="lg"
