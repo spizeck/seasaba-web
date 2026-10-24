@@ -20,7 +20,7 @@ export const review: TranslationReview = {
   reviewedBy: null,
   reviewedAt: null,
   source: "app/(en)/(content)/contact/page.tsx",
-  sourceHash: "e7a153af9857a7aff180ee964f9dac0475fa1a2d",
+  sourceHash: "6ea680cd885a9633c9289315cc0622c9f1ec1f2a",
 };
 
 export const nlMetadata = {
