@@ -32,14 +32,6 @@ const TEAM_MEMBERS: TeamMember[] = [
     languages: ["English", "Dutch", "German"],
   },
   {
-    name: "Otto",
-    title: "Head Boat Captain & Dive Instructor",
-    bio: "Born and raised on Saba, Otto has been diving and running boats for decades. He doesn't have much of a filter, loves to laugh, and believes diving should always be an adventure. A passionate technical diver and fisherman, Otto is happiest when he's on the water, below it, or telling stories about both.",
-    image: "/images/optimized/otto.webp",
-    languages: ["English", "Spanish"],
-    funFact: "Sea Saba's first Divemaster in 1985",
-  },
-  {
     name: "Aaron",
     title: "Senior Boat Captain & Dive Instructor",
     bio: "Originally from the United States, Aaron has spent more than 14 years with Sea Saba. A USCG 100-ton Master Captain and instructor, he's known for his calm professionalism and easygoing personality. Off the boat, you'll usually find him watching Texas football or spoiling his cats. His experience and sense of humor have made him a favorite with guests and crew alike.",
@@ -309,23 +301,29 @@ export function TeamCarousel() {
             style={{ transform: `translateX(${translateX}%)` }}
             aria-live="polite"
           >
-            {Array.from({ length: totalGroups }).map((_, groupIdx) => (
-              <div
-                key={groupIdx}
-                className="w-full flex-shrink-0 grid gap-5"
-                style={{
-                  gridTemplateColumns: `repeat(${cardsPerView}, minmax(0, 1fr))`,
-                }}
-                aria-hidden={groupIdx !== index}
-              >
-                {TEAM_MEMBERS.slice(
-                  groupIdx * cardsPerView,
-                  groupIdx * cardsPerView + cardsPerView
-                ).map((member) => (
-                  <TeamCard key={member.name} member={member} />
-                ))}
-              </div>
-            ))}
+            {Array.from({ length: totalGroups }).map((_, groupIdx) => {
+              const members = TEAM_MEMBERS.slice(
+                groupIdx * cardsPerView,
+                groupIdx * cardsPerView + cardsPerView
+              );
+              const isPartial = members.length < cardsPerView;
+              return (
+                <div
+                  key={groupIdx}
+                  className="w-full flex-shrink-0 grid gap-5 justify-center"
+                  style={{
+                    gridTemplateColumns: isPartial
+                      ? `repeat(${members.length}, calc((100% - ${(cardsPerView - 1) * 1.25}rem) / ${cardsPerView}))`
+                      : `repeat(${cardsPerView}, minmax(0, 1fr))`,
+                  }}
+                  aria-hidden={groupIdx !== index}
+                >
+                  {members.map((member) => (
+                    <TeamCard key={member.name} member={member} />
+                  ))}
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
