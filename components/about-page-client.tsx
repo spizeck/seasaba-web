@@ -192,8 +192,11 @@ export function TeamCarousel({ members = TEAM_MEMBERS }: { members?: TeamMember[
       const cpv = getCardsPerView();
       setCardsPerView(cpv);
       setIndex((prev) => {
-        const maxGroup = Math.max(0, Math.ceil(memberCount / cpv) - 1);
-        return Math.min(Math.max(prev, 0), maxGroup);
+        const groups = Math.ceil(memberCount / cpv);
+        if (groups < 1) return 0;
+        // Modulo keeps a transient clone index (-1 / groups) pointed at its
+        // real page instead of dropping the in-flight wrap.
+        return ((prev % groups) + groups) % groups;
       });
     };
     update();
@@ -209,10 +212,19 @@ export function TeamCarousel({ members = TEAM_MEMBERS }: { members?: TeamMember[
     setIndex((i) => ((i % totalGroups) + totalGroups) % totalGroups);
   }, [totalGroups]);
 
+  // Two frames: the first lets the transition-disabled snap actually paint —
+  // clearing `instant` in the same frame could coalesce with the transform
+  // jump and animate the wrap backwards.
   useEffect(() => {
     if (!instant) return;
-    const raf = requestAnimationFrame(() => setInstant(false));
-    return () => cancelAnimationFrame(raf);
+    let raf2 = 0;
+    const raf1 = requestAnimationFrame(() => {
+      raf2 = requestAnimationFrame(() => setInstant(false));
+    });
+    return () => {
+      cancelAnimationFrame(raf1);
+      cancelAnimationFrame(raf2);
+    };
   }, [instant]);
 
   // Normalize once the slide transition ends; the timeout is a fallback for

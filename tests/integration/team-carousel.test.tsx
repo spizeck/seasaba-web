@@ -19,10 +19,11 @@ vi.stubGlobal("matchMedia", (query: string) => ({
 }));
 
 // jsdom lacks requestAnimationFrame (pretendToBeVisual is off); the carousel
-// uses one frame to re-enable the slide transition after a wrap snap.
+// uses two frames to re-enable the slide transition after a wrap snap.
 vi.stubGlobal("requestAnimationFrame", (cb: FrameRequestCallback) =>
   setTimeout(() => cb(performance.now()), 0)
 );
+vi.stubGlobal("cancelAnimationFrame", (id: number) => clearTimeout(id));
 
 const member = (name: string) => ({
   name,
