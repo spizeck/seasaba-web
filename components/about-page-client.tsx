@@ -174,40 +174,72 @@ function TeamCard({ member }: { member: TeamMember }) {
   );
 }
 
-export function TeamCarousel() {
+export function TeamCarousel({ members = TEAM_MEMBERS }: { members?: TeamMember[] }) {
   const [index, setIndex] = useState(0);
   const [cardsPerView, setCardsPerView] = useState(3);
   const [isPaused, setIsPaused] = useState(false);
+  const [instant, setInstant] = useState(false);
   const trackRef = useRef<HTMLDivElement>(null);
   const dragStart = useRef<number | null>(null);
   const isDragging = useRef(false);
   const autoplayRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const totalGroups = Math.ceil(TEAM_MEMBERS.length / cardsPerView);
+  const memberCount = members.length;
+  const totalGroups = Math.ceil(memberCount / cardsPerView);
 
   useEffect(() => {
     const update = () => {
       const cpv = getCardsPerView();
       setCardsPerView(cpv);
       setIndex((prev) => {
-        const maxGroup = Math.ceil(TEAM_MEMBERS.length / cpv) - 1;
-        return Math.min(prev, maxGroup);
+        const maxGroup = Math.max(0, Math.ceil(memberCount / cpv) - 1);
+        return Math.min(Math.max(prev, 0), maxGroup);
       });
     };
     update();
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
-  }, []);
+  }, [memberCount]);
 
-  const goTo = useCallback(
-    (target: number) => {
-      setIndex((target % totalGroups + totalGroups) % totalGroups);
-    },
+  // Landing on a cloned boundary slide snaps back to the identical real page
+  // with the transition disabled, which is what makes the loop seamless.
+  const normalizeIndex = useCallback(() => {
+    if (totalGroups < 1) return;
+    setInstant(true);
+    setIndex((i) => ((i % totalGroups) + totalGroups) % totalGroups);
+  }, [totalGroups]);
+
+  useEffect(() => {
+    if (!instant) return;
+    const raf = requestAnimationFrame(() => setInstant(false));
+    return () => cancelAnimationFrame(raf);
+  }, [instant]);
+
+  // Normalize once the slide transition ends; the timeout is a fallback for
+  // cases where transitionend never fires (e.g. reduced-motion no-transition).
+  useEffect(() => {
+    if (index >= 0 && index < totalGroups) return;
+    const reduced =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const fallback = setTimeout(normalizeIndex, reduced ? 0 : 600);
+    return () => clearTimeout(fallback);
+  }, [index, totalGroups, normalizeIndex]);
+
+  const onTrackTransitionEnd = (e: React.TransitionEvent) => {
+    if (e.target !== e.currentTarget) return;
+    if (index < 0 || index >= totalGroups) normalizeIndex();
+  };
+
+  const goTo = useCallback((target: number) => setIndex(target), []);
+
+  // The transient positions -1 and totalGroups are the cloned slides; clamping
+  // absorbs extra presses while a wrap transition is still in flight.
+  const prev = useCallback(() => setIndex((i) => Math.max(i - 1, -1)), []);
+  const next = useCallback(
+    () => setIndex((i) => Math.min(i + 1, totalGroups)),
     [totalGroups]
   );
-
-  const prev = useCallback(() => goTo(index - 1), [goTo, index]);
-  const next = useCallback(() => goTo(index + 1), [goTo, index]);
 
   // Autoplay — disabled when the visitor prefers reduced motion
   useEffect(() => {
@@ -219,7 +251,7 @@ export function TeamCarousel() {
       return;
     }
     autoplayRef.current = setInterval(() => {
-      setIndex((current) => (current + 1) % totalGroups);
+      setIndex((current) => Math.min(current + 1, totalGroups));
     }, 5000);
     return () => {
       if (autoplayRef.current) clearInterval(autoplayRef.current);
@@ -248,6 +280,12 @@ export function TeamCarousel() {
     else if (delta < -40) prev();
   };
 
+  const onPointerCancel = () => {
+    dragStart.current = null;
+    isDragging.current = false;
+    setIsPaused(false);
+  };
+
   const onKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "ArrowLeft") {
       prev();
@@ -259,7 +297,42 @@ export function TeamCarousel() {
     }
   };
 
-  const translateX = -(index * 100);
+  if (memberCount === 0) return null;
+
+  // Fewer members than fit in one view: render them centered at card width
+  // with no controls, clones, or empty grid cells.
+  if (memberCount <= cardsPerView) {
+    return (
+      <div
+        className="flex flex-wrap justify-center gap-5"
+        role="region"
+        aria-label="Team members carousel"
+      >
+        {members.map((member) => (
+          <div
+            key={member.name}
+            className="w-full sm:w-[calc(50%-0.625rem)] lg:w-[calc((100%-2.5rem)/3)]"
+          >
+            <TeamCard member={member} />
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  // Pages wrap around the member list so the final page is always full —
+  // with 10 members and 3 per view it is {Gunner, Mel, Jeanine & Marc}
+  // instead of Gunner alone surrounded by empty cells.
+  const pages: TeamMember[][] = Array.from({ length: totalGroups }, (_, g) =>
+    Array.from(
+      { length: cardsPerView },
+      (_, i) => members[(g * cardsPerView + i) % memberCount]
+    )
+  );
+  const slides = [pages[totalGroups - 1], ...pages, pages[0]];
+
+  const logicalIndex = ((index % totalGroups) + totalGroups) % totalGroups;
+  const translateX = -((index + 1) * 100);
 
   return (
     <div className="space-y-5">
@@ -290,12 +363,16 @@ export function TeamCarousel() {
 
         {/* Track container */}
         <div
-          className="overflow-hidden cursor-grab active:cursor-grabbing"
+          className="overflow-hidden cursor-grab active:cursor-grabbing touch-pan-y"
           role="region"
           aria-label="Team members carousel"
           onPointerDown={onPointerDown}
           onPointerMove={onPointerMove}
           onPointerUp={onPointerUp}
+          onPointerCancel={onPointerCancel}
+          // Without this, dragging a card photo starts a native image drag and
+          // cancels the pointer stream mid-swipe.
+          onDragStart={(e) => e.preventDefault()}
           onKeyDown={onKeyDown}
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
@@ -306,27 +383,27 @@ export function TeamCarousel() {
           <div
             ref={trackRef}
             className="flex transition-transform duration-500 ease-in-out motion-reduce:transition-none"
-            style={{ transform: `translateX(${translateX}%)` }}
+            style={{
+              transform: `translateX(${translateX}%)`,
+              transition: instant ? "none" : undefined,
+            }}
+            onTransitionEnd={onTrackTransitionEnd}
             aria-live="polite"
           >
-            {Array.from({ length: totalGroups }).map((_, groupIdx) => {
-              const members = TEAM_MEMBERS.slice(
-                groupIdx * cardsPerView,
-                groupIdx * cardsPerView + cardsPerView
-              );
-              const isPartial = members.length < cardsPerView;
+            {slides.map((slide, slideIdx) => {
+              const isClone =
+                slideIdx === 0 || slideIdx === slides.length - 1;
+              const pageIdx = slideIdx - 1;
               return (
                 <div
-                  key={groupIdx}
-                  className="w-full flex-shrink-0 grid gap-5 justify-center"
+                  key={slideIdx}
+                  className="w-full flex-shrink-0 grid gap-5"
                   style={{
-                    gridTemplateColumns: isPartial
-                      ? `repeat(${members.length}, calc((100% - ${(cardsPerView - 1) * 1.25}rem) / ${cardsPerView}))`
-                      : `repeat(${cardsPerView}, minmax(0, 1fr))`,
+                    gridTemplateColumns: `repeat(${cardsPerView}, minmax(0, 1fr))`,
                   }}
-                  aria-hidden={groupIdx !== index}
+                  aria-hidden={isClone || pageIdx !== logicalIndex}
                 >
-                  {members.map((member) => (
+                  {slide.map((member) => (
                     <TeamCard key={member.name} member={member} />
                   ))}
                 </div>
@@ -347,14 +424,14 @@ export function TeamCarousel() {
             <button
               key={i}
               role="tab"
-              aria-selected={i === index}
+              aria-selected={i === logicalIndex}
               aria-label={`Go to page ${i + 1} of ${totalGroups}`}
               onClick={() => {
                 goTo(i);
                 setIsPaused(true);
               }}
               className={`rounded-full transition-[width,background-color] duration-200 focus-ring ${
-                i === index
+                i === logicalIndex
                   ? "w-5 h-2 bg-primary"
                   : "w-2 h-2 bg-border hover:bg-muted-foreground/40"
               }`}
