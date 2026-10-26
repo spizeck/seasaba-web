@@ -19,9 +19,9 @@ vi.stubGlobal(
 );
 
 // Guards the odd-roster regression: when the member count leaves a carousel
-// page partially filled (9 members -> 5 tablet pages of 2, last holding 1
+// page partially filled (10 members -> 4 desktop pages of 3, last holding 1
 // card), that page must size its cards like a full page and center them
-// instead of leaving a blank column.
+// instead of leaving empty columns.
 describe("team carousel partial pages", () => {
   function groupsOf(container: HTMLElement): HTMLElement[] {
     const region = container.querySelector(
@@ -30,12 +30,12 @@ describe("team carousel partial pages", () => {
     return Array.from(region!.querySelector(".flex")!.children) as HTMLElement[];
   }
 
-  it("centers the lone card on the final tablet page", () => {
-    window.innerWidth = 800;
+  it("centers the lone card on the final desktop page", () => {
+    window.innerWidth = 1440;
     const { container } = render(<TeamCarousel />);
     const groups = groupsOf(container);
 
-    expect(groups).toHaveLength(5);
+    expect(groups).toHaveLength(4);
     const last = groups[groups.length - 1];
     expect(last.children).toHaveLength(1);
     expect(last.style.gridTemplateColumns).toContain("calc");
@@ -43,13 +43,13 @@ describe("team carousel partial pages", () => {
   });
 
   it("keeps the fluid minmax layout on fully populated pages", () => {
-    window.innerWidth = 800;
+    window.innerWidth = 1440;
     const { container } = render(<TeamCarousel />);
     const groups = groupsOf(container);
 
     for (const group of groups.slice(0, -1)) {
       expect(group.style.gridTemplateColumns).toBe(
-        "repeat(2, minmax(0, 1fr))"
+        "repeat(3, minmax(0, 1fr))"
       );
     }
   });
