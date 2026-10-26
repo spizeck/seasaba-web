@@ -178,6 +178,13 @@ export function TeamCarousel({ members = TEAM_MEMBERS }: { members?: TeamMember[
   const [index, setIndex] = useState(0);
   const [cardsPerView, setCardsPerView] = useState(3);
   const [isPaused, setIsPaused] = useState(false);
+  // Synchronous mirror of isPaused: an autoplay tick queued between a pausing
+  // click and the effect's interval cleanup must not still advance.
+  const isPausedRef = useRef(false);
+  const setPaused = useCallback((paused: boolean) => {
+    isPausedRef.current = paused;
+    setIsPaused(paused);
+  }, []);
   const [instant, setInstant] = useState(false);
   const trackRef = useRef<HTMLDivElement>(null);
   const dragStart = useRef<number | null>(null);
@@ -186,17 +193,25 @@ export function TeamCarousel({ members = TEAM_MEMBERS }: { members?: TeamMember[
 
   const memberCount = members.length;
   const totalGroups = Math.ceil(memberCount / cardsPerView);
+  const cardsPerViewRef = useRef(cardsPerView);
+
+  useEffect(() => {
+    cardsPerViewRef.current = cardsPerView;
+  }, [cardsPerView]);
 
   useEffect(() => {
     const update = () => {
       const cpv = getCardsPerView();
+      // Groups under the pre-resize layout, needed to recognize whether the
+      // current index was sitting on a transient clone position.
+      const oldGroups = Math.max(1, Math.ceil(memberCount / cardsPerViewRef.current));
       setCardsPerView(cpv);
       setIndex((prev) => {
         const groups = Math.ceil(memberCount / cpv);
         if (groups < 1) return 0;
-        // Modulo keeps a transient clone index (-1 / groups) pointed at its
-        // real page instead of dropping the in-flight wrap.
-        return ((prev % groups) + groups) % groups;
+        if (prev === -1) return groups - 1; // leading clone → last page
+        if (prev === oldGroups) return 0;   // trailing clone → first page
+        return Math.min(prev, groups - 1);
       });
     };
     update();
@@ -263,6 +278,7 @@ export function TeamCarousel({ members = TEAM_MEMBERS }: { members?: TeamMember[
       return;
     }
     autoplayRef.current = setInterval(() => {
+      if (isPausedRef.current) return;
       setIndex((current) => Math.min(current + 1, totalGroups));
     }, 5000);
     return () => {
@@ -273,7 +289,7 @@ export function TeamCarousel({ members = TEAM_MEMBERS }: { members?: TeamMember[
   const onPointerDown = (e: React.PointerEvent) => {
     dragStart.current = e.clientX;
     isDragging.current = false;
-    setIsPaused(true);
+    setPaused(true);
     (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
   };
 
@@ -286,7 +302,7 @@ export function TeamCarousel({ members = TEAM_MEMBERS }: { members?: TeamMember[
     if (dragStart.current === null) return;
     const delta = dragStart.current - e.clientX;
     dragStart.current = null;
-    setIsPaused(false);
+    setPaused(false);
     if (!isDragging.current) return;
     if (delta > 40) next();
     else if (delta < -40) prev();
@@ -295,17 +311,17 @@ export function TeamCarousel({ members = TEAM_MEMBERS }: { members?: TeamMember[
   const onPointerCancel = () => {
     dragStart.current = null;
     isDragging.current = false;
-    setIsPaused(false);
+    setPaused(false);
   };
 
   const onKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "ArrowLeft") {
       prev();
-      setIsPaused(true);
+      setPaused(true);
     }
     if (e.key === "ArrowRight") {
       next();
-      setIsPaused(true);
+      setPaused(true);
     }
   };
 
@@ -353,7 +369,7 @@ export function TeamCarousel({ members = TEAM_MEMBERS }: { members?: TeamMember[
         <button
           onClick={() => {
             prev();
-            setIsPaused(true);
+            setPaused(true);
           }}
           className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 sm:-translate-x-5 z-10 w-9 h-9 rounded-full bg-card border border-border/60 shadow-sm flex items-center justify-center text-muted-foreground pressable hover:text-foreground hover:shadow-md focus-ring"
           aria-label="Previous team members"
@@ -365,7 +381,7 @@ export function TeamCarousel({ members = TEAM_MEMBERS }: { members?: TeamMember[
         <button
           onClick={() => {
             next();
-            setIsPaused(true);
+            setPaused(true);
           }}
           className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 sm:translate-x-5 z-10 w-9 h-9 rounded-full bg-card border border-border/60 shadow-sm flex items-center justify-center text-muted-foreground pressable hover:text-foreground hover:shadow-md focus-ring"
           aria-label="Next team members"
@@ -386,10 +402,10 @@ export function TeamCarousel({ members = TEAM_MEMBERS }: { members?: TeamMember[
           // cancels the pointer stream mid-swipe.
           onDragStart={(e) => e.preventDefault()}
           onKeyDown={onKeyDown}
-          onMouseEnter={() => setIsPaused(true)}
-          onMouseLeave={() => setIsPaused(false)}
-          onFocus={() => setIsPaused(true)}
-          onBlur={() => setIsPaused(false)}
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+          onFocus={() => setPaused(true)}
+          onBlur={() => setPaused(false)}
           tabIndex={0}
         >
           <div
@@ -440,7 +456,7 @@ export function TeamCarousel({ members = TEAM_MEMBERS }: { members?: TeamMember[
               aria-label={`Go to page ${i + 1} of ${totalGroups}`}
               onClick={() => {
                 goTo(i);
-                setIsPaused(true);
+                setPaused(true);
               }}
               className={`rounded-full transition-[width,background-color] duration-200 focus-ring ${
                 i === logicalIndex

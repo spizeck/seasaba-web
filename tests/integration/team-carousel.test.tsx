@@ -111,6 +111,24 @@ describe("TeamCarousel", () => {
     await waitFor(() => expect(transform()).toBe("translateX(-100%)"));
   });
 
+  it("keeps wrap targets when the viewport resizes mid-transition", async () => {
+    render(<TeamCarousel />);
+    await setViewportWidth(1440); // 3 per view → 4 pages
+    // Sit on the trailing clone (index = totalGroups), then shrink to 2 per
+    // view: the clone position must map to page 0, not collide with a real page.
+    fireEvent.click(screen.getByRole("tab", { name: "Go to page 4 of 4" }));
+    fireEvent.click(screen.getByRole("button", { name: "Next team members" }));
+    expect(transform()).toBe("translateX(-500%)");
+    await setViewportWidth(700);
+    await waitFor(() => expect(transform()).toBe("translateX(-100%)"));
+
+    // Symmetric case: leading clone (index = -1) → last page of the new count.
+    fireEvent.click(screen.getByRole("button", { name: "Previous team members" }));
+    expect(transform()).toBe("translateX(0%)");
+    await setViewportWidth(1024);
+    await waitFor(() => expect(transform()).toBe("translateX(-400%)"));
+  });
+
   it("renders a single member without carousel controls", () => {
     render(<TeamCarousel members={[member("Solo")]} />);
     expect(
