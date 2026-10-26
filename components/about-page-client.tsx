@@ -309,23 +309,29 @@ export function TeamCarousel() {
             style={{ transform: `translateX(${translateX}%)` }}
             aria-live="polite"
           >
-            {Array.from({ length: totalGroups }).map((_, groupIdx) => (
-              <div
-                key={groupIdx}
-                className="w-full flex-shrink-0 grid gap-5"
-                style={{
-                  gridTemplateColumns: `repeat(${cardsPerView}, minmax(0, 1fr))`,
-                }}
-                aria-hidden={groupIdx !== index}
-              >
-                {TEAM_MEMBERS.slice(
-                  groupIdx * cardsPerView,
-                  groupIdx * cardsPerView + cardsPerView
-                ).map((member) => (
-                  <TeamCard key={member.name} member={member} />
-                ))}
-              </div>
-            ))}
+            {Array.from({ length: totalGroups }).map((_, groupIdx) => {
+              const members = TEAM_MEMBERS.slice(
+                groupIdx * cardsPerView,
+                groupIdx * cardsPerView + cardsPerView
+              );
+              const isPartial = members.length < cardsPerView;
+              return (
+                <div
+                  key={groupIdx}
+                  className="w-full flex-shrink-0 grid gap-5 justify-center"
+                  style={{
+                    gridTemplateColumns: isPartial
+                      ? `repeat(${members.length}, calc((100% - ${(cardsPerView - 1) * 1.25}rem) / ${cardsPerView}))`
+                      : `repeat(${cardsPerView}, minmax(0, 1fr))`,
+                  }}
+                  aria-hidden={groupIdx !== index}
+                >
+                  {members.map((member) => (
+                    <TeamCard key={member.name} member={member} />
+                  ))}
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
