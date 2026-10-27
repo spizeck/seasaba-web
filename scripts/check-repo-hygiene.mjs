@@ -13,7 +13,7 @@
 // Exit 1 with a named file/pattern + reason per failure.
 
 import { execSync } from "node:child_process";
-import { existsSync } from "node:fs";
+import { existsSync, readdirSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -148,8 +148,10 @@ for (const file of trackedFiles) {
 
 // Structures removed on purpose during cleanup — reintroducing them silently
 // would resurrect the MDX pipeline and pre-consolidation doc sprawl.
+// content/<locale>/ is the deliberate translation-module structure from #151
+// (typed dictionaries + reviewed page modules) — only MDX content is banned.
 const REMOVED_STRUCTURES = [
-  [/^content\//, "the old content/ MDX directory was removed — put content in app/ TSX pages"],
+  [/^content\/(?!en\/|nl\/|ui\.ts$)/, "the old content/ MDX directory was removed — locale content lives under content/<locale>/"],
   [/\.mdx$/, "MDX support was removed — use ordinary TSX pages instead"],
 ];
 
@@ -159,7 +161,13 @@ for (const file of trackedFiles) {
   }
 }
 if (existsSync(path.join(ROOT, "content"))) {
-  failures.push("content/ directory exists — the MDX pipeline was removed; put content in app/ TSX pages");
+  for (const entry of readdirSync(path.join(ROOT, "content"))) {
+    if (!["en", "nl", "ui.ts"].includes(entry)) {
+      failures.push(
+        `content/${entry} is not a locale directory — content/ holds per-locale translation modules (content/en, content/nl, …)`,
+      );
+    }
+  }
 }
 
 // ------------------------------------------------------------------------------
