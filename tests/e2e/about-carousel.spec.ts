@@ -87,7 +87,7 @@ async function resetCarousel(page: Page) {
     document.querySelector(sel)?.scrollIntoView({ block: "center" });
   }, CAROUSEL);
   await waitForStableScroll(page);
-  await page.getByRole("tab", { name: "Go to Mel" }).click();
+  await page.getByRole("button", { name: "Go to Mel" }).click();
   await expect
     .poll(() => visibleNames(page), { timeout: 3000 })
     .not.toEqual([]);
@@ -187,7 +187,7 @@ test("desktop wraps seamlessly in both directions", async ({ page }) => {
 
   // Walk to the last position one card at a time: the window slides by one
   // member per click and the tail re-enters from the start of the list.
-  await page.getByRole("tab", { name: "Go to Julijana" }).click();
+  await page.getByRole("button", { name: "Go to Julijana" }).click();
   await expectNames(page, ["Julijana", "Gunner", "Mel"]);
   await next(page).click();
   await expectNames(page, ["Gunner", "Mel", "Jeanine & Marc"]); // last position
@@ -229,7 +229,7 @@ test("rapid clicks and direction reversals stay on real cards", async ({ page })
   await expectNames(page, windowAt(4, 3));
 
   // Same across the wrap boundary: from the last position, three presses.
-  await page.getByRole("tab", { name: "Go to Julijana" }).click();
+  await page.getByRole("button", { name: "Go to Julijana" }).click();
   await expectNames(page, windowAt(8, 3));
   for (let i = 0; i < 3; i++) await next(page).click();
   await expectNames(page, windowAt(1, 3));
@@ -261,7 +261,7 @@ test("tablet shows two cards and mobile one, both wrapping one card at a time", 
     document.querySelector(sel)?.scrollIntoView({ block: "center" });
   }, CAROUSEL);
   await waitForStableScroll(page);
-  await page.getByRole("tab", { name: "Go to Mel" }).click();
+  await page.getByRole("button", { name: "Go to Mel" }).click();
   await expectNames(page, ["Mel"]);
   await next(page).click();
   await expectNames(page, ["Jeanine & Marc"]);

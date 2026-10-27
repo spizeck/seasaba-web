@@ -252,12 +252,19 @@ test.describe("reduced motion", () => {
     const initial = await track.evaluate((el) => (el as HTMLElement).style.transform);
     await page.clock.runFor(12000);
     expect(await track.evaluate((el) => (el as HTMLElement).style.transform)).toBe(initial);
-    // Manual navigation still works — it applies instantly, without a slide
+    // Manual navigation still works — and applies instantly, without a slide
     // animation, so there is no transition to wait out.
     await page.getByRole("button", { name: "Next team members" }).click();
     expect(
       await track.evaluate((el) => (el as HTMLElement).style.transform)
     ).not.toBe(initial);
+    // The move must be instant: assert the track has no transform transition
+    // under reduced motion, not just that the inline target changed.
+    const transition = await track.evaluate((el) => {
+      const s = getComputedStyle(el);
+      return `${s.transitionProperty} ${s.transitionDuration}`;
+    });
+    expect(transition).toMatch(/none|0s/);
   });
 
   test("team carousel does not autoplay for visitors without the reduced-motion preference", async ({ page, isMobile, browserName }) => {

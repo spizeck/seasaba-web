@@ -84,7 +84,7 @@ describe("TeamCarousel", () => {
 
   it("wraps forward onto identical cloned slides then snaps to the real strip", async () => {
     render(<TeamCarousel />);
-    fireEvent.click(screen.getByRole("tab", { name: "Go to Gunner" }));
+    fireEvent.click(screen.getByRole("button", { name: "Go to Gunner" }));
     expect(transform()).toBe(offset(9));
 
     // One more card forward wraps to member 0, displayed via the cloned copy.
@@ -104,7 +104,7 @@ describe("TeamCarousel", () => {
 
   it("absorbs rapid consecutive clicks through the wrap without dead ends", async () => {
     render(<TeamCarousel />);
-    fireEvent.click(screen.getByRole("tab", { name: "Go to Gunner" }));
+    fireEvent.click(screen.getByRole("button", { name: "Go to Gunner" }));
     // Four presses fire while the first wrap transition is still in flight;
     // the cloned runway keeps every intermediate position on real slides.
     for (let i = 0; i < 4; i++) fireEvent.click(nextButton());
@@ -116,13 +116,13 @@ describe("TeamCarousel", () => {
   it("reverses direction cleanly at the boundaries", async () => {
     render(<TeamCarousel />);
     // Forward over the boundary, then back before the transition settles.
-    fireEvent.click(screen.getByRole("tab", { name: "Go to Gunner" }));
+    fireEvent.click(screen.getByRole("button", { name: "Go to Gunner" }));
     fireEvent.click(nextButton());
     expect(transform()).toBe(offset(10));
     fireEvent.click(prevButton());
     expect(transform()).toBe(offset(9)); // retargets mid-flight, no snap needed
     // Backward over the boundary, then forward again.
-    fireEvent.click(screen.getByRole("tab", { name: "Go to Mel" }));
+    fireEvent.click(screen.getByRole("button", { name: "Go to Mel" }));
     fireEvent.click(prevButton());
     expect(transform()).toBe(offset(-1));
     fireEvent.click(nextButton());
@@ -134,7 +134,7 @@ describe("TeamCarousel", () => {
     await setViewportWidth(1440); // 3 per view
     // Sit on the trailing clones (index = memberCount), then shrink to 2 per
     // view: the position must map to index 0, not collide with a real slide.
-    fireEvent.click(screen.getByRole("tab", { name: "Go to Gunner" }));
+    fireEvent.click(screen.getByRole("button", { name: "Go to Gunner" }));
     fireEvent.click(nextButton());
     expect(transform()).toBe(offset(10));
     await setViewportWidth(700);
@@ -156,7 +156,7 @@ describe("TeamCarousel", () => {
     expect(
       screen.queryByRole("button", { name: "Next team members" })
     ).toBeNull();
-    expect(screen.queryAllByRole("tab")).toHaveLength(0);
+    expect(screen.queryAllByRole("button", { name: /^Go to / })).toHaveLength(0);
     expect(screen.getByRole("heading", { name: "A" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "B" })).toBeInTheDocument();
   });
@@ -177,7 +177,7 @@ describe("TeamCarousel", () => {
     expect(
       screen.queryByRole("button", { name: "Next team members" })
     ).toBeNull();
-    expect(screen.queryAllByRole("tab")).toHaveLength(0);
+    expect(screen.queryAllByRole("button", { name: /^Go to / })).toHaveLength(0);
     expect(screen.getAllByRole("heading")).toHaveLength(3);
   });
 

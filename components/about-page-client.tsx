@@ -211,9 +211,14 @@ export function TeamCarousel({ members = TEAM_MEMBERS }: { members?: TeamMember[
       setCardsPerView(getCardsPerView());
       // A resize recomputes every slide width and can shrink the valid index
       // range; normalize without animating so a resize mid-wrap cannot leave
-      // the index pointing at space past the rendered clones.
+      // the index pointing at space past the rendered clones. Any active drag
+      // is cancelled — its pixel step is stale under the new widths.
+      drag.current = null;
+      setDragDelta(null);
       setInstant(true);
-      setIndex((i) => ((i % memberCount) + memberCount) % memberCount);
+      if (memberCount > 0) {
+        setIndex((i) => ((i % memberCount) + memberCount) % memberCount);
+      }
     };
     update();
     window.addEventListener("resize", update);
@@ -240,6 +245,7 @@ export function TeamCarousel({ members = TEAM_MEMBERS }: { members?: TeamMember[
   // pixel-identical real slides, which is what makes the loop seamless.
   const normalizeIndex = useCallback(() => {
     if (drag.current) return; // a pointer is down; the release re-evaluates
+    if (memberCount === 0) return;
     const i = indexRef.current;
     const logical = ((i % memberCount) + memberCount) % memberCount;
     if (logical === i) return;
@@ -430,11 +436,14 @@ export function TeamCarousel({ members = TEAM_MEMBERS }: { members?: TeamMember[
           >
             {Array.from({ length: memberCount * 3 }, (_, slideIdx) => {
               const position = slideIdx - memberCount;
+              // Circular distance from the first visible member, so a window
+              // that wraps past the end still exposes the real slides while
+              // every cloned slide stays hidden from assistive tech.
               const isVisible =
                 slideIdx >= memberCount &&
                 slideIdx < memberCount * 2 &&
-                position >= logicalIndex &&
-                position < logicalIndex + cardsPerView;
+                ((position - logicalIndex + memberCount) % memberCount) <
+                  cardsPerView;
               return (
                 <div
                   key={slideIdx}
@@ -457,14 +466,13 @@ export function TeamCarousel({ members = TEAM_MEMBERS }: { members?: TeamMember[
       {memberCount > 1 && (
         <div
           className="flex justify-center gap-2 pt-1"
-          role="tablist"
+          role="group"
           aria-label="Crew members"
         >
           {members.map((member, i) => (
             <button
               key={member.name}
-              role="tab"
-              aria-selected={i === logicalIndex}
+              aria-current={i === logicalIndex}
               aria-label={`Go to ${member.name}`}
               onClick={() => goTo(i)}
               className={`rounded-full transition-[width,background-color] duration-200 focus-ring ${
