@@ -271,6 +271,46 @@ steps 1–3, no temporary diagnostic route is needed. Only if production stays
 clean should a minimal throw-on-demand check be added temporarily and removed
 immediately after — same pattern as #129's `/sentry-check`.
 
+## Vendored Next.js patch — E789 `Expected RSC response` (PR #262)
+
+`patches/next+16.3.8+002.action-not-found-rsc-404.patch` mirrors the unmerged
+upstream fix [vercel/next.js#97568](https://github.com/vercel/next.js/pull/97568)
+in both the CJS and ESM `app-page-runtime` dist templates.
+
+**The defect**: this app defines no server actions, so the action handler
+answers any `POST` with an unrecognized `Next-Action` header with a
+deliberate `x-nextjs-action-not-found: 1` `text/plain` 404. When that request
+also carries `RSC: 1` (the header the client router itself sends on fetch
+actions — and the shape internet scanners replay, observed in production as
+`POST /index.rsc`), the app-page runtime asserts the cached payload is
+`text/x-component` and throws `InvariantError` E789, converting the correct
+404 into a 500 + server Sentry event.
+
+**The patch**: when the response already carries
+`x-nextjs-action-not-found: 1`, serve the 404 instead of throwing. The
+invariant still fires for any other unexpected content type.
+
+**Why a separate patch file**: patch-package records applied patches per
+package in `node_modules/<pkg>/.patch-package.json`. Adding hunks to an
+existing patch file makes it fail to apply on top of a partially patched
+`node_modules` — exactly what Vercel's restored build cache contains. A new
+sequence-numbered patch file (`next+16.3.8+002.*.patch`) applies cleanly on
+both fresh installs and stale caches; the already-applied older patch is
+detected and skipped.
+
+**Removal condition**: when upgrading `next` past 16.3.8, check whether the
+release includes the upstream fix (PR #97568 merged, or a changelog entry
+for the action-not-found RSC invariant). If it does, delete
+`next+<old-version>+002.action-not-found-rsc-404.patch` and regenerate
+`next+<new-version>.patch` for the asset-prefix fix via
+`npx patch-package next`. If the new release does not include it, the hunk
+must be re-rolled forward onto the new version's dist files — preserving
+whatever status the action handler sets for `x-nextjs-action-not-found`
+rather than hardcoding 404 if a future release changes it. Either way,
+`tests/e2e/rsc-action-probe.spec.ts` is the arbiter: it must keep returning
+the action-not-found response (never E789/500) for the probe shape,
+patched or not.
+
 ## Dependency licensing note — `@sentry/cli` (reviewed 2026-09-23, activated by #130)
 
 `@sentry/nextjs@10.74.0` pulls in `@sentry/cli@2.58.6` (plus eight optional
