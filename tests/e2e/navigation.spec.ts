@@ -106,13 +106,14 @@ test("header shows no horizontal overflow around the desktop-nav breakpoint", as
   await hydratedGoto(page, "/diving", "#main-content");
   const toggle = page.locator('button[aria-controls="mobile-navigation"]');
   const primaryNav = page.getByRole("navigation", { name: "Primary" });
-  for (const width of [740, 767, 768, 769, 800, 840, 900, 1024, 1280]) {
+  // The desktop nav breakpoint is lg (1024px) since the pill header (#204).
+  for (const width of [740, 767, 768, 900, 1023, 1024, 1025, 1280]) {
     await page.setViewportSize({ width, height: 800 });
     const overflow = await page.evaluate(
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth
     );
     expect(overflow, `${width}px document overflow`).toBeLessThanOrEqual(0);
-    if (width < 768) {
+    if (width < 1024) {
       await expect(toggle, `${width}px hamburger`).toBeVisible();
     } else {
       await expect(primaryNav, `${width}px primary nav`).toBeVisible();
