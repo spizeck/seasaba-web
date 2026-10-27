@@ -169,6 +169,34 @@ describe("TeamCarousel", () => {
     expect(screen.getByRole("heading", { name: "Solo" })).toBeInTheDocument();
   });
 
+  it("renders three members as a static row at desktop widths", () => {
+    render(
+      <TeamCarousel members={[member("A"), member("B"), member("C")]} />
+    );
+    // 3 members == 3 visible slots → no carousel chrome, no duplicates.
+    expect(
+      screen.queryByRole("button", { name: "Next team members" })
+    ).toBeNull();
+    expect(screen.queryAllByRole("tab")).toHaveLength(0);
+    expect(screen.getAllByRole("heading")).toHaveLength(3);
+  });
+
+  it("carousels a seven-member dataset one card at a time with wrapping", async () => {
+    render(
+      <TeamCarousel
+        members={["A", "B", "C", "D", "E", "F", "G"].map(member)}
+      />
+    );
+    expect(track().children).toHaveLength(21);
+    fireEvent.click(nextButton());
+    expect(transform()).toBe(offset(1, 7));
+    // Forward wrap: index 7 shows clones identical to index 0.
+    for (let i = 0; i < 6; i++) fireEvent.click(nextButton());
+    expect(transform()).toBe(offset(7, 7));
+    fireEvent.transitionEnd(track(), { propertyName: "transform" });
+    await waitFor(() => expect(transform()).toBe(offset(0, 7)));
+  });
+
   it("carousels a four-member dataset one card at a time with wrapping", async () => {
     render(
       <TeamCarousel
