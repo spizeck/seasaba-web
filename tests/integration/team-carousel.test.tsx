@@ -2,9 +2,11 @@ import { describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { TeamCarousel } from "@/components/about-page-client";
 
-// Regression coverage for the Meet the Team infinite carousel: the last page
-// used to render one card in an otherwise empty three-column grid, and the
-// loop relied on a modulo index jump with no cloned boundary slides.
+// Regression coverage for the Meet the Crew infinite carousel. Navigation is
+// per-card now: every Next/Previous press moves exactly one card. The member
+// list renders three times on the track and the middle copy is the real
+// strip — a wrap transition lands on a cloned position that is pixel-identical
+// to the real one memberCount slides away, then snaps home invisibly.
 
 // jsdom lacks matchMedia; the carousel checks prefers-reduced-motion on mount.
 vi.stubGlobal("matchMedia", (query: string) => ({
@@ -31,14 +33,21 @@ const member = (name: string) => ({
   bio: `${name} keeps the boats running.`,
 });
 
+const MEMBER_COUNT = 10;
+const CPV = 3; // default jsdom width (1024) renders 3 cards per view
+const offset = (index: number, count = MEMBER_COUNT, cpv = CPV) =>
+  `translateX(${-((index + count) * (100 / cpv))}%)`;
+
 const region = () =>
   screen.getByRole("region", { name: "Team members carousel" });
 const track = () => region().firstElementChild as HTMLElement;
 const transform = () => track().style.transform;
-const slideNames = (slideIdx: number) =>
-  [...track().children[slideIdx].querySelectorAll("h3")].map(
-    (h) => h.textContent
-  );
+const slideName = (slideIdx: number) =>
+  track().children[slideIdx].querySelector("h3")?.textContent;
+const nextButton = () =>
+  screen.getByRole("button", { name: "Next team members" });
+const prevButton = () =>
+  screen.getByRole("button", { name: "Previous team members" });
 
 async function setViewportWidth(width: number) {
   Object.defineProperty(window, "innerWidth", {
@@ -51,40 +60,97 @@ async function setViewportWidth(width: number) {
 }
 
 describe("TeamCarousel", () => {
-  it("wrap-fills the final page so no grid cells are left empty", () => {
+  it("renders three copies of the member list with the real strip in the middle", () => {
     render(<TeamCarousel />);
-    // 10 members at 3-per-view → 4 pages plus 2 cloned boundary slides.
-    expect(track().children).toHaveLength(6);
-    // The old slice() produced [Gunner] alone; the page must be full.
-    expect(slideNames(4)).toEqual(["Gunner", "Mel", "Jeanine & Marc"]);
-    // Boundary clones mirror the real last/first pages for a seamless wrap.
-    expect(slideNames(0)).toEqual(slideNames(4));
-    expect(slideNames(5)).toEqual(slideNames(1));
+    expect(track().children).toHaveLength(MEMBER_COUNT * 3);
+    // All three copies present the members in source order.
+    expect(slideName(0)).toBe("Mel");
+    expect(slideName(MEMBER_COUNT)).toBe("Mel");
+    expect(slideName(MEMBER_COUNT * 2)).toBe("Mel");
+    expect(slideName(MEMBER_COUNT * 3 - 1)).toBe("Gunner");
+    // The resting position shows the first real slides, not the lead clones.
+    expect(transform()).toBe(offset(0));
   });
 
-  it("wraps forward onto the first-page clone then snaps to the real page", async () => {
+  it("advances exactly one card per Next click and one per Previous click", () => {
     render(<TeamCarousel />);
-    const next = screen.getByRole("button", { name: "Next team members" });
-    const dot4 = screen.getByRole("tab", { name: "Go to page 4 of 4" });
-    fireEvent.click(dot4);
-    expect(transform()).toBe("translateX(-400%)");
+    fireEvent.click(nextButton());
+    expect(transform()).toBe(offset(1));
+    fireEvent.click(nextButton());
+    expect(transform()).toBe(offset(2));
+    fireEvent.click(prevButton());
+    expect(transform()).toBe(offset(1));
+  });
 
-    fireEvent.click(next);
-    expect(transform()).toBe("translateX(-500%)"); // clone of page 0
+  it("wraps forward onto identical cloned slides then snaps to the real strip", async () => {
+    render(<TeamCarousel />);
+    fireEvent.click(screen.getByRole("tab", { name: "Go to Gunner" }));
+    expect(transform()).toBe(offset(9));
+
+    // One more card forward wraps to member 0, displayed via the cloned copy.
+    fireEvent.click(nextButton());
+    expect(transform()).toBe(offset(10));
     fireEvent.transitionEnd(track(), { propertyName: "transform" });
-    await waitFor(() => expect(transform()).toBe("translateX(-100%)"));
+    await waitFor(() => expect(transform()).toBe(offset(0)));
   });
 
-  it("wraps backward onto the last-page clone then snaps to the real page", async () => {
+  it("wraps backward onto identical cloned slides then snaps to the real strip", async () => {
     render(<TeamCarousel />);
-    const prev = screen.getByRole("button", { name: "Previous team members" });
-    fireEvent.click(prev);
-    expect(transform()).toBe("translateX(0%)"); // clone of last page
+    fireEvent.click(prevButton());
+    expect(transform()).toBe(offset(-1)); // clone of the last position
     fireEvent.transitionEnd(track(), { propertyName: "transform" });
-    await waitFor(() => expect(transform()).toBe("translateX(-400%)"));
+    await waitFor(() => expect(transform()).toBe(offset(9)));
   });
 
-  it("renders a centered static row with no controls for small datasets", async () => {
+  it("absorbs rapid consecutive clicks through the wrap without dead ends", async () => {
+    render(<TeamCarousel />);
+    fireEvent.click(screen.getByRole("tab", { name: "Go to Gunner" }));
+    // Four presses fire while the first wrap transition is still in flight;
+    // the cloned runway keeps every intermediate position on real slides.
+    for (let i = 0; i < 4; i++) fireEvent.click(nextButton());
+    expect(transform()).toBe(offset(13)); // logical position 3
+    fireEvent.transitionEnd(track(), { propertyName: "transform" });
+    await waitFor(() => expect(transform()).toBe(offset(3)));
+  });
+
+  it("reverses direction cleanly at the boundaries", async () => {
+    render(<TeamCarousel />);
+    // Forward over the boundary, then back before the transition settles.
+    fireEvent.click(screen.getByRole("tab", { name: "Go to Gunner" }));
+    fireEvent.click(nextButton());
+    expect(transform()).toBe(offset(10));
+    fireEvent.click(prevButton());
+    expect(transform()).toBe(offset(9)); // retargets mid-flight, no snap needed
+    // Backward over the boundary, then forward again.
+    fireEvent.click(screen.getByRole("tab", { name: "Go to Mel" }));
+    fireEvent.click(prevButton());
+    expect(transform()).toBe(offset(-1));
+    fireEvent.click(nextButton());
+    expect(transform()).toBe(offset(0));
+  });
+
+  it("keeps wrap targets when the viewport resizes mid-transition", async () => {
+    render(<TeamCarousel />);
+    await setViewportWidth(1440); // 3 per view
+    // Sit on the trailing clones (index = memberCount), then shrink to 2 per
+    // view: the position must map to index 0, not collide with a real slide.
+    fireEvent.click(screen.getByRole("tab", { name: "Go to Gunner" }));
+    fireEvent.click(nextButton());
+    expect(transform()).toBe(offset(10));
+    await setViewportWidth(700);
+    await waitFor(() =>
+      expect(transform()).toBe(offset(0, MEMBER_COUNT, 2))
+    );
+
+    // Symmetric case: leading clones (index < 0) → last position.
+    await setViewportWidth(1440);
+    fireEvent.click(prevButton());
+    expect(transform()).toBe(offset(-1));
+    await setViewportWidth(1024);
+    await waitFor(() => expect(transform()).toBe(offset(9)));
+  });
+
+  it("renders a centered static row with no controls for small datasets", () => {
     render(<TeamCarousel members={[member("A"), member("B")]} />);
     // Default jsdom width (1024) shows 3 per view > 2 members → no carousel.
     expect(
@@ -95,45 +161,44 @@ describe("TeamCarousel", () => {
     expect(screen.getByRole("heading", { name: "B" })).toBeInTheDocument();
   });
 
-  it("still carousels a small dataset when it exceeds the mobile view", async () => {
-    render(<TeamCarousel members={[member("A"), member("B")]} />);
-    await setViewportWidth(500); // 1 card per view → 2 pages + clones
-    await waitFor(() =>
-      expect(screen.getByRole("button", { name: "Next team members" }))
-        .toBeInTheDocument()
-    );
-    fireEvent.click(screen.getByRole("button", { name: "Next team members" }));
-    expect(transform()).toBe("translateX(-200%)");
-    // Forward wrap from the last page lands on the clone, then normalizes.
-    fireEvent.click(screen.getByRole("button", { name: "Next team members" }));
-    expect(transform()).toBe("translateX(-300%)");
-    fireEvent.transitionEnd(track(), { propertyName: "transform" });
-    await waitFor(() => expect(transform()).toBe("translateX(-100%)"));
-  });
-
-  it("keeps wrap targets when the viewport resizes mid-transition", async () => {
-    render(<TeamCarousel />);
-    await setViewportWidth(1440); // 3 per view → 4 pages
-    // Sit on the trailing clone (index = totalGroups), then shrink to 2 per
-    // view: the clone position must map to page 0, not collide with a real page.
-    fireEvent.click(screen.getByRole("tab", { name: "Go to page 4 of 4" }));
-    fireEvent.click(screen.getByRole("button", { name: "Next team members" }));
-    expect(transform()).toBe("translateX(-500%)");
-    await setViewportWidth(700);
-    await waitFor(() => expect(transform()).toBe("translateX(-100%)"));
-
-    // Symmetric case: leading clone (index = -1) → last page of the new count.
-    fireEvent.click(screen.getByRole("button", { name: "Previous team members" }));
-    expect(transform()).toBe("translateX(0%)");
-    await setViewportWidth(1024);
-    await waitFor(() => expect(transform()).toBe("translateX(-400%)"));
-  });
-
   it("renders a single member without carousel controls", () => {
     render(<TeamCarousel members={[member("Solo")]} />);
     expect(
       screen.queryByRole("button", { name: "Previous team members" })
     ).toBeNull();
     expect(screen.getByRole("heading", { name: "Solo" })).toBeInTheDocument();
+  });
+
+  it("carousels a four-member dataset one card at a time with wrapping", async () => {
+    render(
+      <TeamCarousel
+        members={[member("A"), member("B"), member("C"), member("D")]}
+      />
+    );
+    expect(track().children).toHaveLength(12);
+    fireEvent.click(nextButton());
+    expect(transform()).toBe(offset(1, 4));
+    fireEvent.click(nextButton());
+    expect(transform()).toBe(offset(2, 4));
+    fireEvent.click(nextButton());
+    expect(transform()).toBe(offset(3, 4)); // window [D, A, B]
+    // Forward wrap: index 4 shows clones identical to index 0.
+    fireEvent.click(nextButton());
+    expect(transform()).toBe(offset(4, 4));
+    fireEvent.transitionEnd(track(), { propertyName: "transform" });
+    await waitFor(() => expect(transform()).toBe(offset(0, 4)));
+  });
+
+  it("still carousels a small dataset when it exceeds the mobile view", async () => {
+    render(<TeamCarousel members={[member("A"), member("B")]} />);
+    await setViewportWidth(500); // 1 card per view → carousel
+    await waitFor(() => expect(nextButton()).toBeInTheDocument());
+    fireEvent.click(nextButton());
+    expect(transform()).toBe(offset(1, 2, 1));
+    // Forward wrap lands on the clone, then normalizes to the real strip.
+    fireEvent.click(nextButton());
+    expect(transform()).toBe(offset(2, 2, 1));
+    fireEvent.transitionEnd(track(), { propertyName: "transform" });
+    await waitFor(() => expect(transform()).toBe(offset(0, 2, 1)));
   });
 });
