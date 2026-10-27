@@ -273,9 +273,9 @@ immediately after — same pattern as #129's `/sentry-check`.
 
 ## Vendored Next.js patch — E789 `Expected RSC response` (PR #262)
 
-`patches/next+16.3.8.patch` carries a second fix alongside the `asset-prefix`
-patch: the `app-page-runtime` hunks mirror the unmerged upstream fix
-[vercel/next.js#97568](https://github.com/vercel/next.js/pull/97568).
+`patches/next+16.3.8+002.action-not-found-rsc-404.patch` mirrors the unmerged
+upstream fix [vercel/next.js#97568](https://github.com/vercel/next.js/pull/97568)
+in both the CJS and ESM `app-page-runtime` dist templates.
 
 **The defect**: this app defines no server actions, so the action handler
 answers any `POST` with an unrecognized `Next-Action` header with a
@@ -290,16 +290,23 @@ actions — and the shape internet scanners replay, observed in production as
 `x-nextjs-action-not-found: 1`, serve the 404 instead of throwing. The
 invariant still fires for any other unexpected content type.
 
+**Why a separate patch file**: patch-package records applied patches per
+package in `node_modules/<pkg>/.patch-package.json`. Adding hunks to an
+existing patch file makes it fail to apply on top of a partially patched
+`node_modules` — exactly what Vercel's restored build cache contains. A new
+sequence-numbered patch file (`next+16.3.8+002.*.patch`) applies cleanly on
+both fresh installs and stale caches; the already-applied older patch is
+detected and skipped.
+
 **Removal condition**: when upgrading `next` past 16.3.8, check whether the
-release includes the upstream fix (PR #97568 merged / changelog entry for
-the action-not-found RSC invariant). If it does, drop the two
-`app-page-runtime` hunks and regenerate the patch for the new version
-(`npx patch-package next`); keep the `asset-prefix` hunks until their own
-upstream fix lands. If the upstream fix is present, dropping the hunks is
-also what patch-package forces — the hunks will simply fail to apply on the
-new dist files. Either way, `tests/e2e/rsc-action-probe.spec.ts` is the
-arbiter: it must keep returning 404 (never E789/500) for the probe shape,
-patched or not.
+release includes the upstream fix (PR #97568 merged, or a changelog entry
+for the action-not-found RSC invariant). If it does, delete
+`next+<old-version>+002.action-not-found-rsc-404.patch` and regenerate
+`next+<new-version>.patch` for the asset-prefix fix via
+`npx patch-package next`. If the new release does not include it, the hunk
+must be re-rolled forward onto the new version's dist files. Either way,
+`tests/e2e/rsc-action-probe.spec.ts` is the arbiter: it must keep returning
+404 (never E789/500) for the probe shape, patched or not.
 
 ## Dependency licensing note — `@sentry/cli` (reviewed 2026-09-23, activated by #130)
 
