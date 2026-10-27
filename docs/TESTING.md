@@ -100,7 +100,7 @@ Run it only with real values exported: with placeholders it still exits 0 and ca
 
 **Keyboard coverage:** skip-to-content first tab stop and reading-position handoff; desktop primary-nav traversal with visible-focus assertions; mobile menu open/close/Escape plus proof that closed-menu links are unreachable (inert); dive-site dialog focus trap, Escape close, and focus restoration to the trigger; contact form completed and submitted by keyboard alone.
 
-**Reduced motion:** the `/about` team carousel must not autoplay under `prefers-reduced-motion: reduce` emulation, and must still advance without it (fake clock, no sleeps).
+**Reduced motion:** the `/about` team carousel must not move on its own (no autoplay for anyone) and must still advance on manual input under `prefers-reduced-motion: reduce` emulation (fake clock, no sleeps).
 
 **Browser strategy:** axe checks DOM and computed styles, so findings depend on viewport rather than engine — full scans on desktop Chromium, mobile-layout scans on mobile Chromium, no mobile-WebKit duplication. WebKit does differ on Tab behavior (Safari's default skips links); the mobile-menu keyboard test handles that explicitly.
 

@@ -177,55 +177,53 @@ function TeamCard({ member }: { member: TeamMember }) {
 export function TeamCarousel({ members = TEAM_MEMBERS }: { members?: TeamMember[] }) {
   const [index, setIndex] = useState(0);
   const [cardsPerView, setCardsPerView] = useState(3);
-  const [isPaused, setIsPaused] = useState(false);
-  // Synchronous mirror of isPaused: an autoplay tick queued between a pausing
-  // click and the effect's interval cleanup must not still advance.
-  const isPausedRef = useRef(false);
-  const setPaused = useCallback((paused: boolean) => {
-    isPausedRef.current = paused;
-    setIsPaused(paused);
-  }, []);
   const [instant, setInstant] = useState(false);
+  // Pixel offset applied to the track while a pointer drag is in progress;
+  // null at rest, when the transform is expressed purely in percentages.
+  const [dragDelta, setDragDelta] = useState<number | null>(null);
   const trackRef = useRef<HTMLDivElement>(null);
-  const dragStart = useRef<number | null>(null);
-  const isDragging = useRef(false);
-  const autoplayRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const drag = useRef<{
+    startX: number;
+    startDelta: number;
+    delta: number;
+    stepPx: number;
+  } | null>(null);
+  // Synchronous mirror of index for event handlers, which may fire before a
+  // queued re-render commits (e.g. transitionend during rapid clicks).
+  const indexRef = useRef(index);
 
   const memberCount = members.length;
-  const totalGroups = Math.ceil(memberCount / cardsPerView);
-  const cardsPerViewRef = useRef(cardsPerView);
+  const logicalIndex = ((index % memberCount) + memberCount) % memberCount;
+  // Valid index positions keep every visible slide inside the rendered strip:
+  // the viewport covers slides [index + n, index + n + cardsPerView) ⊆ [0, 3n).
+  const maxIndex = memberCount * 2 - cardsPerView;
+  const clampIndex = useCallback(
+    (i: number) => Math.min(Math.max(i, -memberCount), maxIndex),
+    [memberCount, maxIndex]
+  );
 
   useEffect(() => {
-    cardsPerViewRef.current = cardsPerView;
-  }, [cardsPerView]);
+    indexRef.current = index;
+  }, [index]);
 
   useEffect(() => {
     const update = () => {
-      const cpv = getCardsPerView();
-      // Groups under the pre-resize layout, needed to recognize whether the
-      // current index was sitting on a transient clone position.
-      const oldGroups = Math.max(1, Math.ceil(memberCount / cardsPerViewRef.current));
-      setCardsPerView(cpv);
-      setIndex((prev) => {
-        const groups = Math.ceil(memberCount / cpv);
-        if (groups < 1) return 0;
-        if (prev === -1) return groups - 1; // leading clone → last page
-        if (prev === oldGroups) return 0;   // trailing clone → first page
-        return Math.min(prev, groups - 1);
-      });
+      setCardsPerView(getCardsPerView());
+      // A resize recomputes every slide width and can shrink the valid index
+      // range; normalize without animating so a resize mid-wrap cannot leave
+      // the index pointing at space past the rendered clones. Any active drag
+      // is cancelled — its pixel step is stale under the new widths.
+      drag.current = null;
+      setDragDelta(null);
+      setInstant(true);
+      if (memberCount > 0) {
+        setIndex((i) => ((i % memberCount) + memberCount) % memberCount);
+      }
     };
     update();
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
   }, [memberCount]);
-
-  // Landing on a cloned boundary slide snaps back to the identical real page
-  // with the transition disabled, which is what makes the loop seamless.
-  const normalizeIndex = useCallback(() => {
-    if (totalGroups < 1) return;
-    setInstant(true);
-    setIndex((i) => ((i % totalGroups) + totalGroups) % totalGroups);
-  }, [totalGroups]);
 
   // Two frames: the first lets the transition-disabled snap actually paint —
   // clearing `instant` in the same frame could coalesce with the transform
@@ -242,87 +240,110 @@ export function TeamCarousel({ members = TEAM_MEMBERS }: { members?: TeamMember[
     };
   }, [instant]);
 
-  // Normalize once the slide transition ends; the timeout is a fallback for
-  // cases where transitionend never fires (e.g. reduced-motion no-transition).
+  // Landing outside the real strip means the viewport is showing cloned
+  // slides; snapping back by exactly memberCount positions swaps them for
+  // pixel-identical real slides, which is what makes the loop seamless.
+  const normalizeIndex = useCallback(() => {
+    if (drag.current) return; // a pointer is down; the release re-evaluates
+    if (memberCount === 0) return;
+    const i = indexRef.current;
+    const logical = ((i % memberCount) + memberCount) % memberCount;
+    if (logical === i) return;
+    setInstant(true);
+    setIndex(logical);
+  }, [memberCount]);
+
+  // transitionend is not guaranteed (reduced-motion renders no transition, and
+  // a retargeted transition may never settle on a clone position), so
+  // normalize on a timer whenever the index sits outside the real strip.
   useEffect(() => {
-    if (index >= 0 && index < totalGroups) return;
+    if (index >= 0 && index < memberCount) return;
+    if (dragDelta !== null) return;
     const reduced =
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const fallback = setTimeout(normalizeIndex, reduced ? 0 : 600);
+    const fallback = setTimeout(normalizeIndex, reduced ? 0 : 450);
     return () => clearTimeout(fallback);
-  }, [index, totalGroups, normalizeIndex]);
+  }, [index, memberCount, dragDelta, normalizeIndex]);
 
   const onTrackTransitionEnd = (e: React.TransitionEvent) => {
     if (e.target !== e.currentTarget) return;
-    if (index < 0 || index >= totalGroups) normalizeIndex();
+    if (indexRef.current < 0 || indexRef.current >= memberCount) {
+      normalizeIndex();
+    }
   };
 
-  const goTo = useCallback((target: number) => setIndex(target), []);
-
-  // The transient positions -1 and totalGroups are the cloned slides; clamping
-  // absorbs extra presses while a wrap transition is still in flight.
-  const prev = useCallback(() => setIndex((i) => Math.max(i - 1, -1)), []);
+  // Positions past the ends are cloned slides; the generous cloned runway
+  // (a full copy each side) absorbs rapid consecutive presses while a wrap
+  // transition is still in flight, so no click lands on empty space.
+  const prev = useCallback(
+    () => setIndex((i) => Math.max(i - 1, -memberCount)),
+    [memberCount]
+  );
   const next = useCallback(
-    () => setIndex((i) => Math.min(i + 1, totalGroups)),
-    [totalGroups]
+    () => setIndex((i) => Math.min(i + 1, memberCount * 2 - cardsPerView)),
+    [memberCount, cardsPerView]
+  );
+  const goTo = useCallback(
+    (target: number) =>
+      setIndex(((target % memberCount) + memberCount) % memberCount),
+    [memberCount]
   );
 
-  // Autoplay — disabled when the visitor prefers reduced motion
-  useEffect(() => {
-    if (isPaused || totalGroups <= 1) return;
-    if (
-      typeof window !== "undefined" &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    ) {
-      return;
-    }
-    autoplayRef.current = setInterval(() => {
-      if (isPausedRef.current) return;
-      setIndex((current) => Math.min(current + 1, totalGroups));
-    }, 5000);
-    return () => {
-      if (autoplayRef.current) clearInterval(autoplayRef.current);
-    };
-  }, [isPaused, totalGroups]);
-
   const onPointerDown = (e: React.PointerEvent) => {
-    dragStart.current = e.clientX;
-    isDragging.current = false;
-    setPaused(true);
-    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    const track = trackRef.current;
+    if (!track) return;
+    const stepPx = track.getBoundingClientRect().width / cardsPerView;
+    // Grabbing mid-transition freezes the track where it is: the residual
+    // between the computed transform and the pending target becomes the
+    // drag's starting offset instead of the track snapping ahead first.
+    let startDelta = 0;
+    try {
+      const m = new DOMMatrixReadOnly(getComputedStyle(track).transform);
+      startDelta = m.m41 + (indexRef.current + memberCount) * stepPx;
+      if (!Number.isFinite(startDelta)) startDelta = 0;
+    } catch {
+      startDelta = 0;
+    }
+    drag.current = { startX: e.clientX, startDelta, delta: startDelta, stepPx };
+    setDragDelta(startDelta);
+    e.currentTarget.setPointerCapture(e.pointerId);
   };
 
   const onPointerMove = (e: React.PointerEvent) => {
-    if (dragStart.current === null) return;
-    if (Math.abs(e.clientX - dragStart.current) > 5) isDragging.current = true;
+    const d = drag.current;
+    if (!d || d.stepPx === 0) return;
+    const i = indexRef.current;
+    // Clamp the dragged offset so the strip is never pulled past the ends of
+    // the rendered clones into empty space.
+    d.delta = Math.min(
+      Math.max(
+        d.startDelta + (e.clientX - d.startX),
+        (i - (memberCount * 2 - cardsPerView)) * d.stepPx
+      ),
+      (i + memberCount) * d.stepPx
+    );
+    setDragDelta(d.delta);
   };
 
-  const onPointerUp = (e: React.PointerEvent) => {
-    if (dragStart.current === null) return;
-    const delta = dragStart.current - e.clientX;
-    dragStart.current = null;
-    setPaused(false);
-    if (!isDragging.current) return;
-    if (delta > 40) next();
-    else if (delta < -40) prev();
+  const endDrag = (cancelled: boolean) => {
+    const d = drag.current;
+    if (!d) return;
+    drag.current = null;
+    setDragDelta(null);
+    if (cancelled || d.stepPx === 0) return;
+    // Snap to the nearest card; at least half a card of travel commits a move.
+    const steps = Math.round(-d.delta / d.stepPx);
+    if (steps !== 0) setIndex((i) => clampIndex(i + steps));
   };
 
-  const onPointerCancel = () => {
-    dragStart.current = null;
-    isDragging.current = false;
-    setPaused(false);
-  };
+  const onPointerUp = () => endDrag(false);
+  const onPointerCancel = () => endDrag(true);
 
   const onKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "ArrowLeft") {
-      prev();
-      setPaused(true);
-    }
-    if (e.key === "ArrowRight") {
-      next();
-      setPaused(true);
-    }
+    if (e.key === "ArrowLeft") prev();
+    if (e.key === "ArrowRight") next();
   };
 
   if (memberCount === 0) return null;
@@ -348,29 +369,25 @@ export function TeamCarousel({ members = TEAM_MEMBERS }: { members?: TeamMember[
     );
   }
 
-  // Pages wrap around the member list so the final page is always full —
-  // with 10 members and 3 per view it is {Gunner, Mel, Jeanine & Marc}
-  // instead of Gunner alone surrounded by empty cells.
-  const pages: TeamMember[][] = Array.from({ length: totalGroups }, (_, g) =>
-    Array.from(
-      { length: cardsPerView },
-      (_, i) => members[(g * cardsPerView + i) % memberCount]
-    )
-  );
-  const slides = [pages[totalGroups - 1], ...pages, pages[0]];
-
-  const logicalIndex = ((index % totalGroups) + totalGroups) % totalGroups;
-  const translateX = -((index + 1) * 100);
+  // The member list renders three times and the middle copy is the "real"
+  // strip — member i sits at slide index i + memberCount. Index positions
+  // outside [0, memberCount) show cloned slides that are pixel-identical to
+  // the real position exactly memberCount slides away, so the post-transition
+  // snap home is invisible. Each slide holds one card, so navigation moves
+  // exactly one card per click.
+  const slidePct = 100 / cardsPerView;
+  const baseOffset = -((index + memberCount) * slidePct);
+  const transform =
+    dragDelta !== null
+      ? `translateX(calc(${baseOffset}% + ${dragDelta}px))`
+      : `translateX(${baseOffset}%)`;
 
   return (
     <div className="space-y-5">
       <div className="relative">
         {/* Prev button */}
         <button
-          onClick={() => {
-            prev();
-            setPaused(true);
-          }}
+          onClick={prev}
           className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 sm:-translate-x-5 z-10 w-9 h-9 rounded-full bg-card border border-border/60 shadow-sm flex items-center justify-center text-muted-foreground pressable hover:text-foreground hover:shadow-md focus-ring"
           aria-label="Previous team members"
         >
@@ -379,10 +396,7 @@ export function TeamCarousel({ members = TEAM_MEMBERS }: { members?: TeamMember[
 
         {/* Next button */}
         <button
-          onClick={() => {
-            next();
-            setPaused(true);
-          }}
+          onClick={next}
           className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 sm:translate-x-5 z-10 w-9 h-9 rounded-full bg-card border border-border/60 shadow-sm flex items-center justify-center text-muted-foreground pressable hover:text-foreground hover:shadow-md focus-ring"
           aria-label="Next team members"
         >
@@ -391,8 +405,11 @@ export function TeamCarousel({ members = TEAM_MEMBERS }: { members?: TeamMember[
 
         {/* Track container */}
         <div
-          className="overflow-hidden cursor-grab active:cursor-grabbing touch-pan-y"
+          className={`overflow-hidden cursor-grab active:cursor-grabbing touch-pan-y ${
+            dragDelta !== null ? "select-none" : ""
+          }`}
           role="region"
+          aria-roledescription="carousel"
           aria-label="Team members carousel"
           onPointerDown={onPointerDown}
           onPointerMove={onPointerMove}
@@ -402,38 +419,42 @@ export function TeamCarousel({ members = TEAM_MEMBERS }: { members?: TeamMember[
           // cancels the pointer stream mid-swipe.
           onDragStart={(e) => e.preventDefault()}
           onKeyDown={onKeyDown}
-          onMouseEnter={() => setPaused(true)}
-          onMouseLeave={() => setPaused(false)}
-          onFocus={() => setPaused(true)}
-          onBlur={() => setPaused(false)}
           tabIndex={0}
         >
+          {/* The track's -mx cancels the slides' px so the first and last
+              visible cards stay flush with the content column while keeping
+              a full gap between cards. */}
           <div
             ref={trackRef}
-            className="flex transition-transform duration-500 ease-in-out motion-reduce:transition-none"
+            className="-mx-2.5 flex transition-transform duration-300 ease-out motion-reduce:transition-none"
             style={{
-              transform: `translateX(${translateX}%)`,
-              transition: instant ? "none" : undefined,
+              transform,
+              transition: instant || dragDelta !== null ? "none" : undefined,
             }}
             onTransitionEnd={onTrackTransitionEnd}
             aria-live="polite"
           >
-            {slides.map((slide, slideIdx) => {
-              const isClone =
-                slideIdx === 0 || slideIdx === slides.length - 1;
-              const pageIdx = slideIdx - 1;
+            {Array.from({ length: memberCount * 3 }, (_, slideIdx) => {
+              const position = slideIdx - memberCount;
+              // Circular distance from the first visible member, so a window
+              // that wraps past the end still exposes the real slides while
+              // every cloned slide stays hidden from assistive tech.
+              const isVisible =
+                slideIdx >= memberCount &&
+                slideIdx < memberCount * 2 &&
+                ((position - logicalIndex + memberCount) % memberCount) <
+                  cardsPerView;
               return (
                 <div
                   key={slideIdx}
-                  className="w-full flex-shrink-0 grid gap-5"
-                  style={{
-                    gridTemplateColumns: `repeat(${cardsPerView}, minmax(0, 1fr))`,
-                  }}
-                  aria-hidden={isClone || pageIdx !== logicalIndex}
+                  role="group"
+                  aria-roledescription="slide"
+                  aria-label={`${(slideIdx % memberCount) + 1} of ${memberCount}`}
+                  aria-hidden={!isVisible}
+                  className="flex-shrink-0 px-2.5"
+                  style={{ width: `${slidePct}%` }}
                 >
-                  {slide.map((member) => (
-                    <TeamCard key={member.name} member={member} />
-                  ))}
+                  <TeamCard member={members[slideIdx % memberCount]} />
                 </div>
               );
             })}
@@ -441,23 +462,19 @@ export function TeamCarousel({ members = TEAM_MEMBERS }: { members?: TeamMember[
         </div>
       </div>
 
-      {/* Pagination dots */}
-      {totalGroups > 1 && (
+      {/* Navigation dots — one per crew member */}
+      {memberCount > 1 && (
         <div
           className="flex justify-center gap-2 pt-1"
-          role="tablist"
-          aria-label="Carousel pages"
+          role="group"
+          aria-label="Crew members"
         >
-          {Array.from({ length: totalGroups }).map((_, i) => (
+          {members.map((member, i) => (
             <button
-              key={i}
-              role="tab"
-              aria-selected={i === logicalIndex}
-              aria-label={`Go to page ${i + 1} of ${totalGroups}`}
-              onClick={() => {
-                goTo(i);
-                setPaused(true);
-              }}
+              key={member.name}
+              aria-current={i === logicalIndex}
+              aria-label={`Go to ${member.name}`}
+              onClick={() => goTo(i)}
               className={`rounded-full transition-[width,background-color] duration-200 focus-ring ${
                 i === logicalIndex
                   ? "w-5 h-2 bg-primary"
