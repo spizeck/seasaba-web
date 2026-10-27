@@ -304,9 +304,12 @@ for the action-not-found RSC invariant). If it does, delete
 `next+<old-version>+002.action-not-found-rsc-404.patch` and regenerate
 `next+<new-version>.patch` for the asset-prefix fix via
 `npx patch-package next`. If the new release does not include it, the hunk
-must be re-rolled forward onto the new version's dist files. Either way,
+must be re-rolled forward onto the new version's dist files — preserving
+whatever status the action handler sets for `x-nextjs-action-not-found`
+rather than hardcoding 404 if a future release changes it. Either way,
 `tests/e2e/rsc-action-probe.spec.ts` is the arbiter: it must keep returning
-404 (never E789/500) for the probe shape, patched or not.
+the action-not-found response (never E789/500) for the probe shape,
+patched or not.
 
 ## Dependency licensing note — `@sentry/cli` (reviewed 2026-09-23, activated by #130)
 
