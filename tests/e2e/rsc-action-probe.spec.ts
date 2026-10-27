@@ -42,9 +42,9 @@ test("ordinary action-not-found and RSC navigation still behave", async ({ reque
   // patch — pinned so the two variants can't diverge again.
   const plain = await request.post("/", {
     headers: { "Next-Action": BOGUS_ACTION_ID },
-    maxRedirects: 0,
   });
-  expect(plain.status()).not.toBe(500);
+  expect(plain.status()).toBe(404);
+  expect(plain.headers()["x-nextjs-action-not-found"]).toBe("1");
 
   // Client-side navigations must still get real flight payloads.
   const rsc = await request.get("/", { headers: { RSC: "1" } });
