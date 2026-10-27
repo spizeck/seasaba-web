@@ -1,0 +1,35 @@
+diff --git a/node_modules/next/dist/build/templates/app-page-runtime.js b/node_modules/next/dist/build/templates/app-page-runtime.js
+index dfec9df..57e500f 100644
+--- a/node_modules/next/dist/build/templates/app-page-runtime.js
++++ b/node_modules/next/dist/build/templates/app-page-runtime.js
+@@ -1233,7 +1233,7 @@ function createAppPageEntrypoint({ tree, page, pathname, require: __next_app_req
+                     if (typeof cachedData.rscData === 'undefined') {
+                         // If the response is not an RSC response, then we can't serve it.
+                         if (cachedData.html.contentType !== _approuterheaders.RSC_CONTENT_TYPE_HEADER) {
+-                            if (nextConfig.cacheComponents) {
++                            if (nextConfig.cacheComponents || res.getHeader(_approuterheaders.NEXT_ACTION_NOT_FOUND_HEADER) === '1') {
+                                 res.statusCode = 404;
+                                 return (0, _sendpayload.sendRenderResult)({
+                                     req,
+diff --git a/node_modules/next/dist/esm/build/templates/app-page-runtime.js b/node_modules/next/dist/esm/build/templates/app-page-runtime.js
+index d991e81..059f602 100644
+--- a/node_modules/next/dist/esm/build/templates/app-page-runtime.js
++++ b/node_modules/next/dist/esm/build/templates/app-page-runtime.js
+@@ -49,7 +49,7 @@ import { normalizeAppPath } from '../../shared/lib/router/utils/app-paths' with
+ import { getIsPossibleServerAction } from '../../server/lib/server-action-request-meta' with {
+     'turbopack-transition': 'next-server-utility'
+ };
+-import { RSC_HEADER, NEXT_ROUTER_PREFETCH_HEADER, NEXT_ROUTER_SEGMENT_PREFETCH_HEADER, NEXT_INSTANT_TEST_COOKIE, NEXT_IS_PRERENDER_HEADER, NEXT_DID_POSTPONE_HEADER, RSC_CONTENT_TYPE_HEADER, NEXT_HMR_REFRESH_HEADER } from '../../client/components/app-router-headers' with {
++import { RSC_HEADER, NEXT_ROUTER_PREFETCH_HEADER, NEXT_ROUTER_SEGMENT_PREFETCH_HEADER, NEXT_INSTANT_TEST_COOKIE, NEXT_IS_PRERENDER_HEADER, NEXT_DID_POSTPONE_HEADER, RSC_CONTENT_TYPE_HEADER, NEXT_HMR_REFRESH_HEADER, NEXT_ACTION_NOT_FOUND_HEADER } from '../../client/components/app-router-headers' with {
+     'turbopack-transition': 'next-server-utility'
+ };
+ import { getBotType } from '../../shared/lib/router/utils/is-bot' with {
+@@ -1250,7 +1250,7 @@ export function createAppPageEntrypoint({ tree, page, pathname, require: __next_
+                     if (typeof cachedData.rscData === 'undefined') {
+                         // If the response is not an RSC response, then we can't serve it.
+                         if (cachedData.html.contentType !== RSC_CONTENT_TYPE_HEADER) {
+-                            if (nextConfig.cacheComponents) {
++                            if (nextConfig.cacheComponents || res.getHeader(NEXT_ACTION_NOT_FOUND_HEADER) === '1') {
+                                 res.statusCode = 404;
+                                 return sendRenderResult({
+                                     req,
