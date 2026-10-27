@@ -31,8 +31,8 @@ const secondaryMobileClasses = "max-sm:px-3 max-sm:text-sm";
 export function Hero({ locale = DEFAULT_LOCALE }: { locale?: Locale }) {
   const ui = uiFor(locale);
   const trustIndicators: { stat: string; statMobile?: string; label: string; labelMobile?: string; href?: string }[] = [
-    { stat: `Since ${OPERATIONS.establishedYear}`, label: ui.hero.trust.established },
-    { stat: "30+ Dive Sites", label: ui.hero.trust.protectedWaters },
+    { stat: `${ui.hero.trust.statSince} ${OPERATIONS.establishedYear}`, label: ui.hero.trust.established },
+    { stat: ui.hero.trust.statDiveSites, label: ui.hero.trust.protectedWaters },
     { stat: "★★★★★ 4.8/5", statMobile: "★ 4.8/5", label: ui.hero.trust.reviews, labelMobile: ui.hero.trust.reviewsMobile, href: "https://www.google.com/maps/search/?api=1&query=Sea+Saba+Dive+Center+Fort+Bay+Saba&query_place_id=ChIJX0c19WkgDowRn2l3bKbFrRU" },
   ];
   return (

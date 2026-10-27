@@ -81,6 +81,8 @@ export const ui = {
     exploreSites: "Explore Dive Sites",
     trust: {
       established: "Established",
+      statSince: "Since",
+      statDiveSites: "30+ Dive Sites",
       protectedWaters: "Protected Waters",
       reviews: "Google & TripAdvisor",
       reviewsMobile: "Reviews",

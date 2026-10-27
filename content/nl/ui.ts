@@ -80,6 +80,8 @@ export const ui: UiDictionary = {
     exploreSites: "Ontdek de duikplekken",
     trust: {
       established: "Opgericht",
+      statSince: "Sinds",
+      statDiveSites: "30+ duikstekken",
       protectedWaters: "Beschermde wateren",
       reviews: "Google & TripAdvisor",
       reviewsMobile: "Beoordelingen",
