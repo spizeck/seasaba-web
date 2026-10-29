@@ -22,7 +22,7 @@ const COPY: Record<
     working: "Confirming your subscription…",
     ok: "You're subscribed!",
     okDetail:
-      "Your Sea Saba newsletter subscription is confirmed. Welcome aboard — watch for the next edition in your inbox.",
+      "Your Sea Saba newsletter subscription is confirmed. Welcome aboard! Watch for the next edition in your inbox.",
     invalid: "This confirmation link isn't valid.",
   },
   unsubscribe: {

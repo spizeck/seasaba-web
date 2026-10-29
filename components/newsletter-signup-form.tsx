@@ -70,12 +70,16 @@ export function NewsletterSignupForm({
     viewTracked.current = true;
     trackEvent("newsletter_signup_view", attributionParams);
     // Footer handoff prefill arrives via sessionStorage (never the URL);
-    // apply it once and clear it.
+    // apply it once and clear it. Deferred past the effect body both to
+    // avoid a hydration mismatch and to keep setState out of the
+    // synchronous effect path.
     try {
       const prefill = sessionStorage.getItem("nl-prefill-email");
       if (prefill) {
         sessionStorage.removeItem("nl-prefill-email");
-        setEmail((cur) => (cur.trim() ? cur : prefill));
+        queueMicrotask(() =>
+          setEmail((cur) => (cur.trim() ? cur : prefill))
+        );
       }
     } catch {
       // Storage unavailable.
@@ -156,7 +160,7 @@ export function NewsletterSignupForm({
         kind: "error",
         message:
           body?.kind === "rate_limited"
-            ? "Too many attempts — please try again in a minute."
+            ? "Too many attempts. Please try again in a minute."
             : "Something went wrong on our side. Please try again, or email us at info@seasaba.com.",
       });
     } catch {
@@ -186,7 +190,7 @@ export function NewsletterSignupForm({
             <p className="font-semibold text-foreground">Check your inbox</p>
             <p className="mt-1 text-sm text-muted-foreground">
               We sent a confirmation email to <strong>{email}</strong>. Click the
-              link inside to finish subscribing — you won&apos;t receive the
+              link inside to finish subscribing. You won&apos;t receive the
               newsletter until you confirm.
             </p>
           </div>
@@ -314,7 +318,7 @@ export function NewsletterSignupForm({
           <span>{NEWSLETTER_CONSENT_TEXT}</span>
         </label>
         <p id="nl-consent-note" className="mt-1.5 text-xs text-muted-foreground">
-          We&apos;ll email you a confirmation link first — you&apos;re only
+          We&apos;ll email you a confirmation link first. You&apos;re only
           subscribed once you click it. See our{" "}
           <Link href="/privacy" className="underline underline-offset-2 hover:text-foreground">
             privacy policy
