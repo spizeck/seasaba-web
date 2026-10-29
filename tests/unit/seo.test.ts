@@ -17,6 +17,7 @@ const CANONICAL_ROUTES = [
   "/visiting-yachts",
   "/about",
   "/contact",
+  "/newsletter",
   "/partners",
   "/donate",
   "/terms",

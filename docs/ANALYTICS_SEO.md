@@ -46,6 +46,10 @@
 | `pdf_download` | Dive-log PDF export | Page parameters, `dive_count`, `unit_system` |
 | `chat_open` | Respond.io Website Chat `chat:opened` event (visitor intentionally opened the native widget) | Page parameters only — no widget or contact data |
 | `chat_conversation_started` | First Respond.io `chat:sent` event per page session (first visitor message; `chat:sent` exists in the shipped widget API but is undocumented — it fires per message, so only the first is counted) | Page parameters only — no widget or contact data |
+| `newsletter_signup_view` | `/newsletter` signup form mount (once per mount) | Page parameters + `campaign`, `source`, `placement`, `audience` attribution params — never the email or field values |
+| `newsletter_signup_submit` | `/newsletter` form submit attempt, and the footer band's handoff to the page (`placement: "footer"`) | Page parameters + attribution params, `button_location` — never the email |
+| `newsletter_signup_success` | `/newsletter` signup accepted by the backend (double opt-in email on its way — NOT a confirmed subscription; confirmed counts live in the backend) | Page parameters + attribution params |
+| `newsletter_signup_error` | `/newsletter` submission failed (`reason`: `validation`, `rate_limited`, `unavailable`, `network`, `unknown`) | Page parameters + attribution params, `reason` |
 
 ## Environment Variables
 
@@ -159,7 +163,7 @@ There are no admin/private pages in the current site to exclude.
 | Unused `Link`/`Button` imports on contact/courses pages | Fixed | Removed after replacing those CTAs with tracked components. |
 | Parameterized pages (`/book?item=...`, `/contact?interest=...`) are noindexed | By design | Prevents duplicate canonical content from search params. If you want those deep links indexed, adjust `createMetadata()` to only noindex when `noIndex: true`. |
 | `content/sample.mdx` removed | Resolved | The placeholder MDX page and MDX pipeline have been deleted; `/diving/first-dive` 301-redirects to `/diving`. |
-| No newsletter signup form found | Noted | `newsletter_signup` event is defined in `AnalyticsEvent` but not wired; add it if a newsletter signup is introduced later. |
+| No newsletter signup form found | Resolved | `/newsletter` now ships a double opt-in signup; the `newsletter_signup_{view,submit,success,error}` events are wired (the legacy `newsletter_signup` name remains unused). GA4 owner action: mark `newsletter_signup_success` as a key event in GA4 Admin. |
 
 ## Google Ads Follow-up Items
 

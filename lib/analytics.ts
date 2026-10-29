@@ -21,6 +21,10 @@ export type AnalyticsEvent =
   | "social_click"
   | "pdf_download"
   | "newsletter_signup"
+  | "newsletter_signup_view"
+  | "newsletter_signup_submit"
+  | "newsletter_signup_success"
+  | "newsletter_signup_error"
   | "chat_open"
   | "chat_conversation_started";
 

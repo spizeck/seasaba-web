@@ -27,6 +27,7 @@ const SITEMAP_ROUTES: {
   { path: "/visiting-yachts", changeFrequency: "monthly", priority: 0.7 },
   { path: "/about", changeFrequency: "monthly", priority: 0.7 },
   { path: "/contact", changeFrequency: "monthly", priority: 0.6 },
+  { path: "/newsletter", changeFrequency: "yearly", priority: 0.4 },
   { path: "/partners", changeFrequency: "monthly", priority: 0.6 },
   { path: "/donate", changeFrequency: "monthly", priority: 0.6 },
   { path: "/terms", changeFrequency: "yearly", priority: 0.3 },
