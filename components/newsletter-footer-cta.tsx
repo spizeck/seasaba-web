@@ -44,7 +44,7 @@ export function NewsletterFooterCta() {
       </div>
       <form onSubmit={onSubmit} className="flex w-full max-w-sm gap-2">
         <label htmlFor="nl-footer-email" className="sr-only">
-          Email address
+          Newsletter email address
         </label>
         <input
           id="nl-footer-email"
