@@ -9,7 +9,6 @@ interface NewsletterPageProps {
     source?: string;
     placement?: string;
     audience?: string;
-    email?: string;
   }>;
 }
 
@@ -38,8 +37,6 @@ export async function generateMetadata({
 export default async function NewsletterPage({ searchParams }: NewsletterPageProps) {
   const params = await searchParams;
   const attribution = attributionFromSearchParams(params);
-  const initialEmail =
-    typeof params.email === "string" ? params.email.slice(0, 254) : "";
 
   return (
     <>
@@ -54,10 +51,7 @@ export default async function NewsletterPage({ searchParams }: NewsletterPagePro
       </p>
 
       <div className="not-prose mt-8 rounded-lg border border-border/60 bg-card p-6">
-        <NewsletterSignupForm
-          attribution={attribution}
-          initialEmail={initialEmail}
-        />
+        <NewsletterSignupForm attribution={attribution} />
       </div>
 
       <p className="mt-6 text-sm text-muted-foreground">

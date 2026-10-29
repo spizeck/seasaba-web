@@ -25,7 +25,15 @@ export function NewsletterFooterCta() {
       placement: "footer",
       source: "website",
     });
-    if (email.trim()) params.set("email", email.trim().slice(0, 254));
+    if (email.trim()) {
+      try {
+        // Email never rides in the URL — it would leak via Referer,
+        // history, and tag-manager reads of location.href.
+        sessionStorage.setItem("nl-prefill-email", email.trim().slice(0, 254));
+      } catch {
+        // Storage unavailable: the visitor types the email again.
+      }
+    }
     router.push(`/newsletter?${params.toString()}`);
   }
 

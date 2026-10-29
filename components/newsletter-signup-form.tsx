@@ -69,6 +69,17 @@ export function NewsletterSignupForm({
     if (viewTracked.current) return;
     viewTracked.current = true;
     trackEvent("newsletter_signup_view", attributionParams);
+    // Footer handoff prefill arrives via sessionStorage (never the URL);
+    // apply it once and clear it.
+    try {
+      const prefill = sessionStorage.getItem("nl-prefill-email");
+      if (prefill) {
+        sessionStorage.removeItem("nl-prefill-email");
+        setEmail((cur) => (cur.trim() ? cur : prefill));
+      }
+    } catch {
+      // Storage unavailable.
+    }
   }, [attributionParams]);
 
   useEffect(() => {
