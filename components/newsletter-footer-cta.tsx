@@ -4,6 +4,7 @@ import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { Mail } from "lucide-react";
 import { trackEvent } from "@/lib/analytics";
+import { isRoutePublished, parsePathname } from "@/lib/locale";
 
 /**
  * Footer newsletter band: a compact email field that hands off to the
@@ -18,8 +19,11 @@ export function NewsletterFooterCta() {
 
   // The full signup lives at /newsletter; showing a second signup prompt
   // inside the footer there would duplicate the page. The rest of the
-  // footer renders unchanged. Covers any localized variant of the path.
-  if (pathname === "/newsletter" || pathname.endsWith("/newsletter")) {
+  // footer renders unchanged. Only hide where the newsletter page is
+  // actually published — on a not-yet-translated route the band must
+  // stay, since it is the visitor's only signup entry point.
+  const { locale, path } = parsePathname(pathname ?? "/");
+  if (path === "/newsletter" && isRoutePublished(locale, "/newsletter")) {
     return null;
   }
 
@@ -42,6 +46,10 @@ export function NewsletterFooterCta() {
         // Storage unavailable: the visitor types the email again.
       }
     }
+    // The footer persists across client-side navigation; clear the field
+    // so an abandoned signup doesn't leave the address sitting in the
+    // band on the next page.
+    setEmail("");
     router.push(`/newsletter?${params.toString()}`);
   }
 

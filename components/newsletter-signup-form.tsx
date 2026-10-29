@@ -17,8 +17,6 @@ import {
 interface NewsletterSignupFormProps {
   /** Campaign attribution parsed from the page URL (DEMA 2026 etc.). */
   attribution: NewsletterAttribution;
-  /** Email prefill (e.g. the footer signup band). */
-  initialEmail?: string;
 }
 
 /* Inputs render at text-base (16px) below lg so iOS Safari doesn't auto-zoom
@@ -34,9 +32,20 @@ type SubmitState =
 
 export function NewsletterSignupForm({
   attribution,
-  initialEmail = "",
 }: NewsletterSignupFormProps) {
-  const [email, setEmail] = useState(initialEmail);
+  const [email, setEmail] = useState(() => {
+    // Footer handoff prefill arrives via sessionStorage (never the URL).
+    // A lazy initializer reads it before first paint — no remount race —
+    // and the mount effect below clears the one-shot marker. The input
+    // carries suppressHydrationWarning for the intentional client-only
+    // initial value.
+    if (typeof window === "undefined") return "";
+    try {
+      return sessionStorage.getItem("nl-prefill-email") ?? "";
+    } catch {
+      return "";
+    }
+  });
   const [individual, setIndividual] = useState(
     attribution.audience === "individual"
   );
@@ -69,18 +78,10 @@ export function NewsletterSignupForm({
     if (viewTracked.current) return;
     viewTracked.current = true;
     trackEvent("newsletter_signup_view", attributionParams);
-    // Footer handoff prefill arrives via sessionStorage (never the URL);
-    // apply it once and clear it. Deferred past the effect body both to
-    // avoid a hydration mismatch and to keep setState out of the
-    // synchronous effect path.
+    // Clear the one-shot prefill marker — the value itself was already
+    // claimed by the lazy state initializer.
     try {
-      const prefill = sessionStorage.getItem("nl-prefill-email");
-      if (prefill) {
-        sessionStorage.removeItem("nl-prefill-email");
-        queueMicrotask(() =>
-          setEmail((cur) => (cur.trim() ? cur : prefill))
-        );
-      }
+      sessionStorage.removeItem("nl-prefill-email");
     } catch {
       // Storage unavailable.
     }
@@ -231,6 +232,7 @@ export function NewsletterSignupForm({
           className={`${fieldClass} mt-1.5`}
           aria-invalid={Boolean(errors.email)}
           aria-describedby={errors.email ? "nl-email-error" : undefined}
+          suppressHydrationWarning
         />
         {errors.email && (
           <p id="nl-email-error" role="alert" className="mt-1.5 text-sm text-destructive">

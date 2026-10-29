@@ -30,14 +30,21 @@ describe("NewsletterFooterCta", () => {
     expect(screen.getByRole("button", { name: "Subscribe" })).toBeInTheDocument();
   });
 
-  it.each(["/newsletter", "/nl/newsletter"])(
-    "is hidden on %s so the page never shows two signup prompts",
-    (path) => {
-      mockPathname = path;
-      const { container } = render(<NewsletterFooterCta />);
-      expect(container).toBeEmptyDOMElement();
-    }
-  );
+  it("is hidden on /newsletter so the page never shows two signup prompts", () => {
+    mockPathname = "/newsletter";
+    const { container } = render(<NewsletterFooterCta />);
+    expect(container).toBeEmptyDOMElement();
+  });
+
+  it("stays visible where no newsletter page exists (e.g. /nl/newsletter)", () => {
+    // /nl/newsletter has no published Dutch page yet — hiding the band
+    // there would remove the visitor's only signup entry point.
+    mockPathname = "/nl/newsletter";
+    render(<NewsletterFooterCta />);
+    expect(
+      screen.getByRole("textbox", { name: /newsletter email/i })
+    ).toBeInTheDocument();
+  });
 
   it("hands the email to /newsletter via sessionStorage, never the URL", async () => {
     mockPathname = "/";
@@ -57,6 +64,11 @@ describe("NewsletterFooterCta", () => {
     const params = new URLSearchParams(dest.split("?")[1]);
     expect(params.get("placement")).toBe("footer");
     expect(params.get("source")).toBe("website");
+    // The field clears on handoff so an abandoned signup doesn't leave
+    // the address sitting in the band when the visitor navigates back.
+    expect(
+      screen.getByRole("textbox", { name: /newsletter email/i })
+    ).toHaveValue("");
   });
 
   it("blocks an empty submit and stores nothing", () => {

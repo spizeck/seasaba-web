@@ -14,11 +14,13 @@ const pageEmail = (page: import("@playwright/test").Page) =>
 test.describe("footer newsletter band", () => {
   test("appears on an ordinary page", async ({ page }) => {
     await page.goto("/about");
+    await page.waitForLoadState("networkidle");
     await expect(footerEmail(page)).toBeVisible();
   });
 
   test("is hidden on /newsletter itself", async ({ page }) => {
     await page.goto("/newsletter");
+    await page.waitForLoadState("networkidle");
     await expect(pageEmail(page)).toBeVisible();
     await expect(footerEmail(page)).toHaveCount(0);
     // The rest of the footer still renders.
@@ -31,16 +33,24 @@ test.describe("footer newsletter band", () => {
     page,
   }) => {
     await page.goto("/about");
+    await page.waitForLoadState("networkidle");
     await footerEmail(page).fill("Diver@Example.com");
+    // The input is controlled — the DOM value only holds once React has
+    // hydrated and committed the change. Asserting it before the click
+    // keeps slower engines (WebKit) from racing hydration.
+    await expect(footerEmail(page)).toHaveValue("Diver@Example.com");
     await page.getByRole("button", { name: "Subscribe" }).click();
 
     await page.waitForURL(/\/newsletter/);
     await expect(pageEmail(page)).toHaveValue("Diver@Example.com");
-    // The email must not appear in the URL.
+    // The email must not appear in the URL — raw, encoded, or under any
+    // email-ish query key.
+    expect(page.url()).not.toContain("Diver@Example");
     expect(page.url()).not.toContain("Diver%40Example");
-    expect(page.url()).not.toContain("email=");
+    expect(page.url()).not.toMatch(/[?&](email|e|mail|address)=/i);
     // Footer attribution travels in the handoff URL.
     expect(page.url()).toContain("placement=footer");
+    expect(page.url()).toContain("source=website");
   });
 
   test("DEMA campaign params survive the prefill and preselect the audience", async ({
@@ -49,6 +59,16 @@ test.describe("footer newsletter band", () => {
     await page.goto(
       "/newsletter?campaign=dema-2026&source=qr&placement=group-flyer&audience=group"
     );
+    await page.waitForLoadState("networkidle");
+    // The full attribution set must survive intact in the address bar.
+    for (const param of [
+      "campaign=dema-2026",
+      "source=qr",
+      "placement=group-flyer",
+      "audience=group",
+    ]) {
+      expect(page.url()).toContain(param);
+    }
     const group = page.getByRole("checkbox", {
       name: /Group Organizer/,
     });
