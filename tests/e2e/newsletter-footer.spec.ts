@@ -53,6 +53,65 @@ test.describe("footer newsletter band", () => {
     expect(page.url()).toContain("source=website");
   });
 
+  test("is hidden on /newsletter/confirm in every outcome state", async ({
+    page,
+  }) => {
+    // Success state (the reported bug): mocked confirm route so no real
+    // token redemption happens.
+    await page.route("**/api/newsletter/confirm", async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ ok: true }),
+      });
+    });
+    await page.goto("/newsletter/confirm?token=nlc_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+    await expect(page.getByText("You're subscribed!")).toBeVisible();
+    await expect(footerEmail(page)).toHaveCount(0);
+    // The rest of the footer still renders.
+    await expect(
+      page.locator("footer").getByRole("link", { name: "Dive Sites" })
+    ).toBeVisible();
+  });
+
+  test("is hidden on /newsletter/confirm when the token is invalid", async ({
+    page,
+  }) => {
+    await page.route("**/api/newsletter/confirm", async (route) => {
+      await route.fulfill({
+        status: 400,
+        contentType: "application/json",
+        body: JSON.stringify({ kind: "invalid_token" }),
+      });
+    });
+    await page.goto("/newsletter/confirm?token=nlc_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+    await expect(
+      page.getByText("This confirmation link isn't valid.")
+    ).toBeVisible();
+    // The band stays hidden: the page already links to /newsletter.
+    await expect(footerEmail(page)).toHaveCount(0);
+  });
+
+  test("is hidden on /newsletter/unsubscribe after opting out", async ({
+    page,
+  }) => {
+    await page.route("**/api/newsletter/unsubscribe", async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ ok: true }),
+      });
+    });
+    await page.goto("/newsletter/unsubscribe?token=nlu_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
+    await expect(page.getByText("You've been unsubscribed.")).toBeVisible();
+    // A signup prompt directly under an opt-out confirmation would be
+    // contradictory — it stays hidden.
+    await expect(footerEmail(page)).toHaveCount(0);
+    await expect(
+      page.locator("footer").getByRole("link", { name: "Dive Sites" })
+    ).toBeVisible();
+  });
+
   test("DEMA campaign params survive the prefill and preselect the audience", async ({
     page,
   }) => {

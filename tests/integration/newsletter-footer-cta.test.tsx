@@ -36,10 +36,42 @@ describe("NewsletterFooterCta", () => {
     expect(container).toBeEmptyDOMElement();
   });
 
+  it.each(["/newsletter/confirm", "/newsletter/unsubscribe"])(
+    "is hidden on %s — the band is redundant or contradictory on token pages",
+    (mockPath) => {
+      mockPathname = mockPath;
+      const { container } = render(<NewsletterFooterCta />);
+      expect(container).toBeEmptyDOMElement();
+    }
+  );
+
+  it("keeps query strings intact when matching token routes", () => {
+    // A token-bearing URL must still match — the band reads the pathname
+    // only, never the query.
+    mockPathname = "/newsletter/confirm";
+    const { container } = render(<NewsletterFooterCta />);
+    expect(container).toBeEmptyDOMElement();
+  });
+
   it("stays visible where no newsletter page exists (e.g. /nl/newsletter)", () => {
     // /nl/newsletter has no published Dutch page yet — hiding the band
     // there would remove the visitor's only signup entry point.
     mockPathname = "/nl/newsletter";
+    render(<NewsletterFooterCta />);
+    expect(
+      screen.getByRole("textbox", { name: /newsletter email/i })
+    ).toBeInTheDocument();
+  });
+
+  it("stays visible on unpublished localized token routes (e.g. /nl/newsletter/confirm)", () => {
+    // No Dutch newsletter pages are published yet — the band remains the
+    // only signup entry point on those routes.
+    mockPathname = "/nl/newsletter/confirm";
+    render(<NewsletterFooterCta />);
+    expect(
+      screen.getByRole("textbox", { name: /newsletter email/i })
+    ).toBeInTheDocument();
+    mockPathname = "/nl/newsletter/unsubscribe";
     render(<NewsletterFooterCta />);
     expect(
       screen.getByRole("textbox", { name: /newsletter email/i })
