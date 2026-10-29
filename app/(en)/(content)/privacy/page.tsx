@@ -163,7 +163,20 @@ export default function PrivacyPage() {
             Sea Saba does not send marketing emails without permission.
           </p>
           <p className="mt-3 text-base leading-relaxed text-muted-foreground">
-            You may contact us at any time to request that we stop future communications.
+            If you subscribe to our newsletter, we collect your email address, your chosen
+            audience (individual diver/traveler and/or group organizer/travel professional),
+            optional organization name, and the campaign attribution of the link you used to
+            reach the signup page. We ask for a separate confirmation email (double opt-in)
+            before adding you to the list, and we keep a record of your consent. Subscriber
+            information is stored in Sea Saba&apos;s internal system hosted on Google Cloud /
+            Firebase, and our newsletter emails are sent through our email provider (Resend).
+            Booking and reservation emails are transactional and are not affected by
+            newsletter preferences.
+          </p>
+          <p className="mt-3 text-base leading-relaxed text-muted-foreground">
+            Every newsletter email includes an unsubscribe link, and you may contact us at
+            any time to request that we stop future communications. Once you unsubscribe we
+            will not email you marketing again unless you give us new consent.
           </p>
         </section>
 

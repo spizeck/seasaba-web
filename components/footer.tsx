@@ -8,6 +8,7 @@ import { OPERATIONS } from "@/data/operations";
 import { trackLinkClick } from "@/lib/analytics";
 import { CookieSettingsButton } from "@/components/cookie-settings-button";
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { NewsletterFooterCta } from "@/components/newsletter-footer-cta";
 
 const PLAN_LINKS = [
   { label: "Where to Stay",  href: `/plan-your-trip#${planYourTripAnchors.whereToStay}` },
@@ -58,6 +59,7 @@ export function Footer() {
       {/* pb clears the fixed launchers' clipped hit region (~74px above
           the chat iframe's vendor-anchored bottom edge) plus safe-area */}
       <div className="mx-auto max-w-6xl px-4 pt-10 pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))] sm:px-6 lg:px-8">
+        <NewsletterFooterCta />
         <div className="grid gap-8 sm:grid-cols-2 sm:gap-10 lg:grid-cols-4">
 
           {/* Plan Your Trip */}

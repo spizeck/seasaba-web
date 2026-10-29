@@ -17,6 +17,7 @@ informational pages are server-rendered HTML and readable without JavaScript.
 - [Visiting Saba by Yacht](https://www.seasaba.com/visiting-yachts): arrival, clearance, moorings, and diving from your own vessel
 - [About Sea Saba](https://www.seasaba.com/about): history, crew, and operation since 1985
 - [Contact](https://www.seasaba.com/contact): inquiries, bookings, WhatsApp, and location
+- [Newsletter](https://www.seasaba.com/newsletter): double opt-in email newsletter signup for divers and group/trade organizers
 - [Book](https://www.seasaba.com/book): online reservation for dives, courses, and trips
 - [Recommended Partners](https://www.seasaba.com/partners): accommodations, restaurants, transportation, and local services
 - [Support Saba](https://www.seasaba.com/donate): Sea Saba's community-giving page, covering ways for visitors to support island organizations directly and how Saba groups can request a donation or sponsorship from Sea Saba
