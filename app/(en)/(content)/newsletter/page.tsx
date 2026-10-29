@@ -19,7 +19,7 @@ export async function generateMetadata({
   return createMetadata({
     title: "Newsletter",
     description:
-      "Subscribe to the Sea Saba newsletter — dive travel tips, Saba updates, and group/trade news. Confirm by email; unsubscribe anytime.",
+      "Subscribe to the Sea Saba newsletter for dive travel tips, Saba updates, and group or trade news. Confirm by email; unsubscribe anytime.",
     path: "/newsletter",
     searchParams: params,
   });
@@ -41,20 +41,21 @@ export default async function NewsletterPage({ searchParams }: NewsletterPagePro
   return (
     <>
       <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-        The Sea Saba Newsletter
+        Stay Connected to Saba
       </h1>
 
-      <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-        Occasional, genuinely useful email from Saba — dive conditions,
-        trip-planning tips, schedule news, and (for organizers) group and
-        trade updates. No noise, and you can unsubscribe anytime.
+      <p className="mt-3 text-base leading-relaxed text-muted-foreground">
+        Get occasional updates from Sea Saba, including diving conditions,
+        island news, travel tips, and special opportunities. Organizing a
+        group? Select Group Organizer for trip-planning resources, group
+        rates, and trade updates.
       </p>
 
-      <div className="not-prose mt-8 rounded-lg border border-border/60 bg-card p-6">
+      <div className="not-prose mt-6 rounded-lg border border-border/60 bg-card p-6">
         <NewsletterSignupForm attribution={attribution} />
       </div>
 
-      <p className="mt-6 text-sm text-muted-foreground">
+      <p className="mt-4 text-sm text-muted-foreground">
         We use double opt-in: after subscribing you&apos;ll get a confirmation
         email, and you&apos;re only on the list once you click it. Read how we
         handle your information in our{" "}

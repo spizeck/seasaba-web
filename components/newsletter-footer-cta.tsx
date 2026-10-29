@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Mail } from "lucide-react";
 import { trackEvent } from "@/lib/analytics";
+import { isRoutePublished, parsePathname } from "@/lib/locale";
 
 /**
  * Footer newsletter band: a compact email field that hands off to the
@@ -13,7 +14,18 @@ import { trackEvent } from "@/lib/analytics";
  */
 export function NewsletterFooterCta() {
   const router = useRouter();
+  const pathname = usePathname();
   const [email, setEmail] = useState("");
+
+  // The full signup lives at /newsletter; showing a second signup prompt
+  // inside the footer there would duplicate the page. The rest of the
+  // footer renders unchanged. Only hide where the newsletter page is
+  // actually published — on a not-yet-translated route the band must
+  // stay, since it is the visitor's only signup entry point.
+  const { locale, path } = parsePathname(pathname ?? "/");
+  if (path === "/newsletter" && isRoutePublished(locale, "/newsletter")) {
+    return null;
+  }
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -34,6 +46,10 @@ export function NewsletterFooterCta() {
         // Storage unavailable: the visitor types the email again.
       }
     }
+    // The footer persists across client-side navigation; clear the field
+    // so an abandoned signup doesn't leave the address sitting in the
+    // band on the next page.
+    setEmail("");
     router.push(`/newsletter?${params.toString()}`);
   }
 
@@ -46,7 +62,7 @@ export function NewsletterFooterCta() {
             Dive Saba in your inbox
           </p>
           <p className="mt-0.5 text-sm text-muted-foreground">
-            Occasional trip-planning tips and island updates — no noise.
+            Occasional trip-planning tips and island updates. No noise.
           </p>
         </div>
       </div>

@@ -17,8 +17,6 @@ import {
 interface NewsletterSignupFormProps {
   /** Campaign attribution parsed from the page URL (DEMA 2026 etc.). */
   attribution: NewsletterAttribution;
-  /** Email prefill (e.g. the footer signup band). */
-  initialEmail?: string;
 }
 
 /* Inputs render at text-base (16px) below lg so iOS Safari doesn't auto-zoom
@@ -34,9 +32,20 @@ type SubmitState =
 
 export function NewsletterSignupForm({
   attribution,
-  initialEmail = "",
 }: NewsletterSignupFormProps) {
-  const [email, setEmail] = useState(initialEmail);
+  const [email, setEmail] = useState(() => {
+    // Footer handoff prefill arrives via sessionStorage (never the URL).
+    // A lazy initializer reads it before first paint — no remount race —
+    // and the mount effect below clears the one-shot marker. The input
+    // carries suppressHydrationWarning for the intentional client-only
+    // initial value.
+    if (typeof window === "undefined") return "";
+    try {
+      return sessionStorage.getItem("nl-prefill-email") ?? "";
+    } catch {
+      return "";
+    }
+  });
   const [individual, setIndividual] = useState(
     attribution.audience === "individual"
   );
@@ -69,14 +78,10 @@ export function NewsletterSignupForm({
     if (viewTracked.current) return;
     viewTracked.current = true;
     trackEvent("newsletter_signup_view", attributionParams);
-    // Footer handoff prefill arrives via sessionStorage (never the URL);
-    // apply it once and clear it.
+    // Clear the one-shot prefill marker — the value itself was already
+    // claimed by the lazy state initializer.
     try {
-      const prefill = sessionStorage.getItem("nl-prefill-email");
-      if (prefill) {
-        sessionStorage.removeItem("nl-prefill-email");
-        setEmail((cur) => (cur.trim() ? cur : prefill));
-      }
+      sessionStorage.removeItem("nl-prefill-email");
     } catch {
       // Storage unavailable.
     }
@@ -156,7 +161,7 @@ export function NewsletterSignupForm({
         kind: "error",
         message:
           body?.kind === "rate_limited"
-            ? "Too many attempts — please try again in a minute."
+            ? "Too many attempts. Please try again in a minute."
             : "Something went wrong on our side. Please try again, or email us at info@seasaba.com.",
       });
     } catch {
@@ -186,7 +191,7 @@ export function NewsletterSignupForm({
             <p className="font-semibold text-foreground">Check your inbox</p>
             <p className="mt-1 text-sm text-muted-foreground">
               We sent a confirmation email to <strong>{email}</strong>. Click the
-              link inside to finish subscribing — you won&apos;t receive the
+              link inside to finish subscribing. You won&apos;t receive the
               newsletter until you confirm.
             </p>
           </div>
@@ -227,6 +232,7 @@ export function NewsletterSignupForm({
           className={`${fieldClass} mt-1.5`}
           aria-invalid={Boolean(errors.email)}
           aria-describedby={errors.email ? "nl-email-error" : undefined}
+          suppressHydrationWarning
         />
         {errors.email && (
           <p id="nl-email-error" role="alert" className="mt-1.5 text-sm text-destructive">
@@ -314,7 +320,7 @@ export function NewsletterSignupForm({
           <span>{NEWSLETTER_CONSENT_TEXT}</span>
         </label>
         <p id="nl-consent-note" className="mt-1.5 text-xs text-muted-foreground">
-          We&apos;ll email you a confirmation link first — you&apos;re only
+          We&apos;ll email you a confirmation link first. You&apos;re only
           subscribed once you click it. See our{" "}
           <Link href="/privacy" className="underline underline-offset-2 hover:text-foreground">
             privacy policy
