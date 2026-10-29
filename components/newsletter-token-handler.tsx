@@ -92,6 +92,18 @@ export function NewsletterTokenHandler({ kind }: { kind: TokenKind }) {
           <div>
             <p className="font-semibold text-foreground">{copy.ok}</p>
             <p className="mt-1 text-sm text-muted-foreground">{copy.okDetail}</p>
+            {kind === "unsubscribe" && (
+              <p className="mt-2 text-sm text-muted-foreground">
+                Changed your mind?{" "}
+                <Link
+                  href="/newsletter"
+                  className="underline underline-offset-2 hover:text-foreground"
+                >
+                  Subscribe again on the newsletter page
+                </Link>
+                .
+              </p>
+            )}
           </div>
         </div>
       )}

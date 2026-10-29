@@ -105,8 +105,12 @@ test.describe("footer newsletter band", () => {
     await page.goto("/newsletter/unsubscribe?token=nlu_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
     await expect(page.getByText("You've been unsubscribed.")).toBeVisible();
     // A signup prompt directly under an opt-out confirmation would be
-    // contradictory — it stays hidden.
+    // contradictory — it stays hidden. The outcome itself still links
+    // back to /newsletter for visitors who change their mind.
     await expect(footerEmail(page)).toHaveCount(0);
+    await expect(
+      page.getByRole("link", { name: "Subscribe again on the newsletter page" })
+    ).toHaveAttribute("href", "/newsletter");
     await expect(
       page.locator("footer").getByRole("link", { name: "Dive Sites" })
     ).toBeVisible();

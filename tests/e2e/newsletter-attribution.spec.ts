@@ -25,10 +25,12 @@ interface SubscribePayload {
 
 const EMAIL = "Diver@Example.com";
 
-function mockSubscribe(page: import("@playwright/test").Page) {
+// Route registration is awaited before the caller navigates, so no
+// request can slip past the mock to the real subscribe endpoint.
+async function mockSubscribe(page: import("@playwright/test").Page) {
   const seen: SubscribePayload[] = [];
   const requestUrls: string[] = [];
-  void page.route("**/api/newsletter/subscribe", async (route) => {
+  await page.route("**/api/newsletter/subscribe", async (route) => {
     requestUrls.push(route.request().url());
     seen.push(route.request().postDataJSON() as SubscribePayload);
     await route.fulfill({
@@ -66,7 +68,7 @@ test.describe("newsletter signup payload attribution (#269)", () => {
   test("DEMA group-flyer signup submits the full attribution", async ({
     page,
   }) => {
-    const { seen, requestUrls } = mockSubscribe(page);
+    const { seen, requestUrls } = await mockSubscribe(page);
     await page.goto(
       "/newsletter?campaign=dema-2026&source=qr&placement=group-flyer&audience=group"
     );
@@ -95,7 +97,7 @@ test.describe("newsletter signup payload attribution (#269)", () => {
   test("DEMA individual-flyer signup submits the full attribution", async ({
     page,
   }) => {
-    const { seen } = mockSubscribe(page);
+    const { seen } = await mockSubscribe(page);
     await page.goto(
       "/newsletter?campaign=dema-2026&source=qr&placement=individual-flyer&audience=individual"
     );
@@ -116,7 +118,7 @@ test.describe("newsletter signup payload attribution (#269)", () => {
   test("selecting both audiences submits both memberships", async ({
     page,
   }) => {
-    const { seen } = mockSubscribe(page);
+    const { seen } = await mockSubscribe(page);
     await page.goto(
       "/newsletter?campaign=dema-2026&source=qr&placement=individual-flyer&audience=individual"
     );
@@ -136,7 +138,7 @@ test.describe("newsletter signup payload attribution (#269)", () => {
   test("changing the audience selection never drops campaign attribution", async ({
     page,
   }) => {
-    const { seen } = mockSubscribe(page);
+    const { seen } = await mockSubscribe(page);
     await page.goto(
       "/newsletter?campaign=dema-2026&source=qr&placement=group-flyer&audience=group"
     );
@@ -160,7 +162,7 @@ test.describe("newsletter signup payload attribution (#269)", () => {
   test("footer handoff submits source=website, placement=footer", async ({
     page,
   }) => {
-    const { seen, requestUrls } = mockSubscribe(page);
+    const { seen, requestUrls } = await mockSubscribe(page);
     await page.goto("/about");
     await page.waitForLoadState("networkidle");
     const footerEmail = page.getByRole("textbox", {

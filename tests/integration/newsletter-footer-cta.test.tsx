@@ -63,20 +63,18 @@ describe("NewsletterFooterCta", () => {
     ).toBeInTheDocument();
   });
 
-  it("stays visible on unpublished localized token routes (e.g. /nl/newsletter/confirm)", () => {
-    // No Dutch newsletter pages are published yet — the band remains the
-    // only signup entry point on those routes.
-    mockPathname = "/nl/newsletter/confirm";
-    render(<NewsletterFooterCta />);
-    expect(
-      screen.getByRole("textbox", { name: /newsletter email/i })
-    ).toBeInTheDocument();
-    mockPathname = "/nl/newsletter/unsubscribe";
-    render(<NewsletterFooterCta />);
-    expect(
-      screen.getByRole("textbox", { name: /newsletter email/i })
-    ).toBeInTheDocument();
-  });
+  it.each(["/nl/newsletter/confirm", "/nl/newsletter/unsubscribe"])(
+    "stays visible on unpublished localized token routes (e.g. %s)",
+    (mockPath) => {
+      // No Dutch newsletter pages are published yet — the band remains the
+      // only signup entry point on those routes.
+      mockPathname = mockPath;
+      render(<NewsletterFooterCta />);
+      expect(
+        screen.getByRole("textbox", { name: /newsletter email/i })
+      ).toBeInTheDocument();
+    }
+  );
 
   it("hands the email to /newsletter via sessionStorage, never the URL", async () => {
     mockPathname = "/";
