@@ -17,13 +17,17 @@ export function NewsletterFooterCta() {
   const pathname = usePathname();
   const [email, setEmail] = useState("");
 
-  // The full signup lives at /newsletter; showing a second signup prompt
-  // inside the footer there would duplicate the page. The rest of the
-  // footer renders unchanged. Only hide where the newsletter page is
-  // actually published — on a not-yet-translated route the band must
-  // stay, since it is the visitor's only signup entry point.
+  // The signup band never appears on newsletter token pages: /newsletter
+  // is the signup itself, and /newsletter/confirm + /newsletter/unsubscribe
+  // exist only to redeem an emailed token — a signup prompt there is
+  // either redundant ("You're subscribed!") or contradicts the action
+  // just taken ("You've been unsubscribed."). Their error states already
+  // link back to /newsletter, so nothing is lost. Only hide where the
+  // route is actually published — on a not-yet-translated route the band
+  // must stay, since it is the visitor's only signup entry point.
+  const HIDDEN_ON = ["/newsletter", "/newsletter/confirm", "/newsletter/unsubscribe"];
   const { locale, path } = parsePathname(pathname ?? "/");
-  if (path === "/newsletter" && isRoutePublished(locale, "/newsletter")) {
+  if (HIDDEN_ON.includes(path) && isRoutePublished(locale, path)) {
     return null;
   }
 
