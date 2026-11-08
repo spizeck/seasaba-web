@@ -30,10 +30,11 @@ const PUBLIC_PAGES = [
   { path: "/dive-sites", name: "dive sites" },
   { path: "/about", name: "about" },
   { path: "/dive-log", name: "dive log" },
+  { path: "/journal", name: "journal" },
   { path: "/donate", name: "support saba" },
 ];
 
-const MOBILE_SCAN_PAGES = ["/", "/contact", "/book", "/donate"];
+const MOBILE_SCAN_PAGES = ["/", "/contact", "/book", "/donate", "/journal"];
 
 test.describe("automated axe scans", () => {
   for (const { path, name } of PUBLIC_PAGES) {
@@ -81,6 +82,16 @@ test.describe("automated axe scans", () => {
     await expect(page.locator("#sr-name-error")).toBeVisible();
     await expect(page.locator("#sr-email-error")).toBeVisible();
     await expect(page.locator("#sr-types-error")).toBeVisible();
+    await expectNoAxeViolations(page);
+  });
+
+  test("journal article page has no accessibility violations", async ({ page, isMobile, browserName, request }) => {
+    test.skip(isMobile || browserName !== "chromium", "representative scan on desktop-chromium");
+    // Article slugs are content-driven — discover one from the index.
+    const index = await request.get("/journal");
+    const path = /<a\b[^>]*\bhref="(\/journal\/[a-z0-9-]+)"/.exec(await index.text())?.[1];
+    expect(path, "journal index should link to an article").toBeTruthy();
+    await hydratedGoto(page, path!);
     await expectNoAxeViolations(page);
   });
 

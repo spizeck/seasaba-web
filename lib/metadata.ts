@@ -17,6 +17,22 @@ interface PageMetadataOptions {
   searchParams?: Record<string, string | string[] | undefined>;
   /** Defaults to English. Set on localized pages so canonical/OG/hreflang are locale-aware. */
   locale?: Locale;
+  /**
+   * Open Graph object type — "article" for Journal posts, which also unlocks
+   * `article:*` tags via the `article` option below.
+   */
+  ogType?: "website" | "article";
+  /** OG/Twitter image override (e.g. an article hero) instead of the site default. */
+  ogImage?: { url: string; alt: string; width?: number; height?: number };
+  /** Article metadata — emitted as article:* OG tags when ogType is "article". */
+  article?: {
+    publishedTime: string;
+    modifiedTime?: string;
+    section?: string;
+    authors?: string[];
+  };
+  /** Root-relative RSS feed URL advertised via `<link rel="alternate">` (alternates.types). */
+  rss?: string;
 }
 
 /** Root-layout metadata, per locale (#150). `og:locale` follows the document language. */
@@ -76,10 +92,15 @@ export function createMetadata({
   noIndex = false,
   searchParams,
   locale = DEFAULT_LOCALE,
+  ogType = "website",
+  ogImage,
+  article,
+  rss,
 }: PageMetadataOptions): Metadata {
   const url = `${SITE_URL}${localizedPath(locale, path)}`;
   const hasSearchParams =
     searchParams && Object.keys(searchParams).length > 0;
+  const image = ogImage ?? OG_IMAGE;
 
   // hreflang plumbing for #153: emit language alternates only for locales
   // where this route actually has a published translation. Until #151 lands
@@ -100,28 +121,39 @@ export function createMetadata({
     alternates: {
       canonical: url,
       languages,
+      ...(rss && {
+        types: { "application/rss+xml": `${SITE_URL}${rss}` },
+      }),
     },
     openGraph: {
       title,
       description,
       url,
       siteName: SITE_NAME,
-      type: "website",
+      type: ogType,
       locale: OG_LOCALE[locale],
       images: [
         {
-          url: OG_IMAGE.url,
-          width: OG_IMAGE.width,
-          height: OG_IMAGE.height,
-          alt: OG_IMAGE.alt,
+          url: image.url,
+          width: image.width,
+          height: image.height,
+          alt: image.alt,
         },
       ],
+      // Next.js emits article:* OG tags from flat openGraph fields.
+      ...(ogType === "article" &&
+        article && {
+          publishedTime: article.publishedTime,
+          modifiedTime: article.modifiedTime,
+          section: article.section,
+          authors: article.authors,
+        }),
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: [OG_IMAGE.url],
+      images: [image.url],
     },
     ...((noIndex || hasSearchParams) && {
       robots: {

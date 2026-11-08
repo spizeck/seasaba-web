@@ -8,7 +8,7 @@ import { test, expect } from "./fixtures";
 const PUBLIC_PAGES = [
   "/", "/diving", "/dive-sites", "/courses", "/plan-your-trip",
   "/visiting-yachts", "/about", "/contact", "/book", "/dive-log",
-  "/partners", "/donate", "/terms", "/privacy", "/cookie-policy",
+  "/journal", "/partners", "/donate", "/terms", "/privacy", "/cookie-policy",
 ];
 
 // Static assets and framework URLs that legitimately appear as href/src values.
@@ -22,6 +22,22 @@ test.beforeEach(async ({ browserName }) => {
 test("every internal link on public pages resolves to a real route and anchor", async ({ request }) => {
   const htmlByPage = new Map<string, string>();
   for (const path of PUBLIC_PAGES) {
+    const response = await request.get(path);
+    expect(response.status(), path).toBe(200);
+    htmlByPage.set(path, await response.text());
+  }
+
+  // Journal article routes are content-driven, so discover them from the
+  // index rather than duplicating the registry here — every article linked
+  // on /journal gets fetched and its own links checked too.
+  const articlePaths = new Set<string>();
+  for (const match of htmlByPage
+    .get("/journal")!
+    .matchAll(/<a\b[^>]*\bhref="(\/journal\/[a-z0-9-]+)"/g)) {
+    articlePaths.add(match[1]);
+  }
+  expect(articlePaths.size, "journal index should link to articles").toBeGreaterThan(0);
+  for (const path of articlePaths) {
     const response = await request.get(path);
     expect(response.status(), path).toBe(200);
     htmlByPage.set(path, await response.text());
