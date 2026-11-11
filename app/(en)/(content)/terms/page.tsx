@@ -153,6 +153,17 @@ export default function TermsPage() {
         </section>
 
         <section>
+          <h2 className="text-xl font-semibold text-foreground">Additional Fees & Surcharges</h2>
+          <ul className="mt-3 list-disc space-y-2 pl-5 text-base leading-relaxed text-muted-foreground">
+            <li>Sea Saba reserves the right to introduce, adjust, or discontinue additional fees and surcharges when necessary to address changes in operating costs, regulatory requirements, or fees imposed by third parties.</li>
+            <li>Such charges may include, but are not limited to, fuel surcharges, port and harbor fees, government-imposed fees, environmental or conservation charges, transportation-related fees, and other extraordinary or externally imposed operating expenses.</li>
+            <li>These charges may be assessed per person, per reservation, per activity, or on another reasonable basis appropriate to the expense being recovered.</li>
+            <li>Where permitted by applicable law and the terms of the reservation, additional fees or surcharges may apply to both new and existing reservations, including reservations made before the surcharge was introduced. Sea Saba will make reasonable efforts to notify affected customers of new or adjusted charges before the applicable service is provided.</li>
+            <li>Any applicable additional fees will be disclosed separately or otherwise clearly identified. Sea Saba may reduce or remove surcharges when the circumstances justifying them change.</li>
+          </ul>
+        </section>
+
+        <section>
           <h2 className="text-xl font-semibold text-foreground">Refunds</h2>
           <ul className="mt-3 list-disc space-y-2 pl-5 text-base leading-relaxed text-muted-foreground">
             <li>Approved refunds will be issued to the original payment method whenever possible.</li>
