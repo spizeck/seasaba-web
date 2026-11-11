@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { createMetadata } from "@/lib/metadata";
 import { BookingWidget } from "@/components/booking-widget";
-import { CheckCircle2, MessageSquare } from "lucide-react";
+import { CheckCircle2, Fuel, MessageSquare } from "lucide-react";
 
 interface BookPageProps {
   searchParams: Promise<{ item?: string }>;
@@ -78,6 +79,27 @@ export default async function BookPage({ searchParams }: BookPageProps) {
           </div>
         </div>
       </section>
+
+      {/* Fuel surcharge notice */}
+      <div className="mt-4 rounded border border-border/50 bg-card px-4 py-3">
+        <div className="flex items-start gap-2.5">
+          <Fuel className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+          <div>
+            <p className="text-xs font-semibold text-foreground">
+              Fuel surcharge
+            </p>
+            <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+              A $10 fuel surcharge currently applies to each boat trip to offset
+              elevated fuel costs. Additional fees and surcharges are covered in
+              our{" "}
+              <Link href="/terms" className="font-medium text-primary hover:underline underline-offset-4">
+                Terms &amp; Conditions
+              </Link>
+              .
+            </p>
+          </div>
+        </div>
+      </div>
 
       <div className="mt-8">
         {/* Keying by item forces a remount when the query param changes via
