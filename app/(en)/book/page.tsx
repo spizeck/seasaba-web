@@ -89,9 +89,10 @@ export default async function BookPage({ searchParams }: BookPageProps) {
               Fuel surcharge
             </p>
             <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-              A $10 fuel surcharge currently applies to each boat trip to offset
-              elevated fuel costs. Additional fees and surcharges are covered in
-              our{" "}
+              A $10 fuel surcharge currently applies per person, per reservation
+              &mdash; whether you dive for a single day or several &mdash; to
+              offset elevated fuel costs. The surcharge does not apply to local
+              residents. Additional fees and surcharges are covered in our{" "}
               <Link href="/terms" className="font-medium text-primary hover:underline underline-offset-4">
                 Terms &amp; Conditions
               </Link>
