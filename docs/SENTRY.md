@@ -337,13 +337,6 @@ license was manually reviewed and accepted here rather than suppressed in
 scanner config. The #130 activation does not change the usage class — no
 re-review needed unless `@sentry/cli` changes version or licensing upstream.
 
-A second FSL-flagged package appeared in #295: `sentry@0.50.0`
-(`FSL-1.1-Apache-2.0`), pulled in via `lighthouse` → `@sentry/node` →
-`@sentry/bundler-plugins` — dev-tooling only, never shipped or executed in
-production. Same license family and Permitted-Purpose analysis as above;
-reviewed and accepted 2026-11-24. Re-review only if it becomes a runtime
-dependency or the upstream license changes.
-
 ## Deferred work
 
 - **#131** — alert policies, triage runbook, ownership/escalation tuning.
