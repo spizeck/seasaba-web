@@ -36,7 +36,7 @@ jobs:
     # Official Playwright container: browsers + system deps pre-installed.
     # Keep the tag in sync with package-lock.json (same image as tests.yml).
     container:
-      image: mcr.microsoft.com/playwright:v1.63.0-noble
+      image: mcr.microsoft.com/playwright:v1.65.1-noble
       options: --user 1001
     timeout-minutes: 10
     env:

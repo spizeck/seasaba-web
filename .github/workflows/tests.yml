@@ -141,7 +141,7 @@ jobs:
     # Official Playwright container: browsers + system deps pre-installed.
     # Pin to the exact version in package-lock.json; bump both together.
     container:
-      image: mcr.microsoft.com/playwright:v1.63.0-noble
+      image: mcr.microsoft.com/playwright:v1.65.1-noble
       options: --user 1001
     timeout-minutes: 15
     steps:
@@ -176,7 +176,7 @@ jobs:
     runs-on: ubuntu-latest
     # Same Playwright container: the perf script drives its bundled Chromium.
     container:
-      image: mcr.microsoft.com/playwright:v1.63.0-noble
+      image: mcr.microsoft.com/playwright:v1.65.1-noble
       options: --user 1001
     timeout-minutes: 15
     steps:
