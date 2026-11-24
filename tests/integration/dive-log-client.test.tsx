@@ -25,7 +25,7 @@ it("loads recent dives, filters by guide, changes units, selects and exports onl
   expect(screen.getByRole("heading", { name: "1 dive matching filters" })).toBeVisible();
   await userEvent.click(screen.getByRole("button", { name: "Imperial units" }));
   expect(screen.getByText("Max depth: 69 ft")).toBeVisible();
-  await userEvent.click(screen.getByRole("button", { name: "Add Tent Reef to my dive log" }));
+  await userEvent.click(screen.getByRole("button", { name: "+ Add Tent Reef to my dive log" }));
   await userEvent.click(screen.getByRole("button", { name: "Export My Dive Log" }));
   expect(exportDiveLogToPdf).toHaveBeenCalledWith([expect.objectContaining({ diveSite: "Tent Reef" })], "imperial");
   await userEvent.click(screen.getByRole("button", { name: "Remove Tent Reef" }));
@@ -43,7 +43,7 @@ it("combines filters, recovers from no matches, expands sightings and clears sel
   await userEvent.selectOptions(screen.getByLabelText("Species Sighted"), "Green Turtle");
   await userEvent.click(screen.getByRole("button", { name: "1 species sighted" }));
   expect(screen.getByRole("button", { name: "Hide sightings" })).toBeVisible();
-  await userEvent.click(screen.getByRole("button", { name: "Add Tent Reef to my dive log" }));
+  await userEvent.click(screen.getByRole("button", { name: "+ Add Tent Reef to my dive log" }));
   await userEvent.click(screen.getByRole("button", { name: "Clear selection" }));
   await userEvent.selectOptions(screen.getByLabelText("Guide"), "Sam");
   expect(screen.getByText("No dives match your filters.")).toBeVisible();
@@ -73,7 +73,7 @@ it("paginates without losing selection and resets the page when filters change",
   render(<DiveLogClient />);
   await screen.findByText("Page 1 of 2");
   expect(screen.getByRole("button", { name: "Previous" })).toBeDisabled();
-  await userEvent.click(screen.getAllByRole("button", { name: "Add Tent Reef to my dive log" })[0]);
+  await userEvent.click(screen.getAllByRole("button", { name: "+ Add Tent Reef to my dive log" })[0]);
   await userEvent.click(screen.getByRole("button", { name: "Next" }));
   expect(screen.getAllByRole("heading", { level: 3 })).toHaveLength(1);
   expect(screen.getByText("1 dive selected")).toBeVisible();
@@ -115,7 +115,7 @@ it("politely announces while the PDF is being prepared", async () => {
   vi.mocked(exportDiveLogToPdf).mockReturnValueOnce(new Promise(() => {}));
   render(<DiveLogClient />);
   await screen.findByRole("heading", { name: "2 dives" });
-  await userEvent.click(screen.getByRole("button", { name: "Add Tent Reef to my dive log" }));
+  await userEvent.click(screen.getByRole("button", { name: "+ Add Tent Reef to my dive log" }));
   await userEvent.click(screen.getByRole("button", { name: "Export My Dive Log" }));
   expect(await screen.findByRole("status")).toHaveTextContent("Preparing your dive log PDF");
   expect(screen.getByRole("button", { name: "Preparing PDF..." })).toBeDisabled();
@@ -124,7 +124,7 @@ it("surfaces a failed PDF export as an alert with no lingering status region", a
   vi.mocked(exportDiveLogToPdf).mockRejectedValueOnce(new Error("boom"));
   render(<DiveLogClient />);
   await screen.findByRole("heading", { name: "2 dives" });
-  await userEvent.click(screen.getByRole("button", { name: "Add Tent Reef to my dive log" }));
+  await userEvent.click(screen.getByRole("button", { name: "+ Add Tent Reef to my dive log" }));
   await userEvent.click(screen.getByRole("button", { name: "Export My Dive Log" }));
   expect(await screen.findByRole("alert")).toHaveTextContent("couldn't be created");
   expect(screen.queryByRole("status")).not.toBeInTheDocument();

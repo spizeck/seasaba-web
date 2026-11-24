@@ -21,17 +21,19 @@ import { test, expect, waitForHydration } from "./fixtures";
 // both the hydration wait and the fixture's pageerror teardown.
 test("hydration survives a task-boundary chunk registration (#161)", async ({ page, request }) => {
   // Discover the Turbopack runtime chunk and the sibling chunks it awaits.
-  // Filenames are build-hashed, so they cannot be hardcoded.
+  // Filenames are build-hashed, so they cannot be hardcoded. Since
+  // next@16.4.x the awaited-chunk manifest lives in the inline
+  // `TURBOPACK.push({"otherChunks":[...]})` bootstrap JSON in the HTML, not
+  // in the runtime chunk's own source.
   const html = await (await request.get("/")).text();
   const runtimeSrc = html.match(/src="([^"]*turbopack-[^"]*\.js)"/)?.[1];
   expect(runtimeSrc, "homepage must reference a turbopack runtime chunk").toBeTruthy();
-  const runtimeBody = await (await request.get(runtimeSrc as string)).text();
   const awaited = new Set(
-    [...runtimeBody.matchAll(/otherChunks:\[([^\]]*)\]/g)].flatMap((m) =>
+    [...html.matchAll(/"otherChunks"\s*:\s*\[([^\]]*)\]/g)].flatMap((m) =>
       [...m[1].matchAll(/"([^"]+)"/g)].map((n) => n[1])
     )
   );
-  expect(awaited.size, "runtime chunk must await sibling chunks").toBeGreaterThan(0);
+  expect(awaited.size, "bootstrap must await sibling chunks").toBeGreaterThan(0);
   const deferredChunk = [...awaited].pop() as string;
 
   let deferredUrl: string | null = null;

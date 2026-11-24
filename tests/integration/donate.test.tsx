@@ -311,7 +311,7 @@ describe("donation recipient cards", () => {
     expect(donate.getAttribute("rel")).toContain("noreferrer");
     expect(donate.getAttribute("aria-label")).toMatch(/opens in a new tab/i);
 
-    const visit = screen.getByRole("link", { name: /visit example reef fund's website/i });
+    const visit = screen.getByRole("link", { name: /visit website — example reef fund/i });
     expect(visit.getAttribute("href")).toBe("https://reef.example.org");
   });
 
@@ -360,7 +360,7 @@ describe("donation recipient cards", () => {
     expect(donate.className).toContain("no-underline");
 
     const visit = screen.getByRole("link", {
-      name: /visit example reef fund's website/i,
+      name: /visit website — example reef fund/i,
     });
     expect(visit).not.toHaveAttribute("data-slot");
     expect(visit.className).not.toContain("no-underline");

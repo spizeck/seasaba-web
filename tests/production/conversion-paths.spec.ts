@@ -57,7 +57,7 @@ test("/contact renders a usable form and failed validation sends nothing", async
     page.getByRole("combobox"),
     page.getByRole("textbox", { name: /^Message/ }),
     page.getByRole("button", { name: "Continue to email" }),
-    page.getByRole("button", { name: "Send inquiry by WhatsApp" }),
+    page.getByRole("button", { name: "WhatsApp Sea Saba" }),
   ]) {
     await expect(control).toBeVisible();
     await expect(control).toBeEnabled();
@@ -65,7 +65,7 @@ test("/contact renders a usable form and failed validation sends nothing", async
 
   // Client-side validation on an empty form is provably side-effect free:
   // the handler returns before opening the mailto:/WhatsApp handoff.
-  await page.getByRole("button", { name: "Send inquiry by WhatsApp" }).click();
+  await page.getByRole("button", { name: "WhatsApp Sea Saba" }).click();
   for (const message of [
     "Please enter your name.",
     "Please enter your email address.",

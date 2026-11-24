@@ -18,7 +18,7 @@ test("new diver: home → courses → try scuba inquiry → WhatsApp handoff", a
 
   await page.getByRole("textbox", { name: /^Name/ }).fill("Curious Guest");
   await page.getByRole("textbox", { name: /^Email/ }).fill("guest@example.test");
-  await page.getByRole("button", { name: "Send inquiry by WhatsApp" }).click();
+  await page.getByRole("button", { name: "WhatsApp Sea Saba" }).click();
   await expect.poll(() => windowOpenCalls(page)).toHaveLength(1);
   const url = new URL((await windowOpenCalls(page))[0]);
   expect(url.searchParams.get("text")).toContain("Curious Guest");
@@ -50,7 +50,7 @@ test("course inquiry customer: courses → open water info → message handoff",
   if (browserName === "webkit") {
     // The WhatsApp handoff exercises the alternate contact path on this engine;
     // the email handoff itself is verified on Chromium below.
-    await page.getByRole("button", { name: "Send inquiry by WhatsApp" }).click();
+    await page.getByRole("button", { name: "WhatsApp Sea Saba" }).click();
     await expect.poll(() => windowOpenCalls(page)).toHaveLength(1);
   } else {
     // Email is a client-side mailto: handoff — stubbed window.open captures

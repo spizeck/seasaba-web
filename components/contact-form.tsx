@@ -493,7 +493,7 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
         <Button
           type="submit"
           className="w-full sm:w-auto"
-          aria-label="Continue to email"
+          aria-label="Continue to Email"
         >
           <Mail className="h-4 w-4" />
           Continue to Email
@@ -503,7 +503,7 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
           variant="outline"
           onClick={handleWhatsApp}
           className="w-full border-green-700 text-green-700 hover:bg-green-50 hover:text-green-800 sm:w-auto"
-          aria-label="Send inquiry by WhatsApp"
+          aria-label="WhatsApp Sea Saba, opens in a new window"
         >
           <MessageCircle className="h-4 w-4" />
           WhatsApp Sea Saba

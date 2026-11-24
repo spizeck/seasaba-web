@@ -43,7 +43,7 @@ export function InsuranceCTAs({
           target="_blank"
           rel="noopener noreferrer"
           onClick={() => trackLinkClick("social_click", DIVE_ASSURE_URL, "Get Travel Insurance")}
-          aria-label="Get travel insurance through DiveAssure, opens in a new tab"
+          aria-label="Get Travel Insurance through DiveAssure, opens in a new tab"
           className={
             equalWeight
               ? `${btnOutline} no-underline border-primary/50 text-primary focus-visible:outline-primary`
@@ -76,7 +76,7 @@ export function InsuranceCTAs({
           target="_blank"
           rel="noopener noreferrer"
           onClick={() => trackLinkClick("social_click", DAN_SHORT_TERM_URL, "Get Short-Term Dive Insurance")}
-          aria-label="Get short-term dive accident insurance through DAN, opens in a new tab"
+          aria-label="Get Short-Term Dive Insurance through DAN, opens in a new tab"
           className={`${btnOutline} no-underline border-primary/60 text-primary hover:border-primary hover:bg-primary hover:text-white focus-visible:outline-primary`}
         >
           Get Short-Term Dive Insurance

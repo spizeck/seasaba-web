@@ -47,7 +47,6 @@ export function FindSeaSaba() {
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => trackLinkClick("directions_click", MAPS_URL, "Get Directions")}
-              aria-label="Get directions to Sea Saba Dive Center, opens Google Maps in a new tab"
               className="flex min-w-[10rem] flex-col items-start rounded-xl bg-white px-4 py-3 shadow-xl no-underline"
             >
               <span className="text-sm font-semibold text-foreground">Sea Saba Dive Center</span>
@@ -111,7 +110,7 @@ export function FindSeaSaba() {
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => trackLinkClick("directions_click", MAPS_URL, "Open in Google Maps")}
-            aria-label="Open Sea Saba in Google Maps, opens in a new tab"
+            aria-label="Open in Google Maps ↗, opens in a new tab"
             className="no-underline"
           >
             <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4 shrink-0">
@@ -127,7 +126,7 @@ export function FindSeaSaba() {
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => trackLinkClick("directions_click", APPLE_MAPS_URL, "Open in Apple Maps")}
-            aria-label="Open Sea Saba in Apple Maps, opens in a new tab"
+            aria-label="Open in Apple Maps ↗, opens in a new tab"
             className="no-underline"
           >
             <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4 shrink-0" fill="currentColor">

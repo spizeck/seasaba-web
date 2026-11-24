@@ -143,7 +143,11 @@ function DonationCard({ recipient }: { recipient: DonationRecipient }) {
               href={recipient.website}
               eventName="social_click"
               buttonText={`Visit ${recipient.name}`}
-              ariaLabel={`Visit ${recipient.name}'s website, opens in a new tab`}
+              ariaLabel={
+                recipient.donationUrl
+                  ? `Visit website — ${recipient.name}, opens in a new tab`
+                  : `Visit their website — ${recipient.name}, opens in a new tab`
+              }
               className="inline-flex items-center gap-1.5 text-sm font-medium text-primary transition-colors hover:text-primary/80"
             >
               {recipient.donationUrl ? "Visit website" : "Visit their website"}

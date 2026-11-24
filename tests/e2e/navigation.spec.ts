@@ -78,8 +78,8 @@ test("footer and contact page expose working phone, WhatsApp, email, and map pat
   await expect(footer.getByRole("link", { name: /^Phone:/ })).toHaveAttribute("href", "tel:+5994162246");
   await expect(footer.getByRole("link", { name: /WhatsApp/ })).toHaveAttribute("href", /wa\.me\/5994162246/);
   await expect(footer.getByRole("link", { name: "info@seasaba.com" })).toHaveAttribute("href", "mailto:info@seasaba.com");
-  await expect(page.getByRole("link", { name: /Open Sea Saba in Google Maps/ })).toHaveAttribute("href", /google\.com\/maps/);
-  await expect(page.getByRole("link", { name: /Open Sea Saba in Apple Maps/ })).toHaveAttribute("href", /maps\.apple\.com/);
+  await expect(page.getByRole("link", { name: /Open in Google Maps/ })).toHaveAttribute("href", /google\.com\/maps/);
+  await expect(page.getByRole("link", { name: /Open in Apple Maps/ })).toHaveAttribute("href", /maps\.apple\.com/);
 
   for (const name of ["Instagram", "Facebook", "YouTube", "TripAdvisor", "Google Reviews"]) {
     const link = footer.getByRole("link", { name, exact: true });
