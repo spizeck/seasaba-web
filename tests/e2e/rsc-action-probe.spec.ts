@@ -9,12 +9,13 @@ import { test, expect } from "./fixtures";
  * scanner traffic hits this shape in production (POST /index.rsc), and each
  * hit was a server-side Sentry event.
  *
- * `patches/next+16.4.6+002.action-not-found-rsc-404.patch` mirrors the
+ * `patches/next+16.4.6+002.action-not-found-rsc-404.patch` plus
+ * `patches/next+16.4.6+003.preserve-action-status.patch` mirror the
  * upstream fix: serve the `x-nextjs-action-not-found` early return instead
  * of asserting on the content type, while preserving whatever status the
  * action handler set — 400 for a malformed action ID, 409 for a
  * well-formed ID that names no action. When Next.js ships the real fix the
- * patch can be dropped — these tests must keep passing either way.
+ * patches can be dropped — these tests must keep passing either way.
  */
 
 // This app defines no server actions, so any Next-Action value is
