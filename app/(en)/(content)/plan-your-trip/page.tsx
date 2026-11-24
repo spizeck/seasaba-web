@@ -170,7 +170,7 @@ export default function PlanYourTripPage() {
               href="https://www.winair.sx/"
               eventName="social_click"
               buttonText="Check Flight Schedule"
-              aria-label="Check Winair Flight Schedule, opens in a new tab"
+              aria-label="Check Flight Schedule ↗ — Winair, opens in a new tab"
             >
               Check Flight Schedule ↗
             </TrackedOutboundButton>
@@ -217,7 +217,7 @@ export default function PlanYourTripPage() {
               href="https://makanaferryservice.com/"
               eventName="ferry_link_click"
               buttonText="View Ferry Schedule"
-              aria-label="View Makana Ferry Schedule, opens in a new tab"
+              aria-label="View Ferry Schedule ↗ — Makana, opens in a new tab"
             >
               View Ferry Schedule ↗
             </TrackedOutboundButton>
@@ -264,7 +264,7 @@ export default function PlanYourTripPage() {
               href="https://westindieshelicopters.com/"
               eventName="social_click"
               buttonText="Request Helicopter Charter"
-              aria-label="Request Helicopter Charter, opens in a new tab"
+              aria-label="Request Helicopter Charter ↗ — West Indies Helicopters, opens in a new tab"
             >
               Request Helicopter Charter ↗
             </TrackedOutboundButton>
@@ -311,7 +311,7 @@ export default function PlanYourTripPage() {
               href="https://fly-sxmairways.com/"
               eventName="social_click"
               buttonText="Book SXM Airways"
-              aria-label="Book SXM Airways, opens in a new tab"
+              aria-label="Book SXM Airways ↗, opens in a new tab"
             >
               Book SXM Airways ↗
             </TrackedOutboundButton>

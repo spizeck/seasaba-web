@@ -105,7 +105,7 @@ export function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => trackLinkClick("whatsapp_click", CONTACT.whatsappHref, "WhatsApp")}
-                aria-label="Contact Sea Saba on WhatsApp, opens in a new tab"
+                aria-label={`WhatsApp: ${CONTACT.whatsapp} (opens in a new tab)`}
                 className="transition-colors hover:text-foreground"
               >
                 WhatsApp: {CONTACT.whatsapp}

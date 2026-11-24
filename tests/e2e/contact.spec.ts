@@ -7,7 +7,7 @@ const name = (page: import("@playwright/test").Page) => page.getByRole("textbox"
 const email = (page: import("@playwright/test").Page) => page.getByRole("textbox", { name: /^Email/ });
 const inquiry = (page: import("@playwright/test").Page) => page.getByRole("combobox");
 const emailButton = (page: import("@playwright/test").Page) => page.getByRole("button", { name: "Continue to email" });
-const whatsappButton = (page: import("@playwright/test").Page) => page.getByRole("button", { name: "Send inquiry by WhatsApp" });
+const whatsappButton = (page: import("@playwright/test").Page) => page.getByRole("button", { name: "WhatsApp Sea Saba" });
 
 test("empty submission reports every required field without a handoff", async ({ page }) => {
   await stubWindowOpen(page);

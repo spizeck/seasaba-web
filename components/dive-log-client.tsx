@@ -185,7 +185,7 @@ function DiveCard({
           </div>
           <button
             onClick={onToggle}
-            aria-label={selected ? `Remove ${dive.diveSite} from my dive log` : `Add ${dive.diveSite} to my dive log`}
+            aria-label={selected ? `Added ✓ — remove ${dive.diveSite} from my dive log` : `+ Add ${dive.diveSite} to my dive log`}
             className={`shrink-0 rounded-md border px-3 py-1.5 text-xs font-medium pressable focus-ring ${
               selected
                 ? "border-primary bg-primary text-white hover:bg-primary/90"

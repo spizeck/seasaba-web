@@ -5,7 +5,7 @@ import { ContactForm } from "@/components/contact-form";
 import { trackEvent, trackLinkClick } from "@/lib/analytics";
 vi.mock("@/lib/analytics", () => ({ trackEvent: vi.fn(), trackLinkClick: vi.fn() }));
 
-const emailButton = () => screen.getByRole("button", { name: "Continue to email" });
+const emailButton = () => screen.getByRole("button", { name: "Continue to Email" });
 const open = () => vi.mocked(window.open);
 
 /** Decode the mailto: URI handed to window.open (first call, first arg). */
@@ -35,7 +35,7 @@ beforeEach(() => {
 
 it.each(["email", "WhatsApp"])("blocks empty %s submissions with accessible errors", async (method) => {
   render(<ContactForm />);
-  const label = method === "email" ? "Continue to email" : "Send inquiry by WhatsApp";
+  const label = method === "email" ? "Continue to Email" : /WhatsApp Sea Saba/;
   await userEvent.click(screen.getByRole("button", { name: label }));
   for (const message of ["Please enter your name.", "Please enter your email address.", "Please select an inquiry type.", "Please enter a message."]) expect(screen.getByText(message)).toBeVisible();
   expect(screen.getByRole("textbox", { name: /^Email/ })).toHaveAttribute("aria-invalid", "true");
@@ -75,7 +75,7 @@ it("builds an encoded WhatsApp handoff with course and travel details", async ()
   await userEvent.type(screen.getByRole("textbox", { name: /^Email/ }), "guest@example.test");
   await userEvent.selectOptions(screen.getByRole("combobox"), "try-scuba");
   await userEvent.type(screen.getByLabelText(/^Planned travel dates/), "October 10–12");
-  await userEvent.click(screen.getByRole("button", { name: "Send inquiry by WhatsApp" }));
+  await userEvent.click(screen.getByRole("button", { name: /WhatsApp Sea Saba/ }));
   expect(open()).toHaveBeenCalledOnce();
   const url = new URL(String(open().mock.calls[0][0]));
   expect(url.origin + url.pathname).toBe("https://wa.me/5994162246");

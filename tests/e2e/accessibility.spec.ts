@@ -233,7 +233,7 @@ test.describe("keyboard operation", () => {
     await page.locator("#inquiry-type").focus();
     await page.locator("#inquiry-type").selectOption("general");
     await page.locator("#message").pressSequentially("Interested in diving.");
-    await page.getByRole("button", { name: "Send inquiry by WhatsApp" }).focus();
+    await page.getByRole("button", { name: "WhatsApp Sea Saba" }).focus();
     await page.keyboard.press("Enter");
     const calls = await windowOpenCalls(page);
     expect(calls).toHaveLength(1);
