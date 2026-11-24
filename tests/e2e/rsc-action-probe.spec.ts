@@ -74,4 +74,8 @@ test("ordinary action-not-found and RSC navigation still behave", async ({
   const rsc = await request.get("/", { headers: { RSC: "1" } });
   expect(rsc.status()).toBe(200);
   expect(rsc.headers()["content-type"]).toContain("text/x-component");
+  // Status + content-type alone can't prove the payload is flight data —
+  // require at least one `<id>:<value>` flight row in the body.
+  const body = await rsc.text();
+  expect(body).toMatch(/^[0-9a-z]+:[\["{]/m);
 });
