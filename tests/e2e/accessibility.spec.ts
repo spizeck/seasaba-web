@@ -200,7 +200,7 @@ test.describe("keyboard operation", () => {
     await expect(chip).toBeFocused();
     await page.keyboard.press("Enter");
     await expect(page).toHaveURL(/\/dive-sites\/tent-wall$/);
-    await expect(page.getByRole("heading", { name: "Tent Wall" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Tent Wall", exact: true })).toBeVisible();
   });
 
   test("contact form is completable and submits by keyboard alone", async ({ page, isMobile, browserName }) => {

@@ -12,12 +12,12 @@ test("dive site chips link to individual site pages with sibling navigation", as
   await hydratedGoto(page, "/dive-sites");
   await page.getByRole("link", { name: "Third Encounter", exact: true }).first().click();
   await expect(page).toHaveURL(/\/dive-sites\/third-encounter$/);
-  await expect(page.getByRole("heading", { name: "Third Encounter" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Third Encounter", exact: true })).toBeVisible();
 
   // Sibling-site links keep browsing inside the same dive area.
   await page.getByRole("link", { name: "Twilight Zone", exact: true }).click();
   await expect(page).toHaveURL(/\/dive-sites\/twilight-zone$/);
-  await expect(page.getByRole("heading", { name: "Twilight Zone" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Twilight Zone", exact: true })).toBeVisible();
 });
 
 test("accommodation pills open a hotel dialog, Escape closes it and restores focus", async ({ page }) => {
