@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { createMetadata } from "@/lib/metadata";
 import { DiveLogClient } from "@/components/dive-log-client";
 
@@ -17,19 +18,19 @@ export default function DiveLogPage() {
       <noscript>
         <p className="mx-auto max-w-md px-4 pb-10 text-center text-sm text-muted-foreground">
           Recent dive activity needs JavaScript to load. You can still{" "}
-          <a
+          <Link
             href="/dive-sites"
             className="font-medium text-primary underline underline-offset-2 hover:underline"
           >
             browse our dive sites
-          </a>{" "}
+          </Link>{" "}
           or{" "}
-          <a
+          <Link
             href="/contact"
             className="font-medium text-primary underline underline-offset-2 hover:underline"
           >
             ask us about a recent trip
-          </a>
+          </Link>
           .
         </p>
       </noscript>

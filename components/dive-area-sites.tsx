@@ -1,77 +1,53 @@
-"use client";
-
-import { useState } from "react";
-import { DiveSiteModal } from "@/components/dive-site-modal";
-import { DIVE_SITE_MAP, DIVE_SITES } from "@/data/dive-site-videos";
-import type { DiveSite } from "@/data/dive-site-videos";
+import Link from "next/link";
+import { DIVE_SITE_MAP, diveSitePath } from "@/data/dive-site-videos";
 
 type Props = {
   sites: readonly string[];
   /** Use dark pill styles when rendered on a dark background */
   dark?: boolean;
-  /** Whether the pills open the dive site modal. Defaults to true. */
-  interactive?: boolean;
 };
 
-export function DiveAreaSites({ sites, dark = false, interactive = true }: Props) {
-  const [activeSite, setActiveSite] = useState<DiveSite | null>(null);
-
-  // Only sites that exist in the data file are clickable with a modal
-  const openSite = (name: string) => {
-    const site = DIVE_SITE_MAP[name];
-    if (site) setActiveSite(site);
-  };
-
+/**
+ * Site chips linking to each site's /dive-sites/<slug> guide. Server-rendered
+ * links so the individual site pages are crawlable and shareable — this used
+ * to open a client-side modal, which kept the site content out of the
+ * initial HTML and invisible to crawlers (#301).
+ */
+export function DiveAreaSites({ sites, dark = false }: Props) {
   const pillBase = dark
     ? "rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium text-white/70 pressable focus-ring-light"
     : "rounded-full px-3 py-1 text-xs font-medium pressable focus-ring";
 
   const pillActive = dark
-    ? "hover:bg-white/15 hover:text-white cursor-pointer"
-    : "bg-primary/10 text-primary hover:bg-primary/20 cursor-pointer";
+    ? "hover:bg-white/15 hover:text-white"
+    : "bg-primary/10 text-primary hover:bg-primary/20";
 
-  // Sites with no modal data are disabled, not just unstyled — dim them so
-  // they can't be mistaken for the interactive pills (issue #215).
+  // Names without a catalogue entry have no page — dim them rather than
+  // linking to a 404 (issue #215 behavior preserved).
   const pillInactive = dark
     ? "cursor-default opacity-50"
-    : "bg-primary/10 text-primary cursor-default opacity-50";
+    : "bg-primary/10 text-primary opacity-50";
 
   return (
-    <>
-      <div className="mt-2 flex flex-wrap gap-2">
-        {sites.map((site) => {
-          const hasData = Boolean(DIVE_SITE_MAP[site]);
-          if (!interactive) {
-            return (
-              <span
-                key={site}
-                className={`${pillBase} ${pillInactive}`}
-              >
-                {site}
-              </span>
-            );
-          }
+    <div className="mt-2 flex flex-wrap gap-2">
+      {sites.map((site) => {
+        if (!DIVE_SITE_MAP[site]) {
           return (
-            <button
-              key={site}
-              onClick={() => openSite(site)}
-              disabled={!hasData}
-              className={`${pillBase} ${hasData ? pillActive : pillInactive}`}
-            >
+            <span key={site} className={`${pillBase} ${pillInactive}`}>
               {site}
-            </button>
+            </span>
           );
-        })}
-      </div>
-
-      {interactive && activeSite && (
-        <DiveSiteModal
-          site={activeSite}
-          allSites={DIVE_SITES}
-          onClose={() => setActiveSite(null)}
-          onNavigate={(s) => setActiveSite(s)}
-        />
-      )}
-    </>
+        }
+        return (
+          <Link
+            key={site}
+            href={diveSitePath(site)}
+            className={`${pillBase} ${pillActive}`}
+          >
+            {site}
+          </Link>
+        );
+      })}
+    </div>
   );
 }

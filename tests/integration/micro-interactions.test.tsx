@@ -8,11 +8,9 @@ import { FindSeaSaba } from "@/components/find-sea-saba";
 import { Header } from "@/components/header";
 import { Hero } from "@/components/hero";
 import { SpeciesModal } from "@/components/species-modal";
-import { DiveSiteModal } from "@/components/dive-site-modal";
 import { BankDetailsModal } from "@/components/donations/bank-details-modal";
 import { HotelPills } from "@/components/hotel-pills";
 import { SPECIES_CATALOG } from "@/data/species";
-import { DIVE_SITES } from "@/data/dive-site-videos";
 import { DONATION_RECIPIENTS } from "@/data/donations";
 
 // Issue #199: the site shares one small interaction language — a `pressable`
@@ -135,21 +133,6 @@ describe("dialogs share one entrance language", () => {
     const panel = dialog.firstElementChild as HTMLElement;
     expect(panel.className).toContain("animate-rise-in");
     expect(panel.className).toContain("motion-reduce:animate-none");
-  });
-
-  it("dive-site modal uses the same language", () => {
-    const { getByRole } = render(
-      <DiveSiteModal
-        site={DIVE_SITES[0]}
-        allSites={DIVE_SITES}
-        onClose={noop}
-        onNavigate={noop}
-      />
-    );
-    const dialog = getByRole("dialog");
-    expect(dialog.className).toContain("animate-overlay-in");
-    const panel = dialog.firstElementChild as HTMLElement;
-    expect(panel.className).toContain("animate-rise-in");
   });
 
   it("bank-details modal joins the shared entrance language with reduced-motion opt-out", () => {

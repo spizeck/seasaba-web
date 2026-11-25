@@ -84,11 +84,10 @@ test.describe("automated axe scans", () => {
     await expectNoAxeViolations(page);
   });
 
-  test("dive site dialog has no accessibility violations", async ({ page, isMobile, browserName }) => {
+  test("individual dive site page has no accessibility violations", async ({ page, isMobile, browserName }) => {
     test.skip(isMobile || browserName !== "chromium", "representative scan on desktop-chromium");
-    await hydratedGoto(page, "/dive-sites");
-    await page.getByRole("button", { name: "Tent Reef" }).click();
-    await expect(page.getByRole("dialog")).toBeVisible();
+    await hydratedGoto(page, "/dive-sites/tent-reef");
+    await expect(page.getByRole("heading", { name: "Tent Reef", exact: true })).toBeVisible();
     await expectNoAxeViolations(page);
   });
 
@@ -193,34 +192,15 @@ test.describe("keyboard operation", () => {
     expect(afterClose, "focus must not enter the closed mobile nav").toBeNull();
   });
 
-  test("dive site dialog traps focus, closes on Escape, and restores focus to the trigger", async ({ page, isMobile, browserName }) => {
+  test("dive site chips are keyboard-navigable links to their site pages", async ({ page, isMobile, browserName }) => {
     test.skip(isMobile || browserName !== "chromium", "desktop keyboard interaction");
     await hydratedGoto(page, "/dive-sites");
-    const chip = page.getByRole("button", { name: "Tent Reef" });
+    const chip = page.getByRole("link", { name: "Tent Wall" });
     await chip.focus();
-    await page.keyboard.press("Enter");
-    const dialog = page.getByRole("dialog");
-    await expect(dialog).toBeVisible();
-
-    // Focus lands inside the dialog and is trapped.
-    const focusInDialog = await page.evaluate(() => document.activeElement?.closest('[role="dialog"]'));
-    expect(focusInDialog, "focus must move inside the dialog").not.toBeNull();
-
-    // Tab/Shift+Tab cycle within the dialog: wrap several times without escape.
-    for (let i = 0; i < 12; i++) {
-      await page.keyboard.press("Tab");
-      const inside = await page.evaluate(() => !!document.activeElement?.closest('[role="dialog"]'));
-      expect(inside, `focus escaped the dialog on Tab #${i + 1}`).toBe(true);
-    }
-    for (let i = 0; i < 12; i++) {
-      await page.keyboard.press("Shift+Tab");
-      const inside = await page.evaluate(() => !!document.activeElement?.closest('[role="dialog"]'));
-      expect(inside, `focus escaped the dialog on Shift+Tab #${i + 1}`).toBe(true);
-    }
-
-    await page.keyboard.press("Escape");
-    await expect(dialog).toHaveCount(0);
     await expect(chip).toBeFocused();
+    await page.keyboard.press("Enter");
+    await expect(page).toHaveURL(/\/dive-sites\/tent-wall$/);
+    await expect(page.getByRole("heading", { name: "Tent Wall" })).toBeVisible();
   });
 
   test("contact form is completable and submits by keyboard alone", async ({ page, isMobile, browserName }) => {

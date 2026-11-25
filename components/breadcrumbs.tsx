@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronRight } from "lucide-react";
 import { BreadcrumbListJsonLd } from "@/components/structured-data";
+import { DIVE_SITE_BY_SLUG } from "@/data/dive-site-videos";
 
 export function Breadcrumbs() {
   const pathname = usePathname();
@@ -13,9 +14,13 @@ export function Breadcrumbs() {
 
   const crumbs = segments.map((segment, index) => {
     const href = "/" + segments.slice(0, index + 1).join("/");
-    const label = segment
-      .replace(/-/g, " ")
-      .replace(/\b\w/g, (c) => c.toUpperCase());
+    // Known dive-site slugs use their real names ("Rays n’ Anchors",
+    // "50/50") instead of the slug text ("Rays N Anchors", "50 50").
+    const label =
+      DIVE_SITE_BY_SLUG[segment]?.name ??
+      segment
+        .replace(/-/g, " ")
+        .replace(/\b\w/g, (c) => c.toUpperCase());
     const isLast = index === segments.length - 1;
 
     return { href, label, isLast };

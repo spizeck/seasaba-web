@@ -3,6 +3,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { createMetadata } from "@/lib/metadata";
 import { legacyRedirects } from "@/data/redirects";
+import { DIVE_SITES, diveSitePath } from "@/data/dive-site-videos";
 import sitemap from "@/app/sitemap";
 import robots from "@/app/robots";
 
@@ -47,11 +48,13 @@ it("preserves unique single-hop permanent legacy redirects", () => {
 });
 
 describe("sitemap", () => {
-  it("lists exactly the canonical public routes on the canonical host", () => {
+  it("lists exactly the canonical public routes plus every catalogue dive-site page", () => {
     const urls = sitemap().map((entry) => entry.url);
-    expect([...urls].sort()).toEqual(
-      CANONICAL_ROUTES.map((p) => `https://www.seasaba.com${p}`).sort()
-    );
+    const expected = [
+      ...CANONICAL_ROUTES.map((p) => `https://www.seasaba.com${p}`),
+      ...DIVE_SITES.map((s) => `https://www.seasaba.com${diveSitePath(s.name)}`),
+    ];
+    expect([...urls].sort()).toEqual(expected.sort());
     expect(new Set(urls).size).toBe(urls.length);
   });
 
