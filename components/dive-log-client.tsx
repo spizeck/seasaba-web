@@ -33,15 +33,30 @@ function unique<T>(arr: T[]): T[] {
 const LOAD_TIMEOUT_MS = 15_000;
 
 function useDiveLogData(initialDives?: PublicDive[]) {
+  // An empty payload is ambiguous — Firestore can resolve an empty snapshot
+  // when its backend is unreachable — so only a non-empty list counts.
+  const hasInitial = Boolean(initialDives?.length);
   const [dives, setDives] = useState<PublicDive[]>(initialDives ?? []);
-  const [loading, setLoading] = useState(!initialDives);
+  const [loading, setLoading] = useState(!hasInitial);
   const [error, setError] = useState<string | null>(null);
   const [attempt, setAttempt] = useState(0);
+
+  // A refreshed server payload (RSC navigation) replaces the current list.
+  // (Render-time adjustment — React re-renders before committing.)
+  const [prevInitialDives, setPrevInitialDives] = useState(initialDives);
+  if (initialDives !== prevInitialDives) {
+    setPrevInitialDives(initialDives);
+    if (initialDives?.length) {
+      setDives(initialDives);
+      setLoading(false);
+      setError(null);
+    }
+  }
 
   useEffect(() => {
     // Server-rendered pages already carry the dive list — only fetch on a
     // manual retry, or when no initial payload was provided.
-    if (initialDives && attempt === 0) return;
+    if (hasInitial && attempt === 0) return;
     let cancelled = false;
 
     const timeout = setTimeout(() => {
@@ -70,7 +85,7 @@ function useDiveLogData(initialDives?: PublicDive[]) {
       cancelled = true;
       clearTimeout(timeout);
     };
-  }, [attempt, initialDives]);
+  }, [attempt, hasInitial]);
 
   return {
     dives,
@@ -100,12 +115,11 @@ interface Filters {
   species: string;
 }
 
-function isWithinDateRange(dateStr: string, days: number): boolean {
-  const diveDate = new Date(dateStr + "T12:00:00");
-  const cutoff = new Date();
-  cutoff.setDate(cutoff.getDate() - days);
-  cutoff.setHours(0, 0, 0, 0);
-  return diveDate >= cutoff;
+// Date-string comparison against an explicit reference instant — calling
+// new Date() here would make SSR and hydration disagree around the cutoff.
+function isWithinDateRange(dateStr: string, days: number, nowMs: number): boolean {
+  const cutoff = new Date(nowMs - days * 86_400_000).toISOString().slice(0, 10);
+  return dateStr >= cutoff;
 }
 
 function DiveCard({
@@ -259,8 +273,25 @@ function SelectField({
   );
 }
 
-export function DiveLogClient({ initialDives }: { initialDives?: PublicDive[] }) {
+export function DiveLogClient({
+  initialDives,
+  generatedAt,
+  initialSite,
+}: {
+  initialDives?: PublicDive[];
+  generatedAt?: number;
+  initialSite?: string;
+}) {
   const { dives, loading, error, retry } = useDiveLogData(initialDives);
+  // Date filtering must produce identical markup during SSR and hydration:
+  // seed "now" from the serialized render timestamp, then adopt local time
+  // post-mount (the effect schedules rather than setting synchronously).
+  const [now, setNow] = useState(() => generatedAt ?? Date.now());
+  useEffect(() => {
+    if (generatedAt === undefined) return;
+    const timer = setTimeout(() => setNow(Date.now()), 0);
+    return () => clearTimeout(timer);
+  }, [generatedAt]);
   const [unitSystem, setUnitSystem] = useState<UnitSystem>("metric");
   const [dateRange, setDateRange] = useState<DateRange>("14");
   const [currentPage, setCurrentPage] = useState(1);
@@ -281,11 +312,26 @@ export function DiveLogClient({ initialDives }: { initialDives?: PublicDive[] })
     [dives]
   );
 
+  // A `?site=` deep link (from dive-site guides) pre-selects the site
+  // filter once the list exists — synchronously with an SSR payload, or
+  // after the client fetch resolves. Names matching no logged dive are
+  // ignored. The range widens to all-time so older dives at the site
+  // still appear. (Render-time adjustment, applied before commit.)
+  const [siteParamChecked, setSiteParamChecked] = useState(false);
+  if (!siteParamChecked && initialSite && dives.length > 0) {
+    setSiteParamChecked(true);
+    if (ALL_SITES.includes(initialSite)) {
+      setFilters((f) => ({ ...f, site: initialSite }));
+      setDateRange("all");
+      setFiltersOpen(true);
+    }
+  }
+
   const dateFilteredDives = useMemo(() => {
     if (dateRange === "all") return dives;
     const days = parseInt(dateRange, 10);
-    return dives.filter((d) => isWithinDateRange(d.date, days));
-  }, [dives, dateRange]);
+    return dives.filter((d) => isWithinDateRange(d.date, days, now));
+  }, [dives, dateRange, now]);
 
   const filteredDives = useMemo(() => {
     return dateFilteredDives.filter((d) => {

@@ -15,21 +15,37 @@ export const metadata = createMetadata({
 // keeping Firestore reads off the request path.
 export const revalidate = 3600;
 
-export default async function DiveLogPage() {
+interface DiveLogPageProps {
+  searchParams: Promise<{ site?: string }>;
+}
+
+export default async function DiveLogPage({ searchParams }: DiveLogPageProps) {
+  const { site } = await searchParams;
   // Server-render the dive list so real recent dives are in the initial
   // HTML (issue #108). If the fetch fails — no credentials, backend
   // unreachable, slow — the client component falls back to fetching in the
-  // browser exactly as it did before.
+  // browser exactly as it did before. An empty result is treated the same
+  // way: Firestore can resolve an empty snapshot when its backend is
+  // unreachable, and a browser retry is better than caching an empty page.
   let initialDives: PublicDive[] | undefined;
+  let generatedAt: number | undefined;
   try {
-    initialDives = await loadPublicDives();
+    const result = await loadPublicDives();
+    if (result.dives.length > 0) {
+      initialDives = result.dives;
+      generatedAt = result.generatedAt;
+    }
   } catch (err) {
     console.error("Dive log server fetch failed, falling back to client fetch", err);
   }
 
   return (
     <>
-      <DiveLogClient initialDives={initialDives} />
+      <DiveLogClient
+        initialDives={initialDives}
+        generatedAt={generatedAt}
+        initialSite={site}
+      />
       {/* Without JS the client component sits on its loading state forever
           — say so and offer a real next step instead (issue #209). When the
           server fetch succeeded, no-JS visitors see the static list anyway,

@@ -243,13 +243,25 @@ export function buildPublicDives(data: {
  * Fetch + build the public dive list with a hard timeout. Used by the
  * server component for SSR/ISR — Firestore retries internally when the
  * backend is unreachable, so an unbounded wait could stall prerendering.
+ * `generatedAt` is serialized alongside the payload so the client's date
+ * filters hydrate identically to the SSR markup.
  */
-export async function loadPublicDives(timeoutMs = 15_000): Promise<PublicDive[]> {
-  const timeout = new Promise<never>((_, reject) =>
-    setTimeout(() => reject(new Error("Dive log fetch timed out")), timeoutMs)
-  );
-  const data = await Promise.race([fetchDiveLogData({ serverOnly: true }), timeout]);
-  return buildPublicDives(data);
+export async function loadPublicDives(
+  timeoutMs = 15_000
+): Promise<{ dives: PublicDive[]; generatedAt: number }> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => reject(new Error("Dive log fetch timed out")), timeoutMs);
+  });
+  try {
+    const data = await Promise.race([fetchDiveLogData({ serverOnly: true }), timeout]);
+    return { dives: buildPublicDives(data), generatedAt: Date.now() };
+  } finally {
+    // Clear the losing timer so successful renders don't keep the worker
+    // alive until it fires. (The Firestore reads themselves can't be
+    // cancelled — the SDK has no abort — but they settle on their own.)
+    clearTimeout(timer);
+  }
 }
 
 export function groupDivesForDisplay(dives: PublicDive[]): PublicDive[] {
