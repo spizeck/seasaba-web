@@ -57,6 +57,8 @@ export default async function DiveSitePage({
   if (!site) notFound();
 
   const area = diveAreaByTitle(site.area);
+  // Area titles like "The Pinnacles" already carry their article.
+  const areaRef = /^the\b/i.test(site.area) ? site.area : `the ${site.area}`;
   const siblings =
     area?.sites.filter((name) => name !== site.name) ??
     DIVE_SITES.filter((s) => s.area === site.area && s.name !== site.name).map(
@@ -82,7 +84,7 @@ export default async function DiveSitePage({
         {site.name}
       </h1>
       <p className="mt-3 text-base text-muted-foreground">
-        Dive site in the {site.area} area of the Saba Marine Park
+        Dive site in {areaRef} area of the Saba Marine Park
       </p>
 
       {/* At a glance */}
@@ -173,7 +175,7 @@ export default async function DiveSitePage({
           >
             <div>
               <h2 className="text-xl font-semibold text-foreground">
-                The {area.title} Dive Area
+                {area.title} Dive Area
               </h2>
               <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
                 {area.description}
