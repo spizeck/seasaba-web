@@ -159,7 +159,9 @@ describe("Content-Security-Policy", () => {
     for (const origin of [
       "'self'",
       "seasaba.checkfront.com",
-      "https://www.youtube.com",
+      // Dive-site videos embed via a click-to-play facade on YouTube's
+      // privacy-enhanced domain (components/youtube-embed.tsx).
+      "https://www.youtube-nocookie.com",
       "https://www.googletagmanager.com",
       "https://consentcdn.cookiebot.com",
       // Respond.io Website Chat iframe (chat.html launcher + window).
@@ -168,7 +170,7 @@ describe("Content-Security-Policy", () => {
       expect(frameSrc, origin).toContain(origin);
     }
     // Removed-forever hosts must not creep back.
-    expect(frameSrc).not.toContain("https://www.youtube-nocookie.com");
+    expect(frameSrc).not.toContain("https://www.youtube.com");
     expect(frameSrc).not.toContain("https://*.respond.io");
   });
 
