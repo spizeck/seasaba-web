@@ -334,7 +334,12 @@ export function DiveLogClient({
   // still appear. (Render-time adjustment, applied before commit.)
   const [siteParam, setSiteParam] = useState<string | null>(null);
   const [lastAppliedSiteParam, setLastAppliedSiteParam] = useState<string | null>(null);
-  if (siteParam && siteParam !== lastAppliedSiteParam && dives.length > 0) {
+  if (siteParam === null && lastAppliedSiteParam !== null) {
+    // The deep link was removed — clear the filter only if it still holds
+    // the auto-applied value; a manual site choice stays untouched.
+    setFilters((f) => (f.site === lastAppliedSiteParam ? { ...f, site: "" } : f));
+    setLastAppliedSiteParam(null);
+  } else if (siteParam && siteParam !== lastAppliedSiteParam && dives.length > 0) {
     setLastAppliedSiteParam(siteParam);
     if (ALL_SITES.includes(siteParam)) {
       setFilters((f) => ({ ...f, site: siteParam }));
@@ -361,6 +366,11 @@ export function DiveLogClient({
   }, [dateFilteredDives, filters]);
 
   const totalPages = Math.ceil(filteredDives.length / PAGE_SIZE) || 1;
+  // A refreshed payload or filter change can shrink the list — clamp the
+  // page so the visitor never lands past the last page.
+  if (currentPage > totalPages) {
+    setCurrentPage(totalPages);
+  }
   const paginatedDives = useMemo(() => {
     const start = (currentPage - 1) * PAGE_SIZE;
     return filteredDives.slice(start, start + PAGE_SIZE);
