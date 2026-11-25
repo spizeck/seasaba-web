@@ -4,13 +4,18 @@ import { legacyRedirects } from "../../data/redirects";
 // Representative dynamic route included: /dive-sites/tent-reef covers the
 // generated /dive-sites/[slug] pages (canonical, title, h1, meta).
 const routes = ["/", "/diving", "/dive-sites", "/dive-sites/tent-reef", "/courses", "/plan-your-trip", "/about", "/contact", "/book", "/dive-log", "/partners", "/donate", "/terms", "/privacy", "/cookie-policy"];
+const titles: Record<string, RegExp | string> = {
+  "/": "Professional Scuba Diving in Saba",
+  // Generic /Sea Saba/ would pass on the wrong page's metadata.
+  "/dive-sites/tent-reef": /^Tent Reef Dive Site, Saba \| Sea Saba$/,
+};
 for (const path of routes) {
   test(`@smoke public page ${path} renders without authentication`, async ({ page }) => {
     const response = await page.goto(path);
     expect(response?.status()).toBe(200);
     await expect(page.locator("main h1")).toHaveCount(1);
     await expect(page.locator("main h1")).toBeVisible();
-    await expect(page).toHaveTitle(path === "/" ? "Professional Scuba Diving in Saba" : /Sea Saba/);
+    await expect(page).toHaveTitle(titles[path] ?? /Sea Saba/);
     await expect(page.locator('meta[name="description"]')).toHaveAttribute("content", /\S+/);
     await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", `https://www.seasaba.com${path === "/" ? "" : path}`);
   });

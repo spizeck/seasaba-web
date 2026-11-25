@@ -126,8 +126,9 @@ const cspDirectives: [string, string[]][] = [
       "seasaba.checkfront.com",
       // GTM noscript iframe.
       "https://www.googletagmanager.com",
-      // Dive-site video embeds (data/dive-site-videos.ts).
-      "https://www.youtube.com",
+      // Dive-site video embeds (data/dive-site-videos.ts) — click-to-play
+      // facade on the privacy-enhanced domain (components/youtube-embed.tsx).
+      "https://www.youtube-nocookie.com",
       // Google Ads conversion iframes (GTM-managed).
       "https://www.google.com",
       "https://*.doubleclick.net",

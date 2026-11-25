@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { FeatureImage } from "@/components/feature-image";
 import { JsonLd } from "@/components/structured-data";
 import { TrackedInternalButton } from "@/components/tracked-internal-button";
+import { YouTubeEmbed } from "@/components/youtube-embed";
 import { diveAreaByTitle } from "@/data/dive-areas";
 import {
   DIVE_SITES,
@@ -111,19 +112,13 @@ export default async function DiveSitePage({
         )}
       </div>
 
-      {/* Video */}
+      {/* Video — click-to-play so YouTube is never contacted on load */}
       {site.videoId && (
-        <div className="mt-8 overflow-hidden rounded-xl border border-border/50 bg-black">
-          <div className="relative aspect-video w-full">
-            <iframe
-              src={`https://www.youtube.com/embed/${site.videoId}?rel=0&modestbranding=1`}
-              title={`${site.name} dive site video`}
-              allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              loading="lazy"
-              className="absolute inset-0 h-full w-full"
-            />
-          </div>
+        <div className="mt-8">
+          <YouTubeEmbed
+            videoId={site.videoId}
+            title={`${site.name} dive site`}
+          />
         </div>
       )}
 
@@ -222,12 +217,12 @@ export default async function DiveSitePage({
           <div className="flex items-center gap-2">
             <Waves className="h-4 w-4 text-primary" />
             <h2 className="text-sm font-semibold text-foreground">
-              Recent dives here
+              Sea Saba Dive Log
             </h2>
           </div>
           <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
-            See what our boats have been diving and spotting lately in the
-            Sea Saba Dive Log.
+            See where our boats have been diving and what they&apos;ve
+            spotted lately.
           </p>
         </Link>
         <Link

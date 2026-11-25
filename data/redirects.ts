@@ -132,7 +132,7 @@ export const legacyRedirects: LegacyRedirect[] = [
   { source: "/index.html", destination: "/", statusCode: 301 },
   { source: "/terms-conditions", destination: "/terms", statusCode: 301 },
   { source: "/english_html/diving_sites.htm", destination: diveSites(), statusCode: 301 },
-  { source: "/dive_sites/diving_sites_23_big_rock_market.htm", destination: diveSites(diveSiteAnchors.windwardside), statusCode: 301 },
+  { source: "/dive_sites/diving_sites_23_big_rock_market.htm", destination: diveSitePath("Big Rock Market"), statusCode: 301 },
   { source: "/topside-fun", destination: planYourTrip(planYourTripAnchors.experiences), statusCode: 301 },
   { source: "/english_html/why_saba_topside.htm", destination: planYourTrip(planYourTripAnchors.experiences), statusCode: 301 },
 

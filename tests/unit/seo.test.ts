@@ -3,6 +3,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { createMetadata } from "@/lib/metadata";
 import { legacyRedirects } from "@/data/redirects";
+import { DIVE_AREAS } from "@/data/dive-areas";
 import { DIVE_SITES, diveSitePath } from "@/data/dive-site-videos";
 import sitemap from "@/app/sitemap";
 import robots from "@/app/robots";
@@ -44,6 +45,19 @@ it("preserves unique single-hop permanent legacy redirects", () => {
     expect(redirect.statusCode).toBe(301);
     expect(redirect.destination).toMatch(/^(\/|https:\/\/)/);
     expect(sources).not.toContain(redirect.destination.split(/[?#]/)[0]);
+  }
+});
+
+it("keeps the dive-area lists and the dive-site catalogue in lockstep", () => {
+  // A site added to only one list would silently lose either its directory
+  // chip or its page (undiscoverable either way) — guard both directions.
+  const areaSites = DIVE_AREAS.flatMap((a) => a.sites);
+  const catalogSites = DIVE_SITES.map((s) => s.name);
+  expect([...areaSites].sort()).toEqual([...catalogSites].sort());
+  for (const site of DIVE_SITES) {
+    const area = DIVE_AREAS.find((a) => a.title === site.area);
+    expect(area, `${site.name} has no matching dive area`).toBeTruthy();
+    expect(area?.sites).toContain(site.name);
   }
 });
 
