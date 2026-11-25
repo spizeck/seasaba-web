@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Users, Award, Bus, Droplets, ShieldCheck, Wind, HelpCircle, Mountain, Gauge, Waves, Wrench, Anchor, Heart } from "lucide-react";
 import { InsuranceCTAs } from "@/components/insurance-ctas";
+import { JsonLd, jsxToText } from "@/components/structured-data";
 import { ExperienceSelector } from "@/components/experience-selector";
 import { TrackedInternalButton } from "@/components/tracked-internal-button";
 import { TrackedContactLink } from "@/components/tracked-contact-link";
@@ -1088,6 +1089,20 @@ export default function DivingPage() {
 
       {/* Diving FAQs */}
       <section id={divingAnchors.faq} className="mt-14 scroll-mt-40">
+        <JsonLd
+          data={{
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: DIVING_FAQS.map((faq) => ({
+              "@type": "Question",
+              name: faq.question,
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: jsxToText(faq.answer),
+              },
+            })),
+          }}
+        />
         <div className="flex items-center gap-3">
           <HelpCircle className="h-5 w-5 text-primary" />
           <h2 className="text-xl font-semibold text-foreground">Common Questions</h2>

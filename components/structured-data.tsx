@@ -1,3 +1,4 @@
+import { isValidElement, type ReactNode } from "react";
 import {
   SITE_NAME,
   SITE_URL,
@@ -22,6 +23,22 @@ export function JsonLd({ data }: { data: Record<string, unknown> }) {
       dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
     />
   );
+}
+
+/**
+ * Flatten a rendered answer (strings, interpolated values, nested elements
+ * like <Link>) into the plain text schema.org expects for e.g.
+ * FAQPage.acceptedAnswer.text. Keeps JSON-LD derived from the same copy the
+ * visitor reads — no duplicated plain-text answers that can drift.
+ */
+export function jsxToText(node: ReactNode): string {
+  if (node == null || typeof node === "boolean") return "";
+  if (typeof node === "string" || typeof node === "number") return String(node);
+  if (Array.isArray(node)) return node.map(jsxToText).join("");
+  if (isValidElement<{ children?: ReactNode }>(node)) {
+    return jsxToText(node.props.children);
+  }
+  return "";
 }
 
 export function LocalBusinessJsonLd() {
