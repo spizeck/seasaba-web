@@ -203,6 +203,49 @@ function unique<T>(arr: T[]): T[] {
   return Array.from(new Set(arr));
 }
 
+function parseDiveSlotMinutes(slot: string): number {
+  const match = slot.match(/^(\d{1,2})(?::(\d{2}))?\s*(am|pm)$/i);
+  if (!match) return 0;
+  let hours = parseInt(match[1], 10);
+  const minutes = parseInt(match[2] || "0", 10);
+  const meridian = match[3].toLowerCase();
+  if (meridian === "pm" && hours !== 12) hours += 12;
+  if (meridian === "am" && hours === 12) hours = 0;
+  return hours * 60 + minutes;
+}
+
+/** normalize → group → sort most-recent-first. Shared by the client fetch path and the server-rendered initial payload. */
+export function buildPublicDives(data: {
+  dives: FirestoreDive[];
+  sites: Map<string, FirestoreSite>;
+  species: Map<string, FirestoreSpecies>;
+  boats: Map<string, FirestoreBoat>;
+}): PublicDive[] {
+  const normalized = data.dives.map((d) =>
+    normalizeDive(d, data.sites, data.species, data.boats)
+  );
+  const grouped = groupDivesForDisplay(normalized);
+  grouped.sort((a, b) => {
+    const dateDiff = new Date(b.date).getTime() - new Date(a.date).getTime();
+    if (dateDiff !== 0) return dateDiff;
+    return parseDiveSlotMinutes(b.diveSlot) - parseDiveSlotMinutes(a.diveSlot);
+  });
+  return grouped;
+}
+
+/**
+ * Fetch + build the public dive list with a hard timeout. Used by the
+ * server component for SSR/ISR — Firestore retries internally when the
+ * backend is unreachable, so an unbounded wait could stall prerendering.
+ */
+export async function loadPublicDives(timeoutMs = 15_000): Promise<PublicDive[]> {
+  const timeout = new Promise<never>((_, reject) =>
+    setTimeout(() => reject(new Error("Dive log fetch timed out")), timeoutMs)
+  );
+  const data = await Promise.race([fetchDiveLogData(), timeout]);
+  return buildPublicDives(data);
+}
+
 export function groupDivesForDisplay(dives: PublicDive[]): PublicDive[] {
   const groups = new Map<string, PublicDive[]>();
 

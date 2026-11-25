@@ -11,8 +11,7 @@ import { findSpeciesInfo } from "@/data/species";
 import type { SpeciesInfo } from "@/data/species";
 import {
   fetchDiveLogData,
-  normalizeDive,
-  groupDivesForDisplay,
+  buildPublicDives,
   formatDate,
   convertDepth,
   convertTemperature,
@@ -28,29 +27,21 @@ function unique<T>(arr: T[]): T[] {
   return Array.from(new Set(arr));
 }
 
-function parseDiveSlotMinutes(slot: string): number {
-  const match = slot.match(/^(\d{1,2})(?::(\d{2}))?\s*(am|pm)$/i);
-  if (!match) return 0;
-  let hours = parseInt(match[1], 10);
-  const minutes = parseInt(match[2] || "0", 10);
-  const meridian = match[3].toLowerCase();
-  if (meridian === "pm" && hours !== 12) hours += 12;
-  if (meridian === "am" && hours === 12) hours = 0;
-  return hours * 60 + minutes;
-}
-
 // Firestore retries internally when the backend is unreachable, so a failed
 // fetch can hang without ever rejecting. Cap the wait so visitors see the
 // error state instead of a loading skeleton that never resolves.
 const LOAD_TIMEOUT_MS = 15_000;
 
-function useDiveLogData() {
-  const [dives, setDives] = useState<PublicDive[]>([]);
-  const [loading, setLoading] = useState(true);
+function useDiveLogData(initialDives?: PublicDive[]) {
+  const [dives, setDives] = useState<PublicDive[]>(initialDives ?? []);
+  const [loading, setLoading] = useState(!initialDives);
   const [error, setError] = useState<string | null>(null);
   const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
+    // Server-rendered pages already carry the dive list — only fetch on a
+    // manual retry, or when no initial payload was provided.
+    if (initialDives && attempt === 0) return;
     let cancelled = false;
 
     const timeout = setTimeout(() => {
@@ -59,17 +50,9 @@ function useDiveLogData() {
       setLoading(false);
     }, LOAD_TIMEOUT_MS);
     fetchDiveLogData()
-      .then(({ dives, sites, species, boats }) => {
+      .then((data) => {
         if (cancelled) return;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const normalized = dives.map((d: any) => normalizeDive(d, sites, species, boats));
-        const grouped = groupDivesForDisplay(normalized);
-        grouped.sort((a, b) => {
-          const dateDiff = new Date(b.date).getTime() - new Date(a.date).getTime();
-          if (dateDiff !== 0) return dateDiff;
-          return parseDiveSlotMinutes(b.diveSlot) - parseDiveSlotMinutes(a.diveSlot);
-        });
-        setDives(grouped);
+        setDives(buildPublicDives(data));
         setError(null);
         setLoading(false);
       })
@@ -87,7 +70,7 @@ function useDiveLogData() {
       cancelled = true;
       clearTimeout(timeout);
     };
-  }, [attempt]);
+  }, [attempt, initialDives]);
 
   return {
     dives,
@@ -279,8 +262,8 @@ function SelectField({
   );
 }
 
-export function DiveLogClient() {
-  const { dives, loading, error, retry } = useDiveLogData();
+export function DiveLogClient({ initialDives }: { initialDives?: PublicDive[] }) {
+  const { dives, loading, error, retry } = useDiveLogData(initialDives);
   const [unitSystem, setUnitSystem] = useState<UnitSystem>("metric");
   const [dateRange, setDateRange] = useState<DateRange>("14");
   const [currentPage, setCurrentPage] = useState(1);

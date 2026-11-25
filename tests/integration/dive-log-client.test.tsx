@@ -2,7 +2,7 @@ import { beforeEach, expect, it, vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { DiveLogClient } from "@/components/dive-log-client";
-import { fetchDiveLogData } from "@/lib/firestore/dive-log";
+import { buildPublicDives, fetchDiveLogData } from "@/lib/firestore/dive-log";
 import { exportDiveLogToPdf } from "@/lib/dive-log-export";
 import { diveData, rawDive } from "../fixtures/dives";
 vi.mock("@/lib/firestore/dive-log", async (importOriginal) => ({ ...await importOriginal<typeof import("@/lib/firestore/dive-log")>(), fetchDiveLogData: vi.fn() }));
@@ -82,6 +82,15 @@ it("paginates without losing selection and resets the page when filters change",
   await userEvent.click(screen.getByRole("button", { name: "Next" }));
   await userEvent.selectOptions(screen.getByLabelText("Date range"), "all");
   expect(screen.getByText("Page 1 of 2")).toBeVisible();
+});
+it("renders server-provided dives immediately without fetching", async () => {
+  const today = new Date().toISOString().slice(0, 10);
+  const initialDives = buildPublicDives(diveData([rawDive({ date: today })]));
+  render(<DiveLogClient initialDives={initialDives} />);
+  // No loading state, no Firestore call — the SSR payload renders as-is.
+  expect(screen.queryByText("Loading recent dives...")).not.toBeInTheDocument();
+  expect(screen.getByRole("heading", { name: "1 dive" })).toBeVisible();
+  expect(fetchDiveLogData).not.toHaveBeenCalled();
 });
 it("shows permission failure without exposing an export action", async () => {
   vi.mocked(fetchDiveLogData).mockRejectedValue(new Error("Missing or insufficient permissions"));
