@@ -15,12 +15,10 @@ export const metadata = createMetadata({
 // keeping Firestore reads off the request path.
 export const revalidate = 3600;
 
-interface DiveLogPageProps {
-  searchParams: Promise<{ site?: string }>;
-}
-
-export default async function DiveLogPage({ searchParams }: DiveLogPageProps) {
-  const { site } = await searchParams;
+export default async function DiveLogPage() {
+  // No searchParams access here — reading it would opt the route out of
+  // static generation and run Firestore reads on every request. The
+  // `?site=` deep-link filter is applied client-side instead.
   // Server-render the dive list so real recent dives are in the initial
   // HTML (issue #108). If the fetch fails — no credentials, backend
   // unreachable, slow — the client component falls back to fetching in the
@@ -44,7 +42,6 @@ export default async function DiveLogPage({ searchParams }: DiveLogPageProps) {
       <DiveLogClient
         initialDives={initialDives}
         generatedAt={generatedAt}
-        initialSite={site}
       />
       {/* Without JS the client component sits on its loading state forever
           — say so and offer a real next step instead (issue #209). When the

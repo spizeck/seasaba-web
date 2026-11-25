@@ -7,7 +7,10 @@ import { exportDiveLogToPdf } from "@/lib/dive-log-export";
 import { diveData, rawDive } from "../fixtures/dives";
 vi.mock("@/lib/firestore/dive-log", async (importOriginal) => ({ ...await importOriginal<typeof import("@/lib/firestore/dive-log")>(), fetchDiveLogData: vi.fn() }));
 vi.mock("@/lib/dive-log-export", () => ({ exportDiveLogToPdf: vi.fn().mockResolvedValue(undefined) }));
+const nav = vi.hoisted(() => ({ params: new URLSearchParams() }));
+vi.mock("next/navigation", async (importOriginal) => ({ ...await importOriginal<typeof import("next/navigation")>(), useSearchParams: () => nav.params }));
 beforeEach(() => {
+  nav.params = new URLSearchParams();
   vi.useFakeTimers({ toFake: ["Date"] });
   vi.setSystemTime(new Date("2026-09-08T12:00:00Z"));
   const today = new Date().toISOString().slice(0, 10);
@@ -97,6 +100,7 @@ it("renders server-provided dives immediately without fetching", async () => {
   expect(fetchDiveLogData).not.toHaveBeenCalled();
 });
 it("pre-selects the site filter from a ?site= deep link", async () => {
+  nav.params = new URLSearchParams("site=Diamond Rock");
   const today = new Date().toISOString().slice(0, 10);
   const initialDives = buildPublicDives(
     diveData([
@@ -104,23 +108,25 @@ it("pre-selects the site filter from a ?site= deep link", async () => {
       rawDive({ id: "old", date: "2000-01-01", diveSiteId: "site-2", diveSlot: "9 am" }),
     ])
   );
-  render(<DiveLogClient initialDives={initialDives} initialSite="Diamond Rock" />);
+  render(<DiveLogClient initialDives={initialDives} />);
   // The deep-linked site is filtered, the panel opens to show it, and the
   // range widens to all-time so older dives at the site still appear.
-  expect(screen.getByRole("heading", { name: "1 dive matching filters" })).toBeVisible();
+  expect(await screen.findByRole("heading", { name: "1 dive matching filters" })).toBeVisible();
   expect(screen.getByLabelText("Dive Site")).toHaveValue("Diamond Rock");
   expect(screen.getByLabelText("Date range")).toHaveValue("all");
   expect(fetchDiveLogData).not.toHaveBeenCalled();
 });
 it("ignores a ?site= deep link that matches no logged dive", async () => {
+  nav.params = new URLSearchParams("site=Atlantis");
   const today = new Date().toISOString().slice(0, 10);
   const initialDives = buildPublicDives(diveData([rawDive({ date: today })]));
-  render(<DiveLogClient initialDives={initialDives} initialSite="Atlantis" />);
-  expect(screen.getByRole("heading", { name: "1 dive" })).toBeVisible();
+  render(<DiveLogClient initialDives={initialDives} />);
+  expect(await screen.findByRole("heading", { name: "1 dive" })).toBeVisible();
   expect(screen.getByRole("button", { name: "Filter" })).toHaveAttribute("aria-expanded", "false");
 });
 it("applies a ?site= deep link after the client fetch resolves", async () => {
-  render(<DiveLogClient initialSite="Diamond Rock" />);
+  nav.params = new URLSearchParams("site=Diamond Rock");
+  render(<DiveLogClient />);
   await screen.findByRole("heading", { name: "1 dive matching filters" });
   expect(screen.getByLabelText("Dive Site")).toHaveValue("Diamond Rock");
 });

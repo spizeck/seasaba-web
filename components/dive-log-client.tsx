@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useMemo, useEffect, useId } from "react";
+import { Suspense, useState, useMemo, useEffect, useId } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { PageHero } from "@/components/page-hero";
 import { BubbleLoader } from "@/components/bubble-loader";
 import { StatePanel } from "@/components/state-panel";
@@ -55,8 +56,10 @@ function useDiveLogData(initialDives?: PublicDive[]) {
 
   useEffect(() => {
     // Server-rendered pages already carry the dive list — only fetch on a
-    // manual retry, or when no initial payload was provided.
-    if (hasInitial && attempt === 0) return;
+    // manual retry, or when no initial payload was provided. Depending on
+    // initialDives itself (not just presence) means a refreshed server
+    // payload cancels an in-flight retry rather than racing it.
+    if (initialDives?.length && attempt === 0) return;
     let cancelled = false;
 
     const timeout = setTimeout(() => {
@@ -85,7 +88,7 @@ function useDiveLogData(initialDives?: PublicDive[]) {
       cancelled = true;
       clearTimeout(timeout);
     };
-  }, [attempt, hasInitial]);
+  }, [attempt, initialDives]);
 
   return {
     dives,
@@ -273,14 +276,25 @@ function SelectField({
   );
 }
 
+/**
+ * Reads `?site=` deep links (from dive-site guides) and reports the value
+ * up. Kept tiny and inside Suspense so it bails out of static prerendering
+ * alone — the dive list itself still server-renders.
+ */
+function DiveLogSearchParam({ onSite }: { onSite: (site: string | null) => void }) {
+  const site = useSearchParams().get("site");
+  useEffect(() => {
+    onSite(site);
+  }, [site, onSite]);
+  return null;
+}
+
 export function DiveLogClient({
   initialDives,
   generatedAt,
-  initialSite,
 }: {
   initialDives?: PublicDive[];
   generatedAt?: number;
-  initialSite?: string;
 }) {
   const { dives, loading, error, retry } = useDiveLogData(initialDives);
   // Date filtering must produce identical markup during SSR and hydration:
@@ -312,18 +326,21 @@ export function DiveLogClient({
     [dives]
   );
 
-  // A `?site=` deep link (from dive-site guides) pre-selects the site
-  // filter once the list exists — synchronously with an SSR payload, or
-  // after the client fetch resolves. Names matching no logged dive are
-  // ignored. The range widens to all-time so older dives at the site
+  // `?site=` deep links (from dive-site guides) pre-select the site
+  // filter once a list exists. The param arrives after hydration via
+  // DiveLogSearchParam — the server render stays static. Names matching
+  // no logged dive are ignored; a changed param on client-side nav
+  // re-applies. The range widens to all-time so older dives at the site
   // still appear. (Render-time adjustment, applied before commit.)
-  const [siteParamChecked, setSiteParamChecked] = useState(false);
-  if (!siteParamChecked && initialSite && dives.length > 0) {
-    setSiteParamChecked(true);
-    if (ALL_SITES.includes(initialSite)) {
-      setFilters((f) => ({ ...f, site: initialSite }));
+  const [siteParam, setSiteParam] = useState<string | null>(null);
+  const [lastAppliedSiteParam, setLastAppliedSiteParam] = useState<string | null>(null);
+  if (siteParam && siteParam !== lastAppliedSiteParam && dives.length > 0) {
+    setLastAppliedSiteParam(siteParam);
+    if (ALL_SITES.includes(siteParam)) {
+      setFilters((f) => ({ ...f, site: siteParam }));
       setDateRange("all");
       setFiltersOpen(true);
+      setCurrentPage(1);
     }
   }
 
@@ -375,6 +392,9 @@ export function DiveLogClient({
 
   return (
     <>
+      <Suspense fallback={null}>
+        <DiveLogSearchParam onSite={setSiteParam} />
+      </Suspense>
       <PageHero
         src="/images/optimized/two-divers-above-reef-saba.webp"
         alt="Two divers above the reef in the Saba Marine Park"
