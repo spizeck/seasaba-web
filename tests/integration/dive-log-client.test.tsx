@@ -41,8 +41,12 @@ it("combines filters, recovers from no matches, expands sightings and clears sel
   await userEvent.selectOptions(screen.getByLabelText("Dive Site"), "Tent Reef");
   await userEvent.selectOptions(screen.getByLabelText("Boat"), "Test Boat");
   await userEvent.selectOptions(screen.getByLabelText("Species Sighted"), "Green Turtle");
-  await userEvent.click(screen.getByRole("button", { name: "1 species sighted" }));
-  expect(screen.getByRole("button", { name: "Hide sightings" })).toBeVisible();
+  // Sightings live in a native <details> — the species name is in the DOM
+  // for crawlers and no-JS visitors even before the disclosure opens.
+  const summary = screen.getByText("1 species sighted");
+  const details = summary.closest("details");
+  expect(details).toBeTruthy();
+  expect(details!.textContent).toContain("Green Turtle");
   await userEvent.click(screen.getByRole("button", { name: "+ Add Tent Reef to my dive log" }));
   await userEvent.click(screen.getByRole("button", { name: "Clear selection" }));
   await userEvent.selectOptions(screen.getByLabelText("Guide"), "Sam");

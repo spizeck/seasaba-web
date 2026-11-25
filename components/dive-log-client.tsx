@@ -21,7 +21,7 @@ import {
   type PublicDive,
 } from "@/lib/firestore/dive-log";
 import { trackEvent } from "@/lib/analytics";
-import { BookOpen, SlidersHorizontal, X, ChevronDown, ChevronUp, Download } from "lucide-react";
+import { BookOpen, SlidersHorizontal, X, ChevronDown, Download } from "lucide-react";
 
 function unique<T>(arr: T[]): T[] {
   return Array.from(new Set(arr));
@@ -119,7 +119,6 @@ function DiveCard({
   onToggle: () => void;
   unitSystem: UnitSystem;
 }) {
-  const [expanded, setExpanded] = useState(false);
   const [activeSpecies, setActiveSpecies] = useState<SpeciesInfo | null>(null);
 
   const openSpecies = (name: string) => {
@@ -179,19 +178,16 @@ function DiveCard({
           </button>
         </div>
 
-        <button
-          onClick={() => setExpanded((v) => !v)}
-          aria-expanded={expanded}
-          className="mt-3 flex items-center gap-1 rounded-md text-xs text-muted-foreground pressable hover:text-foreground focus-ring"
-        >
-          {expanded ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
-          {expanded ? "Hide sightings" : `${dive.sightings.length} species sighted`}
-        </button>
-      </div>
-
-      {expanded && (
-        <div className="border-t border-border/40 px-4 py-3">
-          <div className="flex flex-wrap gap-2">
+        {/* Native disclosure: species names stay in the DOM for crawlers
+            and no-JS visitors (the server-rendered list is crawlable, #108)
+            — opening only reveals them visually. */}
+        <details className="group mt-3">
+          <summary className="flex list-none items-center gap-1 rounded-md text-xs text-muted-foreground cursor-pointer select-none pressable hover:text-foreground focus-ring [&::-webkit-details-marker]:hidden">
+            <ChevronDown className="h-3.5 w-3.5 transition-transform group-open:rotate-180" />
+            {dive.sightings.length} species sighted
+          </summary>
+          <div className="-mx-4 -mb-4 mt-3 border-t border-border/40 px-4 py-3">
+            <div className="flex flex-wrap gap-2">
             {dive.sightings.map((s) => {
               const hasInfo = Boolean(findSpeciesInfo(s.speciesName));
               const chip = (
@@ -219,9 +215,10 @@ function DiveCard({
                 </span>
               );
             })}
+            </div>
           </div>
-        </div>
-      )}
+        </details>
+      </div>
 
       {activeSpecies && (
         <SpeciesModal species={activeSpecies} onClose={() => setActiveSpecies(null)} />

@@ -1,4 +1,4 @@
-import { collection, getDocs, Timestamp, type QuerySnapshot, type DocumentData } from "firebase/firestore";
+import { collection, getDocs, getDocsFromServer, Timestamp, type QuerySnapshot, type DocumentData } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
 export type UnitSystem = "metric" | "imperial";
@@ -106,13 +106,19 @@ export function temperatureUnit(unit: UnitSystem): string {
   return unit === "imperial" ? "°F" : "°C";
 }
 
-export async function fetchDiveLogData() {
+/**
+ * `serverOnly` forces live server reads (getDocsFromServer) — the default
+ * getDocs path may resolve cache-only snapshots when a render worker is
+ * offline, which would render and ISR-cache a false "no dives" page.
+ */
+export async function fetchDiveLogData(opts?: { serverOnly?: boolean }) {
+  const get = opts?.serverOnly ? getDocsFromServer : getDocs;
   const names = ["dives", "sites", "species", "boats"] as const;
   const results = await Promise.allSettled([
-    getDocs(collection(db, "dives")),
-    getDocs(collection(db, "sites")),
-    getDocs(collection(db, "species")),
-    getDocs(collection(db, "boats")),
+    get(collection(db, "dives")),
+    get(collection(db, "sites")),
+    get(collection(db, "species")),
+    get(collection(db, "boats")),
   ]);
 
   const failures = results
@@ -242,7 +248,7 @@ export async function loadPublicDives(timeoutMs = 15_000): Promise<PublicDive[]>
   const timeout = new Promise<never>((_, reject) =>
     setTimeout(() => reject(new Error("Dive log fetch timed out")), timeoutMs)
   );
-  const data = await Promise.race([fetchDiveLogData(), timeout]);
+  const data = await Promise.race([fetchDiveLogData({ serverOnly: true }), timeout]);
   return buildPublicDives(data);
 }
 
