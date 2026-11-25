@@ -4,6 +4,7 @@ import { Breadcrumbs } from "@/components/breadcrumbs";
 import { LocalBusinessJsonLd, BUSINESS_ID } from "@/components/structured-data";
 import CoursesPage from "@/app/(en)/(content)/courses/page";
 import PlanYourTripPage from "@/app/(en)/(content)/plan-your-trip/page";
+import DivingPage from "@/app/(en)/(content)/diving/page";
 
 // Breadcrumbs is a client component reading the current route.
 let mockPathname = "/diving";
@@ -96,6 +97,21 @@ describe("FAQPage", () => {
     expect(questions.length).toBeGreaterThan(0);
     for (const q of questions) {
       expect(q.acceptedAnswer.text).toBeTruthy();
+      expect(container.textContent).toContain(q.name);
+    }
+  });
+
+  it("marks up exactly the visible FAQ questions on /diving, with plain-text answers", () => {
+    const { container } = render(<DivingPage />);
+    const faq = jsonLdBlocks(container).find((b) => b["@type"] === "FAQPage");
+    expect(faq).toBeTruthy();
+    const questions = (faq?.mainEntity ?? []) as { name: string; acceptedAnswer: { text: string } }[];
+    expect(questions.length).toBeGreaterThan(0);
+    for (const q of questions) {
+      // Question text is what the visitor sees; answer text is the flattened
+      // JSX — plain sentences, no markup, nothing truncated.
+      expect(q.acceptedAnswer.text).toBeTruthy();
+      expect(q.acceptedAnswer.text).not.toMatch(/<[^>]+>/);
       expect(container.textContent).toContain(q.name);
     }
   });
