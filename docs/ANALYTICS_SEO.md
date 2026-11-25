@@ -126,10 +126,9 @@ Saba entity declaration. Content pages add: `BreadcrumbList` (emitted inside
 (derived from `DIVING_FAQS` via `jsxToText`, so the JSON-LD answers are the
 same copy the visitor reads — Google's FAQ rich result is now limited to
 government/health sites, but the markup is accurate machine-readable content
-for AI retrieval). Per-site `TouristAttraction` on each `/dive-sites/<slug>`
-page (issue #301). Deliberately not added:
-`AggregateRating`/`Review` (no on-site review corpus), and `WebSite`
-sitelinks searchbox (no site search).
+for AI retrieval). Deliberately not added: per-dive-site schema (content is
+section-level, not per-site pages), `AggregateRating`/`Review` (no on-site
+review corpus), and `WebSite` sitelinks searchbox (no site search).
 
 **Crawlability.** All canonical pages are server-rendered; factual content
 (products, courses, sites, policies, yacht guidance) is in the initial HTML.

@@ -101,18 +101,23 @@ describe("FAQPage", () => {
     }
   });
 
-  it("marks up exactly the visible FAQ questions on /diving, with plain-text answers", () => {
+  it("marks up exactly the visible FAQ cards on /diving, in full and in order", () => {
     const { container } = render(<DivingPage />);
     const faq = jsonLdBlocks(container).find((b) => b["@type"] === "FAQPage");
     expect(faq).toBeTruthy();
     const questions = (faq?.mainEntity ?? []) as { name: string; acceptedAnswer: { text: string } }[];
-    expect(questions.length).toBeGreaterThan(0);
-    for (const q of questions) {
-      // Question text is what the visitor sees; answer text is the flattened
-      // JSX — plain sentences, no markup, nothing truncated.
-      expect(q.acceptedAnswer.text).toBeTruthy();
-      expect(q.acceptedAnswer.text).not.toMatch(/<[^>]+>/);
-      expect(container.textContent).toContain(q.name);
-    }
+    const section = container.querySelector("#faq");
+    expect(section).toBeTruthy();
+    // Every rendered FAQ card (h3 question + following answer paragraph)
+    // has exactly one JSON-LD Question — no truncation, none omitted.
+    const cards = Array.from(section!.querySelectorAll("h3"));
+    expect(questions).toHaveLength(cards.length);
+    const norm = (s: string) => s.replace(/\s+/g, " ").trim();
+    cards.forEach((h3, i) => {
+      expect(questions[i].name).toBe(norm(h3.textContent ?? ""));
+      const answer = h3.nextElementSibling?.textContent ?? "";
+      expect(questions[i].acceptedAnswer.text).toBe(norm(answer));
+      expect(questions[i].acceptedAnswer.text).not.toMatch(/<[^>]+>/);
+    });
   });
 });
