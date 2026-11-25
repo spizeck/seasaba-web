@@ -211,7 +211,7 @@ export default async function DiveSitePage({
       {/* Explore further */}
       <section className="mt-12 grid gap-4 sm:grid-cols-2">
         <Link
-          href={`/dive-log?site=${encodeURIComponent(site.name)}`}
+          href={`/dive-log?site=${encodeURIComponent(site.name).replace(/'/g, "%27")}`}
           className="rounded-lg border border-border/40 bg-muted/20 p-4 pressable hover:border-border"
         >
           <div className="flex items-center gap-2">
