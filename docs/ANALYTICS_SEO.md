@@ -122,12 +122,13 @@ entity (`@id: <site>/#business`) sits in the root layout — the single Sea
 Saba entity declaration. Content pages add: `BreadcrumbList` (emitted inside
 `components/breadcrumbs.tsx` so schema mirrors the visible crumbs),
 `Course` `ItemList` on `/courses` (derived from the `COURSES` table), and
-`FAQPage` on `/plan-your-trip` (derived from the `FAQS` array — Google's FAQ
-rich result is now limited to government/health sites, but the markup is
-accurate machine-readable content for AI retrieval). Deliberately not added:
-per-dive-site schema (content is section-level, not per-site pages),
-`AggregateRating`/`Review` (no on-site review corpus), and `WebSite`
-sitelinks searchbox (no site search).
+`FAQPage` on `/plan-your-trip` (derived from the `FAQS` array) and `/diving`
+(derived from `DIVING_FAQS` via `jsxToText`, so the JSON-LD answers are the
+same copy the visitor reads — Google's FAQ rich result is now limited to
+government/health sites, but the markup is accurate machine-readable content
+for AI retrieval). Deliberately not added: per-dive-site schema (content is
+section-level, not per-site pages), `AggregateRating`/`Review` (no on-site
+review corpus), and `WebSite` sitelinks searchbox (no site search).
 
 **Crawlability.** All canonical pages are server-rendered; factual content
 (products, courses, sites, policies, yacht guidance) is in the initial HTML.
