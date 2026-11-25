@@ -211,7 +211,7 @@ export default async function DiveSitePage({
       {/* Explore further */}
       <section className="mt-12 grid gap-4 sm:grid-cols-2">
         <Link
-          href="/dive-log"
+          href={`/dive-log?site=${encodeURIComponent(site.name)}`}
           className="rounded-lg border border-border/40 bg-muted/20 p-4 pressable hover:border-border"
         >
           <div className="flex items-center gap-2">
@@ -221,8 +221,8 @@ export default async function DiveSitePage({
             </h2>
           </div>
           <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
-            See where our boats have been diving and what they&apos;ve
-            spotted lately.
+            See recent dives at {site.name} and what our guides have
+            spotted there.
           </p>
         </Link>
         <Link

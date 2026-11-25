@@ -13,10 +13,10 @@ import { ExternalLink, Play } from "lucide-react";
 export function YouTubeEmbed({ videoId, title }: { videoId: string; title: string }) {
   const [play, setPlay] = useState(false);
 
-  if (play) {
-    return (
-      <div className="overflow-hidden rounded-xl border border-border/50 bg-black">
-        <div className="relative aspect-video w-full">
+  return (
+    <div className="overflow-hidden rounded-xl border border-border/50 bg-muted/30">
+      {play ? (
+        <div className="relative aspect-video w-full bg-black">
           <iframe
             src={`https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1&autoplay=1`}
             title={title}
@@ -25,26 +25,24 @@ export function YouTubeEmbed({ videoId, title }: { videoId: string; title: strin
             className="absolute inset-0 h-full w-full"
           />
         </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="overflow-hidden rounded-xl border border-border/50 bg-muted/30">
-      <button
-        onClick={() => setPlay(true)}
-        className="group flex aspect-video w-full flex-col items-center justify-center gap-3 pressable focus-ring"
-      >
-        <span className="flex h-14 w-14 items-center justify-center rounded-full bg-primary text-white transition-transform group-hover:scale-105">
-          <Play className="h-6 w-6 fill-current" />
-        </span>
-        <span className="px-4 text-sm font-medium text-foreground">
-          Watch the {title} video
-        </span>
-        <span className="text-xs text-muted-foreground">
-          Loads from YouTube when you press play
-        </span>
-      </button>
+      ) : (
+        <button
+          onClick={() => setPlay(true)}
+          className="group flex aspect-video w-full flex-col items-center justify-center gap-3 pressable focus-ring"
+        >
+          <span className="flex h-14 w-14 items-center justify-center rounded-full bg-primary text-white transition-transform group-hover:scale-105">
+            <Play className="h-6 w-6 fill-current" />
+          </span>
+          <span className="px-4 text-sm font-medium text-foreground">
+            Watch the {title} video
+          </span>
+          <span className="text-xs text-muted-foreground">
+            Loads from YouTube when you press play
+          </span>
+        </button>
+      )}
+      {/* Always available — if the embed fails to load the direct link
+          remains the fallback. */}
       <div className="border-t border-border/40 px-4 py-2 text-center">
         <a
           href={`https://www.youtube.com/watch?v=${videoId}`}
