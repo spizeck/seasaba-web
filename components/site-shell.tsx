@@ -22,7 +22,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
       </a>
       <AnalyticsLoader />
       <Header />
-      <main id="main-content">{children}</main>
+      <main id="main-content" className="site-main-container">{children}</main>
       <FooterWrapper />
       <ScrollPositionKeeper />
       <LocalBusinessJsonLd />

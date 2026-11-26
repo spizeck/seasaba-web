@@ -274,6 +274,25 @@
   .prose a[data-slot="button"] {
     text-decoration: none;
   }
+
+  /* Full-bleed interior heroes measure against <main>'s scrollbar-adjusted
+     inline size. Plain vw includes a classic vertical scrollbar and creates
+     horizontal overflow; container-query units use the layout width. */
+  .site-main-container {
+    container-type: inline-size;
+  }
+  .full-bleed-viewport {
+    width: 100vw;
+    margin-right: calc(50% - 50vw);
+    margin-left: calc(50% - 50vw);
+  }
+  @supports (width: 1cqw) {
+    .full-bleed-viewport {
+      width: 100cqw;
+      margin-right: calc(50% - 50cqw);
+      margin-left: calc(50% - 50cqw);
+    }
+  }
 }
 
 /*
