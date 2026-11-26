@@ -180,9 +180,9 @@ const HOMEPAGE_FAQS = [
     answer: (
       <>
         Saba offers good diving year-round; every season brings different
-        marine life and conditions. See{" "}
-        <Link href={`/plan-your-trip#${planYourTripAnchors.whenToVisit}`} className="font-medium text-primary hover:underline underline-offset-4">when to visit</Link>{" "}
-        for seasonal detail.
+        marine life and conditions. See the{" "}
+        <Link href={`/plan-your-trip#${planYourTripAnchors.whenToVisit}`} className="font-medium text-primary hover:underline underline-offset-4">season-by-season guide</Link>{" "}
+        for detail.
       </>
     ),
   },
