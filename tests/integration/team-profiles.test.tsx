@@ -136,7 +136,7 @@ describe("team profile pages", () => {
   it("renders approved long-form Drive biographies for established crew", async () => {
     const cases = [
       ["mel", /grand comeback in April 2026/],
-      ["aaron-smith", /became a certified scuba instructor in 2009/i],
+      ["aaron-smith", /nothing else quite like it in this part of the world/],
       ["lenny", /Trench Town, Sandy Bay/],
       ["robins", /Club Med, Moulin Sur Mer, and Marina Blue/],
       ["julijana", /Smurf Village/],
