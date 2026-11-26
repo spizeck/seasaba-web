@@ -298,6 +298,9 @@ export function TeamCarousel({ members = TEAM_MEMBERS }: { members?: TeamMember[
   };
 
   const onKeyDown = (e: React.KeyboardEvent) => {
+    // Card links are interactive content, not carousel controls; moving the
+    // carousel beneath a focused link would inert that exact DOM node.
+    if ((e.target as HTMLElement).closest("a, button")) return;
     if (e.key === "ArrowLeft") prev();
     if (e.key === "ArrowRight") next();
   };

@@ -114,6 +114,16 @@ describe("TeamCarousel", () => {
     expect((slides[23].querySelector("a") as HTMLAnchorElement).tabIndex).toBe(0);
   });
 
+  it("does not move the carousel when arrowing from a focused biography link", () => {
+    render(<TeamCarousel />);
+    const melSlide = Array.from(track().children)[MEMBER_COUNT] as HTMLElement;
+    const link = melSlide.querySelector("a") as HTMLAnchorElement;
+    fireEvent.keyDown(link, { key: "ArrowLeft" });
+    expect(transform()).toBe(offset(0));
+    fireEvent.keyDown(link, { key: "ArrowRight" });
+    expect(transform()).toBe(offset(0));
+  });
+
   it("advances exactly one card per Next click and one per Previous click", () => {
     render(<TeamCarousel />);
     fireEvent.click(nextButton());
