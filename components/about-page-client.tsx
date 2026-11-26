@@ -392,15 +392,13 @@ export function TeamCarousel({ members = TEAM_MEMBERS }: { members?: TeamMember[
             aria-live="polite"
           >
             {Array.from({ length: memberCount * 3 }, (_, slideIdx) => {
-              const position = slideIdx - memberCount;
-              // Circular distance from the first visible member, so a window
-              // that wraps past the end still exposes the real slides while
-              // every cloned slide stays hidden from assistive tech.
+              // Match the exact slides inside the viewport. Wrapped windows
+              // necessarily include clones at one end, while every duplicate
+              // outside the viewport stays hidden from assistive tech.
+              const firstVisibleSlide = index + memberCount;
               const isVisible =
-                slideIdx >= memberCount &&
-                slideIdx < memberCount * 2 &&
-                ((position - logicalIndex + memberCount) % memberCount) <
-                  cardsPerView;
+                slideIdx >= firstVisibleSlide &&
+                slideIdx < firstVisibleSlide + cardsPerView;
               return (
                 <div
                   key={slideIdx}

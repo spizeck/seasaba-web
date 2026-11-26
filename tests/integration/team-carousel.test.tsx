@@ -97,6 +97,23 @@ describe("TeamCarousel", () => {
     expect(slides.filter((slide) => slide.getAttribute("aria-hidden") === "true").every((slide) => slide.hasAttribute("inert"))).toBe(true);
   });
 
+  it("keeps wrapped visible cards clickable and focusable at the end of the roster", () => {
+    render(<TeamCarousel />);
+    fireEvent.click(screen.getByRole("button", { name: "Go to Gunner" }));
+
+    const slides = Array.from(track().children) as HTMLElement[];
+    expect(slideName(21)).toBe("Gunner");
+    expect(slideName(22)).toBe("Mel");
+    expect(slideName(23)).toBe("Otto");
+    for (const slideIndex of [21, 22, 23]) {
+      expect(slides[slideIndex]).toHaveAttribute("aria-hidden", "false");
+      expect(slides[slideIndex]).not.toHaveAttribute("inert");
+    }
+    expect(slides[22].querySelector("a")).toHaveAttribute("href", "/about/mel");
+    expect((slides[22].querySelector("a") as HTMLAnchorElement).tabIndex).toBe(0);
+    expect((slides[23].querySelector("a") as HTMLAnchorElement).tabIndex).toBe(0);
+  });
+
   it("advances exactly one card per Next click and one per Previous click", () => {
     render(<TeamCarousel />);
     fireEvent.click(nextButton());
