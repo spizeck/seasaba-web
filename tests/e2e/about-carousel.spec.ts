@@ -189,6 +189,29 @@ test("visible crew cards link to profiles while duplicate cards stay out of the 
   await expect(page.getByRole("heading", { name: "Mel", exact: true })).toBeVisible();
 });
 
+test("small pointer movement while clicking a card link still opens the profile", async ({ page, browserName }) => {
+  test.skip(browserName === "webkit", "mouse-drag pointer events are Chromium-only");
+  await hydratedGoto(page, "/about");
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await resetCarousel(page);
+
+  const melSlide = page.locator(`${CAROUSEL} [aria-hidden="false"]`, { hasText: "Mel" }).first();
+  const link = melSlide.getByRole("link", { name: "View full biography" });
+  await link.scrollIntoViewIfNeeded();
+  await waitForStableScroll(page);
+  const box = await link.boundingBox();
+  if (!box) throw new Error("biography link has no box");
+  const x = box.x + box.width / 2;
+  const y = box.y + box.height / 2;
+
+  await page.mouse.move(x, y);
+  await page.mouse.down();
+  await page.mouse.move(x + 6, y, { steps: 2 });
+  await page.mouse.up();
+
+  await expect(page).toHaveURL(/\/about\/mel$/);
+});
+
 test("desktop shows three cards and advances exactly one card per click", async ({ page }) => {
   await hydratedGoto(page, "/about");
   await page.setViewportSize({ width: 1440, height: 900 });

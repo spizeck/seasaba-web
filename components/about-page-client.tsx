@@ -37,7 +37,7 @@ function TeamCard({
       : undefined;
 
   return (
-    <div className="relative rounded-2xl border border-border/50 bg-card overflow-hidden flex flex-col h-full transition-shadow hover:shadow-md">
+    <div className="relative rounded-2xl border border-border/50 bg-card overflow-hidden flex flex-col h-full">
       {/* Photo */}
       <div className="relative aspect-[4/5] w-full flex-shrink-0 overflow-hidden">
         {member.image ? (
@@ -259,9 +259,9 @@ export function TeamCarousel({ members = TEAM_MEMBERS }: { members?: TeamMember[
       dragDistance.current,
       Math.abs(e.clientX - d.startX)
     );
-    // Capture only once the gesture is clearly a drag. Capturing on
-    // pointerdown retargets the eventual click away from card links.
-    if (dragDistance.current > 4 && !e.currentTarget.hasPointerCapture(e.pointerId)) {
+    // Capture only once movement crosses the click-suppression threshold.
+    // Below it, the eventual click must still reach the card link.
+    if (dragDistance.current > 8 && !e.currentTarget.hasPointerCapture(e.pointerId)) {
       e.currentTarget.setPointerCapture(e.pointerId);
     }
     // Clamp the dragged offset so the strip is never pulled past the ends of
@@ -281,7 +281,10 @@ export function TeamCarousel({ members = TEAM_MEMBERS }: { members?: TeamMember[
     if (!d) return;
     drag.current = null;
     setDragDelta(null);
-    if (cancelled || d.stepPx === 0) return;
+    if (cancelled || d.stepPx === 0) {
+      dragDistance.current = 0;
+      return;
+    }
     // Snap to the nearest card; at least half a card of travel commits a move.
     const steps = Math.round(-d.delta / d.stepPx);
     if (steps !== 0) setIndex((i) => clampIndex(i + steps));
