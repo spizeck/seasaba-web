@@ -23,13 +23,22 @@ function SharkFin({ className }: { className?: string }) {
   );
 }
 
-function formatWindow(start: string, end: string): string {
+export function formatWindow(start: string, end: string): string {
   const startDate = new Date(start + "T12:00:00Z");
   const endDate = new Date(end + "T12:00:00Z");
-  const monthDay = (d: Date) =>
-    d.toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
-  const year = endDate.toLocaleDateString("en-US", { year: "numeric", timeZone: "UTC" });
-  return `${monthDay(startDate)} – ${monthDay(endDate)}, ${year}`;
+  const fmt = (d: Date, opts: Intl.DateTimeFormatOptions) =>
+    d.toLocaleDateString("en-US", { ...opts, timeZone: "UTC" });
+  const sameYear = startDate.getUTCFullYear() === endDate.getUTCFullYear();
+  const sameMonth = sameYear && startDate.getUTCMonth() === endDate.getUTCMonth();
+  const year = fmt(endDate, { year: "numeric" });
+  if (sameMonth) {
+    return `${fmt(startDate, { month: "long" })} ${startDate.getUTCDate()} to ${endDate.getUTCDate()}, ${year}`;
+  }
+  const monthDay = (d: Date) => fmt(d, { month: "long", day: "numeric" });
+  if (sameYear) {
+    return `${monthDay(startDate)} to ${monthDay(endDate)}, ${year}`;
+  }
+  return `${monthDay(startDate)}, ${fmt(startDate, { year: "numeric" })} to ${monthDay(endDate)}, ${year}`;
 }
 
 interface Metric {
@@ -87,8 +96,8 @@ export function DiveStatsSection({ stats }: { stats: WeeklyDiveStats }) {
             This Week Beneath the Surface.
           </h2>
           <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-            Real observations recorded by our dive team during the past seven
-            days of diving in Saba — {formatWindow(stats.windowStart, stats.windowEnd)}.
+            Real observations from our dive team over the past seven days in
+            Saba ({formatWindow(stats.windowStart, stats.windowEnd)}).
           </p>
         </div>
 
@@ -111,9 +120,9 @@ export function DiveStatsSection({ stats }: { stats: WeeklyDiveStats }) {
 
         <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <p className="max-w-xl text-xs leading-relaxed text-muted-foreground">
-            Counts are sightings recorded by our guides on dives with logged
-            activity — not every animal encountered. Statistics refresh hourly
-            from the same log linked below.
+            Sightings are recorded by our dive guides and represent observed
+            encounters, not necessarily unique animals. Statistics are updated
+            approximately hourly.
           </p>
           <Link
             href="/dive-log"

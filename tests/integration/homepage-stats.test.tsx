@@ -63,7 +63,7 @@ describe("homepage dive-team statistics", () => {
     expect(section!.textContent).toContain("11");
     expect(section!.textContent).toContain("17");
     expect(section!.textContent).toContain("8");
-    expect(section!.textContent).toContain("Nov 20 – Nov 26, 2026");
+    expect(section!.textContent).toContain("November 20 to 26, 2026");
     // Links onward to the dive log.
     const link = section!.querySelector('a[href="/dive-log"]');
     expect(link).toBeTruthy();
