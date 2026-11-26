@@ -43,8 +43,8 @@ test.describe("staff biography pages", () => {
     await page.setViewportSize({ width: 375, height: 800 });
     await hydratedGoto(page, "/about/otto-de-vries");
     await expect(page.getByRole("heading", { name: "Otto de Vries", exact: true })).toBeVisible();
-    await expect(page.getByAltText("Otto de Vries, Head Boat Captain & Dive Instructor at Sea Saba")).toBeVisible();
-    await expect(page.getByText("Technical diving").first()).toBeVisible();
+    await expect(page.getByAltText("Otto de Vries, Dive Instructor, Captain & Saba Diving Pioneer at Sea Saba")).toBeVisible();
+    await expect(page.getByText("Offshore fishing").first()).toBeVisible();
   });
 
   test("owner profiles remain linked and unknown profiles are genuine 404s", async ({ page, monitor }) => {

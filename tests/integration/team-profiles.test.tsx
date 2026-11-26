@@ -101,13 +101,13 @@ describe("team profile pages", () => {
 
   it("does not repeat the short biography when no extended biography exists", async () => {
     const ui = await TeamMemberPage({
-      params: Promise.resolve({ slug: "mel" }),
+      params: Promise.resolve({ slug: "lionel" }),
     });
     render(ui);
 
-    expect(screen.getAllByText(/A Saba resident for over 20 years/)).toHaveLength(1);
-    expect(screen.queryByRole("heading", { name: "About Mel" })).not.toBeInTheDocument();
-    expect(screen.getByText("Saba resident for over 20 years")).toBeInTheDocument();
+    expect(screen.getAllByText(/A Saban native, freelance instructor/)).toHaveLength(1);
+    expect(screen.queryByRole("heading", { name: "About Lionel" })).not.toBeInTheDocument();
+    expect(screen.getByText("Saban native")).toBeInTheDocument();
   });
 
   it("does not repeat owner introduction text in the extended biography", async () => {
@@ -128,7 +128,26 @@ describe("team profile pages", () => {
     render(ui);
 
     expect(screen.getByRole("heading", { level: 1, name: "Otto de Vries" })).toBeInTheDocument();
-    expect(screen.getByAltText("Otto de Vries, Head Boat Captain & Dive Instructor at Sea Saba")).toBeInTheDocument();
-    expect(screen.getByText("Sea Saba's first Divemaster in 1985")).toBeInTheDocument();
+    expect(screen.getByAltText("Otto de Vries, Dive Instructor, Captain & Saba Diving Pioneer at Sea Saba")).toBeInTheDocument();
+    expect(screen.getByText("Became Sea Saba's first employee in 1985")).toBeInTheDocument();
+    expect(screen.getByText("Became Saba's first local dive instructor in 1988")).toBeInTheDocument();
+  });
+
+  it("renders approved long-form Drive biographies for established crew", async () => {
+    const cases = [
+      ["mel", /grand comeback in April 2026/],
+      ["aaron-smith", /became a certified scuba instructor in 2009/i],
+      ["lenny", /Trench Town, Sandy Bay/],
+      ["robins", /Club Med, Moulin Sur Mer, and Marina Blue/],
+      ["julijana", /Smurf Village/],
+    ] as const;
+
+    for (const [slug, text] of cases) {
+      const ui = await TeamMemberPage({
+        params: Promise.resolve({ slug }),
+      });
+      render(ui);
+      expect(screen.getAllByText(text).length).toBeGreaterThan(0);
+    }
   });
 });
