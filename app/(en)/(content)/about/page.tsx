@@ -137,10 +137,10 @@ export default function AboutPage() {
             "@type": "ItemList",
             name: "Sea Saba Crew",
             itemListElement: TEAM_MEMBERS
-              // Only individually-named people are Person entities — the
-              // joint "Jeanine & Marc" entry can't be split without inventing
-              // roles, and Gunner is the dive dog.
-              .filter((m) => !m.name.includes("&") && !m.title.includes("Dog"))
+              // Person schema covers individually-named people only —
+              // isPerson:false marks joint entries (Jeanine & Marc) and
+              // non-humans (Gunner the dive dog).
+              .filter((m) => m.isPerson !== false)
               .map((m) => ({
                 "@type": "Person",
                 name: m.name,

@@ -138,6 +138,11 @@ describe("Crew Person schema", () => {
       expect(p.jobTitle).toBeTruthy();
       expect(p.jobTitle).not.toContain("Dog");
     }
-    expect(people.map((p) => p.name)).toContain("Otto");
+    const names = people.map((p) => p.name);
+    expect(names).toContain("Otto");
+    // Joint roster entries and the dive dog are deliberately excluded —
+    // isPerson:false in data/team.ts is what keeps them out.
+    expect(names).not.toContain("Gunner");
+    expect(names).not.toContain("Jeanine & Marc");
   });
 });

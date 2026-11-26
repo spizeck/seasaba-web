@@ -12,6 +12,12 @@ export interface TeamMember {
   objectPosition?: string;
   funFact?: string;
   languages?: string[];
+  /**
+   * Whether this entry is one identifiable person (default true) — controls
+   * Person structured data. False for joint entries and non-humans; never
+   * set false to hide a real person's expertise signal.
+   */
+  isPerson?: boolean;
 }
 
 export const TEAM_MEMBERS: TeamMember[] = [
@@ -29,6 +35,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
     bio: "Originally from the Netherlands, Jeanine and Marc arrived on Saba after years working in the Maldives. Jeanine is the organizational force behind Sea Saba, keeping everything running smoothly, while Marc is always chasing his next adventure. Whether underwater with a camera or on a snowboard, he rarely sits still. Together, they bring experience, laughter, and the welcoming atmosphere that keeps guests coming back.",
     image: "/images/optimized/marc-and-jeanine.webp",
     languages: ["English", "Dutch", "German"],
+    isPerson: false, // joint entry — cannot be split into one Person
   },
   {
     name: "Otto",
@@ -91,6 +98,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
     bio: "Gunner is Sea Saba's four-legged ambassador and chief food inspector. He loves meeting guests and making sure everyone feels welcome. From greeting divers at the dock to investigating unattended sandwiches, Gunner takes his responsibilities very seriously.",
     image: "/images/optimized/gunner-dive-dog.webp",
     languages: ["Woof"],
+    isPerson: false, // the dive dog is not a Person
     funFact: "Do NOT leave food unattended in his presence.",
   },
 ];
