@@ -7,8 +7,10 @@ import { Anchor, Users, Shield, Ship, Bus, MapPin } from "lucide-react";
 import { TeamCarousel, OwnerFeature } from "@/components/about-page-client";
 import { TrackedInternalButton } from "@/components/tracked-internal-button";
 import { TrackedOutboundLink } from "@/components/tracked-outbound-link";
+import { JsonLd, BUSINESS_ID } from "@/components/structured-data";
 import { divingAnchors } from "@/lib/anchors";
 import { OPERATIONS } from "@/data/operations";
+import { TEAM_MEMBERS } from "@/data/team";
 
 export const metadata = createMetadata({
   title: "About Us",
@@ -129,6 +131,26 @@ export default function AboutPage() {
 
       {/* Meet the Crew */}
       <section className="mt-12">
+        <JsonLd
+          data={{
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            name: "Sea Saba Crew",
+            itemListElement: TEAM_MEMBERS
+              // Person schema covers individually-named people only —
+              // isPerson:false marks joint entries (Jeanine & Marc) and
+              // non-humans (Gunner the dive dog).
+              .filter((m) => m.isPerson !== false)
+              .map((m) => ({
+                "@type": "Person",
+                name: m.name,
+                jobTitle: m.title,
+                description: m.bio,
+                worksFor: { "@id": BUSINESS_ID },
+                ...(m.languages && { knowsLanguage: m.languages }),
+              })),
+          }}
+        />
         <h2 className="text-xl font-semibold text-foreground">Meet the Crew</h2>
         <p className="mt-2 text-sm text-muted-foreground">
           Our crew brings together local knowledge, professional experience, and

@@ -5,6 +5,7 @@ import { LocalBusinessJsonLd, BUSINESS_ID } from "@/components/structured-data";
 import CoursesPage from "@/app/(en)/(content)/courses/page";
 import PlanYourTripPage from "@/app/(en)/(content)/plan-your-trip/page";
 import DivingPage from "@/app/(en)/(content)/diving/page";
+import AboutPage from "@/app/(en)/(content)/about/page";
 import HomePage from "@/app/(en)/page";
 
 // Breadcrumbs is a client component reading the current route.
@@ -140,5 +141,29 @@ describe("FAQPage", () => {
       expect(questions[i].acceptedAnswer.text).toBe(norm(answer));
       expect(questions[i].acceptedAnswer.text).not.toMatch(/<[^>]+>/);
     });
+  });
+});
+
+describe("Crew Person schema", () => {
+  it("marks up individually-named crew as Person entities on /about", () => {
+    const { container } = render(<AboutPage />);
+    const list = jsonLdBlocks(container).find((b) => b["@type"] === "ItemList");
+    expect(list).toBeTruthy();
+    const people = (list?.itemListElement ?? []) as { "@type": string; name: string; jobTitle?: string }[];
+    expect(people.length).toBeGreaterThan(0);
+    // Joint roster entries (Jeanine & Marc) and the dive dog are excluded —
+    // Person schema only marks up identifiable individuals.
+    for (const p of people) {
+      expect(p["@type"]).toBe("Person");
+      expect(p.name).not.toContain("&");
+      expect(p.jobTitle).toBeTruthy();
+      expect(p.jobTitle).not.toContain("Dog");
+    }
+    const names = people.map((p) => p.name);
+    expect(names).toContain("Otto");
+    // Joint roster entries and the dive dog are deliberately excluded —
+    // isPerson:false in data/team.ts is what keeps them out.
+    expect(names).not.toContain("Gunner");
+    expect(names).not.toContain("Jeanine & Marc");
   });
 });
