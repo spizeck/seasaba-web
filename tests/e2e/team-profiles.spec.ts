@@ -50,7 +50,8 @@ test.describe("staff biography pages", () => {
   test("owner profiles remain linked and unknown profiles are genuine 404s", async ({ page, monitor }) => {
     await hydratedGoto(page, "/about/chad-nuttall");
     await expect(page.getByRole("heading", { name: "Chad Nuttall", exact: true })).toBeVisible();
-    await expect(page.getByText("Together, Chad and Katy oversee daily operations")).toBeVisible();
+    await expect(page.getByText(/serving with the 1st Infantry Division/)).toBeVisible();
+    await expect(page.getByRole("link", { name: "Diamond Rock" })).toHaveAttribute("href", "/dive-sites/diamond-rock");
 
     monitor.allowConsoleError(/about\/jeanine-marc/);
     monitor.allowRequestFailure(/about\/jeanine-marc/);
