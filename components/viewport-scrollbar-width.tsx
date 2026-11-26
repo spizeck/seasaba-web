@@ -22,14 +22,23 @@ export function ViewportScrollbarWidth() {
       );
     };
 
+    let frame = 0;
+    const scheduleUpdate = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(update);
+    };
+
     update();
-    window.addEventListener("resize", update);
-    const observer = new ResizeObserver(update);
+    window.addEventListener("resize", scheduleUpdate);
+    window.addEventListener("orientationchange", scheduleUpdate);
+    const observer = new ResizeObserver(scheduleUpdate);
     observer.observe(document.documentElement);
 
     return () => {
+      cancelAnimationFrame(frame);
       observer.disconnect();
-      window.removeEventListener("resize", update);
+      window.removeEventListener("resize", scheduleUpdate);
+      window.removeEventListener("orientationchange", scheduleUpdate);
       document.documentElement.style.removeProperty("--classic-scrollbar-width");
     };
   }, []);
