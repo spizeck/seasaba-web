@@ -20,11 +20,19 @@ export default async function DiveLogPage() {
   // static generation and run Firestore reads on every request. The
   // `?site=` deep-link filter is applied client-side instead.
   // Server-render the dive list so real recent dives are in the initial
-  // HTML (issue #108). If the fetch fails — no credentials, backend
-  // unreachable, slow — the client component falls back to fetching in the
-  // browser exactly as it did before. An empty result is treated the same
-  // way: Firestore can resolve an empty snapshot when its backend is
-  // unreachable, and a browser retry is better than caching an empty page.
+  // HTML (issue #108). On failure the two phases behave differently by
+  // design:
+  //   - Build: there is no previous page to preserve, so a failed/empty
+  //     fetch still renders the client-fetch fallback shell (the build
+  //     must succeed; the shell self-heals in the browser).
+  //   - Runtime regeneration: throwing keeps the last successfully
+  //     generated page in the ISR cache instead of replacing a good page
+  //     with a degraded shell — Next.js serves the cached page and retries
+  //     revalidation on the next request. An empty payload is treated the
+  //     same: Firestore can resolve an empty snapshot when its backend is
+  //     unreachable, and a genuine "zero dives" dataset does not exist in
+  //     production.
+  const isBuildTime = process.env.NEXT_PHASE === "phase-production-build";
   let initialDives: PublicDive[] | undefined;
   let generatedAt: number | undefined;
   try {
@@ -32,8 +40,11 @@ export default async function DiveLogPage() {
     if (result.dives.length > 0) {
       initialDives = result.dives;
       generatedAt = result.generatedAt;
+    } else if (!isBuildTime) {
+      throw new Error("Dive log fetch returned no dives");
     }
   } catch (err) {
+    if (!isBuildTime) throw err;
     console.error("Dive log server fetch failed, falling back to client fetch", err);
   }
 
