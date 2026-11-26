@@ -275,23 +275,14 @@
     text-decoration: none;
   }
 
-  /* Full-bleed interior heroes measure against <main>'s scrollbar-adjusted
-     inline size. Plain vw includes a classic vertical scrollbar and creates
-     horizontal overflow; container-query units use the layout width. */
-  .site-main-container {
-    container-type: inline-size;
-  }
+  /* Classic vertical scrollbars are included in vw but excluded from the
+     usable layout width. ViewportScrollbarWidth measures that small delta
+     once the client boots; the zero default preserves the pre-measurement
+     rendering and overlay-scrollbar platforms. */
   .full-bleed-viewport {
-    width: 100vw;
-    margin-right: calc(50% - 50vw);
-    margin-left: calc(50% - 50vw);
-  }
-  @supports (width: 1cqw) {
-    .full-bleed-viewport {
-      width: 100cqw;
-      margin-right: calc(50% - 50cqw);
-      margin-left: calc(50% - 50cqw);
-    }
+    width: calc(100vw - var(--classic-scrollbar-width, 0px));
+    margin-right: calc(50% - 50vw + (var(--classic-scrollbar-width, 0px) / 2));
+    margin-left: calc(50% - 50vw + (var(--classic-scrollbar-width, 0px) / 2));
   }
 }
 
