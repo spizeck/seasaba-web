@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { FeatureImage } from "@/components/feature-image";
 import { JsonLd } from "@/components/structured-data";
 import { TrackedInternalButton } from "@/components/tracked-internal-button";
+import { TrackedOutboundLink } from "@/components/tracked-outbound-link";
 import { YouTubeEmbed } from "@/components/youtube-embed";
 import { diveAreaByTitle } from "@/data/dive-areas";
 import {
@@ -134,10 +135,21 @@ export default async function DiveSitePage({
           Diving {site.name}
         </h2>
         <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-          Every Sea Saba dive trip visits sites inside the Saba Marine Park,
-          most of them 5–15 minutes by boat from Fort Bay Harbor. Sites are
-          chosen each day for the actual conditions and the divers aboard, so
-          let us know if there&apos;s a site you&apos;re hoping to visit.
+          Every Sea Saba dive trip visits sites inside the{" "}
+          <TrackedOutboundLink
+            href="https://sabapark.org/saba-national-marine-park/"
+            eventName="social_click"
+            buttonText="Saba National Marine Park"
+            className="font-medium text-primary hover:underline underline-offset-4"
+          >
+            Saba National Marine Park
+          </TrackedOutboundLink>
+          , most of them 5–15 minutes by boat from Fort Bay Harbor. The
+          park&apos;s permanent moorings — maintained by the Saba Conservation
+          Foundation — keep anchors off the reef, and every diver&apos;s park fee
+          supports that protection directly. Sites are chosen each day for the
+          actual conditions and the divers aboard, so let us know if there&apos;s
+          a site you&apos;re hoping to visit.
         </p>
         {site.techSuitable && (
           <p className="mt-2 text-sm leading-relaxed text-muted-foreground">

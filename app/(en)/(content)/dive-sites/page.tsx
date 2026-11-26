@@ -5,6 +5,7 @@ import { PageHero } from "@/components/page-hero";
 import { FeatureImage } from "@/components/feature-image";
 import { DiveAreaSites } from "@/components/dive-area-sites";
 import { TrackedInternalButton } from "@/components/tracked-internal-button";
+import { TrackedOutboundLink } from "@/components/tracked-outbound-link";
 import { DIVE_AREAS } from "@/data/dive-areas";
 import { divingAnchors } from "@/lib/anchors";
 
@@ -26,7 +27,16 @@ export default function DiveSitesPage() {
       />
 
       <p className="text-base leading-relaxed text-muted-foreground">
-        The Saba Marine Park protects over 30 dive sites around this volcanic island.
+        The{" "}
+        <TrackedOutboundLink
+          href="https://sabapark.org/saba-national-marine-park/"
+          eventName="social_click"
+          buttonText="Saba National Marine Park"
+          className="font-medium text-primary hover:underline underline-offset-4"
+        >
+          Saba National Marine Park
+        </TrackedOutboundLink>{" "}
+        protects over 30 dive sites around this volcanic island.
         Explore the world-famous pinnacles, dramatic walls, healthy reefs, and seamounts
         that make Saba one of the Caribbean&apos;s most rewarding dive destinations.
       </p>
