@@ -60,6 +60,7 @@ export interface PublicDive {
   diveGuide: string;
   diveGuides?: string[];
   diveSite: string;
+  diveSiteId?: string;
   maxDepth?: number;
   waterTemperature?: number;
   driftDive?: boolean;
@@ -194,6 +195,7 @@ export function normalizeDive(
     diveGuide: guides.join(", ") || "Unknown",
     diveGuides: guides,
     diveSite: siteName,
+    diveSiteId: dive.diveSiteId,
     maxDepth: dive.maxDepth,
     waterTemperature: dive.waterTemperature,
     driftDive: isDrift,
