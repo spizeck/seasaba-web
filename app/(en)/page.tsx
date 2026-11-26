@@ -7,7 +7,7 @@ import { FeatureImage } from "@/components/feature-image";
 import { TrackedInternalButton } from "@/components/tracked-internal-button";
 import { JsonLd, jsxToText } from "@/components/structured-data";
 import { createMetadata } from "@/lib/metadata";
-import { diveSiteAnchors, planYourTripAnchors } from "@/lib/anchors";
+import { diveSiteAnchors, divingAnchors, planYourTripAnchors } from "@/lib/anchors";
 import { diveSitePath } from "@/data/dive-site-videos";
 import { OPERATIONS } from "@/data/operations";
 
@@ -143,9 +143,9 @@ const HOMEPAGE_FAQS = [
     question: "Is Saba suitable for beginner divers?",
     answer: (
       <>
-        Yes. Scuba Diver-certified guests can join our 2-tank and afternoon
-        trips with a private guide, and divers who aren&apos;t certified yet can
-        start with a Discover Scuba or Open Water{" "}
+        Yes. Scuba Diver-certified guests can join our Classic 2-tank and
+        afternoon trips with a private guide, and divers who aren&apos;t
+        certified yet can start with a Try Scuba or Open Water{" "}
         <Link href="/courses" className="font-medium text-primary hover:underline underline-offset-4">course</Link>.
       </>
     ),
@@ -157,7 +157,9 @@ const HOMEPAGE_FAQS = [
         Complimentary taxi pickup anywhere on Saba, tanks, weights, and an
         experienced guide — never more than {OPERATIONS.maxRecreationalDiversPerGuide} divers
         per guide on recreational dives. Rental gear and dive computers are
-        available. Full details on our{" "}
+        available. Diving also carries a conservation contribution of{" "}
+        ${OPERATIONS.conservationFees.marineParkPerDiveUsd + OPERATIONS.conservationFees.chamberContributionPerDiveUsd}{" "}
+        per diver, per dive. Full details on our{" "}
         <Link href="/diving" className="font-medium text-primary hover:underline underline-offset-4">diving page</Link>.
       </>
     ),
@@ -167,7 +169,9 @@ const HOMEPAGE_FAQS = [
     answer: (
       <>
         Yes — certified Nitrox divers get complimentary{" "}
-        {OPERATIONS.nitroxBlend} Nitrox on every dive, no extra charge.
+        {OPERATIONS.nitroxBlend} Nitrox on qualifying dives, no extra charge.
+        Details in the{" "}
+        <Link href={`/diving#${divingAnchors.nitrox}`} className="font-medium text-primary hover:underline underline-offset-4">Nitrox section</Link>.
       </>
     ),
   },
