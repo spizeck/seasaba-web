@@ -8,12 +8,6 @@ vi.mock("@/lib/firestore/dive-log", () => ({
   loadPublicDives: vi.fn(),
 }));
 
-const ORIGINAL_PHASE = process.env.NEXT_PHASE;
-const setPhase = (phase?: string) => {
-  if (phase === undefined) delete process.env.NEXT_PHASE;
-  else process.env.NEXT_PHASE = phase;
-};
-
 function findClient(node: ReactNode): ReactElement | undefined {
   if (isValidElement(node)) {
     if (node.type === DiveLogClient) return node as ReactElement;
@@ -32,29 +26,33 @@ beforeEach(() => {
   vi.mocked(loadPublicDives).mockReset();
 });
 
-afterEach(() => setPhase(ORIGINAL_PHASE));
+afterEach(() => vi.unstubAllEnvs());
 
 describe("dive-log ISR resilience", () => {
   it("throws on fetch failure at runtime so ISR keeps the last good page", async () => {
-    setPhase("phase-production-server");
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("NEXT_PHASE", "phase-production-server");
     vi.mocked(loadPublicDives).mockRejectedValue(new Error("backend down"));
     await expect(DiveLogPage()).rejects.toThrow("backend down");
   });
 
   it("throws on an empty payload at runtime — a cached good page beats an empty shell", async () => {
-    setPhase("phase-production-server");
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("NEXT_PHASE", "phase-production-server");
     vi.mocked(loadPublicDives).mockResolvedValue({ dives: [], generatedAt: 123 });
     await expect(DiveLogPage()).rejects.toThrow("no dives");
   });
 
-  it("treats NEXT_PHASE unset (plain next start) as runtime", async () => {
-    setPhase(undefined);
+  it("treats NEXT_PHASE unset (plain next start) as production runtime", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("NEXT_PHASE", "");
     vi.mocked(loadPublicDives).mockRejectedValue(new Error("backend down"));
     await expect(DiveLogPage()).rejects.toThrow();
   });
 
   it("renders the client-fetch fallback shell at build on failure", async () => {
-    setPhase("phase-production-build");
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("NEXT_PHASE", "phase-production-build");
     vi.mocked(loadPublicDives).mockRejectedValue(new Error("backend down"));
     const el = await DiveLogPage();
     const client = findClient(el);
@@ -63,15 +61,26 @@ describe("dive-log ISR resilience", () => {
   });
 
   it("renders the client-fetch fallback shell at build on an empty payload", async () => {
-    setPhase("phase-production-build");
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("NEXT_PHASE", "phase-production-build");
     vi.mocked(loadPublicDives).mockResolvedValue({ dives: [], generatedAt: 123 });
     const el = await DiveLogPage();
     const client = findClient(el);
     expect((client!.props as { initialDives?: unknown }).initialDives).toBeUndefined();
   });
 
+  it("falls back to the client-fetch shell in development rather than erroring", async () => {
+    vi.stubEnv("NODE_ENV", "development");
+    vi.stubEnv("NEXT_PHASE", "phase-development-server");
+    vi.mocked(loadPublicDives).mockRejectedValue(new Error("backend down"));
+    const el = await DiveLogPage();
+    const client = findClient(el);
+    expect((client!.props as { initialDives?: unknown }).initialDives).toBeUndefined();
+  });
+
   it("passes successful dives through regardless of phase", async () => {
-    setPhase("phase-production-server");
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("NEXT_PHASE", "phase-production-server");
     const dives = [{ id: "d1" }];
     vi.mocked(loadPublicDives).mockResolvedValue({ dives: dives as never, generatedAt: 456 });
     const el = await DiveLogPage();
