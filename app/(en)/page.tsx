@@ -7,6 +7,7 @@ import { FeatureImage } from "@/components/feature-image";
 import { TrackedInternalButton } from "@/components/tracked-internal-button";
 import { createMetadata } from "@/lib/metadata";
 import { diveSiteAnchors, planYourTripAnchors } from "@/lib/anchors";
+import { diveSitePath } from "@/data/dive-site-videos";
 
 const WHY_SABA_FEATURED = [
   {
@@ -201,12 +202,13 @@ export default function Home() {
                   </p>
                   <div className="mt-5 flex flex-wrap gap-2">
                     {exp.sites.map((site) => (
-                      <span
+                      <Link
                         key={site}
-                        className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/60"
+                        href={diveSitePath(site)}
+                        className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/60 transition-colors hover:bg-white/15 hover:text-white"
                       >
                         {site}
-                      </span>
+                      </Link>
                     ))}
                   </div>
                   <Link

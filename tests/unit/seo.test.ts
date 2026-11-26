@@ -3,6 +3,8 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { createMetadata } from "@/lib/metadata";
 import { legacyRedirects } from "@/data/redirects";
+import { DIVE_AREAS } from "@/data/dive-areas";
+import { DIVE_SITES, diveSitePath } from "@/data/dive-site-videos";
 import sitemap from "@/app/sitemap";
 import robots from "@/app/robots";
 
@@ -46,12 +48,27 @@ it("preserves unique single-hop permanent legacy redirects", () => {
   }
 });
 
+it("keeps the dive-area lists and the dive-site catalogue in lockstep", () => {
+  // A site added to only one list would silently lose either its directory
+  // chip or its page (undiscoverable either way) — guard both directions.
+  const areaSites = DIVE_AREAS.flatMap((a) => a.sites);
+  const catalogSites = DIVE_SITES.map((s) => s.name);
+  expect([...areaSites].sort()).toEqual([...catalogSites].sort());
+  for (const site of DIVE_SITES) {
+    const area = DIVE_AREAS.find((a) => a.title === site.area);
+    expect(area, `${site.name} has no matching dive area`).toBeTruthy();
+    expect(area?.sites).toContain(site.name);
+  }
+});
+
 describe("sitemap", () => {
-  it("lists exactly the canonical public routes on the canonical host", () => {
+  it("lists exactly the canonical public routes plus every catalogue dive-site page", () => {
     const urls = sitemap().map((entry) => entry.url);
-    expect([...urls].sort()).toEqual(
-      CANONICAL_ROUTES.map((p) => `https://www.seasaba.com${p}`).sort()
-    );
+    const expected = [
+      ...CANONICAL_ROUTES.map((p) => `https://www.seasaba.com${p}`),
+      ...DIVE_SITES.map((s) => `https://www.seasaba.com${diveSitePath(s.name)}`),
+    ];
+    expect([...urls].sort()).toEqual(expected.sort());
     expect(new Set(urls).size).toBe(urls.length);
   });
 

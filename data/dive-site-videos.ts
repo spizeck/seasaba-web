@@ -253,3 +253,27 @@ export const DIVE_SITES: DiveSite[] = [
 export const DIVE_SITE_MAP = Object.fromEntries(
   DIVE_SITES.map((s) => [s.name, s])
 ) as Record<string, DiveSite>;
+
+/**
+ * URL slug for a site's `/dive-sites/<slug>` page. Deterministic from the
+ * site name so legacy redirects, the directory and the pages all agree:
+ * "Third Encounter" → "third-encounter", "50/50" → "50-50",
+ * "Rays n’ Anchors" → "rays-n-anchors", "Man O'War Shoals" → "man-owar-shoals".
+ */
+export function diveSiteSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[\u2018\u2019']/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+/** Canonical public path for a site's detail page. */
+export function diveSitePath(name: string): string {
+  return `/dive-sites/${diveSiteSlug(name)}`;
+}
+
+/** Quick lookup: slug → DiveSite */
+export const DIVE_SITE_BY_SLUG = Object.fromEntries(
+  DIVE_SITES.map((s) => [diveSiteSlug(s.name), s])
+) as Record<string, DiveSite>;

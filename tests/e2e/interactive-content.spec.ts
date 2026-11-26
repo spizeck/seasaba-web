@@ -8,26 +8,16 @@ test.beforeEach(async ({ browserName }) => {
   test.skip(browserName !== "chromium", "representative interactive coverage runs on Chromium");
 });
 
-test("dive site pills open a details dialog with prev/next, Escape closes it and restores focus", async ({ page }) => {
+test("dive site chips link to individual site pages with sibling navigation", async ({ page }) => {
   await hydratedGoto(page, "/dive-sites");
-  const pill = page.getByRole("button", { name: "Third Encounter", exact: true });
-  await pill.click();
+  await page.getByRole("link", { name: "Third Encounter", exact: true }).first().click();
+  await expect(page).toHaveURL(/\/dive-sites\/third-encounter$/);
+  await expect(page.getByRole("heading", { name: "Third Encounter", exact: true })).toBeVisible();
 
-  const dialog = page.getByRole("dialog", { name: "Third Encounter dive site" });
-  await expect(dialog).toBeVisible();
-  await expect(dialog.getByRole("button", { name: "Close" })).toBeVisible();
-
-  // Next-site navigation inside the dialog.
-  await dialog.getByRole("button", { name: /Next:/ }).click();
-  const nextDialog = page.getByRole("dialog", { name: "Twilight Zone dive site" });
-  await expect(nextDialog).toBeVisible();
-  await nextDialog.getByRole("button", { name: /Previous:/ }).click();
-  await expect(dialog).toBeVisible();
-
-  // Escape closes and focus returns to the triggering pill.
-  await page.keyboard.press("Escape");
-  await expect(dialog).toHaveCount(0);
-  await expect(pill).toBeFocused();
+  // Sibling-site links keep browsing inside the same dive area.
+  await page.getByRole("link", { name: "Twilight Zone", exact: true }).click();
+  await expect(page).toHaveURL(/\/dive-sites\/twilight-zone$/);
+  await expect(page.getByRole("heading", { name: "Twilight Zone", exact: true })).toBeVisible();
 });
 
 test("accommodation pills open a hotel dialog, Escape closes it and restores focus", async ({ page }) => {

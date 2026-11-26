@@ -1,12 +1,14 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/constants";
+import { DIVE_SITES, diveSitePath } from "@/data/dive-site-videos";
 
 /**
  * Canonical public routes only. Excludes: legacy redirect sources
  * (data/redirects.ts), query-param variants (`/book?item=…`,
  * `/contact?interest=…` — noindexed by createMetadata), and technical
  * endpoints. Keep this table in sync when a public page is added or
- * removed; tests/unit/seo.test.ts guards the list.
+ * removed; tests/unit/seo.test.ts guards the list. Individual dive-site
+ * pages are generated from the dive-site catalogue, not listed here.
  *
  * `lastModified` is deliberately omitted: there is no trustworthy source of
  * content modification dates in this repo, and a build-time `new Date()`
@@ -36,9 +38,15 @@ const SITEMAP_ROUTES: {
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  return SITEMAP_ROUTES.map(({ path, changeFrequency, priority }) => ({
+  const routes = SITEMAP_ROUTES.map(({ path, changeFrequency, priority }) => ({
     url: `${SITE_URL}${path}`,
     changeFrequency,
     priority,
   }));
+  const sites = DIVE_SITES.map((site) => ({
+    url: `${SITE_URL}${diveSitePath(site.name)}`,
+    changeFrequency: "monthly" as const,
+    priority: 0.8,
+  }));
+  return [...routes, ...sites];
 }

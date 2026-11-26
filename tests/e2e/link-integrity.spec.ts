@@ -1,4 +1,5 @@
 import { test, expect } from "./fixtures";
+import { DIVE_SITES, diveSitePath } from "../../data/dive-site-videos";
 
 // Deterministic internal-link validation: fetch each known public page, collect
 // its in-site hrefs, and verify every destination path is a real route and
@@ -9,6 +10,7 @@ const PUBLIC_PAGES = [
   "/", "/diving", "/dive-sites", "/courses", "/plan-your-trip",
   "/visiting-yachts", "/about", "/contact", "/book", "/dive-log",
   "/partners", "/donate", "/terms", "/privacy", "/cookie-policy",
+  ...DIVE_SITES.map((s) => diveSitePath(s.name)),
 ];
 
 // Static assets and framework URLs that legitimately appear as href/src values.

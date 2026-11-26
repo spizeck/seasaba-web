@@ -11,7 +11,7 @@ informational pages are server-rendered HTML and readable without JavaScript.
 ## Core pages
 
 - [Diving with Sea Saba](https://www.seasaba.com/diving): dive products, schedule, certification requirements, free Nitrox, Marine Park rules
-- [Saba Dive Sites](https://www.seasaba.com/dive-sites): the island's dive areas and sites, organized by region
+- [Saba Dive Sites](https://www.seasaba.com/dive-sites): the island's dive areas and individual site guides (each at /dive-sites/<site-slug>), organized by region
 - [Scuba Courses & Certifications](https://www.seasaba.com/courses): SDI and TDI courses from Try Scuba to Divemaster
 - [Plan Your Trip](https://www.seasaba.com/plan-your-trip): getting to Saba, accommodation, seasons, packing, restaurants, non-diving activities
 - [Visiting Saba by Yacht](https://www.seasaba.com/visiting-yachts): arrival, clearance, moorings, and diving from your own vessel
