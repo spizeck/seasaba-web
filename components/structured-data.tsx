@@ -1,4 +1,6 @@
 import { isValidElement, type ReactNode } from "react";
+import { JsonLd } from "@/components/json-ld";
+export { JsonLd, BreadcrumbListJsonLd } from "@/components/json-ld";
 import {
   SITE_NAME,
   SITE_URL,
@@ -17,19 +19,6 @@ import {
 
 /** Stable entity identifier — lets other schema nodes reference the business. */
 export const BUSINESS_ID = `${SITE_URL}/#business`;
-
-/**
- * Render a JSON-LD block. `data` is a plain schema.org object; callers pass
- * `@context` themselves so each block is self-contained.
- */
-export function JsonLd({ data }: { data: Record<string, unknown> }) {
-  return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
-    />
-  );
-}
 
 /**
  * Flatten a rendered answer (strings, interpolated values, nested elements
@@ -90,29 +79,5 @@ export function LocalBusinessJsonLd() {
     sameAs: SOCIAL_LINKS.map((link) => link.href),
   };
 
-  return <JsonLd data={jsonLd} />;
-}
-
-/**
- * BreadcrumbList matching the visible <Breadcrumbs> trail. Emitted only when
- * the trail has at least one page segment (content pages), so the schema
- * always mirrors what the visitor sees.
- */
-export function BreadcrumbListJsonLd({
-  items,
-}: {
-  items: { name: string; path: string }[];
-}) {
-  if (items.length === 0) return null;
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: items.map((item, i) => ({
-      "@type": "ListItem",
-      position: i + 1,
-      name: item.name,
-      item: `${SITE_URL}${item.path}`,
-    })),
-  };
   return <JsonLd data={jsonLd} />;
 }

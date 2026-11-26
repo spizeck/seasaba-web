@@ -4,13 +4,13 @@ import { PageHero } from "@/components/page-hero";
 import { InlineImage } from "@/components/inline-image";
 import { Button } from "@/components/ui/button";
 import { Anchor, Users, Shield, Ship, Bus, MapPin } from "lucide-react";
-import { TeamCarousel, OwnerFeature } from "@/components/about-page-client";
+import { TeamCarousel, OwnerFeature, type TeamCardMember } from "@/components/about-page-client";
 import { TrackedInternalButton } from "@/components/tracked-internal-button";
 import { TrackedOutboundLink } from "@/components/tracked-outbound-link";
 import { JsonLd, personJsonLd } from "@/components/structured-data";
 import { divingAnchors } from "@/lib/anchors";
 import { OPERATIONS } from "@/data/operations";
-import { PROFILE_MEMBERS } from "@/data/team";
+import { PROFILE_MEMBERS, TEAM_MEMBERS, teamMemberProfilePath } from "@/data/team";
 
 export const metadata = createMetadata({
   title: "About Us",
@@ -18,6 +18,20 @@ export const metadata = createMetadata({
     `Professional scuba diving in Saba since ${OPERATIONS.establishedYear}. Small guided groups, experienced local professionals, and a commitment to exceptional underwater experiences.`,
   path: "/about",
 });
+
+const TEAM_CARD_MEMBERS: TeamCardMember[] = TEAM_MEMBERS.map((member) => ({
+  name: member.name,
+  title: member.title,
+  bio: member.bio,
+  image: member.image,
+  objectPosition: member.objectPosition,
+  funFact: member.funFact,
+  languages: member.languages,
+  profileHref:
+    member.slug && member.isPerson !== false
+      ? teamMemberProfilePath(member.slug)
+      : undefined,
+}));
 
 const TRUST_FACTS: { number: string; label: string; href?: string }[] = [
   { number: `${OPERATIONS.establishedYear}`, label: `Operating continuously since ${OPERATIONS.establishedYear}` },
@@ -150,7 +164,7 @@ export default function AboutPage() {
           the warm hospitality that keeps guests coming back.
         </p>
         <div className="mt-6">
-          <TeamCarousel />
+          <TeamCarousel members={TEAM_CARD_MEMBERS} />
         </div>
       </section>
 

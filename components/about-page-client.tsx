@@ -6,11 +6,12 @@ import Link from "next/link";
 import { ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
 import { FeatureImage } from "@/components/feature-image";
 import { OPERATIONS } from "@/data/operations";
-import {
-  TEAM_MEMBERS,
-  teamMemberProfilePath,
-  type TeamMember,
-} from "@/data/team";
+import type { TeamMember } from "@/data/team";
+
+export type TeamCardMember = Pick<
+  TeamMember,
+  "name" | "title" | "bio" | "image" | "objectPosition" | "funFact" | "languages"
+> & { profileHref?: string };
 
 function getCardsPerView(): number {
   if (typeof window === "undefined") return 3;
@@ -23,7 +24,7 @@ function TeamCard({
   member,
   linkTabIndex,
 }: {
-  member: TeamMember;
+  member: TeamCardMember;
   linkTabIndex?: number;
 }) {
   const initials = member.name
@@ -31,11 +32,6 @@ function TeamCard({
     .map((n) => n[0])
     .slice(0, 2)
     .join("");
-  const profileHref =
-    member.slug && member.isPerson !== false
-      ? teamMemberProfilePath(member.slug)
-      : undefined;
-
   return (
     <div className="relative rounded-2xl border border-border/50 bg-card overflow-hidden flex flex-col h-full">
       {/* Photo */}
@@ -97,9 +93,9 @@ function TeamCard({
           </div>
         )}
 
-        {profileHref && (
+        {member.profileHref && (
           <Link
-            href={profileHref}
+            href={member.profileHref}
             tabIndex={linkTabIndex}
             className="mt-4 inline-flex w-fit items-center rounded-md text-sm font-semibold text-primary underline-offset-4 hover:underline focus-ring after:absolute after:inset-0 after:content-['']"
           >
@@ -111,7 +107,7 @@ function TeamCard({
   );
 }
 
-export function TeamCarousel({ members = TEAM_MEMBERS }: { members?: TeamMember[] }) {
+export function TeamCarousel({ members }: { members: TeamCardMember[] }) {
   const [index, setIndex] = useState(0);
   const [cardsPerView, setCardsPerView] = useState(3);
   const [instant, setInstant] = useState(false);
@@ -501,13 +497,13 @@ export function OwnerFeature() {
         </div>
         <div className="mt-5 flex flex-wrap gap-3">
           <Link
-            href={teamMemberProfilePath("chad-nuttall")}
+            href="/about/chad-nuttall"
             className="rounded-md text-sm font-semibold text-primary underline-offset-4 hover:underline focus-ring"
           >
             Chad&apos;s full biography
           </Link>
           <Link
-            href={teamMemberProfilePath("katy-nuttall")}
+            href="/about/katy-nuttall"
             className="rounded-md text-sm font-semibold text-primary underline-offset-4 hover:underline focus-ring"
           >
             Katy&apos;s full biography

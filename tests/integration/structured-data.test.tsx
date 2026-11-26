@@ -76,7 +76,7 @@ describe("business entity", () => {
 describe("BreadcrumbList", () => {
   it("mirrors the visible breadcrumb trail on a content page", () => {
     mockPathname = "/visiting-yachts";
-    const { container } = render(<Breadcrumbs />);
+    const { container } = render(<Breadcrumbs diveSites={[]} teamMembers={[]} />);
     const [crumb] = jsonLdBlocks(container);
     expect(crumb["@type"]).toBe("BreadcrumbList");
     const items = crumb.itemListElement as { position: number; name: string; item: string }[];

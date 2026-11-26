@@ -186,7 +186,7 @@ test("visible crew cards link to profiles while duplicate cards stay out of the 
   const melSlide = page.locator(`${CAROUSEL} [aria-hidden="false"]`, { hasText: "Mel" }).first();
   await melSlide.getByRole("link", { name: "View full biography" }).click();
   await expect(page).toHaveURL(/\/about\/mel$/);
-  await expect(page.getByRole("heading", { name: "Mel", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Melanie Marks", exact: true })).toBeVisible();
 });
 
 test("small pointer movement while clicking a card link still opens the profile", async ({ page, browserName }) => {

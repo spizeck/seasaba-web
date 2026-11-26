@@ -3,25 +3,30 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronRight } from "lucide-react";
-import { BreadcrumbListJsonLd } from "@/components/structured-data";
-import { DIVE_SITE_BY_SLUG } from "@/data/dive-site-videos";
-import { TEAM_MEMBER_BY_SLUG } from "@/data/team";
+import { BreadcrumbListJsonLd } from "@/components/json-ld";
 
-export function Breadcrumbs() {
+export function Breadcrumbs({
+  diveSites,
+  teamMembers,
+}: {
+  diveSites: { slug: string; label: string }[];
+  teamMembers: { slug: string; label: string }[];
+}) {
   const pathname = usePathname();
   const segments = pathname.split("/").filter(Boolean);
 
   if (segments.length === 0) return null;
+
+  const diveSiteNames = new Map(diveSites.map((site) => [site.slug, site.label]));
+  const teamNames = new Map(teamMembers.map((member) => [member.slug, member.label]));
 
   const crumbs = segments.map((segment, index) => {
     const href = "/" + segments.slice(0, index + 1).join("/");
     // Known dive-site slugs use their real names ("Rays n’ Anchors",
     // "50/50") instead of the slug text ("Rays N Anchors", "50 50").
     const label =
-      DIVE_SITE_BY_SLUG[segment]?.name ??
-      (TEAM_MEMBER_BY_SLUG[segment]
-        ? TEAM_MEMBER_BY_SLUG[segment].fullName ?? TEAM_MEMBER_BY_SLUG[segment].name
-        : undefined) ??
+      diveSiteNames.get(segment) ??
+      teamNames.get(segment) ??
       segment
         .replace(/-/g, " ")
         .replace(/\b\w/g, (c) => c.toUpperCase());

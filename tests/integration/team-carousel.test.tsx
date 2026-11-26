@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { TeamCarousel } from "@/components/about-page-client";
+import { TEAM_MEMBERS, teamMemberProfilePath } from "@/data/team";
 
 // Regression coverage for the Meet the Crew infinite carousel. Navigation is
 // per-card now: every Next/Previous press moves exactly one card. The member
@@ -33,6 +34,23 @@ const member = (name: string) => ({
   bio: `${name} keeps the boats running.`,
 });
 
+const REAL_MEMBERS = TEAM_MEMBERS.map((member) => ({
+  name: member.name,
+  title: member.title,
+  bio: member.bio,
+  image: member.image,
+  objectPosition: member.objectPosition,
+  funFact: member.funFact,
+  languages: member.languages,
+  profileHref:
+    member.slug && member.isPerson !== false
+      ? teamMemberProfilePath(member.slug)
+      : undefined,
+}));
+
+const renderRealCarousel = () =>
+  render(<TeamCarousel members={REAL_MEMBERS} />);
+
 const MEMBER_COUNT = 11;
 const CPV = 3; // default jsdom width (1024) renders 3 cards per view
 const offset = (index: number, count = MEMBER_COUNT, cpv = CPV) =>
@@ -61,7 +79,7 @@ async function setViewportWidth(width: number) {
 
 describe("TeamCarousel", () => {
   it("renders three copies of the member list with the real strip in the middle", () => {
-    render(<TeamCarousel />);
+    renderRealCarousel();
     expect(track().children).toHaveLength(MEMBER_COUNT * 3);
     // All three copies present the members in source order.
     expect(slideName(0)).toBe("Mel");
@@ -73,7 +91,7 @@ describe("TeamCarousel", () => {
   });
 
   it("links human cards to profiles while cloned and offscreen links stay unfocusable", () => {
-    render(<TeamCarousel />);
+    renderRealCarousel();
     const links = Array.from(track().querySelectorAll("a")) as HTMLAnchorElement[];
     // Every human member appears three times; Gunner intentionally has no profile link.
     expect(links).toHaveLength((MEMBER_COUNT - 1) * 3);
@@ -98,7 +116,7 @@ describe("TeamCarousel", () => {
   });
 
   it("keeps wrapped visible cards clickable and focusable at the end of the roster", () => {
-    render(<TeamCarousel />);
+    renderRealCarousel();
     fireEvent.click(screen.getByRole("button", { name: "Go to Gunner" }));
 
     const slides = Array.from(track().children) as HTMLElement[];
@@ -115,7 +133,7 @@ describe("TeamCarousel", () => {
   });
 
   it("does not move the carousel when arrowing from a focused biography link", () => {
-    render(<TeamCarousel />);
+    renderRealCarousel();
     const melSlide = Array.from(track().children)[MEMBER_COUNT] as HTMLElement;
     const link = melSlide.querySelector("a") as HTMLAnchorElement;
     fireEvent.keyDown(link, { key: "ArrowLeft" });
@@ -125,7 +143,7 @@ describe("TeamCarousel", () => {
   });
 
   it("advances exactly one card per Next click and one per Previous click", () => {
-    render(<TeamCarousel />);
+    renderRealCarousel();
     fireEvent.click(nextButton());
     expect(transform()).toBe(offset(1));
     fireEvent.click(nextButton());
@@ -135,7 +153,7 @@ describe("TeamCarousel", () => {
   });
 
   it("wraps forward onto identical cloned slides then snaps to the real strip", async () => {
-    render(<TeamCarousel />);
+    renderRealCarousel();
     fireEvent.click(screen.getByRole("button", { name: "Go to Gunner" }));
     expect(transform()).toBe(offset(10));
 
@@ -147,7 +165,7 @@ describe("TeamCarousel", () => {
   });
 
   it("wraps backward onto identical cloned slides then snaps to the real strip", async () => {
-    render(<TeamCarousel />);
+    renderRealCarousel();
     fireEvent.click(prevButton());
     expect(transform()).toBe(offset(-1)); // clone of the last position
     fireEvent.transitionEnd(track(), { propertyName: "transform" });
@@ -155,7 +173,7 @@ describe("TeamCarousel", () => {
   });
 
   it("absorbs rapid consecutive clicks through the wrap without dead ends", async () => {
-    render(<TeamCarousel />);
+    renderRealCarousel();
     fireEvent.click(screen.getByRole("button", { name: "Go to Gunner" }));
     // Four presses fire while the first wrap transition is still in flight;
     // the cloned runway keeps every intermediate position on real slides.
@@ -166,7 +184,7 @@ describe("TeamCarousel", () => {
   });
 
   it("reverses direction cleanly at the boundaries", async () => {
-    render(<TeamCarousel />);
+    renderRealCarousel();
     // Forward over the boundary, then back before the transition settles.
     fireEvent.click(screen.getByRole("button", { name: "Go to Gunner" }));
     fireEvent.click(nextButton());
@@ -182,7 +200,7 @@ describe("TeamCarousel", () => {
   });
 
   it("keeps wrap targets when the viewport resizes mid-transition", async () => {
-    render(<TeamCarousel />);
+    renderRealCarousel();
     await setViewportWidth(1440); // 3 per view
     // Sit on the trailing clones (index = memberCount), then shrink to 2 per
     // view: the position must map to index 0, not collide with a real slide.
