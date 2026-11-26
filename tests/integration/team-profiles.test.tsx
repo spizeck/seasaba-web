@@ -116,8 +116,9 @@ describe("team profile pages", () => {
     });
     render(ui);
 
-    expect(screen.getAllByText(/moved to Saba with Katy/)).toHaveLength(1);
-    expect(screen.getByText(/oversee daily operations/)).toBeInTheDocument();
+    expect(screen.getAllByText(/diverse background in leadership/)).toHaveLength(2);
+    expect(screen.getByText(/serving with the 1st Infantry Division/)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Diamond Rock" })).toHaveAttribute("href", "/dive-sites/diamond-rock");
   });
 
   it("uses verified full names and portrait photography for established crew", async () => {
