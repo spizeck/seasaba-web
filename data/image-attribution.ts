@@ -23,7 +23,7 @@ export function formatImageCaption(image: ImageAttribution): string {
 export const HOME_DIVE_AREA_IMAGES = {
   pinnacles: {
     description: "The Needle",
-    photographer: "Vidar Skålevik",
+    photographer: "Chad Nuttall",
     dateTaken: "2015-11-26",
     location: "The Needle, Saba",
     copyrightHolder: "Vidar Skålevik",
