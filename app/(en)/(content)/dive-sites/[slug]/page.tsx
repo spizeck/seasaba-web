@@ -225,7 +225,7 @@ export default async function DiveSitePage({
       <section className="mt-12 grid gap-4 sm:grid-cols-2">
         <Link
           href={`/dive-log?site=${encodeURIComponent(site.name).replace(/'/g, "%27")}`}
-          className="group rounded-lg border border-border/40 bg-muted/20 p-4 pressable hover:border-primary/40 hover:bg-muted/40"
+          className="group no-underline rounded-lg border border-border/40 bg-muted/20 p-4 pressable hover:border-primary/40 hover:bg-muted/40"
         >
           <div className="flex items-center gap-2">
             <Waves className="h-4 w-4 text-primary" />
@@ -241,7 +241,7 @@ export default async function DiveSitePage({
         </Link>
         <Link
           href="/dive-sites"
-          className="group rounded-lg border border-border/40 bg-muted/20 p-4 pressable hover:border-primary/40 hover:bg-muted/40"
+          className="group no-underline rounded-lg border border-border/40 bg-muted/20 p-4 pressable hover:border-primary/40 hover:bg-muted/40"
         >
           <div className="flex items-center gap-2">
             <MapPin className="h-4 w-4 text-primary" />
