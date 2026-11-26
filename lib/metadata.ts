@@ -27,6 +27,10 @@ export function rootMetadata(locale: Locale = DEFAULT_LOCALE): Metadata {
       template: `%s | ${SITE_NAME}`,
     },
     description: SITE_DESCRIPTION,
+    // Sea Saba is responsible for all business and diving content. This is
+    // deliberately the operator entity, not a website-design credit.
+    authors: [{ name: SITE_NAME, url: `${SITE_URL}/about` }],
+    publisher: SITE_NAME,
     metadataBase: new URL(SITE_URL),
     openGraph: {
       type: "website",

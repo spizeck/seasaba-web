@@ -5,9 +5,11 @@ import { Button } from "@/components/ui/button";
 import { ImageCard } from "@/components/image-card";
 import { FeatureImage } from "@/components/feature-image";
 import { TrackedInternalButton } from "@/components/tracked-internal-button";
+import { JsonLd, jsxToText } from "@/components/structured-data";
 import { createMetadata } from "@/lib/metadata";
-import { diveSiteAnchors, planYourTripAnchors } from "@/lib/anchors";
+import { diveSiteAnchors, divingAnchors, planYourTripAnchors } from "@/lib/anchors";
 import { diveSitePath } from "@/data/dive-site-videos";
+import { OPERATIONS } from "@/data/operations";
 
 const WHY_SABA_FEATURED = [
   {
@@ -26,7 +28,7 @@ const WHY_SABA_FEATURED = [
   },
   {
     heading: "Small Island, Big Heart",
-    body: "Our greatest asset isn't found underwater. It's the people. Friendly faces, welcoming communities, and genuine island hospitality make visitors feel at home from the moment they arrive.",
+    body: "Our greatest asset isn't found underwater. It's the people — friendly villages, genuine island hospitality, and a crew that has been diving these reefs for decades.",
     image: "/images/optimized/windwardside-village-saba.webp",
     imageAlt: "Colorful red-roofed cottages of Windwardside village on the green hillside of Saba.",
     bgPosition: "center",
@@ -36,7 +38,21 @@ const WHY_SABA_FEATURED = [
 const WHY_SABA_SECONDARY = [
   {
     heading: "Protected Since 1987",
-    body: "The Saba Marine Park has actively protected local waters since 1987. Healthy reefs and abundant marine life are the direct result of decades of consistent stewardship.",
+    body: (
+      <>
+        The{" "}
+        <a
+          href="https://sabapark.org/saba-national-marine-park/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-medium text-primary hover:underline underline-offset-4"
+        >
+          Saba National Marine Park
+        </a>{" "}
+        has actively protected local waters since 1987. Healthy reefs and abundant
+        marine life are the direct result of decades of consistent stewardship.
+      </>
+    ),
   },
   {
     heading: "Encounters That Feel Wild",
@@ -44,7 +60,14 @@ const WHY_SABA_SECONDARY = [
   },
   {
     heading: "Active Conservation",
-    body: "Conservation is part of daily life on Saba. Lionfish are actively managed. Marine resources are protected. The island's commitment to stewardship preserves what makes the diving exceptional.",
+    body: (
+      <>
+        Every Sea Saba dive contributes a conservation fee to the Saba
+        Conservation Foundation, which manages the park&apos;s moorings and marine
+        life. Lionfish are actively controlled, and the island&apos;s commitment to
+        stewardship preserves what makes the diving exceptional.
+      </>
+    ),
   },
 ] as const;
 
@@ -101,8 +124,79 @@ const DIVE_EXPERIENCES = [
   },
 ] as const;
 
-
-
+// Concise answers to the questions guests ask most before booking. Each
+// answer links onward to the page that owns the detail — the homepage stays
+// an overview, never a duplicate of /diving or /plan-your-trip.
+const HOMEPAGE_FAQS = [
+  {
+    question: "What makes diving in Saba different?",
+    answer: (
+      <>
+        Saba&apos;s volcanic pinnacles, protected marine park, and near-total lack
+        of crowds produce diving found nowhere else in the Caribbean. All of our{" "}
+        <Link href="/dive-sites" className="font-medium text-primary hover:underline underline-offset-4">dive sites</Link>{" "}
+        sit inside the park, minutes from the harbor.
+      </>
+    ),
+  },
+  {
+    question: "Is Saba suitable for beginner divers?",
+    answer: (
+      <>
+        Yes. Scuba Diver-certified guests can join our Classic 2-tank and
+        afternoon trips with a private guide, and divers who aren&apos;t
+        certified yet can start with a Try Scuba or Open Water{" "}
+        <Link href="/courses" className="font-medium text-primary hover:underline underline-offset-4">course</Link>.
+      </>
+    ),
+  },
+  {
+    question: "What is included in a Sea Saba diving trip?",
+    answer: (
+      <>
+        Complimentary taxi pickup anywhere on Saba, tanks, weights, and an
+        experienced guide — never more than {OPERATIONS.maxRecreationalDiversPerGuide} divers
+        per guide on recreational dives. Rental gear and dive computers are
+        available. Diving also carries a conservation contribution of{" "}
+        ${OPERATIONS.conservationFees.marineParkPerDiveUsd + OPERATIONS.conservationFees.chamberContributionPerDiveUsd}{" "}
+        per diver, per dive. Full details on our{" "}
+        <Link href="/diving" className="font-medium text-primary hover:underline underline-offset-4">diving page</Link>.
+      </>
+    ),
+  },
+  {
+    question: "Is Nitrox included?",
+    answer: (
+      <>
+        Yes — certified Nitrox divers get complimentary{" "}
+        {OPERATIONS.nitroxBlend} Nitrox on qualifying dives, no extra charge.
+        Details in the{" "}
+        <Link href={`/diving#${divingAnchors.nitrox}`} className="font-medium text-primary hover:underline underline-offset-4">Nitrox section</Link>.
+      </>
+    ),
+  },
+  {
+    question: "When is the best time to dive Saba?",
+    answer: (
+      <>
+        Saba offers good diving year-round; every season brings different
+        marine life and conditions. See the{" "}
+        <Link href={`/plan-your-trip#${planYourTripAnchors.whenToVisit}`} className="font-medium text-primary hover:underline underline-offset-4">season-by-season guide</Link>{" "}
+        for detail.
+      </>
+    ),
+  },
+  {
+    question: "How do I get to Saba?",
+    answer: (
+      <>
+        Most visitors fly into St. Maarten, then connect to Saba by a short
+        Winair flight or high-speed ferry. Routes and tips are on{" "}
+        <Link href={`/plan-your-trip#${planYourTripAnchors.gettingHere}`} className="font-medium text-primary hover:underline underline-offset-4">getting here</Link>.
+      </>
+    ),
+  },
+] as const;
 export const metadata = createMetadata({
   title: "Professional Scuba Diving in Saba",
   description:
@@ -128,6 +222,8 @@ export default function Home() {
             <p className="mt-4 text-base leading-relaxed text-muted-foreground">
               Most visitors struggle to explain exactly why. They just know it doesn&apos;t feel
               like anywhere else in the Caribbean, above the surface or below it.
+              Sea Saba — the island&apos;s only continuously operating dive center —
+              has been showing divers this island since {OPERATIONS.establishedYear}.
             </p>
           </div>
 
@@ -327,7 +423,43 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 5. Final CTA */}
+      {/* 5. Common questions — concise answers with links onward */}
+      <section id="faq" className="scroll-mt-40 bg-muted/30 py-20">
+        <JsonLd
+          data={{
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: HOMEPAGE_FAQS.map((faq) => ({
+              "@type": "Question",
+              name: faq.question,
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: jsxToText(faq.answer),
+              },
+            })),
+          }}
+        />
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <div className="mb-10 max-w-2xl">
+            <h2 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+              Questions guests ask.
+            </h2>
+            <p className="mt-4 text-base leading-relaxed text-muted-foreground">
+              The short answers — each links to the page with the full detail.
+            </p>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {HOMEPAGE_FAQS.map((faq) => (
+              <div key={faq.question} className="rounded-lg border border-border/40 bg-card p-4">
+                <h3 className="text-sm font-semibold text-foreground">{faq.question}</h3>
+                <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{faq.answer}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 6. Final CTA */}
       <section className="relative overflow-hidden py-28 -mt-1">
         <Image
           src="/images/optimized/saba-island-aerial-golden-hour.webp"
