@@ -28,6 +28,23 @@ vi.mock("next/navigation", () => ({
   useSearchParams: () => new URLSearchParams(),
 }));
 
+// The homepage's dive-team statistics read Firestore — substitute a fixture
+// so these tests exercise the markup, not the network.
+vi.mock("@/lib/dive-stats", () => ({
+  loadWeeklyDiveStats: vi.fn().mockResolvedValue({
+    avgTempCelsius: 29,
+    tempReadingCount: 12,
+    diveSitesVisited: 9,
+    turtleSightings: 14,
+    sharkSightings: 6,
+    diveCount: 15,
+    windowStart: "2026-11-20",
+    windowEnd: "2026-11-26",
+    generatedAt: 0,
+  }),
+  celsiusToFahrenheit: (c: number) => c * 1.8 + 32,
+}));
+
 // jsdom lacks matchMedia; the About page's team carousel checks
 // prefers-reduced-motion on mount.
 vi.stubGlobal(
@@ -76,7 +93,6 @@ describe("canonical anchors resolve to real section ids", () => {
 
   // /diving anchors are already covered by operations-sourcing.test.tsx.
   const idCheckCases: [string, React.ReactElement][] = [
-    ["/", <HomePage key="home" />],
     ["/donate", <DonatePage key="d" />],
     ...cases.map(([path, element]) => [path, element] as [string, React.ReactElement]),
   ];
@@ -90,19 +106,27 @@ describe("canonical anchors resolve to real section ids", () => {
       expect(dupes, `duplicate ids on ${path}`).toEqual([]);
     });
   }
+
+  // HomePage is an async server component — resolve it before rendering.
+  it("/ has no duplicate element ids", async () => {
+    const { container } = render(await HomePage());
+    const ids = Array.from(container.querySelectorAll("[id]")).map((el) => el.id);
+    const dupes = ids.filter((id, i) => ids.indexOf(id) !== i);
+    expect(dupes, "duplicate ids on /").toEqual([]);
+  });
 });
 
 describe("specific-purpose links carry canonical fragments", () => {
-  it("homepage trip-planning cards land on the matching plan-your-trip sections", () => {
-    render(<HomePage />);
+  it("homepage trip-planning cards land on the matching plan-your-trip sections", async () => {
+    render(await HomePage());
     expect(hrefOf(/flights and ferries/i)).toBe(`/plan-your-trip#${planYourTripAnchors.gettingHere}`);
     expect(hrefOf(/explore accommodations/i)).toBe(`/plan-your-trip#${planYourTripAnchors.whereToStay}`);
     expect(hrefOf(/when to visit/i)).toBe(`/plan-your-trip#${planYourTripAnchors.whenToVisit}`);
     expect(hrefOf(/discover saba/i)).toBe(`/plan-your-trip#${planYourTripAnchors.history}`);
   });
 
-  it("homepage dive-area teasers link to their dive-sites sections", () => {
-    render(<HomePage />);
+  it("homepage dive-area teasers link to their dive-sites sections", async () => {
+    render(await HomePage());
     const expected: [RegExp, string][] = [
       [/pinnacles dive sites/i, diveSiteAnchors.pinnacles],
       [/tent reef dive sites/i, diveSiteAnchors.tentReef],
@@ -115,8 +139,8 @@ describe("specific-purpose links carry canonical fragments", () => {
     }
   });
 
-  it("generic page-level links stay page-level", () => {
-    render(<HomePage />);
+  it("generic page-level links stay page-level", async () => {
+    render(await HomePage());
     // Broad-purpose CTAs keep landing on page tops.
     for (const link of screen.getAllByRole("link", { name: /^plan your trip$/i })) {
       expect(link.getAttribute("href")).toBe("/plan-your-trip");

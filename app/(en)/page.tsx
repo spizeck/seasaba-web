@@ -6,10 +6,18 @@ import { ImageCard } from "@/components/image-card";
 import { FeatureImage } from "@/components/feature-image";
 import { TrackedInternalButton } from "@/components/tracked-internal-button";
 import { JsonLd, jsxToText } from "@/components/structured-data";
+import { DiveStatsSection } from "@/components/dive-stats-section";
 import { createMetadata } from "@/lib/metadata";
 import { diveSiteAnchors, divingAnchors, planYourTripAnchors } from "@/lib/anchors";
 import { diveSitePath } from "@/data/dive-site-videos";
+import { loadWeeklyDiveStats, type WeeklyDiveStats } from "@/lib/dive-stats";
 import { OPERATIONS } from "@/data/operations";
+
+// Hourly ISR — the dive-team statistics regenerate from Firestore on this
+// cadence. The rest of the homepage is editorial and changes rarely, so an
+// hour of staleness is invisible everywhere except the stats, which are
+// labeled with their observation window.
+export const revalidate = 3600;
 
 const WHY_SABA_FEATURED = [
   {
@@ -18,6 +26,7 @@ const WHY_SABA_FEATURED = [
     image: "/images/optimized/divers-above-pinnacle-saba.webp",
     imageAlt: "Scuba divers hovering above a coral-covered volcanic pinnacle in the Saba Marine Park.",
     bgPosition: "top",
+    caption: "Photographed on a Sea Saba dive, March 2025. Photo: Candice Landau",
   },
   {
     heading: "Uncrowded by Design",
@@ -25,6 +34,7 @@ const WHY_SABA_FEATURED = [
     image: "/images/optimized/fin-and-tonic-boat-diamond-rock.webp",
     imageAlt: "Sea Saba dive boat Fin & Tonic moored beside Diamond Rock off Saba.",
     bgPosition: "center",
+    caption: "Our boat Fin & Tonic at Diamond Rock. Photo: Candice Landau",
   },
   {
     heading: "Small Island, Big Heart",
@@ -32,6 +42,7 @@ const WHY_SABA_FEATURED = [
     image: "/images/optimized/windwardside-village-saba.webp",
     imageAlt: "Colorful red-roofed cottages of Windwardside village on the green hillside of Saba.",
     bgPosition: "center",
+    caption: "Windwardside from the Mas Cahones lookout. Photo: Chris Kurzatkowski",
   },
 ] as const;
 
@@ -204,7 +215,29 @@ export const metadata = createMetadata({
   path: "/",
 });
 
-export default function Home() {
+export default async function Home() {
+  // Dive-team statistics (issue #311). Failure semantics mirror the dive
+  // log's ISR resilience (#308):
+  //   - Firestore failure in production serving: rethrow so the regeneration
+  //     fails and ISR keeps serving the last-good homepage — a transient
+  //     outage must not strip the stats (or worse, cache a degraded page).
+  //   - Firestore failure at build or in dev: render without the section —
+  //     the build must succeed and dev shouldn't error on missing
+  //     credentials. The homepage itself never depends on the stats.
+  //   - A successful fetch with zero dives in the window is honest data (no
+  //     diving happened or none was logged): the section simply doesn't
+  //     render. Never substitute zeros or stale numbers.
+  const isBuildTime = process.env.NEXT_PHASE === "phase-production-build";
+  const preserveCachedPage = !isBuildTime && process.env.NODE_ENV === "production";
+  let diveStats: WeeklyDiveStats | undefined;
+  try {
+    const stats = await loadWeeklyDiveStats();
+    if (stats.diveCount > 0) diveStats = stats;
+  } catch (err) {
+    if (preserveCachedPage) throw err;
+    console.error("Dive stats fetch failed, rendering homepage without them", err);
+  }
+
   return (
     <>
       {/* 1. Hero — static image, trust indicators, primary Book CTA */}
@@ -237,6 +270,7 @@ export default function Home() {
                 heading={item.heading}
                 body={item.body}
                 objectPosition={item.bgPosition}
+                caption={item.caption}
               />
             ))}
           </div>
@@ -327,6 +361,12 @@ export default function Home() {
 
         </div>
       </section>
+
+      {/* 3.5 This Week Beneath the Surface — live dive-team observations.
+              Sits after the editorial diving content and before trip
+              planning: it rewards readers already engaged with the diving
+              without interrupting the hero-to-booking journey. */}
+      {diveStats && <DiveStatsSection stats={diveStats} />}
 
       {/* 4. Plan Your Trip */}
       <section className="bg-card py-20">

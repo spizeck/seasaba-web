@@ -8,6 +8,23 @@ import DivingPage from "@/app/(en)/(content)/diving/page";
 import AboutPage from "@/app/(en)/(content)/about/page";
 import HomePage from "@/app/(en)/page";
 
+// The homepage's dive-team statistics read Firestore — substitute a fixture
+// so these tests exercise the markup, not the network.
+vi.mock("@/lib/dive-stats", () => ({
+  loadWeeklyDiveStats: vi.fn().mockResolvedValue({
+    avgTempCelsius: 29,
+    tempReadingCount: 12,
+    diveSitesVisited: 9,
+    turtleSightings: 14,
+    sharkSightings: 6,
+    diveCount: 15,
+    windowStart: "2026-11-20",
+    windowEnd: "2026-11-26",
+    generatedAt: 0,
+  }),
+  celsiusToFahrenheit: (c: number) => c * 1.8 + 32,
+}));
+
 // Breadcrumbs is a client component reading the current route.
 let mockPathname = "/diving";
 vi.mock("next/navigation", () => ({
@@ -123,8 +140,9 @@ describe("FAQPage", () => {
     });
   });
 
-  it("marks up exactly the visible FAQ cards on the homepage, in full and in order", () => {
-    const { container } = render(<HomePage />);
+  it("marks up exactly the visible FAQ cards on the homepage, in full and in order", async () => {
+    // HomePage is an async server component — resolve it before rendering.
+    const { container } = render(await HomePage());
     const faq = jsonLdBlocks(container).find((b) => b["@type"] === "FAQPage");
     expect(faq).toBeTruthy();
     const questions = (faq?.mainEntity ?? []) as { name: string; acceptedAnswer: { text: string } }[];
