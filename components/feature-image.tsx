@@ -14,6 +14,7 @@ interface FeatureImageProps {
   mobileTextFirst?: boolean;
   /** Concise visible attribution rendered beneath meaningful photographs. */
   caption?: string;
+  captionClassName?: string;
   /** Optional section anchor id */
   id?: string;
   children: React.ReactNode;
@@ -34,6 +35,7 @@ export function FeatureImage({
   centerText = false,
   mobileTextFirst = false,
   caption,
+  captionClassName = "text-muted-foreground",
   id,
   children,
 }: FeatureImageProps) {
@@ -72,7 +74,7 @@ export function FeatureImage({
       {caption ? (
         <figure className={`flex flex-col ${imageOrder}`}>
           {imageFrame}
-          <figcaption className="mt-2 text-left text-xs leading-relaxed text-muted-foreground">
+          <figcaption className={`mt-2 text-left text-xs leading-relaxed ${captionClassName}`}>
             {caption}
           </figcaption>
         </figure>

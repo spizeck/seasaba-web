@@ -323,6 +323,7 @@ export default async function Home() {
                 alt={exp.imageAlt}
                 objectPosition={exp.objectPosition}
                 caption={exp.caption}
+                captionClassName="text-white/70"
                 imageRight={i % 2 === 1}
                 centerText
               >
