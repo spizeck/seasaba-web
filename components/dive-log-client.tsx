@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useMemo, useEffect, useId } from "react";
+import { Suspense, useState, useMemo, useEffect, useId } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { PageHero } from "@/components/page-hero";
 import { BubbleLoader } from "@/components/bubble-loader";
 import { StatePanel } from "@/components/state-panel";
@@ -11,8 +12,7 @@ import { findSpeciesInfo } from "@/data/species";
 import type { SpeciesInfo } from "@/data/species";
 import {
   fetchDiveLogData,
-  normalizeDive,
-  groupDivesForDisplay,
+  buildPublicDives,
   formatDate,
   convertDepth,
   convertTemperature,
@@ -22,21 +22,10 @@ import {
   type PublicDive,
 } from "@/lib/firestore/dive-log";
 import { trackEvent } from "@/lib/analytics";
-import { BookOpen, SlidersHorizontal, X, ChevronDown, ChevronUp, Download } from "lucide-react";
+import { BookOpen, SlidersHorizontal, X, ChevronDown, Download } from "lucide-react";
 
 function unique<T>(arr: T[]): T[] {
   return Array.from(new Set(arr));
-}
-
-function parseDiveSlotMinutes(slot: string): number {
-  const match = slot.match(/^(\d{1,2})(?::(\d{2}))?\s*(am|pm)$/i);
-  if (!match) return 0;
-  let hours = parseInt(match[1], 10);
-  const minutes = parseInt(match[2] || "0", 10);
-  const meridian = match[3].toLowerCase();
-  if (meridian === "pm" && hours !== 12) hours += 12;
-  if (meridian === "am" && hours === 12) hours = 0;
-  return hours * 60 + minutes;
 }
 
 // Firestore retries internally when the backend is unreachable, so a failed
@@ -44,13 +33,33 @@ function parseDiveSlotMinutes(slot: string): number {
 // error state instead of a loading skeleton that never resolves.
 const LOAD_TIMEOUT_MS = 15_000;
 
-function useDiveLogData() {
-  const [dives, setDives] = useState<PublicDive[]>([]);
-  const [loading, setLoading] = useState(true);
+function useDiveLogData(initialDives?: PublicDive[]) {
+  // An empty payload is ambiguous — Firestore can resolve an empty snapshot
+  // when its backend is unreachable — so only a non-empty list counts.
+  const hasInitial = Boolean(initialDives?.length);
+  const [dives, setDives] = useState<PublicDive[]>(initialDives ?? []);
+  const [loading, setLoading] = useState(!hasInitial);
   const [error, setError] = useState<string | null>(null);
   const [attempt, setAttempt] = useState(0);
 
+  // A refreshed server payload (RSC navigation) replaces the current list.
+  // (Render-time adjustment — React re-renders before committing.)
+  const [prevInitialDives, setPrevInitialDives] = useState(initialDives);
+  if (initialDives !== prevInitialDives) {
+    setPrevInitialDives(initialDives);
+    if (initialDives?.length) {
+      setDives(initialDives);
+      setLoading(false);
+      setError(null);
+    }
+  }
+
   useEffect(() => {
+    // Server-rendered pages already carry the dive list — only fetch on a
+    // manual retry, or when no initial payload was provided. Depending on
+    // initialDives itself (not just presence) means a refreshed server
+    // payload cancels an in-flight retry rather than racing it.
+    if (initialDives?.length && attempt === 0) return;
     let cancelled = false;
 
     const timeout = setTimeout(() => {
@@ -59,17 +68,9 @@ function useDiveLogData() {
       setLoading(false);
     }, LOAD_TIMEOUT_MS);
     fetchDiveLogData()
-      .then(({ dives, sites, species, boats }) => {
+      .then((data) => {
         if (cancelled) return;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const normalized = dives.map((d: any) => normalizeDive(d, sites, species, boats));
-        const grouped = groupDivesForDisplay(normalized);
-        grouped.sort((a, b) => {
-          const dateDiff = new Date(b.date).getTime() - new Date(a.date).getTime();
-          if (dateDiff !== 0) return dateDiff;
-          return parseDiveSlotMinutes(b.diveSlot) - parseDiveSlotMinutes(a.diveSlot);
-        });
-        setDives(grouped);
+        setDives(buildPublicDives(data));
         setError(null);
         setLoading(false);
       })
@@ -87,7 +88,7 @@ function useDiveLogData() {
       cancelled = true;
       clearTimeout(timeout);
     };
-  }, [attempt]);
+  }, [attempt, initialDives]);
 
   return {
     dives,
@@ -117,12 +118,11 @@ interface Filters {
   species: string;
 }
 
-function isWithinDateRange(dateStr: string, days: number): boolean {
-  const diveDate = new Date(dateStr + "T12:00:00");
-  const cutoff = new Date();
-  cutoff.setDate(cutoff.getDate() - days);
-  cutoff.setHours(0, 0, 0, 0);
-  return diveDate >= cutoff;
+// Date-string comparison against an explicit reference instant — calling
+// new Date() here would make SSR and hydration disagree around the cutoff.
+function isWithinDateRange(dateStr: string, days: number, nowMs: number): boolean {
+  const cutoff = new Date(nowMs - days * 86_400_000).toISOString().slice(0, 10);
+  return dateStr >= cutoff;
 }
 
 function DiveCard({
@@ -136,7 +136,6 @@ function DiveCard({
   onToggle: () => void;
   unitSystem: UnitSystem;
 }) {
-  const [expanded, setExpanded] = useState(false);
   const [activeSpecies, setActiveSpecies] = useState<SpeciesInfo | null>(null);
 
   const openSpecies = (name: string) => {
@@ -196,19 +195,16 @@ function DiveCard({
           </button>
         </div>
 
-        <button
-          onClick={() => setExpanded((v) => !v)}
-          aria-expanded={expanded}
-          className="mt-3 flex items-center gap-1 rounded-md text-xs text-muted-foreground pressable hover:text-foreground focus-ring"
-        >
-          {expanded ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
-          {expanded ? "Hide sightings" : `${dive.sightings.length} species sighted`}
-        </button>
-      </div>
-
-      {expanded && (
-        <div className="border-t border-border/40 px-4 py-3">
-          <div className="flex flex-wrap gap-2">
+        {/* Native disclosure: species names stay in the DOM for crawlers
+            and no-JS visitors (the server-rendered list is crawlable, #108)
+            — opening only reveals them visually. */}
+        <details className="group mt-3">
+          <summary className="flex list-none items-center gap-1 rounded-md text-xs text-muted-foreground cursor-pointer select-none pressable hover:text-foreground focus-ring [&::-webkit-details-marker]:hidden">
+            <ChevronDown className="h-3.5 w-3.5 transition-transform group-open:rotate-180" />
+            {dive.sightings.length} species sighted
+          </summary>
+          <div className="-mx-4 -mb-4 mt-3 border-t border-border/40 px-4 py-3">
+            <div className="flex flex-wrap gap-2">
             {dive.sightings.map((s) => {
               const hasInfo = Boolean(findSpeciesInfo(s.speciesName));
               const chip = (
@@ -236,9 +232,10 @@ function DiveCard({
                 </span>
               );
             })}
+            </div>
           </div>
-        </div>
-      )}
+        </details>
+      </div>
 
       {activeSpecies && (
         <SpeciesModal species={activeSpecies} onClose={() => setActiveSpecies(null)} />
@@ -279,8 +276,36 @@ function SelectField({
   );
 }
 
-export function DiveLogClient() {
-  const { dives, loading, error, retry } = useDiveLogData();
+/**
+ * Reads `?site=` deep links (from dive-site guides) and reports the value
+ * up. Kept tiny and inside Suspense so it bails out of static prerendering
+ * alone — the dive list itself still server-renders.
+ */
+function DiveLogSearchParam({ onSite }: { onSite: (site: string | null) => void }) {
+  const site = useSearchParams().get("site");
+  useEffect(() => {
+    onSite(site);
+  }, [site, onSite]);
+  return null;
+}
+
+export function DiveLogClient({
+  initialDives,
+  generatedAt,
+}: {
+  initialDives?: PublicDive[];
+  generatedAt?: number;
+}) {
+  const { dives, loading, error, retry } = useDiveLogData(initialDives);
+  // Date filtering must produce identical markup during SSR and hydration:
+  // seed "now" from the serialized render timestamp, then adopt local time
+  // post-mount (the effect schedules rather than setting synchronously).
+  const [now, setNow] = useState(() => generatedAt ?? Date.now());
+  useEffect(() => {
+    if (generatedAt === undefined) return;
+    const timer = setTimeout(() => setNow(Date.now()), 0);
+    return () => clearTimeout(timer);
+  }, [generatedAt]);
   const [unitSystem, setUnitSystem] = useState<UnitSystem>("metric");
   const [dateRange, setDateRange] = useState<DateRange>("14");
   const [currentPage, setCurrentPage] = useState(1);
@@ -301,11 +326,34 @@ export function DiveLogClient() {
     [dives]
   );
 
+  // `?site=` deep links (from dive-site guides) pre-select the site
+  // filter once a list exists. The param arrives after hydration via
+  // DiveLogSearchParam — the server render stays static. Names matching
+  // no logged dive are ignored; a changed param on client-side nav
+  // re-applies. The range widens to all-time so older dives at the site
+  // still appear. (Render-time adjustment, applied before commit.)
+  const [siteParam, setSiteParam] = useState<string | null>(null);
+  const [lastAppliedSiteParam, setLastAppliedSiteParam] = useState<string | null>(null);
+  if (siteParam === null && lastAppliedSiteParam !== null) {
+    // The deep link was removed — clear the filter only if it still holds
+    // the auto-applied value; a manual site choice stays untouched.
+    setFilters((f) => (f.site === lastAppliedSiteParam ? { ...f, site: "" } : f));
+    setLastAppliedSiteParam(null);
+  } else if (siteParam && siteParam !== lastAppliedSiteParam && dives.length > 0) {
+    setLastAppliedSiteParam(siteParam);
+    if (ALL_SITES.includes(siteParam)) {
+      setFilters((f) => ({ ...f, site: siteParam }));
+      setDateRange("all");
+      setFiltersOpen(true);
+      setCurrentPage(1);
+    }
+  }
+
   const dateFilteredDives = useMemo(() => {
     if (dateRange === "all") return dives;
     const days = parseInt(dateRange, 10);
-    return dives.filter((d) => isWithinDateRange(d.date, days));
-  }, [dives, dateRange]);
+    return dives.filter((d) => isWithinDateRange(d.date, days, now));
+  }, [dives, dateRange, now]);
 
   const filteredDives = useMemo(() => {
     return dateFilteredDives.filter((d) => {
@@ -318,6 +366,11 @@ export function DiveLogClient() {
   }, [dateFilteredDives, filters]);
 
   const totalPages = Math.ceil(filteredDives.length / PAGE_SIZE) || 1;
+  // A refreshed payload or filter change can shrink the list — clamp the
+  // page so the visitor never lands past the last page.
+  if (currentPage > totalPages) {
+    setCurrentPage(totalPages);
+  }
   const paginatedDives = useMemo(() => {
     const start = (currentPage - 1) * PAGE_SIZE;
     return filteredDives.slice(start, start + PAGE_SIZE);
@@ -349,6 +402,9 @@ export function DiveLogClient() {
 
   return (
     <>
+      <Suspense fallback={null}>
+        <DiveLogSearchParam onSite={setSiteParam} />
+      </Suspense>
       <PageHero
         src="/images/optimized/two-divers-above-reef-saba.webp"
         alt="Two divers above the reef in the Saba Marine Park"

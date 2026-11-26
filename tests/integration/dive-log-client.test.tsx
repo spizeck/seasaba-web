@@ -2,12 +2,15 @@ import { beforeEach, expect, it, vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { DiveLogClient } from "@/components/dive-log-client";
-import { fetchDiveLogData } from "@/lib/firestore/dive-log";
+import { buildPublicDives, fetchDiveLogData } from "@/lib/firestore/dive-log";
 import { exportDiveLogToPdf } from "@/lib/dive-log-export";
 import { diveData, rawDive } from "../fixtures/dives";
 vi.mock("@/lib/firestore/dive-log", async (importOriginal) => ({ ...await importOriginal<typeof import("@/lib/firestore/dive-log")>(), fetchDiveLogData: vi.fn() }));
 vi.mock("@/lib/dive-log-export", () => ({ exportDiveLogToPdf: vi.fn().mockResolvedValue(undefined) }));
+const nav = vi.hoisted(() => ({ params: new URLSearchParams() }));
+vi.mock("next/navigation", async (importOriginal) => ({ ...await importOriginal<typeof import("next/navigation")>(), useSearchParams: () => nav.params }));
 beforeEach(() => {
+  nav.params = new URLSearchParams();
   vi.useFakeTimers({ toFake: ["Date"] });
   vi.setSystemTime(new Date("2026-09-08T12:00:00Z"));
   const today = new Date().toISOString().slice(0, 10);
@@ -41,8 +44,12 @@ it("combines filters, recovers from no matches, expands sightings and clears sel
   await userEvent.selectOptions(screen.getByLabelText("Dive Site"), "Tent Reef");
   await userEvent.selectOptions(screen.getByLabelText("Boat"), "Test Boat");
   await userEvent.selectOptions(screen.getByLabelText("Species Sighted"), "Green Turtle");
-  await userEvent.click(screen.getByRole("button", { name: "1 species sighted" }));
-  expect(screen.getByRole("button", { name: "Hide sightings" })).toBeVisible();
+  // Sightings live in a native <details> — the species name is in the DOM
+  // for crawlers and no-JS visitors even before the disclosure opens.
+  const summary = screen.getByText("1 species sighted");
+  const details = summary.closest("details");
+  expect(details).toBeTruthy();
+  expect(details!.textContent).toContain("Green Turtle");
   await userEvent.click(screen.getByRole("button", { name: "+ Add Tent Reef to my dive log" }));
   await userEvent.click(screen.getByRole("button", { name: "Clear selection" }));
   await userEvent.selectOptions(screen.getByLabelText("Guide"), "Sam");
@@ -82,6 +89,56 @@ it("paginates without losing selection and resets the page when filters change",
   await userEvent.click(screen.getByRole("button", { name: "Next" }));
   await userEvent.selectOptions(screen.getByLabelText("Date range"), "all");
   expect(screen.getByText("Page 1 of 2")).toBeVisible();
+});
+it("renders server-provided dives immediately without fetching", async () => {
+  const today = new Date().toISOString().slice(0, 10);
+  const initialDives = buildPublicDives(diveData([rawDive({ date: today })]));
+  render(<DiveLogClient initialDives={initialDives} />);
+  // No loading state, no Firestore call — the SSR payload renders as-is.
+  expect(screen.queryByText("Loading recent dives...")).not.toBeInTheDocument();
+  expect(screen.getByRole("heading", { name: "1 dive" })).toBeVisible();
+  expect(fetchDiveLogData).not.toHaveBeenCalled();
+});
+it("pre-selects the site filter from a ?site= deep link", async () => {
+  nav.params = new URLSearchParams("site=Diamond Rock");
+  const today = new Date().toISOString().slice(0, 10);
+  const initialDives = buildPublicDives(
+    diveData([
+      rawDive({ date: today }),
+      rawDive({ id: "old", date: "2000-01-01", diveSiteId: "site-2", diveSlot: "9 am" }),
+    ])
+  );
+  render(<DiveLogClient initialDives={initialDives} />);
+  // The deep-linked site is filtered, the panel opens to show it, and the
+  // range widens to all-time so older dives at the site still appear.
+  expect(await screen.findByRole("heading", { name: "1 dive matching filters" })).toBeVisible();
+  expect(screen.getByLabelText("Dive Site")).toHaveValue("Diamond Rock");
+  expect(screen.getByLabelText("Date range")).toHaveValue("all");
+  expect(fetchDiveLogData).not.toHaveBeenCalled();
+});
+it("ignores a ?site= deep link that matches no logged dive", async () => {
+  nav.params = new URLSearchParams("site=Atlantis");
+  const today = new Date().toISOString().slice(0, 10);
+  const initialDives = buildPublicDives(diveData([rawDive({ date: today })]));
+  render(<DiveLogClient initialDives={initialDives} />);
+  expect(await screen.findByRole("heading", { name: "1 dive" })).toBeVisible();
+  expect(screen.getByRole("button", { name: "Filter" })).toHaveAttribute("aria-expanded", "false");
+});
+it("applies a ?site= deep link after the client fetch resolves", async () => {
+  nav.params = new URLSearchParams("site=Diamond Rock");
+  render(<DiveLogClient />);
+  await screen.findByRole("heading", { name: "1 dive matching filters" });
+  expect(screen.getByLabelText("Dive Site")).toHaveValue("Diamond Rock");
+});
+it("dates the SSR cutoff from the render timestamp, then reconciles", async () => {
+  // Rendered Sep 1 (cutoff Aug 18) but hydrated Sep 8 (cutoff Aug 25): the
+  // dive inside only the SSR window renders first, then reconciles after
+  // mount instead of producing a hydration mismatch.
+  const initialDives = buildPublicDives(diveData([rawDive({ date: "2026-08-20" })]));
+  const generatedAt = new Date("2026-09-01T12:00:00Z").getTime();
+  render(<DiveLogClient initialDives={initialDives} generatedAt={generatedAt} />);
+  expect(screen.getByRole("heading", { name: "1 dive" })).toBeVisible();
+  await screen.findByText("No dives match your filters.");
 });
 it("shows permission failure without exposing an export action", async () => {
   vi.mocked(fetchDiveLogData).mockRejectedValue(new Error("Missing or insufficient permissions"));
