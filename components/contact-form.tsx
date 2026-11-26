@@ -473,7 +473,7 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
                 Your email app should open with your inquiry ready to send.
               </p>
               <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                Review it and press Send — it goes to {CONTACT.email} from your own email address. If
+                Review it and press Send. It goes to {CONTACT.email} from your own email address. If
                 nothing opened,{" "}
                 <a href={handoffHref} className="font-medium text-primary underline-offset-2 hover:underline">
                   try opening it again
@@ -482,7 +482,7 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
                 <a href={`mailto:${CONTACT.email}`} className="font-medium text-primary underline-offset-2 hover:underline">
                   {CONTACT.email}
                 </a>
-                . You can edit anything above first — your changes are kept.
+                . You can edit anything above first; your changes are kept.
               </p>
             </div>
           </div>
@@ -511,7 +511,7 @@ export function ContactForm({ initialInterest }: ContactFormProps) {
       </div>
 
       <p className="text-xs text-muted-foreground">
-        This opens your email app with the inquiry ready to send — we reply by email, typically within a day.
+        This opens your email app with the inquiry ready to send. We reply by email, typically within a day.
         WhatsApp is great for quick questions.
       </p>
     </form>

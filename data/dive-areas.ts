@@ -15,6 +15,8 @@ export const DIVE_AREAS = [
     sites: ["Third Encounter", "Twilight Zone", "Outer Limits", "Mt. Michel", "Shark Shoals"],
     knownFor: ["Towering volcanic seamounts rising from the deep blue", "Giant barrel sponges, black corals, and vibrant reef life", "Reef sharks, nurse sharks, jacks, turtles, and large groupers", "The famous Third Encounter pinnacle", "Saba's signature advanced diving experience"],
     image: "/images/optimized/divers-above-pinnacle-saba.webp",
+    caption: "The Needle - Vidar Skålevik",
+    imageObjectPosition: "center top",
     imagePosition: "left",
   },
   {
@@ -25,6 +27,7 @@ export const DIVE_AREAS = [
     sites: ["Tent Shallow", "Tent Deep", "Tent Reef", "Tent Boulders", "Tent Wall", "Tedran Wall"],
     knownFor: ["Mini walls, canyons, and swim-throughs", "Healthy coral gardens and giant barrel sponges", "The famous Three Sisters seamounts on Tent Wall", "Octopus, turtles, lobster, and colorful reef life", "A different experience on every dive"],
     image: "/images/optimized/green-turtle-tent-reef.webp",
+    caption: "Green turtle at Tent Reef",
     imagePosition: "right",
   },
   {
@@ -35,6 +38,7 @@ export const DIVE_AREAS = [
     sites: ["Rays n\u2019 Anchors", "Ladder Labyrinth", "Hot Springs", "50/50", "Porites Point", "Customs House", "Babylon"],
     knownFor: ["Historic Ladder Bay and Saba's original island landing", "Volcanic lava fingers and warm underwater hot springs", "Coral-covered boulders and historic anchors", "Green turtles, flying gurnards, nudibranchs, and macro life", "A unique blend of history, geology, and marine life"],
     image: "/images/optimized/nurse-shark-ladder-bay-saba.webp",
+    caption: "Nurse shark at Ladder Bay",
     imagePosition: "left",
   },
   {
@@ -45,6 +49,7 @@ export const DIVE_AREAS = [
     sites: ["Otto's Limits", "Torrens Point", "Diamond Rock", "Man O'War Shoals"],
     knownFor: ["Diamond Rock and Man O\u2019 War Shoals", "Healthy coral reefs with excellent fish life", "Green turtles, reef sharks, stingrays, and lobster", "Long bottom times and exceptional visibility", "Dramatic coastal scenery above and below the water"],
     image: "/images/optimized/wells-bay-dive-site-saba.webp",
+    caption: "Diamond Rock",
     imagePosition: "right",
   },
   {
@@ -55,6 +60,7 @@ export const DIVE_AREAS = [
     sites: ["Green Island", "Big Rock Market", "Core Gut", "Cove Bay", "Abrams Hole", "Hole in the Corner", "Greer Gut", "Davids Dropoff"],
     knownFor: ["Saba's only true coral reef systems", "Extensive elkhorn coral formations", "White sand, clear water, and vibrant hard corals", "Exceptional underwater photography opportunities", "A unique contrast to Saba's volcanic dive sites"],
     image: "/images/optimized/windwardside-dive-site-saba.webp",
+    caption: "Elkhorn coral on Saba's Windwardside",
     imagePosition: "left",
   },
 ] as const;

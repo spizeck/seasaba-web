@@ -647,7 +647,7 @@ export default function VisitingYachtsPage() {
           <TrackedContactLink
             href={CONTACT.whatsappHref}
             eventName="whatsapp_click"
-            buttonText="WhatsApp — visiting yachts"
+            buttonText="WhatsApp: visiting yachts"
             external
             className="inline-flex items-center justify-center rounded-md border border-green-700 px-4 py-2 text-sm font-medium text-green-700 hover:bg-green-50 hover:text-green-800"
           >
@@ -660,7 +660,7 @@ export default function VisitingYachtsPage() {
           <TrackedContactLink
             href="https://www.sabaferry.com/"
             eventName="ferry_link_click"
-            buttonText="Saba C-Transport — visiting yachts"
+            buttonText="Saba C-Transport: visiting yachts"
             external
             className="font-medium text-primary hover:underline underline-offset-4"
           >

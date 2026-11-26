@@ -150,8 +150,8 @@ export default function PrivacyPage() {
           </p>
           <p className="mt-3 text-base leading-relaxed text-muted-foreground">
             The website chat widget is provided by Respond.io. When you open the chat and submit the
-            pre-chat form or send messages, the information you enter — such as your first name,
-            email address, and message contents — is transmitted directly to Respond.io and processed
+            pre-chat form or send messages, the information you enter, such as your first name,
+            email address, and message contents, is transmitted directly to Respond.io and processed
             under its own privacy policy. The widget does not set cookies or store data on the
             seasaba.com domain; its session state is kept inside the widget itself.
           </p>

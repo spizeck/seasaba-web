@@ -170,7 +170,7 @@ export default function PlanYourTripPage() {
               href="https://www.winair.sx/"
               eventName="social_click"
               buttonText="Check Flight Schedule"
-              aria-label="Check Flight Schedule ↗ — Winair, opens in a new tab"
+              aria-label="Check Flight Schedule ↗: Winair, opens in a new tab"
             >
               Check Flight Schedule ↗
             </TrackedOutboundButton>
@@ -217,7 +217,7 @@ export default function PlanYourTripPage() {
               href="https://makanaferryservice.com/"
               eventName="ferry_link_click"
               buttonText="View Ferry Schedule"
-              aria-label="View Ferry Schedule ↗ — Makana, opens in a new tab"
+              aria-label="View Ferry Schedule ↗: Makana, opens in a new tab"
             >
               View Ferry Schedule ↗
             </TrackedOutboundButton>
@@ -264,7 +264,7 @@ export default function PlanYourTripPage() {
               href="https://westindieshelicopters.com/"
               eventName="social_click"
               buttonText="Request Helicopter Charter"
-              aria-label="Request Helicopter Charter ↗ — West Indies Helicopters, opens in a new tab"
+              aria-label="Request Helicopter Charter ↗: West Indies Helicopters, opens in a new tab"
             >
               Request Helicopter Charter ↗
             </TrackedOutboundButton>
@@ -356,7 +356,7 @@ export default function PlanYourTripPage() {
           </div>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
             Flights and ferries between St. Maarten and Saba run reliably, but weather and
-            connections occasionally shift schedules — a normal part of reaching a small
+            connections occasionally shift schedules, a normal part of reaching a small
             island. If your flight is delayed, the ferry is disrupted, or you&apos;ll arrive
             later than expected,{" "}
             <Link href="/contact?interest=general" className="font-medium text-primary hover:underline underline-offset-4">
@@ -366,7 +366,7 @@ export default function PlanYourTripPage() {
             <TrackedContactLink
               href={CONTACT.whatsappHref}
               eventName="whatsapp_click"
-              buttonText="WhatsApp — plan your trip travel disruption"
+              buttonText="WhatsApp: plan your trip travel disruption"
               external
               className="font-medium text-primary hover:underline underline-offset-4"
             >
@@ -533,7 +533,7 @@ export default function PlanYourTripPage() {
           <Link href="/contact?interest=general" className="font-medium text-primary hover:underline underline-offset-4">
             Ask us
           </Link>{" "}
-          — our team is happy to recommend the perfect place to stay based on your budget, travel style, and diving plans.
+          Our team is happy to recommend the perfect place to stay based on your budget, travel style, and diving plans.
         </div>
       </section>
 
@@ -566,7 +566,7 @@ export default function PlanYourTripPage() {
               </li>
               <li className="flex items-start gap-2">
                 <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                Dive computer — required on every dive; rentals available
+                Dive computer, required on every dive; rentals available
               </li>
               <li className="flex items-start gap-2">
                 <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
@@ -699,7 +699,7 @@ export default function PlanYourTripPage() {
             <Link href={`#${planYourTripAnchors.snorkeling}`} className="font-medium text-primary hover:underline underline-offset-4">
               afternoon snorkel trip
             </Link>{" "}
-            — it shares the boat with the afternoon dive, so you can still spend the day on
+            It shares the boat with the afternoon dive, so you can still spend the day on
             the water together. On land, the{" "}
             <Link href={`#${planYourTripAnchors.hiking}`} className="font-medium text-primary hover:underline underline-offset-4">
               trail network

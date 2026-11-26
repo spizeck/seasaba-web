@@ -12,6 +12,8 @@ import { diveSiteAnchors, divingAnchors, planYourTripAnchors } from "@/lib/ancho
 import { diveSitePath } from "@/data/dive-site-videos";
 import { loadWeeklyDiveStats, type WeeklyDiveStats } from "@/lib/dive-stats";
 import { OPERATIONS } from "@/data/operations";
+import { HOME_DIVE_AREA_IMAGES, formatImageCaption, type ImageAttribution } from "@/data/image-attribution";
+import { SITE_URL } from "@/lib/constants";
 
 // Hourly ISR — the dive-team statistics regenerate from Firestore on this
 // cadence. The rest of the homepage is editorial and changes rarely, so an
@@ -22,27 +24,27 @@ export const revalidate = 3600;
 const WHY_SABA_FEATURED = [
   {
     heading: "World-Famous Pinnacles",
-    body: "Volcanic origins created dramatic underwater pinnacles unlike anything else in the Caribbean. These seamounts rise from the deep and deliver encounters that divers remember for years.",
+    body: "Saba's volcanic origins created spectacular underwater pinnacles that rise from the depths. These dramatic formations are home to vibrant marine life and offer some of the island's most memorable diving experiences.",
     image: "/images/optimized/divers-above-pinnacle-saba.webp",
     imageAlt: "Scuba divers hovering above a coral-covered volcanic pinnacle in the Saba Marine Park.",
     bgPosition: "top",
-    caption: "Photographed on a Sea Saba dive, March 2025. Photo: Candice Landau",
+    caption: "The Needle - Candice Landau",
   },
   {
     heading: "Uncrowded by Design",
-    body: "Saba has chosen a different path. There are no large resorts, no cruise ship crowds, and no busy dive boats competing for space. The result is a quieter, more personal experience both above and below the surface.",
+    body: "Without large resorts or mass tourism, Saba offers a quieter, more personal Caribbean experience. Small dive groups and uncrowded dive sites allow visitors to enjoy the island at a different pace, both above and below the surface.",
     image: "/images/optimized/fin-and-tonic-boat-diamond-rock.webp",
     imageAlt: "Sea Saba dive boat Fin & Tonic moored beside Diamond Rock off Saba.",
     bgPosition: "center",
-    caption: "Our boat Fin & Tonic at Diamond Rock. Photo: Candice Landau",
+    caption: "Fin & Tonic at Diamond Rock - Candice Landau",
   },
   {
     heading: "Small Island, Big Heart",
-    body: "Our greatest asset isn't found underwater. It's the people — friendly villages, genuine island hospitality, and a crew that has been diving these reefs for decades.",
+    body: "Our greatest asset isn't found underwater. It's the people: friendly villages, genuine island hospitality, and a crew that has been diving these reefs for decades.",
     image: "/images/optimized/windwardside-village-saba.webp",
     imageAlt: "Colorful red-roofed cottages of Windwardside village on the green hillside of Saba.",
     bgPosition: "center",
-    caption: "Windwardside from the Mas Cahones lookout. Photo: Chris Kurzatkowski",
+    caption: "Windwardside from the Mas Cahones lookout - Chris Kurzatkowski",
   },
 ] as const;
 
@@ -60,23 +62,22 @@ const WHY_SABA_SECONDARY = [
         >
           Saba National Marine Park
         </a>{" "}
-        has actively protected local waters since 1987. Healthy reefs and abundant
-        marine life are the direct result of decades of consistent stewardship.
+        has actively protected local waters since 1987. That long-standing stewardship
+        helps preserve the reefs and marine life that make Saba distinctive.
       </>
     ),
   },
   {
     heading: "Encounters That Feel Wild",
-    body: "With relatively low dive pressure, marine life often behaves naturally. Sharks, turtles, and rays provide close encounters not because they are conditioned to divers, but because they are undisturbed.",
+    body: "Saba's protected waters and relatively low diving pressure offer wonderful opportunities to observe marine life in its natural environment. Sharks, turtles and rays are regularly encountered, making every dive a chance to discover something extraordinary.",
   },
   {
     heading: "Active Conservation",
     body: (
       <>
-        Every Sea Saba dive contributes a conservation fee to the Saba
-        Conservation Foundation, which manages the park&apos;s moorings and marine
-        life. Lionfish are actively controlled, and the island&apos;s commitment to
-        stewardship preserves what makes the diving exceptional.
+        Every Sea Saba dive includes a conservation contribution supporting the
+        Saba Conservation Foundation, which manages the Saba National Marine
+        Park and its mooring system.
       </>
     ),
   },
@@ -88,8 +89,9 @@ const DIVE_EXPERIENCES = [
     title: "The Pinnacles",
     subtitle: "The dives that made Saba famous.",
     image: "/images/optimized/diver-volcanic-pinnacle-saba.webp",
+    caption: formatImageCaption(HOME_DIVE_AREA_IMAGES.pinnacles),
     imageAlt: "Diver above a coral-covered volcanic pinnacle in the Saba Marine Park.",
-    objectPosition: "center",
+    objectPosition: "center top",
     body: "Towering volcanic seamounts rise from the deep blue, attracting sharks, turtles, schooling fish, and unforgettable pelagic encounters that define Saba diving.",
     sites: ["Third Encounter", "Twilight Zone", "Outer Limits", "Mt. Michel", "Shark Shoals"],
   },
@@ -98,6 +100,7 @@ const DIVE_EXPERIENCES = [
     title: "Tent Reef",
     subtitle: "Something different on every dive.",
     image: "/images/optimized/green-turtle-tent-reef.webp",
+    caption: formatImageCaption(HOME_DIVE_AREA_IMAGES.tentReef),
     imageAlt: "Green turtle gliding over healthy coral reef with sea fans and sponges, Saba.",
     objectPosition: "center",
     body: "A diverse mix of coral gardens, mini walls, canyons, swim-throughs, and dramatic drop-offs sits just minutes from Fort Bay Harbor.",
@@ -108,6 +111,7 @@ const DIVE_EXPERIENCES = [
     title: "Ladder Bay",
     subtitle: "History meets volcanic geology.",
     image: "/images/optimized/nurse-shark-ladder-bay-saba.webp",
+    caption: formatImageCaption(HOME_DIVE_AREA_IMAGES.ladderBay),
     imageAlt: "Nurse shark resting on the sandy bottom at Ladder Bay, Saba.",
     objectPosition: "center",
     body: "Explore lava formations, underwater hot springs, coral-covered boulders, resting turtles, and some of the best macro life in the Caribbean.",
@@ -118,6 +122,7 @@ const DIVE_EXPERIENCES = [
     title: "Wells Bay",
     subtitle: "Classic Caribbean reef diving.",
     image: "/images/optimized/wells-bay-dive-site-saba.webp",
+    caption: formatImageCaption(HOME_DIVE_AREA_IMAGES.wellsBay),
     imageAlt: "Wells Bay along Saba's rugged northwest coast, Caribbean Netherlands.",
     objectPosition: "center",
     body: "Healthy coral reefs, Diamond Rock, Man O' War Shoals, turtles, reef sharks, and long relaxing dives create spectacular scenery above and below.",
@@ -128,6 +133,7 @@ const DIVE_EXPERIENCES = [
     title: "Windwardside",
     subtitle: "A completely different side of Saba.",
     image: "/images/optimized/windwardside-dive-site-saba.webp",
+    caption: formatImageCaption(HOME_DIVE_AREA_IMAGES.windwardside),
     imageAlt: "Dramatic coastline along Saba's Windwardside, Caribbean Netherlands.",
     objectPosition: "center",
     body: "White sand, thriving hard corals, and Saba's only true coral reefs create a vibrant underwater landscape unlike anywhere else around the island.",
@@ -165,12 +171,11 @@ const HOMEPAGE_FAQS = [
     question: "What is included in a Sea Saba diving trip?",
     answer: (
       <>
-        Complimentary taxi pickup anywhere on Saba, tanks, weights, and an
-        experienced guide — never more than {OPERATIONS.maxRecreationalDiversPerGuide} divers
-        per guide on recreational dives. Rental gear and dive computers are
-        available. Diving also carries a conservation contribution of{" "}
+        Taxi pickup, tanks, weights, and an experienced guide are included,
+        with never more than {OPERATIONS.maxRecreationalDiversPerGuide} divers per guide.
+        Rental gear is available. A conservation contribution of{" "}
         ${OPERATIONS.conservationFees.marineParkPerDiveUsd + OPERATIONS.conservationFees.chamberContributionPerDiveUsd}{" "}
-        per diver, per dive. Full details on our{" "}
+        per diver, per dive applies. Full details on our{" "}
         <Link href="/diving" className="font-medium text-primary hover:underline underline-offset-4">diving page</Link>.
       </>
     ),
@@ -179,7 +184,7 @@ const HOMEPAGE_FAQS = [
     question: "Is Nitrox included?",
     answer: (
       <>
-        Yes — certified Nitrox divers get complimentary{" "}
+        Yes. Certified Nitrox divers get complimentary{" "}
         {OPERATIONS.nitroxBlend} Nitrox on qualifying dives, no extra charge.
         Details in the{" "}
         <Link href={`/diving#${divingAnchors.nitrox}`} className="font-medium text-primary hover:underline underline-offset-4">Nitrox section</Link>.
@@ -253,10 +258,10 @@ export default async function Home() {
               Saba is just different.
             </h2>
             <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-              Most visitors struggle to explain exactly why. They just know it doesn&apos;t feel
-              like anywhere else in the Caribbean, above the surface or below it.
-              Sea Saba — the island&apos;s only continuously operating dive center —
-              has been showing divers this island since {OPERATIONS.establishedYear}.
+              Saba feels different from anywhere else in the Caribbean, both above and below
+              the surface. With dramatic underwater landscapes, protected reefs and welcoming
+              island communities, it offers a truly distinctive diving experience. Sea Saba has
+              been introducing divers to this extraordinary island since {OPERATIONS.establishedYear}.
             </p>
           </div>
 
@@ -317,6 +322,7 @@ export default async function Home() {
                 src={exp.image}
                 alt={exp.imageAlt}
                 objectPosition={exp.objectPosition}
+                caption={exp.caption}
                 imageRight={i % 2 === 1}
                 centerText
               >
@@ -479,13 +485,33 @@ export default async function Home() {
             })),
           }}
         />
+        <JsonLd
+          data={{
+            "@context": "https://schema.org",
+            "@graph": (Object.values(HOME_DIVE_AREA_IMAGES) as ImageAttribution[])
+              .filter((image) => image.photographer)
+              .map((image) => ({
+                "@type": "ImageObject",
+                contentUrl: `${SITE_URL}${image.imageUrl}`,
+                name: image.description,
+                caption: formatImageCaption(image),
+                creditText: image.photographer,
+                creator: { "@type": "Person", name: image.photographer },
+                copyrightHolder: image.copyrightHolder
+                  ? { "@type": "Person", name: image.copyrightHolder }
+                  : undefined,
+                dateCreated: image.dateTaken,
+                contentLocation: image.location,
+              })),
+          }}
+        />
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="mb-10 max-w-2xl">
             <h2 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-              Questions guests ask.
+              Frequently Asked Questions About Diving in Saba
             </h2>
             <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-              The short answers — each links to the page with the full detail.
+              Find answers to common questions about diving with Sea Saba.
             </p>
           </div>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

@@ -22,9 +22,9 @@ export const metadata = createMetadata({
 });
 
 const TRUST_SIGNALS = [
-  { icon: Users, label: "Small Groups", sublabel: `Recreational dives — max ${OPERATIONS.maxRecreationalDiversPerGuide} per guide` },
+  { icon: Users, label: "Small Groups", sublabel: `Recreational dives: max ${OPERATIONS.maxRecreationalDiversPerGuide} per guide` },
   { icon: Bus, label: "Complimentary Taxi Shuttle", sublabel: "Anywhere on Saba" },
-  { icon: Droplets, label: `Free ${OPERATIONS.nitroxBlend} Nitrox`, sublabel: "For certified divers" },
+  { icon: Droplets, label: `Free ${OPERATIONS.nitroxBlend} Nitrox`, sublabel: "For Nitrox-certified divers" },
   { icon: Award, label: `Since ${OPERATIONS.establishedYear}`, sublabel: "Saba's only continuously operating dive center" },
 ];
 
@@ -41,7 +41,7 @@ const DIVE_EXPERIENCES = [
       `Free ${OPERATIONS.nitroxBlend} Nitrox`,
       // Owner-confirmed rule — kept as page copy, not a canonical
       // `requirement` (see data/operations.ts and docs/OPERATIONS.md).
-      "Scuba Diver minimum — private guide required",
+      "Scuba Diver minimum: private guide required",
     ],
     cta: "Book Classic Diving",
     href: bookingHref("classic"),
@@ -58,7 +58,7 @@ const DIVE_EXPERIENCES = [
       `Return about ${DIVE_PRODUCTS.advanced.schedule.returns}`,
       "Dive 1 to ~110 ft / 33 m",
       "Dive 2 to ~70 ft / 21 m",
-      "Free Nitrox (mandatory on Dive 1)",
+      "Free Nitrox for certified divers (mandatory on Dive 1)",
       DIVE_PRODUCTS.advanced.requirement,
     ],
     cta: "Book Advanced Diving",
@@ -76,7 +76,7 @@ const DIVE_EXPERIENCES = [
       `Return about ${DIVE_PRODUCTS.afternoon.schedule.returns}`,
       "Up to ~70 ft / 21 m",
       // Owner-confirmed rule — same private-guide requirement as Classic.
-      "Scuba Diver minimum — private guide required",
+      "Scuba Diver minimum: private guide required",
     ],
     cta: "Book Afternoon Dive",
     href: bookingHref("afternoon"),
@@ -120,7 +120,7 @@ const DIVE_EXPERIENCES = [
     title: "SDI / TDI Courses",
     subtitle: "PROFESSIONAL INSTRUCTION",
     description:
-      "From Discover Scuba to Divemaster, learn with experienced instructors in one of the Caribbean's most rewarding diving environments.",
+      "From Try Scuba to Divemaster, learn with experienced instructors in one of the Caribbean's most rewarding diving environments.",
     details: ["All certification levels", "Small classes", "SDI and TDI training", "Private instruction available"],
     cta: "View courses",
     href: "/courses",
@@ -607,7 +607,7 @@ export default function DivingPage() {
             <TrackedContactLink
               href={CONTACT.whatsappHref}
               eventName="whatsapp_click"
-              buttonText="WhatsApp — diving mixed groups"
+              buttonText="WhatsApp: diving mixed groups"
               external
               className="font-medium text-primary hover:underline underline-offset-4"
             >
@@ -653,7 +653,7 @@ export default function DivingPage() {
           <TrackedContactLink
             href={CONTACT.whatsappHref}
             eventName="whatsapp_click"
-            buttonText="WhatsApp — diving junior divers"
+            buttonText="WhatsApp: diving junior divers"
             external
             className="font-medium text-primary hover:underline underline-offset-4"
           >
@@ -759,14 +759,14 @@ export default function DivingPage() {
       <section id={divingAnchors.marinePark} className="mt-14 scroll-mt-40">
         <div className="flex items-center gap-3">
           <Anchor className="h-5 w-5 text-primary" />
-          <h2 className="text-xl font-semibold text-foreground">The Saba Marine Park</h2>
+          <h2 className="text-xl font-semibold text-foreground">The Saba National Marine Park</h2>
         </div>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
           Everything we dive is inside the Saba National Marine Park, established in 1987 and
           managed by the Saba Conservation Foundation. The park circles the entire island from the
-          high-water mark down to 60 m (200 ft), and it&apos;s one of the few self-sustaining marine
-          parks in the world. Visitor fees, souvenir sales, and donations fund the moorings, patrols,
-          and conservation work that keep the reefs healthy.
+          high-water mark down to 60 m (200 ft), and it operates as a self-sustaining marine
+          park. Visitor fees, souvenir sales, and donations support the foundation&apos;s mooring
+          management and marine conservation work.
         </p>
 
         <div className="mt-6 grid gap-5 sm:grid-cols-2">
@@ -795,11 +795,10 @@ export default function DivingPage() {
             Diving carries a conservation contribution of{" "}
             ${OPERATIONS.conservationFees.marineParkPerDiveUsd + OPERATIONS.conservationFees.chamberContributionPerDiveUsd}{" "}
             per diver, per dive: ${OPERATIONS.conservationFees.marineParkPerDiveUsd} goes to the
-            Saba Marine Park and ${OPERATIONS.conservationFees.chamberContributionPerDiveUsd} to the
+            Saba National Marine Park and ${OPERATIONS.conservationFees.chamberContributionPerDiveUsd} to the
             island&apos;s hyperbaric chamber fund. Snorkeling is{" "}
             ${OPERATIONS.conservationFees.snorkelParkPerPersonUsd} per person. These fees are set by
-            the park and the chamber, not Sea Saba, and they directly fund the moorings, patrols,
-            and emergency coverage described above.
+            the park and the chamber, not Sea Saba, and they support the conservation and emergency preparedness described above.
           </p>
         </div>
 
@@ -899,19 +898,19 @@ export default function DivingPage() {
           One of the most common questions we receive is whether it&apos;s safe to dive on Saba and fly back to St. Maarten the same day.
         </p>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          Unlike a typical commercial airline flight, the Winair Twin Otter route between Saba and St. Maarten is a short inter-island flight. The aircraft reaches approximately 2,000 feet for only a few minutes before descending for landing.
+          Unlike a typical commercial airline flight, the Winair Twin Otter route between Saba and St. Maarten is a short inter-island flight. Owner-supplied operational figures put the route at approximately 2,000 to 2,500 feet, with an average flight time of 12 minutes and a maximum of approximately 20 minutes.
         </p>
 
         <div className="mt-5 rounded-lg border border-border/40 bg-muted/20 p-5">
           <h3 className="text-sm font-semibold text-foreground">A Different Kind of Flight</h3>
           <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-            For decades, divers have routinely flown between Saba and St. Maarten as part of their dive vacations. Sea Saba has operated these schedules since {OPERATIONS.establishedYear}, and many guests fly back to St. Maarten after diving under our normal operating schedule.
+            For decades, divers have routinely flown between Saba and St. Maarten as part of their dive vacations. That common travel pattern is useful context, but it is not evidence that same-day flying is safe for every diver or every profile.
           </p>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-            This short, low-altitude flight is fundamentally different from a typical commercial jet flight, which is pressurized to a much higher cabin altitude for a considerably longer period.
+            This short, low-altitude flight differs from a typical commercial jet flight, whose cabin altitude is commonly equivalent to 6,000 to 8,000 feet for a considerably longer period. The lower altitude and shorter exposure may reduce the contrast with sea level, but they do not create an exemption from flying-after-diving guidance.
           </p>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-            As with all dive planning, every diver is ultimately responsible for making decisions based on their own health, dive profile, and the guidance of their physician or DAN if they have medical concerns.
+            Follow the DAN surface-interval guidance that applies to your dives, plan conservatively, and discuss your travel plans with our dive team before booking a same-day flight. Every diver is responsible for decisions based on their own health, dive profile, and medical guidance.
           </p>
         </div>
 
@@ -919,7 +918,7 @@ export default function DivingPage() {
           <div className="rounded-lg border border-border/40 bg-muted/20 p-5">
             <h3 className="text-sm font-semibold text-foreground">Things to Keep in Mind</h3>
             <ul className="mt-4 space-y-2.5 text-sm text-muted-foreground">
-              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>The Winair flight is a short, low-altitude island flight.</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>The Winair flight is short and relatively low, but decompression risk is not eliminated.</span></li>
               <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Plan a conservative dive profile.</span></li>
               <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Stay well hydrated.</span></li>
               <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Follow your dive computer.</span></li>
@@ -945,7 +944,11 @@ export default function DivingPage() {
         </div>
 
         <p className="mt-5 text-sm leading-relaxed text-muted-foreground">
-          DAN (Divers Alert Network) has published research regarding inter-island Caribbean flights, and Sea Saba can provide additional information to guests who would like to read the research.
+          Review the{" "}
+          <Link href="https://world.dan.org/health-medicine/health-resource/health-safety-guidelines/guidelines-for-flying-after-diving/" target="_blank" rel="noopener noreferrer" className="font-medium text-primary hover:underline underline-offset-4">
+            Divers Alert Network flying-after-diving guidelines
+          </Link>{" "}
+          and talk with our team about your flight before planning a same-day departure.
         </p>
         <p className="mt-3 text-xs text-muted-foreground italic">
           This information is provided for planning purposes only and does not constitute medical advice. Follow your dive computer, physician, and DAN recommendations.
@@ -1064,19 +1067,19 @@ export default function DivingPage() {
         <div className="mt-5 grid gap-5 lg:grid-cols-2">
           <div className="rounded-lg border border-border/40 bg-muted/20 p-5">
             <p className="text-sm leading-relaxed text-muted-foreground">
-              Saba is well equipped to support safe recreational diving. In the unlikely event that advanced treatment is ever required, the island is home to a DAN-certified hyperbaric chamber located at the Saba Conservation Foundation facility in Fort Bay.
+              Saba is well equipped to support safe recreational diving. The island has a hyperbaric chamber at the Saba Conservation Foundation facility in Fort Bay.
             </p>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
               Sea Saba&apos;s captains and dive professionals are trained in emergency response procedures, every dive boat carries emergency oxygen and first aid equipment, and our team maintains established emergency action plans in coordination with local medical services.
             </p>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              While serious diving incidents are extremely rare, knowing these resources are available provides additional peace of mind for both new and experienced divers.
+              While serious diving incidents are rare, our team plans conservatively and coordinates emergency response resources with local medical services.
             </p>
           </div>
           <div className="rounded-lg border border-border/40 bg-muted/20 p-5">
             <h3 className="text-sm font-semibold text-foreground">Safety Resources</h3>
             <ul className="mt-4 space-y-2.5 text-sm text-muted-foreground">
-              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>DAN-certified hyperbaric chamber</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Hyperbaric chamber on Saba</span></li>
               <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Located at Fort Bay</span></li>
               <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Emergency oxygen on every dive boat</span></li>
               <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>First aid equipment onboard</span></li>

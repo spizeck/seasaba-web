@@ -71,8 +71,8 @@ export function Hero() {
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/40" />
 
       <div className="relative z-10 mx-auto max-w-3xl flex-1 flex flex-col items-center justify-center px-4 py-10 text-center sm:px-6 sm:py-20 lg:px-8">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/85 sm:text-sm" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.35)' }}>
-          Sea Saba · Scuba Diving in Saba, Dutch Caribbean
+        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-white/85 sm:text-sm sm:tracking-[0.2em]" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.35)' }}>
+          SABA · DUTCH CARIBBEAN
         </p>
         <h1 className="mt-3 font-heading italic text-3xl leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl" style={{ textShadow: '0 2px 10px rgba(0,0,0,0.4)' }}>
           Dive the Extraordinary.

@@ -170,7 +170,7 @@ export function BookingWidget({ item }: BookingWidgetProps) {
             <>
               Open our secure booking page directly
               {itemId ? ` for ${ITEM_NAMES[itemId]}` : ""}, or reach us another
-              way — we&apos;ll get you booked.
+              way, and we&apos;ll get you booked.
             </>
           }
         >
