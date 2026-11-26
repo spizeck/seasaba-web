@@ -8,6 +8,12 @@ import {
   SOCIAL_LINKS,
 } from "@/lib/constants";
 import { OPERATIONS } from "@/data/operations";
+import {
+  teamMemberDisplayName,
+  teamMemberEntityId,
+  teamMemberProfileUrl,
+  type ProfiledTeamMember,
+} from "@/data/team";
 
 /** Stable entity identifier — lets other schema nodes reference the business. */
 export const BUSINESS_ID = `${SITE_URL}/#business`;
@@ -39,6 +45,21 @@ export function jsxToText(node: ReactNode): string {
     return jsxToText(node.props.children);
   }
   return "";
+}
+
+/** schema.org Person derived from the canonical staff record. */
+export function personJsonLd(member: ProfiledTeamMember): Record<string, unknown> {
+  return {
+    "@type": "Person",
+    "@id": teamMemberEntityId(member),
+    name: teamMemberDisplayName(member),
+    jobTitle: member.title,
+    description: member.bio,
+    url: teamMemberProfileUrl(member),
+    ...(member.image && { image: `${SITE_URL}${member.image}` }),
+    worksFor: { "@id": BUSINESS_ID },
+    ...(member.languages && { knowsLanguage: member.languages }),
+  };
 }
 
 export function LocalBusinessJsonLd() {

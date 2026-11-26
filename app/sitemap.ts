@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/constants";
 import { DIVE_SITES, diveSitePath } from "@/data/dive-site-videos";
+import { PROFILE_MEMBERS, teamMemberProfilePath } from "@/data/team";
 
 /**
  * Canonical public routes only. Excludes: legacy redirect sources
@@ -8,7 +9,8 @@ import { DIVE_SITES, diveSitePath } from "@/data/dive-site-videos";
  * `/contact?interest=…` — noindexed by createMetadata), and technical
  * endpoints. Keep this table in sync when a public page is added or
  * removed; tests/unit/seo.test.ts guards the list. Individual dive-site
- * pages are generated from the dive-site catalogue, not listed here.
+ * and staff-profile pages are generated from their canonical catalogues,
+ * not listed here.
  *
  * `lastModified` is deliberately omitted: there is no trustworthy source of
  * content modification dates in this repo, and a build-time `new Date()`
@@ -48,5 +50,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     changeFrequency: "monthly" as const,
     priority: 0.8,
   }));
-  return [...routes, ...sites];
+  const profiles = PROFILE_MEMBERS.map((member) => ({
+    url: `${SITE_URL}${teamMemberProfilePath(member)}`,
+    changeFrequency: "monthly" as const,
+    priority: 0.65,
+  }));
+  return [...routes, ...sites, ...profiles];
 }

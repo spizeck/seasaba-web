@@ -167,18 +167,24 @@ describe("Crew Person schema", () => {
     const { container } = render(<AboutPage />);
     const list = jsonLdBlocks(container).find((b) => b["@type"] === "ItemList");
     expect(list).toBeTruthy();
-    const people = (list?.itemListElement ?? []) as { "@type": string; name: string; jobTitle?: string }[];
+    const entries = (list?.itemListElement ?? []) as { "@type": string; item: { "@type": string; "@id": string; name: string; jobTitle?: string } }[];
+    for (const entry of entries) expect(entry["@type"]).toBe("ListItem");
+    const people = entries.map((entry) => entry.item);
     expect(people.length).toBeGreaterThan(0);
     // Joint roster entries (Jeanine & Marc) and the dive dog are excluded —
     // Person schema only marks up identifiable individuals.
     for (const p of people) {
       expect(p["@type"]).toBe("Person");
       expect(p.name).not.toContain("&");
+      expect(p["@id"]).toMatch(/^https:\/\/www\.seasaba\.com\/about\/[^#]+#person$/);
       expect(p.jobTitle).toBeTruthy();
       expect(p.jobTitle).not.toContain("Dog");
     }
     const names = people.map((p) => p.name);
-    expect(names).toContain("Otto");
+    expect(names).toContain("Otto de Vries");
+    expect(names).toContain("Aaron Smith");
+    expect(names).toContain("Jake Mulford");
+    expect(names).toContain("Lilian Caro");
     // Joint roster entries and the dive dog are deliberately excluded —
     // isPerson:false in data/team.ts is what keeps them out.
     expect(names).not.toContain("Gunner");

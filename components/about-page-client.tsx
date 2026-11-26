@@ -2,10 +2,15 @@
 
 import { useState, useRef, useCallback, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
 import { FeatureImage } from "@/components/feature-image";
 import { OPERATIONS } from "@/data/operations";
-import { TEAM_MEMBERS, type TeamMember } from "@/data/team";
+import {
+  TEAM_MEMBERS,
+  teamMemberProfilePath,
+  type TeamMember,
+} from "@/data/team";
 
 function getCardsPerView(): number {
   if (typeof window === "undefined") return 3;
@@ -14,15 +19,25 @@ function getCardsPerView(): number {
   return 1;
 }
 
-function TeamCard({ member }: { member: TeamMember }) {
+function TeamCard({
+  member,
+  linkTabIndex,
+}: {
+  member: TeamMember;
+  linkTabIndex?: number;
+}) {
   const initials = member.name
     .split(" ")
     .map((n) => n[0])
     .slice(0, 2)
     .join("");
+  const profileHref =
+    member.slug && member.isPerson !== false
+      ? teamMemberProfilePath(member.slug)
+      : undefined;
 
   return (
-    <div className="rounded-2xl border border-border/50 bg-card overflow-hidden flex flex-col h-full">
+    <div className="relative rounded-2xl border border-border/50 bg-card overflow-hidden flex flex-col h-full">
       {/* Photo */}
       <div className="relative aspect-[4/5] w-full flex-shrink-0 overflow-hidden">
         {member.image ? (
@@ -81,6 +96,16 @@ function TeamCard({ member }: { member: TeamMember }) {
             </p>
           </div>
         )}
+
+        {profileHref && (
+          <Link
+            href={profileHref}
+            tabIndex={linkTabIndex}
+            className="mt-4 inline-flex w-fit items-center rounded-md text-sm font-semibold text-primary underline-offset-4 hover:underline focus-ring after:absolute after:inset-0 after:content-['']"
+          >
+            View full biography
+          </Link>
+        )}
       </div>
     </div>
   );
@@ -103,6 +128,10 @@ export function TeamCarousel({ members = TEAM_MEMBERS }: { members?: TeamMember[
   // Synchronous mirror of index for event handlers, which may fire before a
   // queued re-render commits (e.g. transitionend during rapid clicks).
   const indexRef = useRef(index);
+  // Distance travelled by the active pointer. Clicks following a real drag
+  // are swallowed so swiping a linked card never navigates accidentally.
+  const dragDistance = useRef(0);
+  const removeWindowDragListeners = useRef<(() => void) | null>(null);
 
   const memberCount = members.length;
   const logicalIndex = ((index % memberCount) + memberCount) % memberCount;
@@ -118,6 +147,11 @@ export function TeamCarousel({ members = TEAM_MEMBERS }: { members?: TeamMember[
     indexRef.current = index;
   }, [index]);
 
+  useEffect(
+    () => () => removeWindowDragListeners.current?.(),
+    []
+  );
+
   useEffect(() => {
     const update = () => {
       setCardsPerView(getCardsPerView());
@@ -125,6 +159,7 @@ export function TeamCarousel({ members = TEAM_MEMBERS }: { members?: TeamMember[
       // range; normalize without animating so a resize mid-wrap cannot leave
       // the index pointing at space past the rendered clones. Any active drag
       // is cancelled — its pixel step is stale under the new widths.
+      removeWindowDragListeners.current?.();
       drag.current = null;
       setDragDelta(null);
       setInstant(true);
@@ -219,19 +254,40 @@ export function TeamCarousel({ members = TEAM_MEMBERS }: { members?: TeamMember[
       startDelta = 0;
     }
     drag.current = { startX: e.clientX, startDelta, delta: startDelta, stepPx };
+    dragDistance.current = 0;
     setDragDelta(startDelta);
-    e.currentTarget.setPointerCapture(e.pointerId);
+
+    // Window listeners keep fast swipes alive when the pointer leaves the
+    // carousel before another in-track event, without pointer-capture
+    // retargeting ordinary clicks away from card links.
+    removeWindowDragListeners.current?.();
+    const onWindowPointerMove = (event: PointerEvent) => updateDrag(event.clientX);
+    const onWindowPointerUp = () => endDrag(false);
+    const onWindowPointerCancel = () => endDrag(true);
+    window.addEventListener("pointermove", onWindowPointerMove);
+    window.addEventListener("pointerup", onWindowPointerUp);
+    window.addEventListener("pointercancel", onWindowPointerCancel);
+    removeWindowDragListeners.current = () => {
+      window.removeEventListener("pointermove", onWindowPointerMove);
+      window.removeEventListener("pointerup", onWindowPointerUp);
+      window.removeEventListener("pointercancel", onWindowPointerCancel);
+      removeWindowDragListeners.current = null;
+    };
   };
 
-  const onPointerMove = (e: React.PointerEvent) => {
+  const updateDrag = (clientX: number) => {
     const d = drag.current;
     if (!d || d.stepPx === 0) return;
     const i = indexRef.current;
+    dragDistance.current = Math.max(
+      dragDistance.current,
+      Math.abs(clientX - d.startX)
+    );
     // Clamp the dragged offset so the strip is never pulled past the ends of
     // the rendered clones into empty space.
     d.delta = Math.min(
       Math.max(
-        d.startDelta + (e.clientX - d.startX),
+        d.startDelta + (clientX - d.startX),
         (i - (memberCount * 2 - cardsPerView)) * d.stepPx
       ),
       (i + memberCount) * d.stepPx
@@ -242,9 +298,13 @@ export function TeamCarousel({ members = TEAM_MEMBERS }: { members?: TeamMember[
   const endDrag = (cancelled: boolean) => {
     const d = drag.current;
     if (!d) return;
+    removeWindowDragListeners.current?.();
     drag.current = null;
     setDragDelta(null);
-    if (cancelled || d.stepPx === 0) return;
+    if (cancelled || d.stepPx === 0) {
+      dragDistance.current = 0;
+      return;
+    }
     // Snap to the nearest card; at least half a card of travel commits a move.
     const steps = Math.round(-d.delta / d.stepPx);
     if (steps !== 0) setIndex((i) => clampIndex(i + steps));
@@ -253,7 +313,17 @@ export function TeamCarousel({ members = TEAM_MEMBERS }: { members?: TeamMember[
   const onPointerUp = () => endDrag(false);
   const onPointerCancel = () => endDrag(true);
 
+  const onClickCapture = (e: React.MouseEvent) => {
+    if (dragDistance.current <= 8) return;
+    e.preventDefault();
+    e.stopPropagation();
+    dragDistance.current = 0;
+  };
+
   const onKeyDown = (e: React.KeyboardEvent) => {
+    // Card links are interactive content, not carousel controls; moving the
+    // carousel beneath a focused link would inert that exact DOM node.
+    if ((e.target as HTMLElement).closest("a, button")) return;
     if (e.key === "ArrowLeft") prev();
     if (e.key === "ArrowRight") next();
   };
@@ -324,9 +394,9 @@ export function TeamCarousel({ members = TEAM_MEMBERS }: { members?: TeamMember[
           aria-roledescription="carousel"
           aria-label="Team members carousel"
           onPointerDown={onPointerDown}
-          onPointerMove={onPointerMove}
           onPointerUp={onPointerUp}
           onPointerCancel={onPointerCancel}
+          onClickCapture={onClickCapture}
           // Without this, dragging a card photo starts a native image drag and
           // cancels the pointer stream mid-swipe.
           onDragStart={(e) => e.preventDefault()}
@@ -347,15 +417,13 @@ export function TeamCarousel({ members = TEAM_MEMBERS }: { members?: TeamMember[
             aria-live="polite"
           >
             {Array.from({ length: memberCount * 3 }, (_, slideIdx) => {
-              const position = slideIdx - memberCount;
-              // Circular distance from the first visible member, so a window
-              // that wraps past the end still exposes the real slides while
-              // every cloned slide stays hidden from assistive tech.
+              // Match the exact slides inside the viewport. Wrapped windows
+              // necessarily include clones at one end, while every duplicate
+              // outside the viewport stays hidden from assistive tech.
+              const firstVisibleSlide = index + memberCount;
               const isVisible =
-                slideIdx >= memberCount &&
-                slideIdx < memberCount * 2 &&
-                ((position - logicalIndex + memberCount) % memberCount) <
-                  cardsPerView;
+                slideIdx >= firstVisibleSlide &&
+                slideIdx < firstVisibleSlide + cardsPerView;
               return (
                 <div
                   key={slideIdx}
@@ -363,10 +431,14 @@ export function TeamCarousel({ members = TEAM_MEMBERS }: { members?: TeamMember[
                   aria-roledescription="slide"
                   aria-label={`${(slideIdx % memberCount) + 1} of ${memberCount}`}
                   aria-hidden={!isVisible}
+                  inert={!isVisible}
                   className="flex-shrink-0 px-2.5"
                   style={{ width: `${slidePct}%` }}
                 >
-                  <TeamCard member={members[slideIdx % memberCount]} />
+                  <TeamCard
+                    member={members[slideIdx % memberCount]}
+                    linkTabIndex={isVisible ? undefined : -1}
+                  />
                 </div>
               );
             })}
@@ -426,6 +498,20 @@ export function OwnerFeature() {
             Sea Saba is a family business, and their goal is simple: help guests
             experience the best of Saba above and below the water.
           </p>
+        </div>
+        <div className="mt-5 flex flex-wrap gap-3">
+          <Link
+            href={teamMemberProfilePath("chad-nuttall")}
+            className="rounded-md text-sm font-semibold text-primary underline-offset-4 hover:underline focus-ring"
+          >
+            Chad&apos;s full biography
+          </Link>
+          <Link
+            href={teamMemberProfilePath("katy-nuttall")}
+            className="rounded-md text-sm font-semibold text-primary underline-offset-4 hover:underline focus-ring"
+          >
+            Katy&apos;s full biography
+          </Link>
         </div>
       </div>
     </FeatureImage>

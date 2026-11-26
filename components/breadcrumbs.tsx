@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { ChevronRight } from "lucide-react";
 import { BreadcrumbListJsonLd } from "@/components/structured-data";
 import { DIVE_SITE_BY_SLUG } from "@/data/dive-site-videos";
+import { TEAM_MEMBER_BY_SLUG } from "@/data/team";
 
 export function Breadcrumbs() {
   const pathname = usePathname();
@@ -18,6 +19,9 @@ export function Breadcrumbs() {
     // "50/50") instead of the slug text ("Rays N Anchors", "50 50").
     const label =
       DIVE_SITE_BY_SLUG[segment]?.name ??
+      (TEAM_MEMBER_BY_SLUG[segment]
+        ? TEAM_MEMBER_BY_SLUG[segment].fullName ?? TEAM_MEMBER_BY_SLUG[segment].name
+        : undefined) ??
       segment
         .replace(/-/g, " ")
         .replace(/\b\w/g, (c) => c.toUpperCase());
