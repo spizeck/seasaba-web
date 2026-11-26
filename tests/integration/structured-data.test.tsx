@@ -5,6 +5,7 @@ import { LocalBusinessJsonLd, BUSINESS_ID } from "@/components/structured-data";
 import CoursesPage from "@/app/(en)/(content)/courses/page";
 import PlanYourTripPage from "@/app/(en)/(content)/plan-your-trip/page";
 import DivingPage from "@/app/(en)/(content)/diving/page";
+import HomePage from "@/app/(en)/page";
 
 // Breadcrumbs is a client component reading the current route.
 let mockPathname = "/diving";
@@ -110,6 +111,24 @@ describe("FAQPage", () => {
     expect(section).toBeTruthy();
     // Every rendered FAQ card (h3 question + following answer paragraph)
     // has exactly one JSON-LD Question — no truncation, none omitted.
+    const cards = Array.from(section!.querySelectorAll("h3"));
+    expect(questions).toHaveLength(cards.length);
+    const norm = (s: string) => s.replace(/\s+/g, " ").trim();
+    cards.forEach((h3, i) => {
+      expect(questions[i].name).toBe(norm(h3.textContent ?? ""));
+      const answer = h3.nextElementSibling?.textContent ?? "";
+      expect(questions[i].acceptedAnswer.text).toBe(norm(answer));
+      expect(questions[i].acceptedAnswer.text).not.toMatch(/<[^>]+>/);
+    });
+  });
+
+  it("marks up exactly the visible FAQ cards on the homepage, in full and in order", () => {
+    const { container } = render(<HomePage />);
+    const faq = jsonLdBlocks(container).find((b) => b["@type"] === "FAQPage");
+    expect(faq).toBeTruthy();
+    const questions = (faq?.mainEntity ?? []) as { name: string; acceptedAnswer: { text: string } }[];
+    const section = container.querySelector("#faq");
+    expect(section).toBeTruthy();
     const cards = Array.from(section!.querySelectorAll("h3"));
     expect(questions).toHaveLength(cards.length);
     const norm = (s: string) => s.replace(/\s+/g, " ").trim();
