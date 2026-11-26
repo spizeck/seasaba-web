@@ -15,7 +15,7 @@ export const DIVE_AREAS = [
     sites: ["Third Encounter", "Twilight Zone", "Outer Limits", "Mt. Michel", "Shark Shoals"],
     knownFor: ["Towering volcanic seamounts rising from the deep blue", "Giant barrel sponges, black corals, and vibrant reef life", "Reef sharks, nurse sharks, jacks, turtles, and large groupers", "The famous Third Encounter pinnacle", "Saba's signature advanced diving experience"],
     image: "/images/optimized/divers-above-pinnacle-saba.webp",
-    caption: "The Needle - Vidar Skålevik",
+    caption: "The Needle - Candice Landau",
     imageObjectPosition: "center top",
     imagePosition: "left",
   },
