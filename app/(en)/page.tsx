@@ -501,7 +501,9 @@ export default async function Home() {
                   ? { "@type": "Person", name: image.copyrightHolder }
                   : undefined,
                 dateCreated: image.dateTaken,
-                contentLocation: image.location,
+                contentLocation: image.location
+                  ? { "@type": "Place", name: image.location }
+                  : undefined,
               })),
           }}
         />
