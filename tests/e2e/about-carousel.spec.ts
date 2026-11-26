@@ -358,6 +358,14 @@ test("pointer swipe follows the drag and respects the loop", async ({ page, brow
   await page.mouse.move(box.x + box.width / 2 + drag, y, { steps: 8 });
   await page.mouse.up();
   await expectNames(page, ["Mel", "Otto", "Aaron"]);
+
+  // A fast swipe can leave the carousel before another in-track pointermove;
+  // window-level tracking still ends the drag cleanly instead of stranding it.
+  await page.mouse.move(box.x + box.width / 2, y);
+  await page.mouse.down();
+  await page.mouse.move(box.x + box.width / 2 - drag, Math.min(880, y + 430), { steps: 1 });
+  await page.mouse.up();
+  await expectNames(page, ["Otto", "Aaron", "Lenny"]);
 });
 
 test("team carousel controls keep their desktop overhang", async ({ page }) => {

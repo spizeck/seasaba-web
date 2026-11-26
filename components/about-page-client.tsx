@@ -33,7 +33,7 @@ function TeamCard({
     .join("");
   const profileHref =
     member.slug && member.isPerson !== false
-      ? teamMemberProfilePath(member)
+      ? teamMemberProfilePath(member.slug)
       : undefined;
 
   return (
@@ -131,6 +131,7 @@ export function TeamCarousel({ members = TEAM_MEMBERS }: { members?: TeamMember[
   // Distance travelled by the active pointer. Clicks following a real drag
   // are swallowed so swiping a linked card never navigates accidentally.
   const dragDistance = useRef(0);
+  const removeWindowDragListeners = useRef<(() => void) | null>(null);
 
   const memberCount = members.length;
   const logicalIndex = ((index % memberCount) + memberCount) % memberCount;
@@ -146,6 +147,11 @@ export function TeamCarousel({ members = TEAM_MEMBERS }: { members?: TeamMember[
     indexRef.current = index;
   }, [index]);
 
+  useEffect(
+    () => () => removeWindowDragListeners.current?.(),
+    []
+  );
+
   useEffect(() => {
     const update = () => {
       setCardsPerView(getCardsPerView());
@@ -153,6 +159,7 @@ export function TeamCarousel({ members = TEAM_MEMBERS }: { members?: TeamMember[
       // range; normalize without animating so a resize mid-wrap cannot leave
       // the index pointing at space past the rendered clones. Any active drag
       // is cancelled — its pixel step is stale under the new widths.
+      removeWindowDragListeners.current?.();
       drag.current = null;
       setDragDelta(null);
       setInstant(true);
@@ -249,26 +256,38 @@ export function TeamCarousel({ members = TEAM_MEMBERS }: { members?: TeamMember[
     drag.current = { startX: e.clientX, startDelta, delta: startDelta, stepPx };
     dragDistance.current = 0;
     setDragDelta(startDelta);
+
+    // Window listeners keep fast swipes alive when the pointer leaves the
+    // carousel before another in-track event, without pointer-capture
+    // retargeting ordinary clicks away from card links.
+    removeWindowDragListeners.current?.();
+    const onWindowPointerMove = (event: PointerEvent) => updateDrag(event.clientX);
+    const onWindowPointerUp = () => endDrag(false);
+    const onWindowPointerCancel = () => endDrag(true);
+    window.addEventListener("pointermove", onWindowPointerMove);
+    window.addEventListener("pointerup", onWindowPointerUp);
+    window.addEventListener("pointercancel", onWindowPointerCancel);
+    removeWindowDragListeners.current = () => {
+      window.removeEventListener("pointermove", onWindowPointerMove);
+      window.removeEventListener("pointerup", onWindowPointerUp);
+      window.removeEventListener("pointercancel", onWindowPointerCancel);
+      removeWindowDragListeners.current = null;
+    };
   };
 
-  const onPointerMove = (e: React.PointerEvent) => {
+  const updateDrag = (clientX: number) => {
     const d = drag.current;
     if (!d || d.stepPx === 0) return;
     const i = indexRef.current;
     dragDistance.current = Math.max(
       dragDistance.current,
-      Math.abs(e.clientX - d.startX)
+      Math.abs(clientX - d.startX)
     );
-    // Capture only once movement crosses the click-suppression threshold.
-    // Below it, the eventual click must still reach the card link.
-    if (dragDistance.current > 8 && !e.currentTarget.hasPointerCapture(e.pointerId)) {
-      e.currentTarget.setPointerCapture(e.pointerId);
-    }
     // Clamp the dragged offset so the strip is never pulled past the ends of
     // the rendered clones into empty space.
     d.delta = Math.min(
       Math.max(
-        d.startDelta + (e.clientX - d.startX),
+        d.startDelta + (clientX - d.startX),
         (i - (memberCount * 2 - cardsPerView)) * d.stepPx
       ),
       (i + memberCount) * d.stepPx
@@ -279,6 +298,7 @@ export function TeamCarousel({ members = TEAM_MEMBERS }: { members?: TeamMember[
   const endDrag = (cancelled: boolean) => {
     const d = drag.current;
     if (!d) return;
+    removeWindowDragListeners.current?.();
     drag.current = null;
     setDragDelta(null);
     if (cancelled || d.stepPx === 0) {
@@ -374,7 +394,6 @@ export function TeamCarousel({ members = TEAM_MEMBERS }: { members?: TeamMember[
           aria-roledescription="carousel"
           aria-label="Team members carousel"
           onPointerDown={onPointerDown}
-          onPointerMove={onPointerMove}
           onPointerUp={onPointerUp}
           onPointerCancel={onPointerCancel}
           onClickCapture={onClickCapture}

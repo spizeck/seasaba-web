@@ -12,7 +12,7 @@ import {
   teamMemberDisplayName,
   teamMemberEntityId,
   teamMemberProfileUrl,
-  type TeamMember,
+  type ProfiledTeamMember,
 } from "@/data/team";
 
 /** Stable entity identifier — lets other schema nodes reference the business. */
@@ -48,7 +48,7 @@ export function jsxToText(node: ReactNode): string {
 }
 
 /** schema.org Person derived from the canonical staff record. */
-export function personJsonLd(member: TeamMember): Record<string, unknown> {
+export function personJsonLd(member: ProfiledTeamMember): Record<string, unknown> {
   return {
     "@type": "Person",
     "@id": teamMemberEntityId(member),

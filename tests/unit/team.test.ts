@@ -45,11 +45,14 @@ describe("canonical team roster", () => {
     expect(crewProfiles.every((member) => Boolean(member.slug))).toBe(true);
     expect(PROFILE_MEMBERS.map((member) => member.name)).not.toContain("Gunner");
     expect(TEAM_MEMBER_BY_SLUG.gunner).toBeUndefined();
+    expect(TEAM_MEMBER_BY_SLUG.constructor).toBeUndefined();
+    expect(TEAM_MEMBER_BY_SLUG.toString).toBeUndefined();
   });
 
   it("uses stable profile-based Person entity identifiers", () => {
     const jake = TEAM_MEMBER_BY_SLUG["jake-mulford"];
-    expect(teamMemberEntityId(jake)).toBe(
+    expect(jake).toBeDefined();
+    expect(teamMemberEntityId(jake!)).toBe(
       "https://www.seasaba.com/about/jake-mulford#person"
     );
   });

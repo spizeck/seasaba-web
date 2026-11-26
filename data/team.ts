@@ -256,27 +256,34 @@ export const TEAM_MEMBERS: TeamMember[] = STAFF_MEMBERS.filter(
   (member) => !member.isOwner
 );
 
+export type ProfiledTeamMember = TeamMember & { slug: string };
+
 /** Identifiable people with a stable profile slug. */
-export const PROFILE_MEMBERS: TeamMember[] = STAFF_MEMBERS.filter(
-  (member) => member.isPerson !== false && Boolean(member.slug)
+export const PROFILE_MEMBERS: ProfiledTeamMember[] = STAFF_MEMBERS.filter(
+  (member): member is ProfiledTeamMember =>
+    member.isPerson !== false && typeof member.slug === "string" && member.slug.length > 0
 );
 
-export const TEAM_MEMBER_BY_SLUG: Record<string, TeamMember> =
-  Object.fromEntries(
-    PROFILE_MEMBERS.map((member) => [member.slug as string, member])
-  );
+// Null-prototype lookup: unknown slugs such as "constructor" can never
+// resolve through Object.prototype and every miss is a plain undefined.
+export const TEAM_MEMBER_BY_SLUG: Readonly<
+  Record<string, ProfiledTeamMember | undefined>
+> = Object.assign(
+  Object.create(null),
+  Object.fromEntries(PROFILE_MEMBERS.map((member) => [member.slug, member]))
+);
 
-export function teamMemberProfilePath(member: TeamMember | string): string {
+export function teamMemberProfilePath(member: ProfiledTeamMember | string): string {
   const slug = typeof member === "string" ? member : member.slug;
   return `/about/${slug}`;
 }
 
-export function teamMemberProfileUrl(member: TeamMember): string {
+export function teamMemberProfileUrl(member: ProfiledTeamMember): string {
   return `${SITE_URL}${teamMemberProfilePath(member)}`;
 }
 
 /** Stable schema.org entity identifier reused across pages. */
-export function teamMemberEntityId(member: TeamMember): string {
+export function teamMemberEntityId(member: ProfiledTeamMember): string {
   return `${teamMemberProfileUrl(member)}#person`;
 }
 
