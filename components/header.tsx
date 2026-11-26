@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { usePathname } from "next/navigation";
+import { useSelectedLayoutSegment } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { NAV_ITEMS } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
@@ -11,8 +11,11 @@ import { trackBookingClick } from "@/lib/analytics";
 export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const pathname = usePathname();
-  const isHome = pathname === "/";
+  // The header lives in the shared root layout, where URL data is not a
+  // stable input during static/ISR rendering. The route-tree segment is
+  // structural, so it remains correct in prerendered and regenerated HTML.
+  const selectedSegment = useSelectedLayoutSegment();
+  const isHome = selectedSegment === null;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 48);

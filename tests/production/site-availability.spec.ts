@@ -41,6 +41,28 @@ for (const route of CRITICAL_ROUTES) {
   });
 }
 
+test("production homepage hero extends behind the floating navigation", async ({ page }) => {
+  const response = await page.goto("/");
+  expect(response?.status()).toBe(200);
+  await expect(page.locator("[data-hero]")).toBeVisible();
+
+  const geometry = await page.evaluate(() => {
+    const header = document.querySelector("header")?.getBoundingClientRect();
+    const hero = document.querySelector("[data-hero]")?.getBoundingClientRect();
+    return {
+      headerHeight: header?.height ?? null,
+      heroTop: hero?.top ?? null,
+    };
+  });
+
+  // The homepage header band is intentionally zero-height: only then can the
+  // hero photograph reach the viewport top behind the floating pill. Interior
+  // pages keep the 72px in-flow header measured elsewhere.
+  expect(geometry.headerHeight).toBe(0);
+  expect(geometry.heroTop).not.toBeNull();
+  expect(Math.abs(geometry.heroTop!)).toBeLessThan(1);
+});
+
 test("critical internal navigation paths work on the deployed site", async ({ page }) => {
   // Homepage -> diving information.
   await hydratedGoto(page, "/");

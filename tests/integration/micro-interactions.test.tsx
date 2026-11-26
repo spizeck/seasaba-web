@@ -20,7 +20,14 @@ import { DONATION_RECIPIENTS } from "@/data/donations";
 
 const mocks = vi.hoisted(() => ({ pathname: { current: "/" } }));
 vi.mock("next/navigation", () => ({
-  usePathname: () => mocks.pathname.current,
+  // Regression coverage for the ISR homepage failure: a regenerated shared
+  // shell can carry a pathname that does not belong to the homepage. The
+  // header must therefore derive the hero overlay from the route-tree segment,
+  // not this stale URL value.
+  usePathname: () =>
+    mocks.pathname.current === "/" ? "/stale-shared-shell" : mocks.pathname.current,
+  useSelectedLayoutSegment: () =>
+    mocks.pathname.current === "/" ? null : mocks.pathname.current.split("/")[1],
 }));
 
 const globalsCss = readFileSync("app/globals.css", "utf8");
