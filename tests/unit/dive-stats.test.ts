@@ -98,6 +98,19 @@ describe("water temperature averaging", () => {
     expect(stats.tempReadingCount).toBe(2);
     expect(stats.diveCount).toBe(2);
   });
+
+  it("falls back to the dive's own reading for ungrouped input", () => {
+    // computeWeeklyDiveStats is typed for PublicDive[]; callers passing
+    // normalized-but-ungrouped dives (no sourceTemperatures) must still
+    // produce a temperature rather than a silent null.
+    const stats = computeWeeklyDiveStats(
+      [publicDive({ date: "2026-11-24", waterTemperature: 28, sourceTemperatures: undefined })],
+      SPECIES,
+      NOW
+    );
+    expect(stats.avgTempCelsius).toBeCloseTo(28);
+    expect(stats.tempReadingCount).toBe(1);
+  });
 });
 
 describe("distinct dive-site counting", () => {

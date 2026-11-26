@@ -81,10 +81,15 @@ export function computeWeeklyDiveStats(
 
   // Temperature: average each physical dive's valid source readings first
   // (duplicate records of the same dive must not double-weight it), then
-  // average across dives.
+  // average across dives. Grouped dives carry `sourceTemperatures`; a lone
+  // normalized dive falls back to its own reading so the function is correct
+  // for both inputs.
   const perDiveMeans: number[] = [];
   for (const dive of inWindow) {
-    const valid = (dive.sourceTemperatures ?? []).filter(isValidTemp);
+    const readings =
+      dive.sourceTemperatures ??
+      (dive.waterTemperature !== undefined ? [dive.waterTemperature] : []);
+    const valid = readings.filter(isValidTemp);
     if (valid.length > 0) {
       perDiveMeans.push(valid.reduce((a, b) => a + b, 0) / valid.length);
     }
@@ -136,6 +141,16 @@ export async function loadWeeklyDiveStats(timeoutMs = 15_000): Promise<WeeklyDiv
   });
   try {
     const data = await Promise.race([fetchDiveLogData({ serverOnly: true }), timeout]);
+    // An empty dives collection is never genuine production data (the log
+    // holds years of history) — it's the same backend-anomaly signature the
+    // dive-log page treats as a failure. Throwing here lets production
+    // serving preserve the last-good stats-bearing page instead of caching
+    // a silently degraded one. This is distinct from a non-empty collection
+    // with no dives in the window, which honestly means no recent diving
+    // and simply hides the section.
+    if (data.dives.length === 0) {
+      throw new Error("Dive stats fetch returned an empty dives collection");
+    }
     const grouped = buildPublicDives(data);
     return computeWeeklyDiveStats(grouped, data.species, Date.now());
   } finally {
