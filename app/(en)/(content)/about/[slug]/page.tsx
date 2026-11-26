@@ -103,7 +103,9 @@ export default async function TeamMemberPage({
   if (!member) notFound();
 
   const name = teamMemberDisplayName(member);
-  const biography = teamMemberBiography(member);
+  const biography = teamMemberBiography(member).filter(
+    (paragraph) => paragraph !== member.bio
+  );
   const favoriteSites = (member.favoriteDiveSites ?? [])
     .map((siteName) => DIVE_SITES.find((site) => site.name === siteName))
     .filter((site) => site !== undefined);
@@ -185,16 +187,18 @@ export default async function TeamMemberPage({
           </div>
         </section>
 
-        <section className="mt-12 max-w-3xl">
-          <h2 className="text-xl font-semibold text-foreground">About {name}</h2>
-          <div className="mt-4 space-y-4">
-            {biography.map((paragraph) => (
-              <p key={paragraph} className="text-base leading-relaxed text-muted-foreground">
-                {paragraph}
-              </p>
-            ))}
-          </div>
-        </section>
+        {biography.length > 0 && (
+          <section className="mt-12 max-w-3xl">
+            <h2 className="text-xl font-semibold text-foreground">About {name}</h2>
+            <div className="mt-4 space-y-4">
+              {biography.map((paragraph) => (
+                <p key={paragraph} className="text-base leading-relaxed text-muted-foreground">
+                  {paragraph}
+                </p>
+              ))}
+            </div>
+          </section>
+        )}
 
         {(member.qualifications?.length ||
           member.experience?.length ||

@@ -99,6 +99,27 @@ describe("team profile pages", () => {
     expect(screen.getByText("A little Portuñol")).toBeInTheDocument();
   });
 
+  it("does not repeat the short biography when no extended biography exists", async () => {
+    const ui = await TeamMemberPage({
+      params: Promise.resolve({ slug: "mel" }),
+    });
+    render(ui);
+
+    expect(screen.getAllByText(/A Saba resident for over 20 years/)).toHaveLength(1);
+    expect(screen.queryByRole("heading", { name: "About Mel" })).not.toBeInTheDocument();
+    expect(screen.getByText("Saba resident for over 20 years")).toBeInTheDocument();
+  });
+
+  it("does not repeat owner introduction text in the extended biography", async () => {
+    const ui = await TeamMemberPage({
+      params: Promise.resolve({ slug: "chad-nuttall" }),
+    });
+    render(ui);
+
+    expect(screen.getAllByText(/moved to Saba with Katy/)).toHaveLength(1);
+    expect(screen.getByText(/oversee daily operations/)).toBeInTheDocument();
+  });
+
   it("uses verified full names and portrait photography for established crew", async () => {
     const ui = await TeamMemberPage({
       params: Promise.resolve({ slug: "otto-de-vries" }),
