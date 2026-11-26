@@ -361,10 +361,11 @@ Do not create overly deep navigation trees.
   - Dive site pages
   - Informational / trip planning pages
   - All content uses ordinary React/TSX components (MDX support was removed)
+- Static TypeScript data:
+  - Staff profiles and roster (infrequently edited, owner-maintained in the repository)
 - Firestore:
   - Testimonials
   - Reviews
-  - Staff profiles
   - Dynamic operational data
 
 Do not overcomplicate content that belongs in static TSX pages.
