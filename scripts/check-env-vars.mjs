@@ -37,6 +37,9 @@ const TOOLING_ALLOWLIST = new Set([
   "NODE_ENV",
   // Supplied by the Next.js runtime / Vercel platform, not app config.
   "NEXT_RUNTIME",
+  // Set by `next build`/`next start` — distinguishes build prerendering from
+  // runtime ISR regeneration in app/(en)/(content)/dive-log/page.tsx.
+  "NEXT_PHASE",
   "VERCEL_ENV",
   "NEXT_PUBLIC_VERCEL_ENV",
 ]);

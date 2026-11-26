@@ -550,7 +550,7 @@ export const PARTNERS: Partner[] = [
   {
     name: "Saba Conservation Foundation",
     category: "conservation",
-    website: "https://www.sabaconservation.org/",
+    website: "https://sabapark.org/",
   },
   {
     name: "Sea & Learn Foundation",
