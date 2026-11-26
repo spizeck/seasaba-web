@@ -130,6 +130,8 @@ describe("FAQPage", () => {
     const section = container.querySelector("#faq");
     expect(section).toBeTruthy();
     const cards = Array.from(section!.querySelectorAll("h3"));
+    // Guard the length comparison — with zero cards the test would pass vacuously.
+    expect(cards.length).toBeGreaterThan(0);
     expect(questions).toHaveLength(cards.length);
     const norm = (s: string) => s.replace(/\s+/g, " ").trim();
     cards.forEach((h3, i) => {
