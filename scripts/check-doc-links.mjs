@@ -75,7 +75,7 @@ for (const file of trackedMarkdown) {
   const prose = stripInlineCode(stripFenced(readFileSync(path.join(ROOT, file), "utf8")));
   for (const match of prose.matchAll(LINK_RE)) {
     const raw = match[1];
-    if (isExternal(raw) || raw.startsWith("#")) continue;
+    if (isExternal(raw) || raw.startsWith("#") || raw.startsWith("/")) continue;
     const target = decodePath(raw.split("#")[0].split("?")[0]);
     if (!target) continue;
     if (file === "README.md") readmeLinkTargets.add(target);
