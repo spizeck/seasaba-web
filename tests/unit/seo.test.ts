@@ -5,6 +5,7 @@ import { createMetadata } from "@/lib/metadata";
 import { legacyRedirects } from "@/data/redirects";
 import { DIVE_AREAS } from "@/data/dive-areas";
 import { DIVE_SITES, diveSitePath } from "@/data/dive-site-videos";
+import { PROFILE_MEMBERS, teamMemberProfilePath } from "@/data/team";
 import sitemap from "@/app/sitemap";
 import robots from "@/app/robots";
 
@@ -62,11 +63,14 @@ it("keeps the dive-area lists and the dive-site catalogue in lockstep", () => {
 });
 
 describe("sitemap", () => {
-  it("lists exactly the canonical public routes plus every catalogue dive-site page", () => {
+  it("lists exactly the canonical public routes plus every catalogue dive-site and staff-profile page", () => {
     const urls = sitemap().map((entry) => entry.url);
     const expected = [
       ...CANONICAL_ROUTES.map((p) => `https://www.seasaba.com${p}`),
       ...DIVE_SITES.map((s) => `https://www.seasaba.com${diveSitePath(s.name)}`),
+      ...PROFILE_MEMBERS.map(
+        (member) => `https://www.seasaba.com${teamMemberProfilePath(member)}`
+      ),
     ];
     expect([...urls].sort()).toEqual(expected.sort());
     expect(new Set(urls).size).toBe(urls.length);

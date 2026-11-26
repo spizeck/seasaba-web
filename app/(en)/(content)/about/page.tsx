@@ -7,10 +7,10 @@ import { Anchor, Users, Shield, Ship, Bus, MapPin } from "lucide-react";
 import { TeamCarousel, OwnerFeature } from "@/components/about-page-client";
 import { TrackedInternalButton } from "@/components/tracked-internal-button";
 import { TrackedOutboundLink } from "@/components/tracked-outbound-link";
-import { JsonLd, BUSINESS_ID } from "@/components/structured-data";
+import { JsonLd, personJsonLd } from "@/components/structured-data";
 import { divingAnchors } from "@/lib/anchors";
 import { OPERATIONS } from "@/data/operations";
-import { TEAM_MEMBERS } from "@/data/team";
+import { PROFILE_MEMBERS } from "@/data/team";
 
 export const metadata = createMetadata({
   title: "About Us",
@@ -97,10 +97,11 @@ export default function AboutPage() {
             <h3 className="text-lg font-semibold text-foreground">Experienced Local Professionals</h3>
           </div>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-            Our guides are not seasonal staff passing through. They are experienced 
-            professionals who have spent years, in some cases decades, diving 
-            Saba&apos;s waters. They understand the conditions, the sites, and how 
-            to match divers to the right experience.
+            Our team combines long-serving local professionals who know Saba&apos;s
+            conditions, sites, and rhythms with instructors who bring professional
+            teaching and diving experience from elsewhere in the world. Together,
+            they match divers to the right experience with local knowledge and
+            a broader international perspective.
           </p>
         </div>
 
@@ -130,25 +131,17 @@ export default function AboutPage() {
       </section>
 
       {/* Meet the Crew */}
-      <section className="mt-12">
+      <section id="meet-the-crew" className="mt-12 scroll-mt-24">
         <JsonLd
           data={{
             "@context": "https://schema.org",
             "@type": "ItemList",
-            name: "Sea Saba Crew",
-            itemListElement: TEAM_MEMBERS
-              // Person schema covers individually-named people only —
-              // isPerson:false marks joint entries (Jeanine & Marc) and
-              // non-humans (Gunner the dive dog).
-              .filter((m) => m.isPerson !== false)
-              .map((m) => ({
-                "@type": "Person",
-                name: m.name,
-                jobTitle: m.title,
-                description: m.bio,
-                worksFor: { "@id": BUSINESS_ID },
-                ...(m.languages && { knowsLanguage: m.languages }),
-              })),
+            name: "Sea Saba Team",
+            itemListElement: PROFILE_MEMBERS.map((member, index) => ({
+              "@type": "ListItem",
+              position: index + 1,
+              item: personJsonLd(member),
+            })),
           }}
         />
         <h2 className="text-xl font-semibold text-foreground">Meet the Crew</h2>

@@ -33,7 +33,7 @@ const member = (name: string) => ({
   bio: `${name} keeps the boats running.`,
 });
 
-const MEMBER_COUNT = 10;
+const MEMBER_COUNT = 11;
 const CPV = 3; // default jsdom width (1024) renders 3 cards per view
 const offset = (index: number, count = MEMBER_COUNT, cpv = CPV) =>
   `translateX(${-((index + count) * (100 / cpv))}%)`;
@@ -72,6 +72,31 @@ describe("TeamCarousel", () => {
     expect(transform()).toBe(offset(0));
   });
 
+  it("links human cards to profiles while cloned and offscreen links stay unfocusable", () => {
+    render(<TeamCarousel />);
+    const links = Array.from(track().querySelectorAll("a")) as HTMLAnchorElement[];
+    // Every human member appears three times; Gunner intentionally has no profile link.
+    expect(links).toHaveLength((MEMBER_COUNT - 1) * 3);
+    expect(links[0]).toHaveTextContent("View full biography");
+    expect(links.some((link) => link.getAttribute("href") === "/about/mel")).toBe(true);
+    expect(links.some((link) => link.getAttribute("href") === "/about/jake-mulford")).toBe(true);
+    expect(links.some((link) => link.getAttribute("href") === "/about/lilian-caro")).toBe(true);
+    expect(links.some((link) => link.getAttribute("href")?.includes("gunner"))).toBe(false);
+
+    const slides = Array.from(track().children) as HTMLElement[];
+    const visibleLinks = slides
+      .filter((slide) => slide.getAttribute("aria-hidden") === "false")
+      .flatMap((slide) => Array.from(slide.querySelectorAll("a")) as HTMLAnchorElement[]);
+    const hiddenLinks = slides
+      .filter((slide) => slide.getAttribute("aria-hidden") === "true")
+      .flatMap((slide) => Array.from(slide.querySelectorAll("a")) as HTMLAnchorElement[]);
+    expect(visibleLinks).toHaveLength(3);
+    expect(visibleLinks.every((link) => link.tabIndex === 0)).toBe(true);
+    expect(hiddenLinks.length).toBeGreaterThan(0);
+    expect(hiddenLinks.every((link) => link.tabIndex === -1)).toBe(true);
+    expect(slides.filter((slide) => slide.getAttribute("aria-hidden") === "true").every((slide) => slide.hasAttribute("inert"))).toBe(true);
+  });
+
   it("advances exactly one card per Next click and one per Previous click", () => {
     render(<TeamCarousel />);
     fireEvent.click(nextButton());
@@ -85,11 +110,11 @@ describe("TeamCarousel", () => {
   it("wraps forward onto identical cloned slides then snaps to the real strip", async () => {
     render(<TeamCarousel />);
     fireEvent.click(screen.getByRole("button", { name: "Go to Gunner" }));
-    expect(transform()).toBe(offset(9));
+    expect(transform()).toBe(offset(10));
 
     // One more card forward wraps to member 0, displayed via the cloned copy.
     fireEvent.click(nextButton());
-    expect(transform()).toBe(offset(10));
+    expect(transform()).toBe(offset(11));
     fireEvent.transitionEnd(track(), { propertyName: "transform" });
     await waitFor(() => expect(transform()).toBe(offset(0)));
   });
@@ -99,7 +124,7 @@ describe("TeamCarousel", () => {
     fireEvent.click(prevButton());
     expect(transform()).toBe(offset(-1)); // clone of the last position
     fireEvent.transitionEnd(track(), { propertyName: "transform" });
-    await waitFor(() => expect(transform()).toBe(offset(9)));
+    await waitFor(() => expect(transform()).toBe(offset(10)));
   });
 
   it("absorbs rapid consecutive clicks through the wrap without dead ends", async () => {
@@ -108,7 +133,7 @@ describe("TeamCarousel", () => {
     // Four presses fire while the first wrap transition is still in flight;
     // the cloned runway keeps every intermediate position on real slides.
     for (let i = 0; i < 4; i++) fireEvent.click(nextButton());
-    expect(transform()).toBe(offset(13)); // logical position 3
+    expect(transform()).toBe(offset(14)); // logical position 3
     fireEvent.transitionEnd(track(), { propertyName: "transform" });
     await waitFor(() => expect(transform()).toBe(offset(3)));
   });
@@ -118,9 +143,9 @@ describe("TeamCarousel", () => {
     // Forward over the boundary, then back before the transition settles.
     fireEvent.click(screen.getByRole("button", { name: "Go to Gunner" }));
     fireEvent.click(nextButton());
-    expect(transform()).toBe(offset(10));
+    expect(transform()).toBe(offset(11));
     fireEvent.click(prevButton());
-    expect(transform()).toBe(offset(9)); // retargets mid-flight, no snap needed
+    expect(transform()).toBe(offset(10)); // retargets mid-flight, no snap needed
     // Backward over the boundary, then forward again.
     fireEvent.click(screen.getByRole("button", { name: "Go to Mel" }));
     fireEvent.click(prevButton());
@@ -136,7 +161,7 @@ describe("TeamCarousel", () => {
     // view: the position must map to index 0, not collide with a real slide.
     fireEvent.click(screen.getByRole("button", { name: "Go to Gunner" }));
     fireEvent.click(nextButton());
-    expect(transform()).toBe(offset(10));
+    expect(transform()).toBe(offset(11));
     await setViewportWidth(700);
     await waitFor(() =>
       expect(transform()).toBe(offset(0, MEMBER_COUNT, 2))
@@ -147,7 +172,7 @@ describe("TeamCarousel", () => {
     fireEvent.click(prevButton());
     expect(transform()).toBe(offset(-1));
     await setViewportWidth(1024);
-    await waitFor(() => expect(transform()).toBe(offset(9)));
+    await waitFor(() => expect(transform()).toBe(offset(10)));
   });
 
   it("renders a centered static row with no controls for small datasets", () => {

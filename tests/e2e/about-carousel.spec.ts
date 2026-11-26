@@ -19,7 +19,6 @@ const MOBILE_WIDTHS = [320, 375, 430] as const;
 const CAROUSEL = '[aria-label="Team members carousel"]';
 const MEMBERS = [
   "Mel",
-  "Jeanine & Marc",
   "Otto",
   "Aaron",
   "Lenny",
@@ -27,6 +26,8 @@ const MEMBERS = [
   "Lionel",
   "Anthony",
   "Julijana",
+  "Jake Mulford",
+  "Lilian Caro",
   "Gunner",
 ];
 
@@ -151,19 +152,41 @@ test("team carousel controls navigate and respond to the keyboard", async ({ pag
 
   const track = page.locator(`${CAROUSEL} > .flex`);
   const transform = () => track.evaluate((el) => el.style.transform);
-  // Mobile shows one card; index 0 rests at -(10 * 100%) on the tripled strip.
-  expect(await transform()).toContain("translateX(-1000%)");
-
-  await next(page).click();
+  // Mobile shows one card; index 0 rests at -(11 * 100%) on the tripled strip.
   expect(await transform()).toContain("translateX(-1100%)");
 
+  await next(page).click();
+  expect(await transform()).toContain("translateX(-1200%)");
+
   await prev(page).click();
-  expect(await transform()).toContain("translateX(-1000%)");
+  expect(await transform()).toContain("translateX(-1100%)");
 
   // Keyboard: focus the region, ArrowRight advances exactly one card.
   await page.locator(CAROUSEL).focus();
   await page.keyboard.press("ArrowRight");
-  expect(await transform()).toContain("translateX(-1100%)");
+  expect(await transform()).toContain("translateX(-1200%)");
+});
+
+test("visible crew cards link to profiles while duplicate cards stay out of the tab order", async ({ page }) => {
+  await hydratedGoto(page, "/about");
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await resetCarousel(page);
+
+  const focusability = await page.evaluate((sel) => {
+    const links = Array.from(document.querySelectorAll(`${sel} a`)) as HTMLAnchorElement[];
+    return {
+      total: links.length,
+      focusable: links.filter((link) => link.tabIndex === 0).length,
+      unfocusable: links.filter((link) => link.tabIndex === -1).length,
+      hiddenInert: Array.from(document.querySelectorAll(`${sel} [role="group"][aria-roledescription="slide"][aria-hidden="true"]`)).every((slide) => (slide as HTMLElement & { inert?: boolean }).inert === true),
+    };
+  }, CAROUSEL);
+  expect(focusability).toEqual({ total: 30, focusable: 3, unfocusable: 27, hiddenInert: true });
+
+  const melSlide = page.locator(`${CAROUSEL} [aria-hidden="false"]`, { hasText: "Mel" }).first();
+  await melSlide.getByRole("link", { name: "View full biography" }).click();
+  await expect(page).toHaveURL(/\/about\/mel$/);
+  await expect(page.getByRole("heading", { name: "Mel", exact: true })).toBeVisible();
 });
 
 test("desktop shows three cards and advances exactly one card per click", async ({ page }) => {
@@ -171,13 +194,13 @@ test("desktop shows three cards and advances exactly one card per click", async 
   await page.setViewportSize({ width: 1440, height: 900 });
   await resetCarousel(page);
 
-  await expectNames(page, ["Mel", "Jeanine & Marc", "Otto"]);
-  await next(page).click();
-  await expectNames(page, ["Jeanine & Marc", "Otto", "Aaron"]);
+  await expectNames(page, ["Mel", "Otto", "Aaron"]);
   await next(page).click();
   await expectNames(page, ["Otto", "Aaron", "Lenny"]);
+  await next(page).click();
+  await expectNames(page, ["Aaron", "Lenny", "Robins"]);
   await prev(page).click();
-  await expectNames(page, ["Jeanine & Marc", "Otto", "Aaron"]);
+  await expectNames(page, ["Otto", "Aaron", "Lenny"]);
 });
 
 test("desktop wraps seamlessly in both directions", async ({ page }) => {
@@ -187,17 +210,17 @@ test("desktop wraps seamlessly in both directions", async ({ page }) => {
 
   // Walk to the last position one card at a time: the window slides by one
   // member per click and the tail re-enters from the start of the list.
-  await page.getByRole("button", { name: "Go to Julijana" }).click();
-  await expectNames(page, ["Julijana", "Gunner", "Mel"]);
+  await page.getByRole("button", { name: "Go to Lilian Caro" }).click();
+  await expectNames(page, ["Lilian Caro", "Gunner", "Mel"]);
   await next(page).click();
-  await expectNames(page, ["Gunner", "Mel", "Jeanine & Marc"]); // last position
+  await expectNames(page, ["Gunner", "Mel", "Otto"]); // last position
   // Forward wrap: after the transition the first position is back, still full.
   await next(page).click();
   await expectCoverageThroughTransition(page, 3);
-  await expectNames(page, ["Mel", "Jeanine & Marc", "Otto"]);
+  await expectNames(page, ["Mel", "Otto", "Aaron"]);
   // Backward wrap: first → last position, same seamlessness.
   await prev(page).click();
-  await expectNames(page, ["Gunner", "Mel", "Jeanine & Marc"]);
+  await expectNames(page, ["Gunner", "Mel", "Otto"]);
 });
 
 test("repeated cycling never reaches a dead end or an empty slot", async ({ page }) => {
@@ -206,7 +229,7 @@ test("repeated cycling never reaches a dead end or an empty slot", async ({ page
   await page.setViewportSize({ width: 1440, height: 900 });
   await resetCarousel(page);
 
-  // Two full loops of ten positions — every landing must show 3 cards in
+  // Two full loops of eleven positions — every landing must show 3 cards in
   // source order, including across the wrap boundary.
   for (let i = 1; i <= 20; i++) {
     await next(page).click();
@@ -229,8 +252,8 @@ test("rapid clicks and direction reversals stay on real cards", async ({ page })
   await expectNames(page, windowAt(4, 3));
 
   // Same across the wrap boundary: from the last position, three presses.
-  await page.getByRole("button", { name: "Go to Julijana" }).click();
-  await expectNames(page, windowAt(8, 3));
+  await page.getByRole("button", { name: "Go to Lilian Caro" }).click();
+  await expectNames(page, windowAt(9, 3));
   for (let i = 0; i < 3; i++) await next(page).click();
   await expectNames(page, windowAt(1, 3));
 
@@ -248,9 +271,9 @@ test("tablet shows two cards and mobile one, both wrapping one card at a time", 
   await resetCarousel(page);
 
   // Tablet: 2 cards per view.
-  await expectNames(page, ["Mel", "Jeanine & Marc"]);
+  await expectNames(page, ["Mel", "Otto"]);
   await next(page).click();
-  await expectNames(page, ["Jeanine & Marc", "Otto"]);
+  await expectNames(page, ["Otto", "Aaron"]);
   await prev(page).click();
   await prev(page).click();
   await expectNames(page, ["Gunner", "Mel"]); // backward wrap
@@ -264,7 +287,7 @@ test("tablet shows two cards and mobile one, both wrapping one card at a time", 
   await page.getByRole("button", { name: "Go to Mel" }).click();
   await expectNames(page, ["Mel"]);
   await next(page).click();
-  await expectNames(page, ["Jeanine & Marc"]);
+  await expectNames(page, ["Otto"]);
   await prev(page).click();
   await expectNames(page, ["Mel"]);
   await prev(page).click();
@@ -297,21 +320,21 @@ test("pointer swipe follows the drag and respects the loop", async ({ page, brow
   await page.mouse.down();
   await page.mouse.move(box.x + box.width / 2 - drag, y, { steps: 8 });
   await page.mouse.up();
-  await expectNames(page, ["Jeanine & Marc", "Otto", "Aaron"]);
+  await expectNames(page, ["Otto", "Aaron", "Lenny"]);
 
   // A short drag under half a card snaps back instead of moving.
   await page.mouse.move(box.x + box.width / 2, y);
   await page.mouse.down();
   await page.mouse.move(box.x + box.width / 2 - step * 0.2, y, { steps: 8 });
   await page.mouse.up();
-  await expectNames(page, ["Jeanine & Marc", "Otto", "Aaron"]);
+  await expectNames(page, ["Otto", "Aaron", "Lenny"]);
 
   // Drag right → one card back.
   await page.mouse.move(box.x + box.width / 2, y);
   await page.mouse.down();
   await page.mouse.move(box.x + box.width / 2 + drag, y, { steps: 8 });
   await page.mouse.up();
-  await expectNames(page, ["Mel", "Jeanine & Marc", "Otto"]);
+  await expectNames(page, ["Mel", "Otto", "Aaron"]);
 });
 
 test("team carousel controls keep their desktop overhang", async ({ page }) => {

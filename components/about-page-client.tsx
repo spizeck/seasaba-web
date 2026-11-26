@@ -2,10 +2,15 @@
 
 import { useState, useRef, useCallback, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
 import { FeatureImage } from "@/components/feature-image";
 import { OPERATIONS } from "@/data/operations";
-import { TEAM_MEMBERS, type TeamMember } from "@/data/team";
+import {
+  TEAM_MEMBERS,
+  teamMemberProfilePath,
+  type TeamMember,
+} from "@/data/team";
 
 function getCardsPerView(): number {
   if (typeof window === "undefined") return 3;
@@ -14,15 +19,25 @@ function getCardsPerView(): number {
   return 1;
 }
 
-function TeamCard({ member }: { member: TeamMember }) {
+function TeamCard({
+  member,
+  linkTabIndex,
+}: {
+  member: TeamMember;
+  linkTabIndex?: number;
+}) {
   const initials = member.name
     .split(" ")
     .map((n) => n[0])
     .slice(0, 2)
     .join("");
+  const profileHref =
+    member.slug && member.isPerson !== false
+      ? teamMemberProfilePath(member)
+      : undefined;
 
   return (
-    <div className="rounded-2xl border border-border/50 bg-card overflow-hidden flex flex-col h-full">
+    <div className="relative rounded-2xl border border-border/50 bg-card overflow-hidden flex flex-col h-full transition-shadow hover:shadow-md">
       {/* Photo */}
       <div className="relative aspect-[4/5] w-full flex-shrink-0 overflow-hidden">
         {member.image ? (
@@ -81,6 +96,16 @@ function TeamCard({ member }: { member: TeamMember }) {
             </p>
           </div>
         )}
+
+        {profileHref && (
+          <Link
+            href={profileHref}
+            tabIndex={linkTabIndex}
+            className="mt-4 inline-flex w-fit items-center rounded-md text-sm font-semibold text-primary underline-offset-4 hover:underline focus-ring after:absolute after:inset-0 after:content-['']"
+          >
+            View full biography
+          </Link>
+        )}
       </div>
     </div>
   );
@@ -103,6 +128,9 @@ export function TeamCarousel({ members = TEAM_MEMBERS }: { members?: TeamMember[
   // Synchronous mirror of index for event handlers, which may fire before a
   // queued re-render commits (e.g. transitionend during rapid clicks).
   const indexRef = useRef(index);
+  // Distance travelled by the active pointer. Clicks following a real drag
+  // are swallowed so swiping a linked card never navigates accidentally.
+  const dragDistance = useRef(0);
 
   const memberCount = members.length;
   const logicalIndex = ((index % memberCount) + memberCount) % memberCount;
@@ -219,14 +247,23 @@ export function TeamCarousel({ members = TEAM_MEMBERS }: { members?: TeamMember[
       startDelta = 0;
     }
     drag.current = { startX: e.clientX, startDelta, delta: startDelta, stepPx };
+    dragDistance.current = 0;
     setDragDelta(startDelta);
-    e.currentTarget.setPointerCapture(e.pointerId);
   };
 
   const onPointerMove = (e: React.PointerEvent) => {
     const d = drag.current;
     if (!d || d.stepPx === 0) return;
     const i = indexRef.current;
+    dragDistance.current = Math.max(
+      dragDistance.current,
+      Math.abs(e.clientX - d.startX)
+    );
+    // Capture only once the gesture is clearly a drag. Capturing on
+    // pointerdown retargets the eventual click away from card links.
+    if (dragDistance.current > 4 && !e.currentTarget.hasPointerCapture(e.pointerId)) {
+      e.currentTarget.setPointerCapture(e.pointerId);
+    }
     // Clamp the dragged offset so the strip is never pulled past the ends of
     // the rendered clones into empty space.
     d.delta = Math.min(
@@ -252,6 +289,13 @@ export function TeamCarousel({ members = TEAM_MEMBERS }: { members?: TeamMember[
 
   const onPointerUp = () => endDrag(false);
   const onPointerCancel = () => endDrag(true);
+
+  const onClickCapture = (e: React.MouseEvent) => {
+    if (dragDistance.current <= 8) return;
+    e.preventDefault();
+    e.stopPropagation();
+    dragDistance.current = 0;
+  };
 
   const onKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "ArrowLeft") prev();
@@ -327,6 +371,7 @@ export function TeamCarousel({ members = TEAM_MEMBERS }: { members?: TeamMember[
           onPointerMove={onPointerMove}
           onPointerUp={onPointerUp}
           onPointerCancel={onPointerCancel}
+          onClickCapture={onClickCapture}
           // Without this, dragging a card photo starts a native image drag and
           // cancels the pointer stream mid-swipe.
           onDragStart={(e) => e.preventDefault()}
@@ -363,10 +408,14 @@ export function TeamCarousel({ members = TEAM_MEMBERS }: { members?: TeamMember[
                   aria-roledescription="slide"
                   aria-label={`${(slideIdx % memberCount) + 1} of ${memberCount}`}
                   aria-hidden={!isVisible}
+                  inert={!isVisible}
                   className="flex-shrink-0 px-2.5"
                   style={{ width: `${slidePct}%` }}
                 >
-                  <TeamCard member={members[slideIdx % memberCount]} />
+                  <TeamCard
+                    member={members[slideIdx % memberCount]}
+                    linkTabIndex={isVisible ? undefined : -1}
+                  />
                 </div>
               );
             })}
@@ -426,6 +475,20 @@ export function OwnerFeature() {
             Sea Saba is a family business, and their goal is simple: help guests
             experience the best of Saba above and below the water.
           </p>
+        </div>
+        <div className="mt-5 flex flex-wrap gap-3">
+          <Link
+            href={teamMemberProfilePath("chad-nuttall")}
+            className="rounded-md text-sm font-semibold text-primary underline-offset-4 hover:underline focus-ring"
+          >
+            Chad&apos;s full biography
+          </Link>
+          <Link
+            href={teamMemberProfilePath("katy-nuttall")}
+            className="rounded-md text-sm font-semibold text-primary underline-offset-4 hover:underline focus-ring"
+          >
+            Katy&apos;s full biography
+          </Link>
         </div>
       </div>
     </FeatureImage>
