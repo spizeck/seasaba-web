@@ -132,9 +132,10 @@ review corpus), and `WebSite` sitelinks searchbox (no site search).
 
 **Crawlability.** All canonical pages are server-rendered; factual content
 (products, courses, sites, policies, yacht guidance) is in the initial HTML.
-Known limitation: `/dive-log` renders its Firestore dive list client-side —
-the page shell and metadata are crawlable but the dive entries are not
-(drive-by design; the Firestore SDK is client-only). `/book` shows the
+`/dive-log` server-renders the public Firestore dive list at ISR revalidate
+(hourly — entries are appended at most daily), so recent dives, sites, and
+sightings are crawlable; if the server fetch fails, the page falls back to
+the original browser-side fetch. `/book` shows the
 Checkfront widget via client-side embed; the page itself is indexable.
 
 **Webmaster tooling.** Sitemap is at `https://www.seasaba.com/sitemap.xml`

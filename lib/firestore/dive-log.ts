@@ -1,4 +1,4 @@
-import { collection, getDocs, Timestamp, type QuerySnapshot, type DocumentData } from "firebase/firestore";
+import { collection, getDocs, getDocsFromServer, Timestamp, type QuerySnapshot, type DocumentData } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
 export type UnitSystem = "metric" | "imperial";
@@ -106,13 +106,19 @@ export function temperatureUnit(unit: UnitSystem): string {
   return unit === "imperial" ? "°F" : "°C";
 }
 
-export async function fetchDiveLogData() {
+/**
+ * `serverOnly` forces live server reads (getDocsFromServer) — the default
+ * getDocs path may resolve cache-only snapshots when a render worker is
+ * offline, which would render and ISR-cache a false "no dives" page.
+ */
+export async function fetchDiveLogData(opts?: { serverOnly?: boolean }) {
+  const get = opts?.serverOnly ? getDocsFromServer : getDocs;
   const names = ["dives", "sites", "species", "boats"] as const;
   const results = await Promise.allSettled([
-    getDocs(collection(db, "dives")),
-    getDocs(collection(db, "sites")),
-    getDocs(collection(db, "species")),
-    getDocs(collection(db, "boats")),
+    get(collection(db, "dives")),
+    get(collection(db, "sites")),
+    get(collection(db, "species")),
+    get(collection(db, "boats")),
   ]);
 
   const failures = results
@@ -201,6 +207,61 @@ export function normalizeDive(
 
 function unique<T>(arr: T[]): T[] {
   return Array.from(new Set(arr));
+}
+
+function parseDiveSlotMinutes(slot: string): number {
+  const match = slot.match(/^(\d{1,2})(?::(\d{2}))?\s*(am|pm)$/i);
+  if (!match) return 0;
+  let hours = parseInt(match[1], 10);
+  const minutes = parseInt(match[2] || "0", 10);
+  const meridian = match[3].toLowerCase();
+  if (meridian === "pm" && hours !== 12) hours += 12;
+  if (meridian === "am" && hours === 12) hours = 0;
+  return hours * 60 + minutes;
+}
+
+/** normalize → group → sort most-recent-first. Shared by the client fetch path and the server-rendered initial payload. */
+export function buildPublicDives(data: {
+  dives: FirestoreDive[];
+  sites: Map<string, FirestoreSite>;
+  species: Map<string, FirestoreSpecies>;
+  boats: Map<string, FirestoreBoat>;
+}): PublicDive[] {
+  const normalized = data.dives.map((d) =>
+    normalizeDive(d, data.sites, data.species, data.boats)
+  );
+  const grouped = groupDivesForDisplay(normalized);
+  grouped.sort((a, b) => {
+    const dateDiff = new Date(b.date).getTime() - new Date(a.date).getTime();
+    if (dateDiff !== 0) return dateDiff;
+    return parseDiveSlotMinutes(b.diveSlot) - parseDiveSlotMinutes(a.diveSlot);
+  });
+  return grouped;
+}
+
+/**
+ * Fetch + build the public dive list with a hard timeout. Used by the
+ * server component for SSR/ISR — Firestore retries internally when the
+ * backend is unreachable, so an unbounded wait could stall prerendering.
+ * `generatedAt` is serialized alongside the payload so the client's date
+ * filters hydrate identically to the SSR markup.
+ */
+export async function loadPublicDives(
+  timeoutMs = 15_000
+): Promise<{ dives: PublicDive[]; generatedAt: number }> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => reject(new Error("Dive log fetch timed out")), timeoutMs);
+  });
+  try {
+    const data = await Promise.race([fetchDiveLogData({ serverOnly: true }), timeout]);
+    return { dives: buildPublicDives(data), generatedAt: Date.now() };
+  } finally {
+    // Clear the losing timer so successful renders don't keep the worker
+    // alive until it fires. (The Firestore reads themselves can't be
+    // cancelled — the SDK has no abort — but they settle on their own.)
+    clearTimeout(timer);
+  }
 }
 
 export function groupDivesForDisplay(dives: PublicDive[]): PublicDive[] {

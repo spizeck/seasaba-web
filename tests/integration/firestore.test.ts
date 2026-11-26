@@ -1,15 +1,16 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { getDocs } from "firebase/firestore";
-import { fetchDiveLogData, normalizeDive } from "@/lib/firestore/dive-log";
+import { getDocs, getDocsFromServer } from "firebase/firestore";
+import { fetchDiveLogData, loadPublicDives, normalizeDive } from "@/lib/firestore/dive-log";
 import { rawDive } from "../fixtures/dives";
 
 vi.mock("firebase/firestore", async (importOriginal) => ({
   ...await importOriginal<typeof import("firebase/firestore")>(),
   collection: (_db: unknown, name: string) => name,
   getDocs: vi.fn(),
+  getDocsFromServer: vi.fn(),
 }));
 const snapshot = (records: Record<string, unknown>) => ({ docs: Object.entries(records).map(([id, data]) => ({ id, data: () => data })) });
-beforeEach(() => { vi.mocked(getDocs).mockReset(); });
+beforeEach(() => { vi.mocked(getDocs).mockReset(); vi.mocked(getDocsFromServer).mockReset(); });
 describe("anonymous Firestore read boundary", () => {
   it("joins the four public collections into usable dive data", async () => {
     vi.mocked(getDocs).mockImplementation(async (ref) => {
@@ -37,5 +38,18 @@ describe("anonymous Firestore read boundary", () => {
     vi.mocked(getDocs).mockRejectedValue(new Error("offline"));
     const error = await fetchDiveLogData().then(() => null, (reason: Error) => reason);
     expect(error?.message).toBe('Failed to load collection "dives": offline; Failed to load collection "sites": offline; Failed to load collection "species": offline; Failed to load collection "boats": offline');
+  });
+  it("server-side reads require live snapshots, never the offline cache", async () => {
+    // getDocs can resolve a cache-only snapshot when the render worker is
+    // offline — which would render and ISR-cache a false "no dives" page.
+    // The server path must force getDocsFromServer so a disconnected fetch
+    // rejects and takes the client-fallback route instead.
+    vi.mocked(getDocsFromServer).mockResolvedValue(snapshot({}) as never);
+    await fetchDiveLogData({ serverOnly: true });
+    expect(getDocsFromServer).toHaveBeenCalledTimes(4);
+    expect(getDocs).not.toHaveBeenCalled();
+
+    vi.mocked(getDocsFromServer).mockRejectedValue(new Error("offline"));
+    await expect(loadPublicDives()).rejects.toThrow('Failed to load collection "dives"');
   });
 });
