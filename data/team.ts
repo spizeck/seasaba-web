@@ -49,6 +49,12 @@ export interface TeamMember {
     href: string;
     relationship: "authored" | "reviewed";
   }[];
+  /** Approved external profile or portfolio links owned by the person. */
+  externalLinks?: {
+    title: string;
+    href: string;
+    description?: string;
+  }[];
 }
 
 export const STAFF_MEMBERS: TeamMember[] = [
@@ -74,6 +80,14 @@ export const STAFF_MEMBERS: TeamMember[] = [
       "Managed military airfield construction projects around the world",
     ],
     interests: ["Playing guitar", "Writing code"],
+    externalLinks: [
+      {
+        title: "Explore Chad's Saba Photography",
+        href: "https://chadnuttall.smugmug.com/Saba",
+        description:
+          "Chad also enjoys underwater photography, documenting Saba's marine life and distinctive underwater landscapes.",
+      },
+    ],
     favoriteDiveSites: ["Diamond Rock"],
     funFact: "When he's not working on Sea Saba, you'll probably find Chad playing guitar or writing code.",
     isOwner: true,
@@ -158,7 +172,7 @@ export const STAFF_MEMBERS: TeamMember[] = [
       "Became Saba's first local dive instructor in 1988",
     ],
     interests: ["Offshore fishing", "Designing fishing tackle", "Chess"],
-    funFact: "When Otto isn't underwater, there's a good chance he's still somewhere out on the ocean trolling for wahoo—or planning his next move over a chessboard.",
+    funFact: "When Otto isn't underwater, there's a good chance he's still somewhere out on the ocean trolling for wahoo, or planning his next move over a chessboard.",
   },
   {
     slug: "aaron-smith",
@@ -186,7 +200,7 @@ export const STAFF_MEMBERS: TeamMember[] = [
     ],
     interests: ["Texas football", "Mexican food", "Hot sauce"],
     favoriteDiveSites: ["Third Encounter"],
-    funFact: "Aaron proudly claims the title of Saba's biggest Texas football fan—and says he speaks two languages, English and American.",
+    funFact: "Aaron proudly claims the title of Saba's biggest Texas football fan, and says he speaks two languages, English and American.",
   },
   {
     slug: "lenny",
@@ -215,7 +229,7 @@ export const STAFF_MEMBERS: TeamMember[] = [
       "Studied Agricultural Science and Entrepreneurship at St. Vincent and the Grenadines Community College",
     ],
     interests: ["Spearfishing", "Fishing", "Cricket", "Creating social media content"],
-    funFact: "Lenny is known as Captain Giggles—and if you appear in one of his social media videos, don't be surprised.",
+    funFact: "Lenny is known as Captain Giggles, and if you appear in one of his social media videos, don't be surprised.",
   },
   {
     slug: "robins",
@@ -277,7 +291,7 @@ export const STAFF_MEMBERS: TeamMember[] = [
     name: "Julijana",
     fullName: "Julijana Masic",
     title: "Dive Professional",
-    bio: "Born in Serbia and raised in Cuba, Julijana first discovered scuba diving through a school underwater cleanup at age 10. An adventurous diver with a passion for cave and sidemount diving, she loves Saba's marine life—especially the smaller and stranger creatures.",
+    bio: "Born in Serbia and raised in Cuba, Julijana first discovered scuba diving through a school underwater cleanup at age 10. An adventurous diver with a passion for cave and sidemount diving, she loves Saba's marine life, especially the smaller and stranger creatures.",
     image: "/images/optimized/julijana.webp",
     languages: ["English", "Serbian", "Spanish"],
     biography: [

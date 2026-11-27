@@ -184,7 +184,7 @@ function DiveCard({
           </div>
           <button
             onClick={onToggle}
-            aria-label={selected ? `Added ✓ — remove ${dive.diveSite} from my dive log` : `+ Add ${dive.diveSite} to my dive log`}
+            aria-label={selected ? `Added ✓. Remove ${dive.diveSite} from my dive log` : `+ Add ${dive.diveSite} to my dive log`}
             className={`shrink-0 rounded-md border px-3 py-1.5 text-xs font-medium pressable focus-ring ${
               selected
                 ? "border-primary bg-primary text-white hover:bg-primary/90"
@@ -459,7 +459,7 @@ export function DiveLogClient({
                     setDateRange(e.target.value as DateRange);
                     resetPage();
                   }}
-                  className="rounded-md border border-border/60 bg-background px-2 py-1.5 text-base text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30 lg:text-sm"
+                  className="rounded-md border border-border/60 bg-background px-2 py-1.5 text-xs font-medium text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30"
                 >
                   {(Object.keys(DATE_RANGE_LABELS) as DateRange[]).map((key) => (
                     <option key={key} value={key}>
@@ -541,7 +541,7 @@ export function DiveLogClient({
               <StatePanel
                 role="status"
                 title="No dives logged yet"
-                description="Our guides add new dives after most trips — check back soon. In the meantime, explore the sites we visit."
+                description="Our guides add new dives after most trips. Check back soon. In the meantime, explore the sites we visit."
               >
                 <Link
                   href="/dive-sites"

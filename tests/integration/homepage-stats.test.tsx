@@ -97,7 +97,7 @@ describe("homepage dive-team statistics", () => {
     const { container } = render(await HomePage());
     expect(container.querySelector('[aria-labelledby="dive-stats-heading"]')).toBeNull();
     // The rest of the homepage is unaffected.
-    expect(container.textContent).toContain("Questions guests ask");
+    expect(container.textContent).toContain("Frequently Asked Questions About Diving in Saba");
   });
 
   it("rethrows on fetch failure in production serving so ISR keeps the last-good page", async () => {
@@ -113,7 +113,7 @@ describe("homepage dive-team statistics", () => {
     vi.mocked(loadWeeklyDiveStats).mockRejectedValue(new Error("firestore down"));
     const { container } = render(await HomePage());
     expect(container.querySelector('[aria-labelledby="dive-stats-heading"]')).toBeNull();
-    expect(container.textContent).toContain("Questions guests ask");
+    expect(container.textContent).toContain("Frequently Asked Questions About Diving in Saba");
   });
 
   it("renders the homepage without stats on fetch failure in development", async () => {
@@ -122,6 +122,6 @@ describe("homepage dive-team statistics", () => {
     vi.mocked(loadWeeklyDiveStats).mockRejectedValue(new Error("firestore down"));
     const { container } = render(await HomePage());
     expect(container.querySelector('[aria-labelledby="dive-stats-heading"]')).toBeNull();
-    expect(container.textContent).toContain("Questions guests ask");
+    expect(container.textContent).toContain("Frequently Asked Questions About Diving in Saba");
   });
 });

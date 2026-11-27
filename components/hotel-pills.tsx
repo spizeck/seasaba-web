@@ -53,7 +53,7 @@ const HOTELS: Hotel[] = [
       { icon: "📍", label: "Booby Hill, Windwardside" },
       { icon: "⏱", label: "15 min to Fort Bay Harbor" },
       { icon: "🏡", label: "7 private wooden cottages" },
-      { icon: "🌬", label: "No A/C — elevation & breeze" },
+      { icon: "🌬", label: "No A/C, elevation & breeze" },
       { icon: "🌿", label: "Tropical gardens & hammocks" },
       { icon: "🚶", label: "5-min walk to Windwardside" },
     ],

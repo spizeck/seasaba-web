@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import {
   Award,
   Briefcase,
+  ExternalLink,
   FileText,
   Languages,
   MapPin,
@@ -261,6 +262,29 @@ export default async function TeamMemberPage({
             </div>
           </section>
         )}
+
+        {member.externalLinks?.length ? (
+          <section className="mt-12 max-w-2xl rounded-lg border border-border/60 bg-card p-5">
+            {member.externalLinks.map((link) => (
+              <div key={link.href}>
+                <a
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-md text-base font-semibold text-primary underline-offset-4 hover:underline focus-ring"
+                >
+                  {link.title}
+                  <ExternalLink className="h-4 w-4" aria-hidden="true" />
+                </a>
+                {link.description && (
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                    {link.description}
+                  </p>
+                )}
+              </div>
+            ))}
+          </section>
+        ) : null}
 
         {member.additionalImages?.length ? (
           <section className="mt-12">

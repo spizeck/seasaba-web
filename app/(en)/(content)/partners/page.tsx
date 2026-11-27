@@ -40,7 +40,7 @@ export default function PartnersPage() {
       />
 
       <p className="text-base leading-relaxed text-muted-foreground">
-        We work with a small, curated group of local and regional partners that help make a Saba dive trip seamless — from boutique accommodations and island restaurants to trusted transportation, training agencies, and conservation organizations.
+        We work with a small, curated group of local and regional partners that help make a Saba dive trip seamless, from boutique accommodations and island restaurants to trusted transportation, training agencies, and conservation organizations.
       </p>
 
       <OnThisPageNav />

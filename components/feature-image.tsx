@@ -12,6 +12,9 @@ interface FeatureImageProps {
   centerText?: boolean;
   /** When true, text is stacked above the image on mobile instead of below it. */
   mobileTextFirst?: boolean;
+  /** Concise visible attribution rendered beneath meaningful photographs. */
+  caption?: string;
+  captionClassName?: string;
   /** Optional section anchor id */
   id?: string;
   children: React.ReactNode;
@@ -31,6 +34,8 @@ export function FeatureImage({
   balanced = false,
   centerText = false,
   mobileTextFirst = false,
+  caption,
+  captionClassName = "text-muted-foreground",
   id,
   children,
 }: FeatureImageProps) {
@@ -41,29 +46,41 @@ export function FeatureImage({
     : balanced
       ? "lg:grid-cols-[3fr_2fr]"
       : "lg:grid-cols-[2fr_1fr]";
+  const imageOrder = imageRight
+    ? mobileTextFirst
+      ? "order-2 lg:order-2"
+      : "lg:order-2"
+    : mobileTextFirst
+      ? "order-2"
+      : "";
+  const imageFrame = (
+    <div className={`relative aspect-[4/3] w-full overflow-hidden rounded-lg ${caption ? "lg:flex-1" : "lg:aspect-auto lg:h-full"} lg:min-h-[280px]`}>
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        className="object-cover"
+        style={{ objectPosition }}
+        sizes="(max-width: 1024px) 100vw, 66vw"
+      />
+    </div>
+  );
+
   return (
     <div
       id={id}
       className={`not-prose grid gap-6 lg:items-stretch lg:gap-14 ${columns}`}
     >
-      <div className={`relative aspect-[4/3] w-full overflow-hidden rounded-lg lg:aspect-auto lg:h-full lg:min-h-[280px] ${
-        imageRight
-          ? mobileTextFirst
-            ? "order-2 lg:order-2"
-            : "lg:order-2"
-          : mobileTextFirst
-            ? "order-2"
-            : ""
-      }`}>
-        <Image
-          src={src}
-          alt={alt}
-          fill
-          className="object-cover"
-          style={{ objectPosition }}
-          sizes="(max-width: 1024px) 100vw, 66vw"
-        />
-      </div>
+      {caption ? (
+        <figure className={`flex flex-col ${imageOrder}`}>
+          {imageFrame}
+          <figcaption className={`mt-2 text-left text-xs leading-relaxed ${captionClassName}`}>
+            {caption}
+          </figcaption>
+        </figure>
+      ) : (
+        <div className={imageOrder}>{imageFrame}</div>
+      )}
       <div className={`${
         imageRight
           ? mobileTextFirst

@@ -32,7 +32,7 @@ const EXPERIENCES: Experience[] = [
     entries: [
       { type: "step", time: DIVE_PRODUCTS.advanced.schedule.taxiPickup, icon: Users, label: "Be ready for taxi pickup" },
       { type: "step", time: DIVE_PRODUCTS.advanced.schedule.departure, icon: Anchor, label: "Boat departs for two dives (Dive 1 to ~110 ft / 33 m, Dive 2 to ~70 ft / 21 m)" },
-      { type: "callout", variant: "info", title: "Want a Third Dive?", description: "Ask about upgrading to our Triple Tank option for an extended day. If you add the third dive, consider bringing a lunch — the day will run past typical lunch hours and harbor food isn't reliable." },
+      { type: "callout", variant: "info", title: "Want a Third Dive?", description: "Ask about upgrading to our Triple Tank option for an extended day. If you add the third dive, consider bringing a lunch because the day will run past typical lunch hours and harbor food isn't reliable." },
       { type: "step", time: DIVE_PRODUCTS.advanced.schedule.returns, icon: Clock, label: `Return to ${OPERATIONS.harbor}` },
     ],
   },
@@ -138,7 +138,7 @@ export function ExperienceSelector() {
           </div>
         </div>
         <p className="mt-4 text-xs italic text-muted-foreground">
-          Pickup times are when taxi pickups begin — please be ready; actual
+          Pickup times are when taxi pickups begin. Please be ready; actual
           arrival varies with the route. All times are approximate and may
           vary depending on conditions.
         </p>

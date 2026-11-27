@@ -59,10 +59,10 @@ import { useEffect } from "react";
  *   150ms after the last document-size change. A ResizeObserver can extend
  *   a burst but never open one, so content growth (navigation, lazy
  *   media, fonts) can't start corrections.
- * - A deliberate scroll jump during a burst (>300px / half a viewport —
- *   anchor nav, scrollbar drag, programmatic scroll; reflow noise is
- *   ~6px/event) re-anchors the frozen target to the visitor's new
- *   position instead of dragging them back to the stale one.
+ * - A deliberate scroll jump during a burst re-anchors the frozen target to
+ *   the visitor's new position, while scroll events caused by the keeper's
+ *   own corrections are ignored. Explicit input cancels corrections and
+ *   wrapped programmatic scroll APIs re-anchor them directly.
  * - Landmarks are existing semantic elements discovered geometrically; no
  *   markup changes, no hardcoded heights or breakpoints, no URL/hash
  *   mutation.
@@ -87,7 +87,7 @@ const SCAN_STEP = 4;
 // pinning a whole <section> top would snap the visitor to the section start
 // instead of their reading position.
 const CONTENT_SELECTOR =
-  "h1,h2,h3,h4,h5,h6,p,li,figure,img,blockquote,td,th";
+  "h1,h2,h3,h4,h5,h6,p,li,figure,figcaption,img,blockquote,td,th";
 
 // Top-pinned UI that overlaps page content. Class-name discovery keeps this
 // honest as the header/section-nav markup evolves — no duplicated heights.
@@ -166,9 +166,15 @@ function pickLandmark(chromeBottom: number): Landmark | null {
     if (!(hit instanceof HTMLElement)) continue; // gap or padding — look lower
     const rect = hit.getBoundingClientRect();
     if (rect.height === 0) continue; // hidden at this breakpoint
+    // Do not anchor on the tail end of a text element: once less than half
+    // of it remains below the scan point, the next content is the stable
+    // reading position. Media is exempt because a photograph remains the
+    // object the visitor is looking at even when only part of it is visible.
+    const isMedia = hit.matches("img,figure");
+    if (!isMedia && rect.bottom - y < rect.height / 2) continue;
     // A huge match means we hit a media block or an unusual wrapper; media
     // still works as an anchor, wrappers don't — keep looking for text.
-    if (rect.height > window.innerHeight * 2 && !hit.matches("img,figure")) {
+    if (rect.height > window.innerHeight * 2 && !isMedia) {
       continue;
     }
     return { el: hit, gap: rect.top - chromeBottom };
@@ -178,9 +184,9 @@ function pickLandmark(chromeBottom: number): Landmark | null {
 
 // A scroll delta beyond this during an active burst is a deliberate move —
 // anchor navigation, a scrollbar drag, or a programmatic scroll — not
-// reflow noise (measured ~6px per event). The frozen target is re-anchored
-// to the visitor's new position so the correction preserves where they are
-// *now*, not where they were when the resize began.
+// reflow noise. The frozen target is re-anchored to the visitor's new
+// position so the correction preserves where they are *now*, not where they
+// were when the resize began.
 function deliberateScrollThreshold() {
   return Math.max(300, window.innerHeight / 2);
 }
@@ -210,8 +216,11 @@ export function ScrollPositionKeeper() {
     let tickFrame = 0;
     let reanchorPending = false;
     // True while the keeper itself is inside window.scrollTo — external
-    // programmatic scrolls are detected by wrapping the API below.
+    // programmatic scrolls are detected by wrapping the API below. Scroll
+    // events are asynchronous, so internalScrollTargets identifies the events
+    // produced by those writes after the synchronous call has returned.
     let internalWrite = false;
+    const internalScrollTargets: number[] = [];
     let settleTimer: ReturnType<typeof setTimeout> | undefined;
 
     // Cheap path per scroll frame: while the landmark still sits inside the
@@ -249,11 +258,17 @@ export function ScrollPositionKeeper() {
     };
 
     const onScroll = () => {
-      // A deliberate jump is detected synchronously in the event: a queued
-      // correction tick could otherwise run first and drag the visitor back
-      // to the stale target for a frame. Reflow noise (~6px/event) stays
-      // below the threshold and is ignored.
+      // The keeper's own correction writes can move the scroll position by
+      // far more than the deliberate-jump threshold. Suppress events landing
+      // at one of those exact targets; otherwise the correction would
+      // immediately re-anchor to the reflowed position it is trying to undo.
+      const internalIndex = internalScrollTargets.findIndex(
+        (target) => Math.abs(window.scrollY - target) <= 1
+      );
+      const internalEvent = internalIndex >= 0;
+      if (internalEvent) internalScrollTargets.splice(internalIndex, 1);
       if (
+        !internalEvent &&
         burstActive &&
         Math.abs(window.scrollY - lastY) > deliberateScrollThreshold()
       ) {
@@ -283,6 +298,8 @@ export function ScrollPositionKeeper() {
         );
         if (Math.abs(y - target) > 1) {
           internalWrite = true;
+          internalScrollTargets.push(target);
+          if (internalScrollTargets.length > 10) internalScrollTargets.shift();
           window.scrollTo(0, target);
           internalWrite = false;
           lastY = target;
@@ -297,6 +314,8 @@ export function ScrollPositionKeeper() {
       const delta = rect.top - desiredTop;
       if (Math.abs(delta) > 1) {
         internalWrite = true;
+        internalScrollTargets.push(y + delta);
+        if (internalScrollTargets.length > 10) internalScrollTargets.shift();
         window.scrollTo(0, y + delta);
         internalWrite = false;
         lastY = y + delta;

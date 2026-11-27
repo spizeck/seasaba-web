@@ -46,19 +46,19 @@ export default function CookiePolicyPage() {
           </p>
           <ul className="mt-3 list-disc space-y-2 pl-5 text-base leading-relaxed text-muted-foreground">
             <li>
-              <strong className="text-foreground">Necessary</strong> — required for the website
+              <strong className="text-foreground">Necessary</strong>: required for the website
               and booking process to function. These cannot be switched off.
             </li>
             <li>
-              <strong className="text-foreground">Preferences</strong> — remember choices you
+              <strong className="text-foreground">Preferences</strong>: remember choices you
               make, such as language or display settings.
             </li>
             <li>
-              <strong className="text-foreground">Statistics</strong> — help us understand how
+              <strong className="text-foreground">Statistics</strong>: help us understand how
               visitors use the site (for example, Google Analytics and Microsoft Clarity).
             </li>
             <li>
-              <strong className="text-foreground">Marketing</strong> — used to measure and
+              <strong className="text-foreground">Marketing</strong>: used to measure and
               improve advertising effectiveness (for example, Google Ads, Microsoft Advertising,
               and Meta).
             </li>

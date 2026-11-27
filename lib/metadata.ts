@@ -23,7 +23,7 @@ interface PageMetadataOptions {
 export function rootMetadata(locale: Locale = DEFAULT_LOCALE): Metadata {
   return {
     title: {
-      default: `${SITE_NAME} — Professional Scuba Diving in Saba`,
+      default: `${SITE_NAME} | Professional Scuba Diving in Saba`,
       template: `%s | ${SITE_NAME}`,
     },
     description: SITE_DESCRIPTION,
