@@ -39,7 +39,7 @@ export function ImageCard({
           priority={priority}
         />
         {caption && (
-          <figcaption className="absolute inset-x-0 bottom-0 max-h-full overflow-y-auto overscroll-contain bg-gradient-to-t from-black/75 via-black/40 to-transparent px-3 pb-2 pt-8 text-left text-xs leading-snug text-white/90">
+          <figcaption className="absolute inset-x-0 bottom-0 max-h-full overflow-y-auto bg-gradient-to-t from-black/75 via-black/40 to-transparent px-3 pb-2 pt-8 text-left text-xs leading-snug text-white/90">
             {caption}
           </figcaption>
         )}
