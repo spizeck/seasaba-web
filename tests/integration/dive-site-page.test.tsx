@@ -128,4 +128,16 @@ describe("dive site pages with commissioned published content (issue #325)", () 
     const metadata = await generateMetadata({ params: Promise.resolve({ slug: "twilight-zone" }) });
     expect(metadata.title).toBe("Twilight Zone Dive Site, Saba");
   });
+
+  it("cannot break out of the JSON-LD script with published copy", async () => {
+    const payload = '</script><script>alert(1)</script>';
+    commissionWith([
+      apiSite({ websitePublished: true, websiteContent: { slug: "twilight-zone", fullDescription: payload } }),
+    ]);
+    const { container } = await renderDiveSite("twilight-zone");
+    const scripts = container.querySelectorAll("script");
+    expect(scripts).toHaveLength(1);
+    expect(scripts[0].innerHTML).not.toContain("</script");
+    expect(JSON.parse(scripts[0].textContent!).description).toBe(payload);
+  });
 });
