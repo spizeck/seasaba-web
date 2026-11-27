@@ -49,6 +49,12 @@ export interface TeamMember {
     href: string;
     relationship: "authored" | "reviewed";
   }[];
+  /** Approved external profile or portfolio links owned by the person. */
+  externalLinks?: {
+    title: string;
+    href: string;
+    description?: string;
+  }[];
 }
 
 export const STAFF_MEMBERS: TeamMember[] = [
@@ -74,6 +80,14 @@ export const STAFF_MEMBERS: TeamMember[] = [
       "Managed military airfield construction projects around the world",
     ],
     interests: ["Playing guitar", "Writing code"],
+    externalLinks: [
+      {
+        title: "Explore Chad's Saba Photography",
+        href: "https://chadnuttall.smugmug.com/Saba",
+        description:
+          "Chad also enjoys underwater photography, documenting Saba's marine life and distinctive underwater landscapes.",
+      },
+    ],
     favoriteDiveSites: ["Diamond Rock"],
     funFact: "When he's not working on Sea Saba, you'll probably find Chad playing guitar or writing code.",
     isOwner: true,

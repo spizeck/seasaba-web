@@ -11,6 +11,8 @@ export interface ImageAttribution {
   copyrightHolder?: string;
   copyrightNotice?: string;
   license?: string;
+  /** Public page for a verified source photograph, when one exists. */
+  sourceUrl?: string;
   imageUrl: string;
 }
 
@@ -42,22 +44,33 @@ export const IMAGE_ATTRIBUTIONS = {
   },
   "diver-volcanic-pinnacle-saba.webp": {
     description: "Diver descending toward one of Saba's underwater pinnacles",
+    photographer: "Candice Landau",
     imageUrl: "/images/optimized/diver-volcanic-pinnacle-saba.webp",
   },
   "green-turtle-tent-reef.webp": {
     description: "Green turtle gliding over coral reef",
+    photographer: "Chad Nuttall",
+    dateTaken: "2021-03-16",
+    sourceUrl: "https://chadnuttall.smugmug.com/Saba/i-Dx8MvCP",
     imageUrl: "/images/optimized/green-turtle-tent-reef.webp",
   },
   "nurse-shark-ladder-bay-saba.webp": {
     description: "Nurse shark resting beneath a rocky reef ledge",
+    photographer: "Chad Nuttall",
     imageUrl: "/images/optimized/nurse-shark-ladder-bay-saba.webp",
   },
   "wells-bay-dive-site-saba.webp": {
     description: "Coral- and sponge-covered reef underwater",
+    photographer: "Chad Nuttall",
+    dateTaken: "2021-03-16",
+    sourceUrl: "https://chadnuttall.smugmug.com/Saba/i-2tcJcmZ",
     imageUrl: "/images/optimized/wells-bay-dive-site-saba.webp",
   },
   "windwardside-dive-site-saba.webp": {
     description: "Elkhorn coral growing on a shallow coral reef",
+    photographer: "Chad Nuttall",
+    dateTaken: "2021-11-26",
+    sourceUrl: "https://chadnuttall.smugmug.com/Saba/i-JxF9LBC",
     imageUrl: "/images/optimized/windwardside-dive-site-saba.webp",
   },
 } as const satisfies Record<string, ImageAttribution>;
