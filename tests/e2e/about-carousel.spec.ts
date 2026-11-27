@@ -301,6 +301,14 @@ test("browser replays rapid arrow presses that overflow the cloned runway", asyn
   await next(page).evaluate((button, count) => {
     for (let i = 0; i < count; i++) (button as HTMLElement).click();
   }, forwardPresses);
+
+  // A tap while the wrap is still moving must not reinterpret the frozen
+  // mid-transition position as a drag and change the navigation target.
+  await page.waitForTimeout(50);
+  const carousel = page.getByRole("region", { name: "Team members carousel" });
+  await carousel.dispatchEvent("pointerdown", { clientX: 500, clientY: 500, button: 0, pointerType: "mouse" });
+  await carousel.dispatchEvent("pointerup", { clientX: 500, clientY: 500, button: 0, pointerType: "mouse" });
+
   await expect.poll(() => visibleNames(page), { timeout: 10000 }).toEqual(windowAt(forwardPresses % MEMBERS.length, 3));
 
   await page.getByRole("button", { name: "Go to Mel" }).click();

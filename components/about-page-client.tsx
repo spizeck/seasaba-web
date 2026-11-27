@@ -336,10 +336,16 @@ export function TeamCarousel({ members }: { members: TeamCardMember[] }) {
     removeWindowDragListeners.current?.();
     drag.current = null;
     setDragDelta(null);
-    // A tap is not a drag and must not discard queued arrow input. Once the
+    // A tap is not a drag: it neither discards queued arrow input nor turns
+    // the frozen mid-transition offset into a navigation change. Once the
     // pointer has genuinely dragged the strip, though, direct manipulation
     // takes ownership and cancels any navigation still waiting to replay.
-    if (dragDistance.current > 8) pendingSteps.current = 0;
+    const didDrag = dragDistance.current > 8;
+    if (!didDrag) {
+      dragDistance.current = 0;
+      return;
+    }
+    pendingSteps.current = 0;
     if (cancelled || d.stepPx === 0) {
       dragDistance.current = 0;
       return;
