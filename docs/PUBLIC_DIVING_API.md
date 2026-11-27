@@ -18,7 +18,7 @@ Dive Log page / homepage / dive-site pages (server components, hourly ISR)
 
 | Surface | Endpoint | Mapped to |
 |---|---|---|
-| `/dive-log` | `GET /dives?limit=100&cursor=...` (all pages) | `PublicDive[]` (already grouped by the API) |
+| `/dive-log` | `GET /dives?startDate=<14 days ago>&limit=100&cursor=...` (all pages); 30-day, 90-day and all-time ranges load on demand | `PublicDive[]` (already grouped by the API) |
 | Homepage stats | `GET /dive-stats` | `WeeklyDiveStats` |
 | `/dive-sites/[slug]` | `GET /dive-sites?published=true` | `DiveSitePageContent` overlay |
 
@@ -61,8 +61,9 @@ units, runaway pagination) throws.
 | Build / development | Error state; "Try again" re-renders on the server | Stats section hidden | Static content |
 
 A `200` with empty data is a genuine result: an empty week shows no stats
-section (as before), and the Dive Log renders its "No dives logged yet"
-state. (In Firestore mode an empty Dive Log at production runtime still
+section (as before). An empty Dive Log shows "No dives match your filters"
+for the default 14 days and "No dives logged yet" once all history is
+loaded and empty. (In Firestore mode an empty Dive Log at production runtime still
 keeps the last good page, because an unreachable Firestore can resolve an
 empty snapshot.)
 
@@ -105,21 +106,15 @@ the server re-renders through the API (and the ISR cache).
    static descriptions superseded by published content. The variables are
    transition switches, not a permanent dual-source design.
 
-### Follow-up: date-bounded Dive Log fetching
+### Date-bounded Dive Log fetching
 
-`loadPublicDivesFromApi()` requests all history (no `startDate`) and follows
-every cursor. That runs once per ISR regeneration (about hourly), not per
-visitor, but it cannot use the API's date-bounded range queries. Requesting
-only the default 14 days needs more than a `startDate` parameter, because
-the client derives these from the full list:
-
-- the site, boat, guide and species filter options;
-- the 30-day, 90-day and all-time ranges;
-- `?site=` deep links, which widen to all-time;
-- the selection used by "Export My Dive Log".
-
-Loading only 14 days without also fetching older history on demand would
-shrink these, which is a regression. Fetching history on demand needs a new
-browser-to-server path (for example a server action calling the API with
-`startDate`/`endDate`), plus loading states and caching for it. Do this as a
-separate change after commissioning, without changing the v1 contract.
+The page server-renders only the default 14 days
+(`startDate` = `diveLogStartDate(14)`), so the API can use its date-range
+query. Choosing "Past 30 days", "Past 90 days" or "All time", the
+"show all time" recovery button, or a `?site=` deep link calls the
+`loadDiveLogHistory` server action (`app/(en)/(content)/dive-log/actions.ts`),
+which requests `startDate` 30/90 days back, or all history (no `startDate`).
+Loaded ranges are reused; narrowing never refetches. The action accepts only
+those range keys and is refused when API mode is off. Filter options reflect
+the loaded range, and selections for export survive widening. A failed load
+shows the error state; "Try again" repeats that range request.

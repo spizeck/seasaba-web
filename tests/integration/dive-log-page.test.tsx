@@ -13,6 +13,8 @@ vi.mock("@/lib/firestore/dive-log", () => ({
 vi.mock("@/lib/public-diving/client", () => ({
   isPublicDivingApiEnabled: vi.fn(() => false),
   loadPublicDivesFromApi: vi.fn(),
+  DIVE_LOG_DEFAULT_DAYS: 14,
+  diveLogStartDate: (days: number) => `start-${days}`,
 }));
 
 function findClient(node: ReactNode): ReactElement | undefined {
@@ -109,6 +111,7 @@ describe("dive-log public API source (issue #325)", () => {
     vi.mocked(loadPublicDivesFromApi).mockResolvedValue({ dives: dives as never, generatedAt: 789 });
     const client = findClient(await DiveLogPage());
     expect((client!.props as { initialDives?: unknown }).initialDives).toBe(dives);
+    expect(loadPublicDivesFromApi).toHaveBeenCalledWith({ startDate: "start-14" });
     expect(loadPublicDives).not.toHaveBeenCalled();
   });
 

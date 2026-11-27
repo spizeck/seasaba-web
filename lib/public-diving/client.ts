@@ -221,15 +221,32 @@ async function withTimeout<T>(timeoutMs: number, run: (signal: AbortSignal) => P
  * The API already returns grouped physical dives, most recent first, so the
  * list is used as-is. One overall timeout bounds the whole page chain.
  */
-export async function loadPublicDivesFromApi(
-  timeoutMs = 20_000
-): Promise<{ dives: PublicDive[]; generatedAt: number }> {
+/** The Dive Log's default range; wider ranges are loaded on demand. */
+export const DIVE_LOG_DEFAULT_DAYS = 14;
+
+/**
+ * UTC `YYYY-MM-DD` for `days` before `nowMs`: the same cutoff the Dive Log
+ * client filters on, so a bounded fetch always covers the visible range.
+ */
+export function diveLogStartDate(days: number, nowMs = Date.now()): string {
+  return new Date(nowMs - days * 86_400_000).toISOString().slice(0, 10);
+}
+
+/**
+ * Pass `startDate` to bound the request (the API then uses a date-range
+ * query); omitting it requests all history, per the v1 contract.
+ */
+export async function loadPublicDivesFromApi({
+  startDate,
+  timeoutMs = 20_000,
+}: { startDate?: string; timeoutMs?: number } = {}): Promise<{ dives: PublicDive[]; generatedAt: number }> {
   return withTimeout(timeoutMs, async (signal) => {
     const dives: PublicDive[] = [];
     const seenCursors = new Set<string>();
     let cursor: string | undefined;
     for (let page = 0; page < MAX_PAGES; page++) {
       const params = new URLSearchParams({ limit: String(PAGE_LIMIT) });
+      if (startDate) params.set("startDate", startDate);
       if (cursor) params.set("cursor", cursor);
       const body = await getJson(`dives?${params}`, signal);
       if (!isObject(body) || !Array.isArray(body.data) || !isObject(body.pagination)) {

@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState, useMemo, useEffect, useId, useTransition } from "react";
+import { Suspense, useState, useMemo, useEffect, useEffectEvent, useId, useTransition } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { PageHero } from "@/components/page-hero";
@@ -22,6 +22,7 @@ import {
   type PublicDive,
 } from "@/lib/firestore/dive-log";
 import { trackEvent } from "@/lib/analytics";
+import { loadDiveLogHistory } from "@/app/(en)/(content)/dive-log/actions";
 import { BookOpen, SlidersHorizontal, X, ChevronDown, Download } from "lucide-react";
 
 function unique<T>(arr: T[]): T[] {
@@ -37,9 +38,10 @@ const LOAD_ERROR = "The dive log couldn't be loaded right now. Please try again.
 
 /**
  * Where the server-rendered list came from. With the public API
- * commissioned (issue #325) the browser never reads Firestore: the list is
- * server-only, an empty array is a genuine empty result, and retry asks the
- * server to re-render (ISR) instead of fetching client-side.
+ * commissioned (issue #325) the browser never reads Firestore: the server
+ * renders the default 14 days, wider ranges load on demand through a
+ * server action, an empty array is a genuine empty result, and retry asks
+ * the server to re-render (ISR) instead of fetching client-side.
  */
 export type DiveLogSource = "firestore" | "api";
 
@@ -103,12 +105,49 @@ function useDiveLogData(initialDives: PublicDive[] | undefined, source: DiveLogS
     };
   }, [attempt, initialDives, serverOnly]);
 
+  const [history, setHistory] = useState<{ range: DateRange; dives: PublicDive[] } | null>(null);
+  const [requestedRange, setRequestedRange] = useState<DateRange>("14");
+  const [historyFailed, setHistoryFailed] = useState(false);
+  const [loadingHistory, startHistory] = useTransition();
+  const loadedRange: DateRange = serverOnly ? history?.range ?? "14" : "all";
+
+  function loadRange(range: DateRange) {
+    setRequestedRange(range);
+    setHistoryFailed(false);
+    startHistory(async () => {
+      try {
+        const result = await loadDiveLogHistory(range);
+        startHistory(() =>
+          setHistory((h) => (h && coversRange(h.range, range) ? h : { range, dives: result.dives }))
+        );
+      } catch (err) {
+        console.error("Dive log history failed to load", err);
+        setHistoryFailed(true);
+      }
+    });
+  }
+
+  /** API mode: fetch a wider range than the one already loaded. */
+  function ensureRange(range: DateRange) {
+    if (!serverOnly) return;
+    if (coversRange(loadedRange, range)) {
+      if (historyFailed) setHistoryFailed(false);
+      return;
+    }
+    if (loadingHistory && coversRange(requestedRange, range)) return;
+    loadRange(range);
+  }
+
   if (serverOnly) {
     return {
-      dives: initialDives ?? [],
-      loading: refreshing,
-      error: initialDives || refreshing ? null : LOAD_ERROR,
-      retry: () => startRefresh(() => router.refresh()),
+      dives: history?.dives ?? initialDives ?? [],
+      loading: refreshing || loadingHistory,
+      error: historyFailed ? LOAD_ERROR : initialDives || history || refreshing ? null : LOAD_ERROR,
+      retry: historyFailed
+        ? () => loadRange(requestedRange)
+        : () => startRefresh(() => router.refresh()),
+      loadedRange,
+      ensureRange,
     };
   }
 
@@ -121,10 +160,18 @@ function useDiveLogData(initialDives: PublicDive[] | undefined, source: DiveLogS
       setError(null);
       setAttempt((a) => a + 1);
     },
+    loadedRange,
+    ensureRange,
   };
 }
 
 type DateRange = "14" | "30" | "90" | "all";
+
+const RANGE_ORDER: DateRange[] = ["14", "30", "90", "all"];
+
+function coversRange(loaded: DateRange, wanted: DateRange): boolean {
+  return RANGE_ORDER.indexOf(loaded) >= RANGE_ORDER.indexOf(wanted);
+}
 
 const DATE_RANGE_LABELS: Record<DateRange, string> = {
   "14": "Past 14 days",
@@ -320,7 +367,7 @@ export function DiveLogClient({
   generatedAt?: number;
   source?: DiveLogSource;
 }) {
-  const { dives, loading, error, retry } = useDiveLogData(initialDives, source);
+  const { dives, loading, error, retry, loadedRange, ensureRange } = useDiveLogData(initialDives, source);
   // Date filtering must produce identical markup during SSR and hydration:
   // seed "now" from the serialized render timestamp, then adopt local time
   // post-mount (the effect schedules rather than setting synchronously).
@@ -363,7 +410,12 @@ export function DiveLogClient({
     // the auto-applied value; a manual site choice stays untouched.
     setFilters((f) => (f.site === lastAppliedSiteParam ? { ...f, site: "" } : f));
     setLastAppliedSiteParam(null);
-  } else if (siteParam && siteParam !== lastAppliedSiteParam && dives.length > 0) {
+  } else if (
+    siteParam &&
+    siteParam !== lastAppliedSiteParam &&
+    dives.length > 0 &&
+    loadedRange === "all"
+  ) {
     setLastAppliedSiteParam(siteParam);
     if (ALL_SITES.includes(siteParam)) {
       setFilters((f) => ({ ...f, site: siteParam }));
@@ -372,6 +424,11 @@ export function DiveLogClient({
       setCurrentPage(1);
     }
   }
+  // In API mode the deep link needs all history before it can match a site.
+  const requestAllHistory = useEffectEvent(() => ensureRange("all"));
+  useEffect(() => {
+    if (siteParam) requestAllHistory();
+  }, [siteParam]);
 
   const dateFilteredDives = useMemo(() => {
     if (dateRange === "all") return dives;
@@ -480,7 +537,9 @@ export function DiveLogClient({
                   id="date-range"
                   value={dateRange}
                   onChange={(e) => {
-                    setDateRange(e.target.value as DateRange);
+                    const range = e.target.value as DateRange;
+                    setDateRange(range);
+                    ensureRange(range);
                     resetPage();
                   }}
                   className="rounded-md border border-border/60 bg-background px-2 py-1.5 text-xs font-medium text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30"
@@ -561,7 +620,7 @@ export function DiveLogClient({
                   unitSystem={unitSystem}
                 />
               ))
-            ) : dives.length === 0 ? (
+            ) : dives.length === 0 && loadedRange === "all" ? (
               <StatePanel
                 role="status"
                 title="No dives logged yet"
@@ -581,7 +640,7 @@ export function DiveLogClient({
                 description="Try adjusting the date range or clearing your filters to see more results."
               >
                 <button
-                  onClick={() => { clearFilters(); setDateRange("all"); resetPage(); }}
+                  onClick={() => { clearFilters(); setDateRange("all"); ensureRange("all"); resetPage(); }}
                   className="mt-4 rounded-md px-2 py-1 text-sm font-medium text-primary pressable hover:underline focus-ring"
                 >
                   Clear filters and show all time

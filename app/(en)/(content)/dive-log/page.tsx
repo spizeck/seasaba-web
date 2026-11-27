@@ -2,7 +2,12 @@ import Link from "next/link";
 import { createMetadata } from "@/lib/metadata";
 import { DiveLogClient } from "@/components/dive-log-client";
 import { loadPublicDives, type PublicDive } from "@/lib/firestore/dive-log";
-import { isPublicDivingApiEnabled, loadPublicDivesFromApi } from "@/lib/public-diving/client";
+import {
+  DIVE_LOG_DEFAULT_DAYS,
+  diveLogStartDate,
+  isPublicDivingApiEnabled,
+  loadPublicDivesFromApi,
+} from "@/lib/public-diving/client";
 
 export const metadata = createMetadata({
   title: "Sea Saba Dive Log",
@@ -44,13 +49,14 @@ export default async function DiveLogPage() {
   // PUBLIC_DIVING_API_BASE_URL commissions the seasaba.app public API
   // (issue #325); unset keeps the direct Firestore read. In API mode a 200
   // with no dives is a genuine empty result (per the v1 contract), and the
-  // browser never falls back to Firestore.
+  // browser never falls back to Firestore. Only the default 14-day range is
+  // fetched here; wider ranges load on demand via ./actions.
   const source = isPublicDivingApiEnabled() ? "api" : "firestore";
   let initialDives: PublicDive[] | undefined;
   let generatedAt: number | undefined;
   try {
     const result = await (source === "api"
-      ? loadPublicDivesFromApi()
+      ? loadPublicDivesFromApi({ startDate: diveLogStartDate(DIVE_LOG_DEFAULT_DAYS) })
       : loadPublicDives());
     if (result.dives.length > 0 || source === "api") {
       initialDives = result.dives;

@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   isPublicDivingApiEnabled,
   loadPublicDivesFromApi,
+  diveLogStartDate,
   loadPublishedDiveSitesFromApi,
   loadWeeklyDiveStatsFromApi,
   publicDivingApiBaseUrl,
@@ -110,6 +111,16 @@ describe("dive mapping", () => {
 });
 
 describe("loadPublicDivesFromApi", () => {
+  it("bounds the request with startDate when given, and requests all history otherwise", async () => {
+    fetchMock
+      .mockResolvedValueOnce(jsonResponse(divesPage([apiDive({ id: "a" })], { hasMore: true, nextCursor: "c1" })))
+      .mockResolvedValueOnce(jsonResponse(divesPage([])));
+    await loadPublicDivesFromApi({ startDate: diveLogStartDate(14, Date.parse("2026-09-15T12:00:00Z")) });
+    expect(requestedUrl(0).searchParams.get("startDate")).toBe("2026-09-01");
+    expect(requestedUrl(1).searchParams.get("startDate")).toBe("2026-09-01");
+    expect(requestedUrl(1).searchParams.get("cursor")).toBe("c1");
+  });
+
   it("follows cursors until hasMore is false and preserves API order", async () => {
     fetchMock
       .mockResolvedValueOnce(
@@ -166,7 +177,7 @@ describe("loadPublicDivesFromApi", () => {
           init?.signal?.addEventListener("abort", () => reject(new DOMException("aborted", "AbortError")));
         })
     );
-    await expect(loadPublicDivesFromApi(10)).rejects.toThrow("timed out");
+    await expect(loadPublicDivesFromApi({ timeoutMs: 10 })).rejects.toThrow("timed out");
   });
 });
 
