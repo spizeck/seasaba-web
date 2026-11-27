@@ -12,7 +12,7 @@ import { diveSiteAnchors, divingAnchors, planYourTripAnchors } from "@/lib/ancho
 import { diveSitePath } from "@/data/dive-site-videos";
 import { loadWeeklyDiveStats, type WeeklyDiveStats } from "@/lib/dive-stats";
 import { OPERATIONS } from "@/data/operations";
-import { HOME_DIVE_AREA_IMAGES, IMAGE_ATTRIBUTIONS, formatImageCaption, type ImageAttribution } from "@/data/image-attribution";
+import { IMAGE_ATTRIBUTIONS, formatImageCaption, type ImageAttribution } from "@/data/image-attribution";
 import { SITE_NAME, SITE_URL } from "@/lib/constants";
 
 // Hourly ISR — the dive-team statistics regenerate from Firestore on this
@@ -28,7 +28,6 @@ const WHY_SABA_FEATURED = [
     image: IMAGE_ATTRIBUTIONS["divers-above-pinnacle-saba.webp"].imageUrl,
     imageAlt: "Scuba divers hovering above a coral-covered volcanic pinnacle in the Saba Marine Park.",
     bgPosition: "top",
-    caption: formatImageCaption(IMAGE_ATTRIBUTIONS["divers-above-pinnacle-saba.webp"]),
   },
   {
     heading: "Uncrowded by Design",
@@ -36,7 +35,6 @@ const WHY_SABA_FEATURED = [
     image: IMAGE_ATTRIBUTIONS["fin-and-tonic-boat-diamond-rock.webp"].imageUrl,
     imageAlt: "Sea Saba dive boat Fin & Tonic moored beside Diamond Rock off Saba.",
     bgPosition: "center",
-    caption: formatImageCaption(IMAGE_ATTRIBUTIONS["fin-and-tonic-boat-diamond-rock.webp"]),
   },
   {
     heading: "Small Island, Big Heart",
@@ -44,7 +42,6 @@ const WHY_SABA_FEATURED = [
     image: IMAGE_ATTRIBUTIONS["windwardside-village-saba.webp"].imageUrl,
     imageAlt: "Colorful red-roofed cottages of Windwardside village on the green hillside of Saba.",
     bgPosition: "center",
-    caption: formatImageCaption(IMAGE_ATTRIBUTIONS["windwardside-village-saba.webp"]),
   },
 ] as const;
 
@@ -87,9 +84,9 @@ const DIVE_EXPERIENCES = [
   {
     anchor: diveSiteAnchors.pinnacles,
     title: "The Pinnacles",
-    subtitle: "The dives that made Saba famous.",
+    subtitle: "Volcanic peaks rising from the deep.",
+    plainSubtitle: true,
     image: IMAGE_ATTRIBUTIONS["diver-volcanic-pinnacle-saba.webp"].imageUrl,
-    caption: formatImageCaption(HOME_DIVE_AREA_IMAGES.pinnacles),
     imageAlt: "Diver swimming in deep blue water above a faint volcanic pinnacle formation.",
     objectPosition: "center",
     body: "Towering volcanic seamounts rise from the deep blue, attracting sharks, turtles, schooling fish, and unforgettable pelagic encounters that define Saba diving.",
@@ -99,8 +96,8 @@ const DIVE_EXPERIENCES = [
     anchor: diveSiteAnchors.tentReef,
     title: "Tent Reef",
     subtitle: "Something different on every dive.",
+    plainSubtitle: false,
     image: IMAGE_ATTRIBUTIONS["green-turtle-tent-reef.webp"].imageUrl,
-    caption: formatImageCaption(HOME_DIVE_AREA_IMAGES.tentReef),
     imageAlt: "Green turtle gliding over a coral reef with sea fans and sponges.",
     objectPosition: "center",
     body: "Coral gardens, mini walls, canyons, swim-throughs, and dramatic drop-offs sit minutes from Fort Bay Harbor.",
@@ -110,8 +107,8 @@ const DIVE_EXPERIENCES = [
     anchor: diveSiteAnchors.ladderBay,
     title: "Ladder Bay",
     subtitle: "History meets volcanic geology.",
+    plainSubtitle: false,
     image: IMAGE_ATTRIBUTIONS["nurse-shark-ladder-bay-saba.webp"].imageUrl,
-    caption: formatImageCaption(HOME_DIVE_AREA_IMAGES.ladderBay),
     imageAlt: "Nurse shark resting beneath a rocky reef ledge.",
     objectPosition: "center",
     body: "Explore lava formations, underwater hot springs, coral-covered boulders, and resting turtles. The macro life is among the Caribbean's best.",
@@ -121,8 +118,8 @@ const DIVE_EXPERIENCES = [
     anchor: diveSiteAnchors.wellsBay,
     title: "Wells Bay",
     subtitle: "Classic Caribbean reef diving.",
+    plainSubtitle: false,
     image: IMAGE_ATTRIBUTIONS["wells-bay-dive-site-saba.webp"].imageUrl,
-    caption: formatImageCaption(HOME_DIVE_AREA_IMAGES.wellsBay),
     imageAlt: "Coral- and sponge-covered reef structure underwater.",
     objectPosition: "center",
     body: "Healthy coral reefs, turtles, and reef sharks create spectacular scenery. Diamond Rock and Man O' War Shoals offer long, relaxing dives.",
@@ -132,8 +129,8 @@ const DIVE_EXPERIENCES = [
     anchor: diveSiteAnchors.windwardside,
     title: "Windwardside",
     subtitle: "A completely different side of Saba.",
+    plainSubtitle: false,
     image: IMAGE_ATTRIBUTIONS["windwardside-dive-site-saba.webp"].imageUrl,
-    caption: formatImageCaption(HOME_DIVE_AREA_IMAGES.windwardside),
     imageAlt: "Elkhorn coral growing on a shallow coral reef.",
     objectPosition: "center",
     body: "White sand and thriving hard corals form the island's only true coral reefs. The result is a vibrant landscape unlike anywhere else around Saba.",
@@ -277,7 +274,6 @@ export default async function Home() {
                 heading={item.heading}
                 body={item.body}
                 objectPosition={item.bgPosition}
-                caption={item.caption}
               />
             ))}
           </div>
@@ -323,8 +319,6 @@ export default async function Home() {
                 src={exp.image}
                 alt={exp.imageAlt}
                 objectPosition={exp.objectPosition}
-                caption={exp.caption}
-                captionClassName="text-white/90"
                 imageRight={i % 2 === 1}
                 centerText
               >
@@ -332,7 +326,7 @@ export default async function Home() {
                   <h3 className="text-2xl font-semibold text-white sm:text-3xl">
                     {exp.title}
                   </h3>
-                  <p className="mt-1 text-sm text-white/60 uppercase tracking-wide">
+                  <p className={exp.plainSubtitle ? "mt-1 text-sm text-white/70" : "mt-1 text-sm text-white/60 uppercase tracking-wide"}>
                     {exp.subtitle}
                   </p>
                   <p className="mt-4 text-base leading-relaxed text-white/70">

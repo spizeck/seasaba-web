@@ -28,3 +28,4 @@ informational pages are server-rendered HTML and readable without JavaScript.
 - [Terms & Conditions](https://www.seasaba.com/terms): booking, cancellation, rescheduling, and insurance policy
 - [Privacy Policy](https://www.seasaba.com/privacy)
 - [Cookie Policy](https://www.seasaba.com/cookie-policy)
+- [Photography Credits](https://www.seasaba.com/photography-credits)
