@@ -45,23 +45,19 @@ export const IMAGE_ATTRIBUTIONS = {
     imageUrl: "/images/optimized/diver-volcanic-pinnacle-saba.webp",
   },
   "green-turtle-tent-reef.webp": {
-    description: "Green turtle at Tent Reef",
-    location: "Tent Reef, Saba",
+    description: "Green turtle gliding over coral reef",
     imageUrl: "/images/optimized/green-turtle-tent-reef.webp",
   },
   "nurse-shark-ladder-bay-saba.webp": {
-    description: "Nurse shark at Ladder Bay",
-    location: "Ladder Bay, Saba",
+    description: "Nurse shark resting beneath a rocky reef ledge",
     imageUrl: "/images/optimized/nurse-shark-ladder-bay-saba.webp",
   },
   "wells-bay-dive-site-saba.webp": {
-    description: "Coral and sponge-covered reef at Wells Bay",
-    location: "Wells Bay, Saba",
+    description: "Coral- and sponge-covered reef underwater",
     imageUrl: "/images/optimized/wells-bay-dive-site-saba.webp",
   },
   "windwardside-dive-site-saba.webp": {
-    description: "Elkhorn coral on Saba's Windwardside",
-    location: "Windwardside, Saba",
+    description: "Elkhorn coral growing on a shallow coral reef",
     imageUrl: "/images/optimized/windwardside-dive-site-saba.webp",
   },
 } as const satisfies Record<string, ImageAttribution>;
