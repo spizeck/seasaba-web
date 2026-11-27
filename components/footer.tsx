@@ -44,6 +44,7 @@ const RESOURCE_LINKS: { label: string; href: string; external?: boolean; ariaLab
     ariaLabel: "Get short-term dive accident insurance through DAN, opens in a new tab",
   },
   { label: "FAQ",                href: `/plan-your-trip#${planYourTripAnchors.faq}` },
+  { label: "Photography Credits", href: "/photography-credits" },
   { label: "Terms & Conditions", href: "/terms" },
   { label: "Privacy Policy",     href: "/privacy" },
   { label: "Cookie Policy",      href: "/cookie-policy" },

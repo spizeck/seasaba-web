@@ -37,6 +37,7 @@ const SITEMAP_ROUTES: {
   { path: "/terms", changeFrequency: "yearly", priority: 0.3 },
   { path: "/privacy", changeFrequency: "yearly", priority: 0.3 },
   { path: "/cookie-policy", changeFrequency: "yearly", priority: 0.3 },
+  { path: "/photography-credits", changeFrequency: "yearly", priority: 0.2 },
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {

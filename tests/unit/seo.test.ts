@@ -26,6 +26,7 @@ const CANONICAL_ROUTES = [
   "/terms",
   "/privacy",
   "/cookie-policy",
+  "/photography-credits",
 ];
 
 it("creates canonical website metadata without query parameters", () => {

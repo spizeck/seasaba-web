@@ -11,6 +11,7 @@ const PUBLIC_PAGES = [
   "/", "/diving", "/dive-sites", "/courses", "/plan-your-trip",
   "/visiting-yachts", "/about", "/contact", "/book", "/dive-log",
   "/partners", "/donate", "/terms", "/privacy", "/cookie-policy",
+  "/photography-credits",
   ...DIVE_SITES.map((s) => diveSitePath(s.name)),
   ...PROFILE_MEMBERS.map((member) => teamMemberProfilePath(member)),
 ];
