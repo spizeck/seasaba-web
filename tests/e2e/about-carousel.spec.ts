@@ -247,21 +247,21 @@ test("desktop wraps seamlessly in both directions", async ({ page }) => {
 });
 
 test("repeated cycling never reaches a dead end or an empty slot", async ({ page }) => {
-  test.setTimeout(90000); // 20 clicked steps incl. real transitions are slow on WebKit
+  test.setTimeout(90000); // Two full loops incl. real transitions are slow on WebKit
   await hydratedGoto(page, "/about");
   await page.setViewportSize({ width: 1440, height: 900 });
   await resetCarousel(page);
 
-  // Two full loops of eleven positions — every landing must show 3 cards in
-  // source order, including across the wrap boundary.
-  for (let i = 1; i <= 20; i++) {
+  // Two full loops of the crew positions — every landing must show 3 cards
+  // in source order, including across the wrap boundary.
+  for (let i = 1; i <= MEMBERS.length * 2; i++) {
     await next(page).click();
     await expectNames(page, windowAt(i, 3));
   }
 
   // And backward through the same boundary.
   await prev(page).click();
-  await expectNames(page, windowAt(9, 3));
+  await expectNames(page, windowAt(MEMBERS.length - 1, 3));
 });
 
 test("rapid clicks and direction reversals stay on real cards", async ({ page }) => {
@@ -286,6 +286,39 @@ test("rapid clicks and direction reversals stay on real cards", async ({ page })
   await prev(page).click();
   await prev(page).click();
   await expectNames(page, windowAt(1, 3));
+});
+
+test("browser replays rapid arrow presses that overflow the cloned runway", async ({ page }) => {
+  test.setTimeout(60000);
+  await hydratedGoto(page, "/about");
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await resetCarousel(page);
+
+  // Dispatch the burst inside the browser so every press lands before the
+  // first wrap transition can settle. At desktop width the trailing runway
+  // ends at 2 * members - 3; one further press must replay after the snap.
+  const forwardPresses = MEMBERS.length * 2 - 3 + 1;
+  await next(page).evaluate((button, count) => {
+    for (let i = 0; i < count; i++) (button as HTMLElement).click();
+  }, forwardPresses);
+
+  // A tap while the wrap is still moving must not reinterpret the frozen
+  // mid-transition position as a drag and change the navigation target.
+  await page.waitForTimeout(50);
+  const carousel = page.getByRole("region", { name: "Team members carousel" });
+  await carousel.dispatchEvent("pointerdown", { clientX: 500, clientY: 500, button: 0, pointerType: "mouse" });
+  await carousel.dispatchEvent("pointerup", { clientX: 500, clientY: 500, button: 0, pointerType: "mouse" });
+
+  await expect.poll(() => visibleNames(page), { timeout: 10000 }).toEqual(windowAt(forwardPresses % MEMBERS.length, 3));
+
+  await page.getByRole("button", { name: "Go to Mel" }).click();
+  const backwardPresses = MEMBERS.length + 1;
+  await prev(page).evaluate((button, count) => {
+    for (let i = 0; i < count; i++) (button as HTMLElement).click();
+  }, backwardPresses);
+  await expect.poll(() => visibleNames(page), { timeout: 10000 }).toEqual(
+    windowAt((MEMBERS.length - (backwardPresses % MEMBERS.length)) % MEMBERS.length, 3)
+  );
 });
 
 test("tablet shows two cards and mobile one, both wrapping one card at a time", async ({ page }) => {
