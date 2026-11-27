@@ -96,7 +96,7 @@ const probeFns = `(() => {
     if (!(hit instanceof HTMLElement)) continue;
     const r = hit.getBoundingClientRect();
     if (r.height === 0) continue;
-    if (r.bottom - y < Math.min(24, r.height)) continue;
+    if (r.bottom - y < Math.min(12, r.height / 2)) continue;
     if (r.height > window.innerHeight * 2 && !hit.matches("img,figure")) continue;
     landmark = hit;
     break;

@@ -59,10 +59,10 @@ import { useEffect } from "react";
  *   150ms after the last document-size change. A ResizeObserver can extend
  *   a burst but never open one, so content growth (navigation, lazy
  *   media, fonts) can't start corrections.
- * - Explicit input cancels corrections and wrapped programmatic scroll APIs
- *   re-anchor them. Large browser scroll-anchoring jumps during reflow are
- *   not treated as visitor intent: they are exactly the displacement this
- *   helper exists to correct.
+ * - A deliberate scroll jump during a burst re-anchors the frozen target to
+ *   the visitor's new position, while scroll events caused by the keeper's
+ *   own corrections are ignored. Explicit input cancels corrections and
+ *   wrapped programmatic scroll APIs re-anchor them directly.
  * - Landmarks are existing semantic elements discovered geometrically; no
  *   markup changes, no hardcoded heights or breakpoints, no URL/hash
  *   mutation.
@@ -168,7 +168,7 @@ function pickLandmark(chromeBottom: number): Landmark | null {
     if (rect.height === 0) continue; // hidden at this breakpoint
     // Do not anchor on a sliver caught at the scan edge: for short captions
     // or text lines, a few visible pixels are not a stable reading position.
-    if (rect.bottom - y < Math.min(24, rect.height)) continue;
+    if (rect.bottom - y < Math.min(12, rect.height / 2)) continue;
     // A huge match means we hit a media block or an unusual wrapper; media
     // still works as an anchor, wrappers don't — keep looking for text.
     if (rect.height > window.innerHeight * 2 && !hit.matches("img,figure")) {
@@ -177,6 +177,15 @@ function pickLandmark(chromeBottom: number): Landmark | null {
     return { el: hit, gap: rect.top - chromeBottom };
   }
   return null;
+}
+
+// A scroll delta beyond this during an active burst is a deliberate move —
+// anchor navigation, a scrollbar drag, or a programmatic scroll — not
+// reflow noise. The frozen target is re-anchored to the visitor's new
+// position so the correction preserves where they are *now*, not where they
+// were when the resize began.
+function deliberateScrollThreshold() {
+  return Math.max(300, window.innerHeight / 2);
 }
 
 export function ScrollPositionKeeper() {
@@ -204,8 +213,11 @@ export function ScrollPositionKeeper() {
     let tickFrame = 0;
     let reanchorPending = false;
     // True while the keeper itself is inside window.scrollTo — external
-    // programmatic scrolls are detected by wrapping the API below.
+    // programmatic scrolls are detected by wrapping the API below. Scroll
+    // events are asynchronous, so internalScrollTargets identifies the events
+    // produced by those writes after the synchronous call has returned.
     let internalWrite = false;
+    const internalScrollTargets: number[] = [];
     let settleTimer: ReturnType<typeof setTimeout> | undefined;
 
     // Cheap path per scroll frame: while the landmark still sits inside the
@@ -243,9 +255,22 @@ export function ScrollPositionKeeper() {
     };
 
     const onScroll = () => {
-      // Sample synchronously after the scroll event; a queued correction
-      // tick could otherwise run first and drag the visitor back to the
-      // stale target for a frame.
+      // The keeper's own correction writes can move the scroll position by
+      // far more than the deliberate-jump threshold. Suppress events landing
+      // at one of those exact targets; otherwise the correction would
+      // immediately re-anchor to the reflowed position it is trying to undo.
+      const internalIndex = internalScrollTargets.findIndex(
+        (target) => Math.abs(window.scrollY - target) <= 1
+      );
+      const internalEvent = internalIndex >= 0;
+      if (internalEvent) internalScrollTargets.splice(internalIndex, 1);
+      if (
+        !internalEvent &&
+        burstActive &&
+        Math.abs(window.scrollY - lastY) > deliberateScrollThreshold()
+      ) {
+        markExternalScroll();
+      }
       cancelAnimationFrame(sampleFrame);
       sampleFrame = requestAnimationFrame(() => {
         sampleFrame = 0;
@@ -270,6 +295,8 @@ export function ScrollPositionKeeper() {
         );
         if (Math.abs(y - target) > 1) {
           internalWrite = true;
+          internalScrollTargets.push(target);
+          if (internalScrollTargets.length > 10) internalScrollTargets.shift();
           window.scrollTo(0, target);
           internalWrite = false;
           lastY = target;
@@ -284,6 +311,8 @@ export function ScrollPositionKeeper() {
       const delta = rect.top - desiredTop;
       if (Math.abs(delta) > 1) {
         internalWrite = true;
+        internalScrollTargets.push(y + delta);
+        if (internalScrollTargets.length > 10) internalScrollTargets.shift();
         window.scrollTo(0, y + delta);
         internalWrite = false;
         lastY = y + delta;
@@ -362,8 +391,7 @@ export function ScrollPositionKeeper() {
     // superseded by the correction loop — without this, per-frame writes can
     // starve a pending scrollTo before it ever commits. Scrolls landing
     // without going through these APIs (element.scrollTop, hash navigation)
-    // bypassing these APIs is rare and normally follows explicit input,
-    // which already cancels the burst.
+    // still re-anchor via the large-delta check in the scroll handler.
     const scrollApis = (["scrollTo", "scroll", "scrollBy"] as const).filter(
       (key) => typeof window[key] === "function"
     );
