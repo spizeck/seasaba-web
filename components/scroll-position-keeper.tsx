@@ -166,13 +166,15 @@ function pickLandmark(chromeBottom: number): Landmark | null {
     if (!(hit instanceof HTMLElement)) continue; // gap or padding — look lower
     const rect = hit.getBoundingClientRect();
     if (rect.height === 0) continue; // hidden at this breakpoint
-    // Do not anchor on the tail end of an element: once less than half of it
-    // remains below the scan point, the next content is the stable reading
-    // position. This is especially important for text that rewraps shorter.
-    if (rect.bottom - y < rect.height / 2) continue;
+    // Do not anchor on the tail end of a text element: once less than half
+    // of it remains below the scan point, the next content is the stable
+    // reading position. Media is exempt because a photograph remains the
+    // object the visitor is looking at even when only part of it is visible.
+    const isMedia = hit.matches("img,figure");
+    if (!isMedia && rect.bottom - y < rect.height / 2) continue;
     // A huge match means we hit a media block or an unusual wrapper; media
     // still works as an anchor, wrappers don't — keep looking for text.
-    if (rect.height > window.innerHeight * 2 && !hit.matches("img,figure")) {
+    if (rect.height > window.innerHeight * 2 && !isMedia) {
       continue;
     }
     return { el: hit, gap: rect.top - chromeBottom };
