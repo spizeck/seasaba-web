@@ -12,10 +12,10 @@ import { YouTubeEmbed } from "@/components/youtube-embed";
 import { diveAreaByTitle } from "@/data/dive-areas";
 import {
   DIVE_SITES,
-  DIVE_SITE_BY_SLUG,
   diveSitePath,
   diveSiteSlug,
 } from "@/data/dive-site-videos";
+import { getDiveSitePageContent } from "@/lib/public-diving/dive-site-content";
 import { divingAnchors } from "@/lib/anchors";
 import { SITE_URL } from "@/lib/constants";
 
@@ -26,6 +26,10 @@ export function generateStaticParams() {
 // Sites not in the catalogue never existed — they are genuine 404s, not
 // placeholders waiting for content.
 export const dynamicParams = false;
+
+// Hourly ISR so commissioned seasaba.app published content (issue #325)
+// refreshes like the Dive Log; static-only content renders identically.
+export const revalidate = 3600;
 
 function metaDescription(text: string): string {
   if (text.length <= 160) return text;
@@ -39,11 +43,11 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const site = DIVE_SITE_BY_SLUG[slug];
+  const site = await getDiveSitePageContent(slug);
   if (!site) return {};
   return createMetadata({
-    title: `${site.name} Dive Site, Saba`,
-    description: metaDescription(site.description),
+    title: site.seoTitle ?? `${site.name} Dive Site, Saba`,
+    description: metaDescription(site.seoDescription ?? site.description),
     path: `/dive-sites/${slug}`,
   });
 }
@@ -54,7 +58,7 @@ export default async function DiveSitePage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const site = DIVE_SITE_BY_SLUG[slug];
+  const site = await getDiveSitePageContent(slug);
   if (!site) notFound();
 
   const area = diveAreaByTitle(site.area);
@@ -116,7 +120,7 @@ export default async function DiveSitePage({
       </div>
 
       {/* About this site */}
-      <p className="mt-8 text-base leading-relaxed text-muted-foreground">
+      <p className="mt-8 text-base leading-relaxed text-muted-foreground whitespace-pre-line">
         {site.description}
       </p>
 

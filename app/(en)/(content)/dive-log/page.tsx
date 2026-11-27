@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createMetadata } from "@/lib/metadata";
 import { DiveLogClient } from "@/components/dive-log-client";
 import { loadPublicDives, type PublicDive } from "@/lib/firestore/dive-log";
+import { isPublicDivingApiEnabled, loadPublicDivesFromApi } from "@/lib/public-diving/client";
 
 export const metadata = createMetadata({
   title: "Sea Saba Dive Log",
@@ -43,7 +44,11 @@ export default async function DiveLogPage() {
   let initialDives: PublicDive[] | undefined;
   let generatedAt: number | undefined;
   try {
-    const result = await loadPublicDives();
+    // PUBLIC_DIVING_API_BASE_URL commissions the seasaba.app public API
+    // (issue #325); unset keeps the direct Firestore read.
+    const result = await (isPublicDivingApiEnabled()
+      ? loadPublicDivesFromApi()
+      : loadPublicDives());
     if (result.dives.length > 0) {
       initialDives = result.dives;
       generatedAt = result.generatedAt;

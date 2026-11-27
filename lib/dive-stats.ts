@@ -1,4 +1,5 @@
 import { fetchDiveLogData, buildPublicDives, type PublicDive, type FirestoreSpecies } from "@/lib/firestore/dive-log";
+import { isPublicDivingApiEnabled, loadWeeklyDiveStatsFromApi } from "@/lib/public-diving/client";
 
 /**
  * Rolling seven-day diving statistics for the homepage, computed from the
@@ -128,13 +129,18 @@ export function computeWeeklyDiveStats(
 }
 
 /**
- * Fetch dive-log data and compute the rolling statistics. Uses the same
+ * Fetch the rolling statistics: from the public diving API when
+ * PUBLIC_DIVING_API_BASE_URL is set, otherwise computed from Firestore
+ * dive-log data. The Firestore path uses the same
  * server-only access path as the dive-log page so cache-only snapshots can
  * never produce false zeros. Throws on failure — callers decide per phase
  * (build/dev fall back gracefully; production serving rethrows so ISR keeps
  * the last-good page).
  */
 export async function loadWeeklyDiveStats(timeoutMs = 15_000): Promise<WeeklyDiveStats> {
+  // Commissioned source (issue #325): seasaba.app computes the same
+  // methodology server-side; a 200 with zero dives is a genuine empty week.
+  if (isPublicDivingApiEnabled()) return loadWeeklyDiveStatsFromApi(timeoutMs);
   let timer: ReturnType<typeof setTimeout> | undefined;
   const timeout = new Promise<never>((_, reject) => {
     timer = setTimeout(() => reject(new Error("Dive stats fetch timed out")), timeoutMs);
