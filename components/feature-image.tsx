@@ -12,7 +12,7 @@ interface FeatureImageProps {
   centerText?: boolean;
   /** When true, text is stacked above the image on mobile instead of below it. */
   mobileTextFirst?: boolean;
-  /** Concise visible attribution rendered beneath meaningful photographs. */
+  /** Concise visible attribution overlaid on meaningful photographs. */
   caption?: string;
   captionClassName?: string;
   /** Optional section anchor id */
@@ -35,7 +35,7 @@ export function FeatureImage({
   centerText = false,
   mobileTextFirst = false,
   caption,
-  captionClassName = "text-muted-foreground",
+  captionClassName = "text-white/90",
   id,
   children,
 }: FeatureImageProps) {
@@ -53,17 +53,16 @@ export function FeatureImage({
     : mobileTextFirst
       ? "order-2"
       : "";
-  const imageFrame = (
-    <div className={`relative aspect-[4/3] w-full overflow-hidden rounded-lg ${caption ? "lg:flex-1" : "lg:aspect-auto lg:h-full"} lg:min-h-[280px]`}>
-      <Image
-        src={src}
-        alt={alt}
-        fill
-        className="object-cover"
-        style={{ objectPosition }}
-        sizes="(max-width: 1024px) 100vw, 66vw"
-      />
-    </div>
+  const frameClass = `relative aspect-[4/3] w-full overflow-hidden rounded-lg lg:aspect-auto lg:h-full lg:min-h-[280px] ${imageOrder}`;
+  const imageElement = (
+    <Image
+      src={src}
+      alt={alt}
+      fill
+      className="object-cover"
+      style={{ objectPosition }}
+      sizes="(max-width: 1024px) 100vw, 66vw"
+    />
   );
 
   return (
@@ -72,14 +71,14 @@ export function FeatureImage({
       className={`not-prose grid gap-6 lg:items-stretch lg:gap-14 ${columns}`}
     >
       {caption ? (
-        <figure className={`flex flex-col ${imageOrder}`}>
-          {imageFrame}
-          <figcaption className={`mt-2 text-left text-xs leading-relaxed ${captionClassName}`}>
+        <figure className={frameClass}>
+          {imageElement}
+          <figcaption className={`absolute inset-x-0 bottom-0 max-h-full overflow-y-auto bg-gradient-to-t from-black/75 via-black/40 to-transparent px-3 pb-2 pt-8 text-left text-xs leading-snug ${captionClassName}`}>
             {caption}
           </figcaption>
         </figure>
       ) : (
-        <div className={imageOrder}>{imageFrame}</div>
+        <div className={frameClass}>{imageElement}</div>
       )}
       <div className={`${
         imageRight
