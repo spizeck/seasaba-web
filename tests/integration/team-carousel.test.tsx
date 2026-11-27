@@ -196,6 +196,20 @@ describe("TeamCarousel", () => {
     await waitFor(() => expect(transform()).toBe(offset(9)));
   });
 
+  it("keeps queued boundary presses when the track is only tapped", async () => {
+    renderRealCarousel();
+    fireEvent.click(screen.getByRole("button", { name: "Go to Gunner" }));
+
+    for (let i = 0; i < 10; i++) fireEvent.click(nextButton());
+    expect(transform()).toBe(offset(19));
+
+    fireEvent.pointerDown(region(), { clientX: 500, clientY: 500, button: 0 });
+    fireEvent.pointerUp(region(), { clientX: 500, clientY: 500, button: 0 });
+
+    fireEvent.transitionEnd(track(), { propertyName: "transform" });
+    await waitFor(() => expect(transform()).toBe(offset(9)));
+  });
+
   it("does not drop rapid backward clicks that reach the start of the cloned runway", async () => {
     renderRealCarousel();
 

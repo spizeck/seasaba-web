@@ -290,7 +290,6 @@ export function TeamCarousel({ members }: { members: TeamCardMember[] }) {
     }
     drag.current = { startX: e.clientX, startDelta, delta: startDelta, stepPx };
     dragDistance.current = 0;
-    pendingSteps.current = 0;
     setDragDelta(startDelta);
 
     // Window listeners keep fast swipes alive when the pointer leaves the
@@ -337,6 +336,10 @@ export function TeamCarousel({ members }: { members: TeamCardMember[] }) {
     removeWindowDragListeners.current?.();
     drag.current = null;
     setDragDelta(null);
+    // A tap is not a drag and must not discard queued arrow input. Once the
+    // pointer has genuinely dragged the strip, though, direct manipulation
+    // takes ownership and cancels any navigation still waiting to replay.
+    if (dragDistance.current > 8) pendingSteps.current = 0;
     if (cancelled || d.stepPx === 0) {
       dragDistance.current = 0;
       return;

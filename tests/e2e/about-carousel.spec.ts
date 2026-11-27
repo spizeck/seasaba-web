@@ -288,6 +288,31 @@ test("rapid clicks and direction reversals stay on real cards", async ({ page })
   await expectNames(page, windowAt(1, 3));
 });
 
+test("browser replays rapid arrow presses that overflow the cloned runway", async ({ page }) => {
+  test.setTimeout(60000);
+  await hydratedGoto(page, "/about");
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await resetCarousel(page);
+
+  // Dispatch the burst inside the browser so every press lands before the
+  // first wrap transition can settle. At desktop width the trailing runway
+  // ends at 2 * members - 3; one further press must replay after the snap.
+  const forwardPresses = MEMBERS.length * 2 - 3 + 1;
+  await next(page).evaluate((button, count) => {
+    for (let i = 0; i < count; i++) (button as HTMLElement).click();
+  }, forwardPresses);
+  await expect.poll(() => visibleNames(page), { timeout: 10000 }).toEqual(windowAt(forwardPresses % MEMBERS.length, 3));
+
+  await page.getByRole("button", { name: "Go to Mel" }).click();
+  const backwardPresses = MEMBERS.length + 1;
+  await prev(page).evaluate((button, count) => {
+    for (let i = 0; i < count; i++) (button as HTMLElement).click();
+  }, backwardPresses);
+  await expect.poll(() => visibleNames(page), { timeout: 10000 }).toEqual(
+    windowAt((MEMBERS.length - (backwardPresses % MEMBERS.length)) % MEMBERS.length, 3)
+  );
+});
+
 test("tablet shows two cards and mobile one, both wrapping one card at a time", async ({ page }) => {
   await hydratedGoto(page, "/about");
   await page.setViewportSize({ width: 768, height: 900 });
