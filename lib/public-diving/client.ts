@@ -196,11 +196,19 @@ export function toWeeklyDiveStats(data: unknown): WeeklyDiveStats {
   };
 }
 
+// The deadline is enforced by racing, not only by the abort signal: Next.js
+// drops `signal` when it refetches a stale cached response.
 async function withTimeout<T>(timeoutMs: number, run: (signal: AbortSignal) => Promise<T>): Promise<T> {
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const deadline = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => {
+      controller.abort();
+      reject(new PublicDivingApiError("Public diving API request timed out"));
+    }, timeoutMs);
+  });
   try {
-    return await run(controller.signal);
+    return await Promise.race([run(controller.signal), deadline]);
   } finally {
     clearTimeout(timer);
   }

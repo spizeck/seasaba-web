@@ -154,6 +154,11 @@ describe("loadPublicDivesFromApi", () => {
     await expect(loadPublicDivesFromApi()).rejects.toThrow("units");
   });
 
+  it("times out even when fetch ignores the abort signal (Next stale refetch)", async () => {
+    fetchMock.mockImplementation(() => new Promise(() => {}));
+    await expect(loadWeeklyDiveStatsFromApi(10)).rejects.toThrow("timed out");
+  });
+
   it("times out a hung request", async () => {
     fetchMock.mockImplementation(
       (_url, init) =>
