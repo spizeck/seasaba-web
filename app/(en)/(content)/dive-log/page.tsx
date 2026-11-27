@@ -4,10 +4,10 @@ import { DiveLogClient } from "@/components/dive-log-client";
 import { loadPublicDives, type PublicDive } from "@/lib/firestore/dive-log";
 import {
   DIVE_LOG_DEFAULT_DAYS,
-  diveLogStartDate,
   isPublicDivingApiEnabled,
   loadPublicDivesFromApi,
 } from "@/lib/public-diving/client";
+import { diveLogRangeStartDate } from "@/lib/dive-log-dates";
 
 export const metadata = createMetadata({
   title: "Sea Saba Dive Log",
@@ -56,7 +56,7 @@ export default async function DiveLogPage() {
   let generatedAt: number | undefined;
   try {
     const result = await (source === "api"
-      ? loadPublicDivesFromApi({ startDate: diveLogStartDate(DIVE_LOG_DEFAULT_DAYS) })
+      ? loadPublicDivesFromApi({ startDate: diveLogRangeStartDate(DIVE_LOG_DEFAULT_DAYS, Date.now()) })
       : loadPublicDives());
     if (result.dives.length > 0 || source === "api") {
       initialDives = result.dives;

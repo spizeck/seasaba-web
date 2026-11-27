@@ -22,7 +22,9 @@ import {
   type PublicDive,
 } from "@/lib/firestore/dive-log";
 import { trackEvent } from "@/lib/analytics";
-import { loadDiveLogHistory } from "@/app/(en)/(content)/dive-log/actions";
+import { loadDiveLogHistory, loadDiveLogSiteHistory } from "@/app/(en)/(content)/dive-log/actions";
+import { diveLogRangeStartDate } from "@/lib/dive-log-dates";
+import { parseDiveSlotMinutes } from "@/lib/firestore/dive-log";
 import { BookOpen, SlidersHorizontal, X, ChevronDown, Download } from "lucide-react";
 
 function unique<T>(arr: T[]): T[] {
@@ -106,13 +108,16 @@ function useDiveLogData(initialDives: PublicDive[] | undefined, source: DiveLogS
   }, [attempt, initialDives, serverOnly]);
 
   const [history, setHistory] = useState<{ range: DateRange; dives: PublicDive[] } | null>(null);
-  const [requestedRange, setRequestedRange] = useState<DateRange>("14");
+  // All-history chunks for individual sites, keyed by site name. They are
+  // never a complete dataset, so they don't widen `loadedRange`.
+  const [siteChunks, setSiteChunks] = useState<Record<string, PublicDive[]>>({});
+  const [lastRequest, setLastRequest] = useState<{ type: "range"; range: DateRange } | { type: "site"; site: string }>({ type: "range", range: "14" });
   const [historyFailed, setHistoryFailed] = useState(false);
   const [loadingHistory, startHistory] = useTransition();
   const loadedRange: DateRange = serverOnly ? history?.range ?? "14" : "all";
 
   function loadRange(range: DateRange) {
-    setRequestedRange(range);
+    setLastRequest({ type: "range", range });
     setHistoryFailed(false);
     startHistory(async () => {
       try {
@@ -127,27 +132,67 @@ function useDiveLogData(initialDives: PublicDive[] | undefined, source: DiveLogS
     });
   }
 
-  /** API mode: fetch a wider range than the one already loaded. */
-  function ensureRange(range: DateRange) {
+  function loadSiteHistory(site: string) {
+    setLastRequest({ type: "site", site });
+    setHistoryFailed(false);
+    startHistory(async () => {
+      try {
+        const result = await loadDiveLogSiteHistory(site);
+        if (!result) {
+          // Unknown site: only full history can confirm whether it has dives.
+          loadRange("all");
+          return;
+        }
+        startHistory(() =>
+          setSiteChunks((prev) => (prev[site] ? prev : { ...prev, [site]: result.dives }))
+        );
+      } catch (err) {
+        console.error("Dive log site history failed to load", err);
+        setHistoryFailed(true);
+      }
+    });
+  }
+
+  /**
+   * API mode: fetch whatever the (range, site) view needs. A range chunk
+   * covers every site within it; a site chunk covers that site at any
+   * range. For a site-filtered all-time view the site chunk is much
+   * smaller than full history.
+   */
+  function ensureCoverage(range: DateRange, site?: string) {
     if (!serverOnly) return;
-    if (coversRange(loadedRange, range)) {
+    const rangeOk = coversRange(loadedRange, range);
+    const covered = site ? rangeOk || Boolean(siteChunks[site]) : rangeOk;
+    if (covered) {
       if (historyFailed) setHistoryFailed(false);
       return;
     }
-    if (loadingHistory && coversRange(requestedRange, range)) return;
-    loadRange(range);
+    if (loadingHistory) return;
+    if (site && range === "all") loadSiteHistory(site);
+    else loadRange(range);
   }
+
+  // Union of every loaded chunk, deduplicated, in API order. Selections
+  // survive widening because ids persist across chunks.
+  const mergedDives = useMemo(() => {
+    const byId = new Map<string, PublicDive>();
+    for (const list of [initialDives ?? [], ...(history ? [history.dives] : []), ...Object.values(siteChunks)]) {
+      for (const d of list) if (!byId.has(d.id)) byId.set(d.id, d);
+    }
+    return Array.from(byId.values()).sort(compareDives);
+  }, [initialDives, history, siteChunks]);
 
   if (serverOnly) {
     return {
-      dives: history?.dives ?? initialDives ?? [],
+      dives: mergedDives,
       loading: refreshing || loadingHistory,
       error: historyFailed ? LOAD_ERROR : initialDives || history || refreshing ? null : LOAD_ERROR,
       retry: historyFailed
-        ? () => loadRange(requestedRange)
+        ? () => (lastRequest.type === "site" ? loadSiteHistory(lastRequest.site) : loadRange(lastRequest.range))
         : () => startRefresh(() => router.refresh()),
       loadedRange,
-      ensureRange,
+      siteChunks,
+      ensureCoverage,
     };
   }
 
@@ -161,7 +206,8 @@ function useDiveLogData(initialDives: PublicDive[] | undefined, source: DiveLogS
       setAttempt((a) => a + 1);
     },
     loadedRange,
-    ensureRange,
+    siteChunks,
+    ensureCoverage,
   };
 }
 
@@ -190,8 +236,16 @@ interface Filters {
 // Date-string comparison against an explicit reference instant — calling
 // new Date() here would make SSR and hydration disagree around the cutoff.
 function isWithinDateRange(dateStr: string, days: number, nowMs: number): boolean {
-  const cutoff = new Date(nowMs - days * 86_400_000).toISOString().slice(0, 10);
-  return dateStr >= cutoff;
+  return dateStr >= diveLogRangeStartDate(days, nowMs);
+}
+
+/** Same newest-first order the API returns: date, then dive slot, then id. */
+function compareDives(a: PublicDive, b: PublicDive): number {
+  const dateDiff = new Date(b.date).getTime() - new Date(a.date).getTime();
+  if (dateDiff !== 0) return dateDiff;
+  const slotDiff = parseDiveSlotMinutes(b.diveSlot) - parseDiveSlotMinutes(a.diveSlot);
+  if (slotDiff !== 0) return slotDiff;
+  return b.id.localeCompare(a.id);
 }
 
 function DiveCard({
@@ -367,7 +421,7 @@ export function DiveLogClient({
   generatedAt?: number;
   source?: DiveLogSource;
 }) {
-  const { dives, loading, error, retry, loadedRange, ensureRange } = useDiveLogData(initialDives, source);
+  const { dives, loading, error, retry, loadedRange, siteChunks, ensureCoverage } = useDiveLogData(initialDives, source);
   // Date filtering must produce identical markup during SSR and hydration:
   // seed "now" from the serialized render timestamp, then adopt local time
   // post-mount (the effect schedules rather than setting synchronously).
@@ -414,7 +468,7 @@ export function DiveLogClient({
     siteParam &&
     siteParam !== lastAppliedSiteParam &&
     dives.length > 0 &&
-    loadedRange === "all"
+    (loadedRange === "all" || Boolean(siteChunks[siteParam]))
   ) {
     setLastAppliedSiteParam(siteParam);
     if (ALL_SITES.includes(siteParam)) {
@@ -424,11 +478,14 @@ export function DiveLogClient({
       setCurrentPage(1);
     }
   }
-  // In API mode the deep link needs all history before it can match a site.
-  const requestAllHistory = useEffectEvent(() => ensureRange("all"));
+  // In API mode the current view (and a deep link, which widens to
+  // all-time for one site) loads whatever history it doesn't have yet.
+  // `dives` in the deps re-checks coverage when a chunk lands.
+  const loadCoverage = useEffectEvent((range: DateRange, site?: string) => ensureCoverage(range, site));
   useEffect(() => {
-    if (siteParam) requestAllHistory();
-  }, [siteParam]);
+    if (siteParam) loadCoverage("all", siteParam);
+    loadCoverage(dateRange, filters.site || undefined);
+  }, [siteParam, dateRange, filters.site, dives]);
 
   const dateFilteredDives = useMemo(() => {
     if (dateRange === "all") return dives;
@@ -537,9 +594,7 @@ export function DiveLogClient({
                   id="date-range"
                   value={dateRange}
                   onChange={(e) => {
-                    const range = e.target.value as DateRange;
-                    setDateRange(range);
-                    ensureRange(range);
+                    setDateRange(e.target.value as DateRange);
                     resetPage();
                   }}
                   className="rounded-md border border-border/60 bg-background px-2 py-1.5 text-xs font-medium text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30"
@@ -640,7 +695,7 @@ export function DiveLogClient({
                 description="Try adjusting the date range or clearing your filters to see more results."
               >
                 <button
-                  onClick={() => { clearFilters(); setDateRange("all"); ensureRange("all"); resetPage(); }}
+                  onClick={() => { clearFilters(); setDateRange("all"); resetPage(); }}
                   className="mt-4 rounded-md px-2 py-1 text-sm font-medium text-primary pressable hover:underline focus-ring"
                 >
                   Clear filters and show all time

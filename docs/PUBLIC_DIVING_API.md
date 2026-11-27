@@ -106,17 +106,39 @@ the server re-renders through the API (and the ISR cache).
    static descriptions superseded by published content. The variables are
    transition switches, not a permanent dual-source design.
 
-### Date-bounded Dive Log fetching
+### Date-bounded and site-scoped Dive Log fetching
 
 The page server-renders only the default 14 days
-(`startDate` = `diveLogStartDate(14)`), so the API can use its date-range
-query. Choosing "Past 30 days", "Past 90 days" or "All time", the
-"show all time" recovery button, or a `?site=` deep link calls the
-`loadDiveLogHistory` server action (`app/(en)/(content)/dive-log/actions.ts`),
-which requests `startDate` 30/90 days back, or all history (no `startDate`).
-The action's requests skip the Next data cache, so the wider list is never
-older than the page and replaces it (the API keeps its own hourly snapshot).
-Loaded ranges are reused; narrowing never refetches. The action accepts only
-those range keys and is refused when API mode is off. Filter options reflect
-the loaded range, and selections for export survive widening. A failed load
-shows the error state; "Try again" repeats that range request.
+(`startDate` = `diveLogRangeStartDate(14, now)`), so the API can use its
+date-range query. Choosing "Past 30 days", "Past 90 days" or "All time",
+the "show all time" recovery button, or a `?site=` deep link loads what the
+view is missing through server actions
+(`app/(en)/(content)/dive-log/actions.ts`):
+
+- `loadDiveLogHistory("30" | "90")` requests `startDate` 30/90 days back;
+  `"all"` requests all history (no `startDate`).
+- `loadDiveLogSiteHistory(name)` resolves the name to its public `siteId`
+  through the `dive-sites` list and requests `?siteId=` with no date
+  bound — all history for that one site, much smaller than full history.
+  It is used for `?site=` deep links and for site-filtered all-time
+  views. Unknown names return null and the client falls back to a full
+  load.
+
+Coverage rules: a range chunk covers every site within it; a site chunk
+covers that site at any range. Chunks are merged deduplicated by dive id
+in the API's newest-first order, selections for export survive widening,
+and a site chunk never counts as a complete dataset. Narrowing never
+refetches; a failed load shows the error state and "Try again" repeats
+that request.
+
+All action requests skip the Next data cache (`fresh`), so a wider list is
+never older than the page and replaces it outright. The actions accept
+only the inputs above and are refused when API mode is off.
+
+**Date semantics.** Ranges are exactly N calendar days including today:
+`diveLogRangeStartDate(days, now)` is `today − (days − 1)` in UTC
+(`lib/dive-log-dates.ts`), shared by the server request and the client
+filter, both inclusive — the same convention the API uses for its own
+7-day stats window. UTC date strings mean no timezone or DST drift;
+month, year and leap-year boundaries come free from epoch arithmetic.
+

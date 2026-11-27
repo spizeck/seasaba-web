@@ -14,7 +14,6 @@ vi.mock("@/lib/public-diving/client", () => ({
   isPublicDivingApiEnabled: vi.fn(() => false),
   loadPublicDivesFromApi: vi.fn(),
   DIVE_LOG_DEFAULT_DAYS: 14,
-  diveLogStartDate: (days: number) => `start-${days}`,
 }));
 
 function findClient(node: ReactNode): ReactElement | undefined {
@@ -111,7 +110,11 @@ describe("dive-log public API source (issue #325)", () => {
     vi.mocked(loadPublicDivesFromApi).mockResolvedValue({ dives: dives as never, generatedAt: 789 });
     const client = findClient(await DiveLogPage());
     expect((client!.props as { initialDives?: unknown }).initialDives).toBe(dives);
-    expect(loadPublicDivesFromApi).toHaveBeenCalledWith({ startDate: "start-14" });
+    expect(loadPublicDivesFromApi).toHaveBeenCalledWith({ startDate: expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/) });
+    // Exactly 14 calendar days, including today.
+    const start = (loadPublicDivesFromApi as ReturnType<typeof vi.fn>).mock.calls[0][0].startDate as string;
+    const days = Math.round((Date.parse(new Date().toISOString().slice(0, 10)) - Date.parse(start)) / 86_400_000);
+    expect(days).toBe(13);
     expect(loadPublicDives).not.toHaveBeenCalled();
   });
 

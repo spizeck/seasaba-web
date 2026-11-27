@@ -227,23 +227,17 @@ async function withTimeout<T>(timeoutMs: number, run: (signal: AbortSignal) => P
 export const DIVE_LOG_DEFAULT_DAYS = 14;
 
 /**
- * UTC `YYYY-MM-DD` for `days` before `nowMs`: the same cutoff the Dive Log
- * client filters on, so a bounded fetch always covers the visible range.
- */
-export function diveLogStartDate(days: number, nowMs = Date.now()): string {
-  return new Date(nowMs - days * 86_400_000).toISOString().slice(0, 10);
-}
-
-/**
  * Pass `startDate` to bound the request (the API then uses a date-range
- * query); omitting it requests all history, per the v1 contract. `fresh`
- * skips the Next data cache so the result is never older than the page.
+ * query) and/or `siteId` for a single site's dives; omitting both requests
+ * all history, per the v1 contract. `fresh` skips the Next data cache so
+ * the result is never older than the page.
  */
 export async function loadPublicDivesFromApi({
   startDate,
+  siteId,
   fresh = false,
   timeoutMs = 20_000,
-}: { startDate?: string; fresh?: boolean; timeoutMs?: number } = {}): Promise<{ dives: PublicDive[]; generatedAt: number }> {
+}: { startDate?: string; siteId?: string; fresh?: boolean; timeoutMs?: number } = {}): Promise<{ dives: PublicDive[]; generatedAt: number }> {
   return withTimeout(timeoutMs, async (signal) => {
     const dives: PublicDive[] = [];
     const seenCursors = new Set<string>();
@@ -251,6 +245,7 @@ export async function loadPublicDivesFromApi({
     for (let page = 0; page < MAX_PAGES; page++) {
       const params = new URLSearchParams({ limit: String(PAGE_LIMIT) });
       if (startDate) params.set("startDate", startDate);
+      if (siteId) params.set("siteId", siteId);
       if (cursor) params.set("cursor", cursor);
       const body = await getJson(`dives?${params}`, signal, fresh);
       if (!isObject(body) || !Array.isArray(body.data) || !isObject(body.pagination)) {
@@ -313,6 +308,21 @@ const WEBSITE_CONTENT_FIELDS = [
  * returned; operational `active` is deliberately ignored here because an
  * active site is not necessarily approved for the website.
  */
+/** All dive sites (any active/published status), for name → siteId lookups. */
+export async function loadDiveSitesFromApi(
+  timeoutMs = 15_000
+): Promise<{ siteId: string; name: string }[]> {
+  return withTimeout(timeoutMs, async (signal) => {
+    const body = await getJson("dive-sites", signal);
+    if (!isObject(body) || !Array.isArray(body.data)) malformed("dive-sites response");
+    checkMeta(body);
+    return body.data.map((site) => {
+      if (!isObject(site)) malformed("dive site");
+      return { siteId: str(site.siteId, "dive site siteId"), name: str(site.name, "dive site name") };
+    });
+  });
+}
+
 export async function loadPublishedDiveSitesFromApi(
   timeoutMs = 15_000
 ): Promise<PublishedDiveSiteContent[]> {

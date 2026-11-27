@@ -2,13 +2,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   isPublicDivingApiEnabled,
   loadPublicDivesFromApi,
-  diveLogStartDate,
+  loadDiveSitesFromApi,
   loadPublishedDiveSitesFromApi,
   loadWeeklyDiveStatsFromApi,
   publicDivingApiBaseUrl,
   toPublicDive,
 } from "@/lib/public-diving/client";
 import { loadWeeklyDiveStats } from "@/lib/dive-stats";
+import { diveLogRangeStartDate } from "@/lib/dive-log-dates";
 import { fetchDiveLogData } from "@/lib/firestore/dive-log";
 import {
   META,
@@ -116,14 +117,39 @@ describe("loadPublicDivesFromApi", () => {
       .mockResolvedValueOnce(jsonResponse(divesPage([apiDive({ id: "a" })], { hasMore: true, nextCursor: "c1" })))
       .mockResolvedValueOnce(jsonResponse(divesPage([])));
     await loadPublicDivesFromApi({
-      startDate: diveLogStartDate(14, Date.parse("2026-09-15T12:00:00Z")),
+      startDate: diveLogRangeStartDate(14, Date.parse("2026-09-15T12:00:00Z")),
       fresh: true,
     });
-    expect(requestedUrl(0).searchParams.get("startDate")).toBe("2026-09-01");
+    expect(requestedUrl(0).searchParams.get("startDate")).toBe("2026-09-02");
     expect(fetchMock.mock.calls[0][1]).toMatchObject({ cache: "no-store" });
     expect(fetchMock.mock.calls[0][1]).not.toHaveProperty("next");
-    expect(requestedUrl(1).searchParams.get("startDate")).toBe("2026-09-01");
+    expect(requestedUrl(1).searchParams.get("startDate")).toBe("2026-09-02");
     expect(requestedUrl(1).searchParams.get("cursor")).toBe("c1");
+  });
+
+  it("passes siteId through to every page request", async () => {
+    fetchMock.mockResolvedValueOnce(jsonResponse(divesPage([apiDive({ id: "a" })])));
+    await loadPublicDivesFromApi({ siteId: "site-9" });
+    expect(requestedUrl(0).searchParams.get("siteId")).toBe("site-9");
+  });
+
+  it("loadDiveSitesFromApi returns id/name pairs for every site", async () => {
+    fetchMock.mockResolvedValueOnce(
+      jsonResponse({
+        data: [
+          { siteId: "s1", name: "Tent Reef", active: true, websitePublished: true },
+          { siteId: "s2", name: "Diamond Rock", active: true, websitePublished: false },
+        ],
+        meta: META,
+      })
+    );
+    const sites = await loadDiveSitesFromApi();
+    expect(sites).toEqual([
+      { siteId: "s1", name: "Tent Reef" },
+      { siteId: "s2", name: "Diamond Rock" },
+    ]);
+    expect(requestedUrl(0).pathname).toBe("/api/public/v1/dive-sites");
+    expect(requestedUrl(0).searchParams.has("published")).toBe(false);
   });
 
   it("follows cursors until hasMore is false and preserves API order", async () => {

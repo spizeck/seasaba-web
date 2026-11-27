@@ -2,12 +2,12 @@ import { beforeEach, expect, it, vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { DiveLogClient } from "@/components/dive-log-client";
-import { buildPublicDives, fetchDiveLogData } from "@/lib/firestore/dive-log";
+import { buildPublicDives, fetchDiveLogData, formatDate } from "@/lib/firestore/dive-log";
 import { exportDiveLogToPdf } from "@/lib/dive-log-export";
-import { loadDiveLogHistory } from "@/app/(en)/(content)/dive-log/actions";
+import { loadDiveLogHistory, loadDiveLogSiteHistory } from "@/app/(en)/(content)/dive-log/actions";
 import { diveData, rawDive } from "../fixtures/dives";
 vi.mock("@/lib/firestore/dive-log", async (importOriginal) => ({ ...await importOriginal<typeof import("@/lib/firestore/dive-log")>(), fetchDiveLogData: vi.fn() }));
-vi.mock("@/app/(en)/(content)/dive-log/actions", () => ({ loadDiveLogHistory: vi.fn() }));
+vi.mock("@/app/(en)/(content)/dive-log/actions", () => ({ loadDiveLogHistory: vi.fn(), loadDiveLogSiteHistory: vi.fn() }));
 vi.mock("@/lib/dive-log-export", () => ({ exportDiveLogToPdf: vi.fn().mockResolvedValue(undefined) }));
 const nav = vi.hoisted(() => ({ params: new URLSearchParams(), refresh: vi.fn() }));
 vi.mock("next/navigation", async (importOriginal) => ({ ...await importOriginal<typeof import("next/navigation")>(), useSearchParams: () => nav.params, useRouter: () => ({ refresh: nav.refresh }) }));
@@ -16,6 +16,7 @@ beforeEach(() => {
   nav.refresh.mockReset();
   vi.mocked(fetchDiveLogData).mockClear();
   vi.mocked(loadDiveLogHistory).mockReset();
+  vi.mocked(loadDiveLogSiteHistory).mockReset();
   vi.useFakeTimers({ toFake: ["Date"] });
   vi.setSystemTime(new Date("2026-09-08T12:00:00Z"));
   const today = new Date().toISOString().slice(0, 10);
@@ -242,15 +243,70 @@ it("API mode surfaces a failed history load and retries it", async () => {
   expect(await screen.findByRole("heading", { name: "1 dive" })).toBeVisible();
   expect(nav.refresh).not.toHaveBeenCalled();
 });
-it("API mode deep links load all history before applying the site filter", async () => {
+it("API mode deep links load only that site's history, not all history", async () => {
   nav.params = new URLSearchParams("site=Diamond Rock");
   const today = new Date().toISOString().slice(0, 10);
   const recent = buildPublicDives(diveData([rawDive({ date: today })]));
-  const all = buildPublicDives(diveData([rawDive({ date: today }), rawDive({ id: "old", date: "2000-01-01", diveSiteId: "site-2", diveSlot: "9 am" })]));
-  vi.mocked(loadDiveLogHistory).mockResolvedValue({ dives: all, generatedAt: Date.now() });
+  const siteHistory = buildPublicDives(diveData([
+    rawDive({ id: "old", date: "2000-01-01", diveSiteId: "site-2", diveSlot: "9 am" }),
+    rawDive({ id: "older", date: "1999-06-01", diveSiteId: "site-2", diveSlot: "9 am" }),
+  ]));
+  vi.mocked(loadDiveLogSiteHistory).mockResolvedValue({ dives: siteHistory, generatedAt: Date.now() });
   render(<DiveLogClient source="api" initialDives={recent} generatedAt={Date.now()} />);
-  expect(await screen.findByRole("heading", { name: "1 dive matching filters" })).toBeVisible();
-  expect(loadDiveLogHistory).toHaveBeenCalledWith("all");
+  expect(await screen.findByRole("heading", { name: "2 dives matching filters" })).toBeVisible();
+  expect(loadDiveLogSiteHistory).toHaveBeenCalledWith("Diamond Rock");
+  expect(loadDiveLogHistory).not.toHaveBeenCalled();
   expect(screen.getByLabelText("Date range")).toHaveValue("all");
   expect(screen.getByLabelText("Dive Site")).toHaveValue("Diamond Rock");
+  expect(fetchDiveLogData).not.toHaveBeenCalled();
+});
+it("API mode falls back to full history when the deep-linked site is unknown", async () => {
+  nav.params = new URLSearchParams("site=Atlantis");
+  const today = new Date().toISOString().slice(0, 10);
+  const recent = buildPublicDives(diveData([rawDive({ date: today })]));
+  vi.mocked(loadDiveLogSiteHistory).mockResolvedValue(null);
+  vi.mocked(loadDiveLogHistory).mockResolvedValue({ dives: recent, generatedAt: Date.now() });
+  render(<DiveLogClient source="api" initialDives={recent} generatedAt={Date.now()} />);
+  await waitFor(() => expect(loadDiveLogHistory).toHaveBeenCalledWith("all"));
+  // Unknown site: the filter never applies, no crash.
+  expect(screen.getByRole("heading", { name: "1 dive" })).toBeVisible();
+});
+it("API mode clearing a deep-linked site filter loads full history once", async () => {
+  nav.params = new URLSearchParams("site=Diamond Rock");
+  const today = new Date().toISOString().slice(0, 10);
+  const recent = buildPublicDives(diveData([rawDive({ date: today })]));
+  const siteHistory = buildPublicDives(diveData([rawDive({ id: "old", date: "2000-01-01", diveSiteId: "site-2", diveSlot: "9 am" })]));
+  vi.mocked(loadDiveLogSiteHistory).mockResolvedValue({ dives: siteHistory, generatedAt: Date.now() });
+  vi.mocked(loadDiveLogHistory).mockResolvedValue({ dives: buildPublicDives(diveData([rawDive({ date: today }), rawDive({ id: "other", date: "2001-01-01", diveSlot: "9 am" })])), generatedAt: Date.now() });
+  render(<DiveLogClient source="api" initialDives={recent} generatedAt={Date.now()} />);
+  expect(await screen.findByRole("heading", { name: "1 dive matching filters" })).toBeVisible();
+  // Select a dive from the site chunk — it must survive the widening.
+  await userEvent.click(screen.getByRole("button", { name: "+ Add Diamond Rock to my dive log" }));
+  // Clear the site filter while staying on all time (the deep link opened the panel).
+  await userEvent.selectOptions(screen.getByLabelText("Dive Site"), "");
+  await waitFor(() => expect(loadDiveLogHistory).toHaveBeenCalledWith("all"));
+  expect(await screen.findByRole("heading", { name: "3 dives" })).toBeVisible();
+  await userEvent.click(screen.getByRole("button", { name: "Export My Dive Log" }));
+  expect(exportDiveLogToPdf).toHaveBeenCalledWith([expect.objectContaining({ diveSite: "Diamond Rock" })], "metric");
+});
+it("API mode merges overlapping chunks deduplicated in newest-first order", async () => {
+  nav.params = new URLSearchParams("site=Tent Reef");
+  const today = new Date().toISOString().slice(0, 10);
+  const recent = buildPublicDives(diveData([rawDive({ date: today })]));
+  const siteHistory = buildPublicDives(diveData([
+    rawDive({ date: today }), // duplicate of the initial chunk
+    rawDive({ id: "mid", date: "2020-06-01", diveSlot: "9 am" }),
+  ]));
+  vi.mocked(loadDiveLogSiteHistory).mockResolvedValue({ dives: siteHistory, generatedAt: Date.now() });
+  // Clearing the deep-linked site widens to full history (mocked empty here);
+  // the merged list is what matters.
+  vi.mocked(loadDiveLogHistory).mockResolvedValue({ dives: [], generatedAt: Date.now() });
+  render(<DiveLogClient source="api" initialDives={recent} generatedAt={Date.now()} />);
+  expect(await screen.findByRole("heading", { name: "2 dives matching filters" })).toBeVisible();
+  // Clear the site filter: both chunks merged, the duplicate counted once,
+  // today's dive first.
+  await userEvent.selectOptions(screen.getByLabelText("Dive Site"), "");
+  expect(await screen.findByRole("heading", { name: "2 dives" })).toBeVisible();
+  const html = document.body.innerHTML;
+  expect(html.indexOf(formatDate(today))).toBeLessThan(html.indexOf(formatDate("2020-06-01")));
 });
