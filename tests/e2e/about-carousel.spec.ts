@@ -247,21 +247,21 @@ test("desktop wraps seamlessly in both directions", async ({ page }) => {
 });
 
 test("repeated cycling never reaches a dead end or an empty slot", async ({ page }) => {
-  test.setTimeout(90000); // 20 clicked steps incl. real transitions are slow on WebKit
+  test.setTimeout(90000); // Two full loops incl. real transitions are slow on WebKit
   await hydratedGoto(page, "/about");
   await page.setViewportSize({ width: 1440, height: 900 });
   await resetCarousel(page);
 
-  // Two full loops of eleven positions — every landing must show 3 cards in
-  // source order, including across the wrap boundary.
-  for (let i = 1; i <= 20; i++) {
+  // Two full loops of the crew positions — every landing must show 3 cards
+  // in source order, including across the wrap boundary.
+  for (let i = 1; i <= MEMBERS.length * 2; i++) {
     await next(page).click();
     await expectNames(page, windowAt(i, 3));
   }
 
   // And backward through the same boundary.
   await prev(page).click();
-  await expectNames(page, windowAt(9, 3));
+  await expectNames(page, windowAt(MEMBERS.length - 1, 3));
 });
 
 test("rapid clicks and direction reversals stay on real cards", async ({ page }) => {

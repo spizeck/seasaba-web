@@ -121,9 +121,12 @@ export function TeamCarousel({ members }: { members: TeamCardMember[] }) {
     delta: number;
     stepPx: number;
   } | null>(null);
-  // Synchronous mirror of index for event handlers, which may fire before a
-  // queued re-render commits (e.g. transitionend during rapid clicks).
+  // Latest navigation target, mirrored synchronously for event handlers that
+  // may fire before a queued React re-render commits (e.g. rapid clicks).
   const indexRef = useRef(index);
+  // Signed count of arrow presses that arrived after the cloned runway was
+  // exhausted. They are replayed only after the wrap snap returns to the real strip.
+  const pendingSteps = useRef(0);
   // Distance travelled by the active pointer. Clicks following a real drag
   // are swallowed so swiping a linked card never navigates accidentally.
   const dragDistance = useRef(0);
@@ -139,9 +142,18 @@ export function TeamCarousel({ members }: { members: TeamCardMember[] }) {
     [memberCount, maxIndex]
   );
 
-  useEffect(() => {
-    indexRef.current = index;
-  }, [index]);
+  // Keep the ref authoritative within a burst of events, then commit the same
+  // value to React state. This prevents a normalization or a rapid click from
+  // overwriting another navigation update queued in the same burst.
+  const updateIndex = useCallback(
+    (updater: number | ((current: number) => number)) => {
+      const nextIndex =
+        typeof updater === "function" ? updater(indexRef.current) : updater;
+      indexRef.current = nextIndex;
+      setIndex(nextIndex);
+    },
+    []
+  );
 
   useEffect(
     () => () => removeWindowDragListeners.current?.(),
@@ -159,14 +171,15 @@ export function TeamCarousel({ members }: { members: TeamCardMember[] }) {
       drag.current = null;
       setDragDelta(null);
       setInstant(true);
+      pendingSteps.current = 0;
       if (memberCount > 0) {
-        setIndex((i) => ((i % memberCount) + memberCount) % memberCount);
+        updateIndex((i) => ((i % memberCount) + memberCount) % memberCount);
       }
     };
     update();
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
-  }, [memberCount]);
+  }, [memberCount, updateIndex]);
 
   // Two frames: the first lets the transition-disabled snap actually paint —
   // clearing `instant` in the same frame could coalesce with the transform
@@ -193,8 +206,8 @@ export function TeamCarousel({ members }: { members: TeamCardMember[] }) {
     const logical = ((i % memberCount) + memberCount) % memberCount;
     if (logical === i) return;
     setInstant(true);
-    setIndex(logical);
-  }, [memberCount]);
+    updateIndex(logical);
+  }, [memberCount, updateIndex]);
 
   // transitionend is not guaranteed (reduced-motion renders no transition, and
   // a retargeted transition may never settle on a clone position), so
@@ -209,6 +222,24 @@ export function TeamCarousel({ members }: { members: TeamCardMember[] }) {
     return () => clearTimeout(fallback);
   }, [index, memberCount, dragDelta, normalizeIndex]);
 
+  // Boundary presses are not safe to apply while the strip is parked on the
+  // last clone. Once the seamless snap has returned to the real strip and its
+  // transition has been re-enabled, replay their net movement so no press is lost.
+  useEffect(() => {
+    if (instant || dragDelta !== null) return;
+    if (index < 0 || index >= memberCount) return;
+    const steps = pendingSteps.current;
+    if (steps === 0) return;
+    updateIndex((i) => {
+      const target = i + steps;
+      const clamped = clampIndex(target);
+      // Extremely long bursts can exceed even the opposite runway. Keep the
+      // overflow signed so it is replayed after the next wrap snap rather than dropped.
+      pendingSteps.current = target - clamped;
+      return clamped;
+    });
+  }, [index, instant, dragDelta, memberCount, clampIndex, updateIndex]);
+
   const onTrackTransitionEnd = (e: React.TransitionEvent) => {
     if (e.target !== e.currentTarget) return;
     if (indexRef.current < 0 || indexRef.current >= memberCount) {
@@ -219,18 +250,26 @@ export function TeamCarousel({ members }: { members: TeamCardMember[] }) {
   // Positions past the ends are cloned slides; the generous cloned runway
   // (a full copy each side) absorbs rapid consecutive presses while a wrap
   // transition is still in flight, so no click lands on empty space.
-  const prev = useCallback(
-    () => setIndex((i) => Math.max(i - 1, -memberCount)),
-    [memberCount]
-  );
-  const next = useCallback(
-    () => setIndex((i) => Math.min(i + 1, memberCount * 2 - cardsPerView)),
-    [memberCount, cardsPerView]
-  );
+  const prev = useCallback(() => {
+    if (indexRef.current <= -memberCount) {
+      pendingSteps.current -= 1;
+      return;
+    }
+    updateIndex((i) => Math.max(i - 1, -memberCount));
+  }, [memberCount, updateIndex]);
+  const next = useCallback(() => {
+    if (indexRef.current >= maxIndex) {
+      pendingSteps.current += 1;
+      return;
+    }
+    updateIndex((i) => Math.min(i + 1, maxIndex));
+  }, [maxIndex, updateIndex]);
   const goTo = useCallback(
-    (target: number) =>
-      setIndex(((target % memberCount) + memberCount) % memberCount),
-    [memberCount]
+    (target: number) => {
+      pendingSteps.current = 0;
+      updateIndex(((target % memberCount) + memberCount) % memberCount);
+    },
+    [memberCount, updateIndex]
   );
 
   const onPointerDown = (e: React.PointerEvent) => {
@@ -251,6 +290,7 @@ export function TeamCarousel({ members }: { members: TeamCardMember[] }) {
     }
     drag.current = { startX: e.clientX, startDelta, delta: startDelta, stepPx };
     dragDistance.current = 0;
+    pendingSteps.current = 0;
     setDragDelta(startDelta);
 
     // Window listeners keep fast swipes alive when the pointer leaves the
@@ -303,7 +343,7 @@ export function TeamCarousel({ members }: { members: TeamCardMember[] }) {
     }
     // Snap to the nearest card; at least half a card of travel commits a move.
     const steps = Math.round(-d.delta / d.stepPx);
-    if (steps !== 0) setIndex((i) => clampIndex(i + steps));
+    if (steps !== 0) updateIndex((i) => clampIndex(i + steps));
   };
 
   const onPointerUp = () => endDrag(false);
