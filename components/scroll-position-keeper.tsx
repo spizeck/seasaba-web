@@ -59,10 +59,10 @@ import { useEffect } from "react";
  *   150ms after the last document-size change. A ResizeObserver can extend
  *   a burst but never open one, so content growth (navigation, lazy
  *   media, fonts) can't start corrections.
- * - A deliberate scroll jump during a burst (>300px / half a viewport —
- *   anchor nav, scrollbar drag, programmatic scroll; reflow noise is
- *   ~6px/event) re-anchors the frozen target to the visitor's new
- *   position instead of dragging them back to the stale one.
+ * - Explicit input cancels corrections and wrapped programmatic scroll APIs
+ *   re-anchor them. Large browser scroll-anchoring jumps during reflow are
+ *   not treated as visitor intent: they are exactly the displacement this
+ *   helper exists to correct.
  * - Landmarks are existing semantic elements discovered geometrically; no
  *   markup changes, no hardcoded heights or breakpoints, no URL/hash
  *   mutation.
@@ -87,7 +87,7 @@ const SCAN_STEP = 4;
 // pinning a whole <section> top would snap the visitor to the section start
 // instead of their reading position.
 const CONTENT_SELECTOR =
-  "h1,h2,h3,h4,h5,h6,p,li,figure,img,blockquote,td,th";
+  "h1,h2,h3,h4,h5,h6,p,li,figure,figcaption,img,blockquote,td,th";
 
 // Top-pinned UI that overlaps page content. Class-name discovery keeps this
 // honest as the header/section-nav markup evolves — no duplicated heights.
@@ -166,6 +166,9 @@ function pickLandmark(chromeBottom: number): Landmark | null {
     if (!(hit instanceof HTMLElement)) continue; // gap or padding — look lower
     const rect = hit.getBoundingClientRect();
     if (rect.height === 0) continue; // hidden at this breakpoint
+    // Do not anchor on a sliver caught at the scan edge: for short captions
+    // or text lines, a few visible pixels are not a stable reading position.
+    if (rect.bottom - y < Math.min(24, rect.height)) continue;
     // A huge match means we hit a media block or an unusual wrapper; media
     // still works as an anchor, wrappers don't — keep looking for text.
     if (rect.height > window.innerHeight * 2 && !hit.matches("img,figure")) {
@@ -174,15 +177,6 @@ function pickLandmark(chromeBottom: number): Landmark | null {
     return { el: hit, gap: rect.top - chromeBottom };
   }
   return null;
-}
-
-// A scroll delta beyond this during an active burst is a deliberate move —
-// anchor navigation, a scrollbar drag, or a programmatic scroll — not
-// reflow noise (measured ~6px per event). The frozen target is re-anchored
-// to the visitor's new position so the correction preserves where they are
-// *now*, not where they were when the resize began.
-function deliberateScrollThreshold() {
-  return Math.max(300, window.innerHeight / 2);
 }
 
 export function ScrollPositionKeeper() {
@@ -249,16 +243,9 @@ export function ScrollPositionKeeper() {
     };
 
     const onScroll = () => {
-      // A deliberate jump is detected synchronously in the event: a queued
-      // correction tick could otherwise run first and drag the visitor back
-      // to the stale target for a frame. Reflow noise (~6px/event) stays
-      // below the threshold and is ignored.
-      if (
-        burstActive &&
-        Math.abs(window.scrollY - lastY) > deliberateScrollThreshold()
-      ) {
-        markExternalScroll();
-      }
+      // Sample synchronously after the scroll event; a queued correction
+      // tick could otherwise run first and drag the visitor back to the
+      // stale target for a frame.
       cancelAnimationFrame(sampleFrame);
       sampleFrame = requestAnimationFrame(() => {
         sampleFrame = 0;
@@ -375,7 +362,8 @@ export function ScrollPositionKeeper() {
     // superseded by the correction loop — without this, per-frame writes can
     // starve a pending scrollTo before it ever commits. Scrolls landing
     // without going through these APIs (element.scrollTop, hash navigation)
-    // still re-anchor via the large-delta check in the scroll handler.
+    // bypassing these APIs is rare and normally follows explicit input,
+    // which already cancels the burst.
     const scrollApis = (["scrollTo", "scroll", "scrollBy"] as const).filter(
       (key) => typeof window[key] === "function"
     );
