@@ -38,7 +38,7 @@ const DIVE_EXPERIENCES = [
       `${DIVE_PRODUCTS.classic.schedule.departure} departure`,
       `Return about ${DIVE_PRODUCTS.classic.schedule.returns}`,
       "Two dives to ~70 ft / 21 m",
-      `Free ${OPERATIONS.nitroxBlend} Nitrox`,
+      `Free ${OPERATIONS.nitroxBlend} Nitrox for certified divers`,
       // Owner-confirmed rule — kept as page copy, not a canonical
       // `requirement` (see data/operations.ts and docs/OPERATIONS.md).
       "Scuba Diver minimum: private guide required",

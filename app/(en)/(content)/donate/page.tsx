@@ -58,8 +58,8 @@ export default function DonatePage() {
           to the island&apos;s hyperbaric chamber fund. Snorkel trips contribute{" "}
           ${OPERATIONS.conservationFees.snorkelParkPerPersonUsd} per person.
           These fees are set by the park and the chamber, not Sea Saba, and they
-          fund the moorings, patrols, and emergency coverage that keep the
-          reefs healthy.
+          support marine conservation and hyperbaric chamber preparedness
+          on Saba.
         </p>
         <p className="mt-3 text-sm text-muted-foreground">
           <Link
