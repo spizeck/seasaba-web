@@ -261,40 +261,29 @@ export async function loadWeeklyDiveStatsFromApi(timeoutMs = 15_000): Promise<We
   });
 }
 
+/**
+ * The published websiteContent fields the dive-site pages render today.
+ * Other contract fields (experienceLevel, featuredImage*, ...) are not read
+ * until the pages present them.
+ */
 export interface PublishedDiveSiteContent {
   siteId: string;
   name: string;
   slug?: string;
   shortDescription?: string;
   fullDescription?: string;
-  experienceLevel?: string;
-  typicalConditions?: string;
-  specialConsiderations?: string;
-  featuredImageUrl?: string;
-  featuredImageAltText?: string;
-  featuredImageAttribution?: string;
   youtubeVideoUrl?: string;
   seoTitle?: string;
   seoDescription?: string;
-  lastReviewedOn?: string;
-  publishedAt?: string;
 }
 
 const WEBSITE_CONTENT_FIELDS = [
   "slug",
   "shortDescription",
   "fullDescription",
-  "experienceLevel",
-  "typicalConditions",
-  "specialConsiderations",
-  "featuredImageUrl",
-  "featuredImageAltText",
-  "featuredImageAttribution",
   "youtubeVideoUrl",
   "seoTitle",
   "seoDescription",
-  "lastReviewedOn",
-  "publishedAt",
 ] as const;
 
 /**

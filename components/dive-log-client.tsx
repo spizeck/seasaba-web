@@ -1,8 +1,8 @@
 "use client";
 
-import { Suspense, useState, useMemo, useEffect, useId } from "react";
+import { Suspense, useState, useMemo, useEffect, useId, useTransition } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { PageHero } from "@/components/page-hero";
 import { BubbleLoader } from "@/components/bubble-loader";
 import { StatePanel } from "@/components/state-panel";
@@ -33,7 +33,20 @@ function unique<T>(arr: T[]): T[] {
 // error state instead of a loading skeleton that never resolves.
 const LOAD_TIMEOUT_MS = 15_000;
 
-function useDiveLogData(initialDives?: PublicDive[]) {
+const LOAD_ERROR = "The dive log couldn't be loaded right now. Please try again.";
+
+/**
+ * Where the server-rendered list came from. With the public API
+ * commissioned (issue #325) the browser never reads Firestore: the list is
+ * server-only, an empty array is a genuine empty result, and retry asks the
+ * server to re-render (ISR) instead of fetching client-side.
+ */
+export type DiveLogSource = "firestore" | "api";
+
+function useDiveLogData(initialDives: PublicDive[] | undefined, source: DiveLogSource) {
+  const serverOnly = source === "api";
+  const router = useRouter();
+  const [refreshing, startRefresh] = useTransition();
   // An empty payload is ambiguous — Firestore can resolve an empty snapshot
   // when its backend is unreachable — so only a non-empty list counts.
   const hasInitial = Boolean(initialDives?.length);
@@ -59,7 +72,7 @@ function useDiveLogData(initialDives?: PublicDive[]) {
     // manual retry, or when no initial payload was provided. Depending on
     // initialDives itself (not just presence) means a refreshed server
     // payload cancels an in-flight retry rather than racing it.
-    if (initialDives?.length && attempt === 0) return;
+    if (serverOnly || (initialDives?.length && attempt === 0)) return;
     let cancelled = false;
 
     const timeout = setTimeout(() => {
@@ -79,7 +92,7 @@ function useDiveLogData(initialDives?: PublicDive[]) {
         // nontechnical message instead of a raw Firestore/network exception.
         console.error("Dive log failed to load", err);
         if (cancelled) return;
-        setError("The dive log couldn't be loaded right now. Please try again.");
+        setError(LOAD_ERROR);
         setLoading(false);
       })
       .finally(() => clearTimeout(timeout));
@@ -88,7 +101,16 @@ function useDiveLogData(initialDives?: PublicDive[]) {
       cancelled = true;
       clearTimeout(timeout);
     };
-  }, [attempt, initialDives]);
+  }, [attempt, initialDives, serverOnly]);
+
+  if (serverOnly) {
+    return {
+      dives: initialDives ?? [],
+      loading: refreshing,
+      error: initialDives || refreshing ? null : LOAD_ERROR,
+      retry: () => startRefresh(() => router.refresh()),
+    };
+  }
 
   return {
     dives,
@@ -292,11 +314,13 @@ function DiveLogSearchParam({ onSite }: { onSite: (site: string | null) => void 
 export function DiveLogClient({
   initialDives,
   generatedAt,
+  source = "firestore",
 }: {
   initialDives?: PublicDive[];
   generatedAt?: number;
+  source?: DiveLogSource;
 }) {
-  const { dives, loading, error, retry } = useDiveLogData(initialDives);
+  const { dives, loading, error, retry } = useDiveLogData(initialDives, source);
   // Date filtering must produce identical markup during SSR and hydration:
   // seed "now" from the serialized render timestamp, then adopt local time
   // post-mount (the effect schedules rather than setting synchronously).

@@ -41,15 +41,18 @@ export default async function DiveLogPage() {
   const isBuildTime = process.env.NEXT_PHASE === "phase-production-build";
   const preserveCachedPage =
     !isBuildTime && process.env.NODE_ENV === "production";
+  // PUBLIC_DIVING_API_BASE_URL commissions the seasaba.app public API
+  // (issue #325); unset keeps the direct Firestore read. In API mode a 200
+  // with no dives is a genuine empty result (per the v1 contract), and the
+  // browser never falls back to Firestore.
+  const source = isPublicDivingApiEnabled() ? "api" : "firestore";
   let initialDives: PublicDive[] | undefined;
   let generatedAt: number | undefined;
   try {
-    // PUBLIC_DIVING_API_BASE_URL commissions the seasaba.app public API
-    // (issue #325); unset keeps the direct Firestore read.
-    const result = await (isPublicDivingApiEnabled()
+    const result = await (source === "api"
       ? loadPublicDivesFromApi()
       : loadPublicDives());
-    if (result.dives.length > 0) {
+    if (result.dives.length > 0 || source === "api") {
       initialDives = result.dives;
       generatedAt = result.generatedAt;
     } else if (preserveCachedPage) {
@@ -65,6 +68,7 @@ export default async function DiveLogPage() {
       <DiveLogClient
         initialDives={initialDives}
         generatedAt={generatedAt}
+        source={source}
       />
       {/* Without JS the client component sits on its loading state forever
           — say so and offer a real next step instead (issue #209). When the

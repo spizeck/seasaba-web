@@ -7,10 +7,12 @@ import { exportDiveLogToPdf } from "@/lib/dive-log-export";
 import { diveData, rawDive } from "../fixtures/dives";
 vi.mock("@/lib/firestore/dive-log", async (importOriginal) => ({ ...await importOriginal<typeof import("@/lib/firestore/dive-log")>(), fetchDiveLogData: vi.fn() }));
 vi.mock("@/lib/dive-log-export", () => ({ exportDiveLogToPdf: vi.fn().mockResolvedValue(undefined) }));
-const nav = vi.hoisted(() => ({ params: new URLSearchParams() }));
-vi.mock("next/navigation", async (importOriginal) => ({ ...await importOriginal<typeof import("next/navigation")>(), useSearchParams: () => nav.params }));
+const nav = vi.hoisted(() => ({ params: new URLSearchParams(), refresh: vi.fn() }));
+vi.mock("next/navigation", async (importOriginal) => ({ ...await importOriginal<typeof import("next/navigation")>(), useSearchParams: () => nav.params, useRouter: () => ({ refresh: nav.refresh }) }));
 beforeEach(() => {
   nav.params = new URLSearchParams();
+  nav.refresh.mockReset();
+  vi.mocked(fetchDiveLogData).mockClear();
   vi.useFakeTimers({ toFake: ["Date"] });
   vi.setSystemTime(new Date("2026-09-08T12:00:00Z"));
   const today = new Date().toISOString().slice(0, 10);
@@ -187,4 +189,16 @@ it("surfaces a failed PDF export as an alert with no lingering status region", a
   expect(screen.queryByRole("status")).not.toBeInTheDocument();
   expect(screen.getByRole("button", { name: "Export My Dive Log" })).toBeEnabled();
 });
-
+it("API mode never reads Firestore in the browser; Try again re-renders on the server", async () => {
+  render(<DiveLogClient source="api" />);
+  expect(screen.getByRole("alert")).toHaveTextContent("Unable to load dive log");
+  await userEvent.click(screen.getByRole("button", { name: "Try again" }));
+  expect(nav.refresh).toHaveBeenCalledTimes(1);
+  expect(fetchDiveLogData).not.toHaveBeenCalled();
+});
+it("API mode treats an empty server list as a genuine empty log, not a failure", () => {
+  render(<DiveLogClient source="api" initialDives={[]} generatedAt={Date.now()} />);
+  expect(screen.getByText("No dives logged yet")).toBeVisible();
+  expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+  expect(fetchDiveLogData).not.toHaveBeenCalled();
+});

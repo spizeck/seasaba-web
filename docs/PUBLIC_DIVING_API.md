@@ -58,11 +58,17 @@ units, runaway pagination) throws.
 | Phase | Dive Log | Homepage stats | Dive-site pages |
 |---|---|---|---|
 | Production runtime (ISR) | Throws: last good page kept | Throws: last good page kept | Throws: last good page kept |
-| Build / development | Client-fetch shell | Stats section hidden | Static content |
+| Build / development | Error state; "Try again" re-renders on the server | Stats section hidden | Static content |
 
 A `200` with empty data is a genuine result: an empty week shows no stats
-section (as before), and an empty Dive Log at production runtime still keeps
-the last good page (existing anomaly guard).
+section (as before), and the Dive Log renders its "No dives logged yet"
+state. (In Firestore mode an empty Dive Log at production runtime still
+keeps the last good page, because an unreachable Firestore can resolve an
+empty snapshot.)
+
+In API mode the browser never reads Firestore. Without a server payload the
+Dive Log shows its error state, and "Try again" calls `router.refresh()` so
+the server re-renders through the API (and the ISR cache).
 
 ## Dive-site content rules
 
@@ -94,7 +100,7 @@ the last good page (existing anomaly guard).
    Production.
 4. **Decommission the dual path:** once both are stable, remove the direct
    Firestore Dive Log/stats reads (`lib/firestore/dive-log.ts` fetchers,
-   `lib/dive-stats.ts` computation, the client-side Firestore retry in
-   `components/dive-log-client.tsx`) and the static descriptions superseded
-   by published content. Until then the client-side Dive Log retry (used
-   only when no server payload exists) still reads Firestore.
+   `lib/dive-stats.ts` computation, the Firestore-mode client retry in
+   `components/dive-log-client.tsx`), both commissioning variables, and the
+   static descriptions superseded by published content. The variables are
+   transition switches, not a permanent dual-source design.

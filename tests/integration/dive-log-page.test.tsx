@@ -112,6 +112,15 @@ describe("dive-log public API source (issue #325)", () => {
     expect(loadPublicDives).not.toHaveBeenCalled();
   });
 
+  it("renders a genuine empty API result instead of treating it as a failure", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("NEXT_PHASE", "phase-production-server");
+    vi.mocked(loadPublicDivesFromApi).mockResolvedValue({ dives: [], generatedAt: 789 });
+    const props = findClient(await DiveLogPage())!.props as { initialDives?: unknown; source?: string };
+    expect(props.initialDives).toEqual([]);
+    expect(props.source).toBe("api");
+  });
+
   it("throws on API failure at runtime so ISR keeps the last good page", async () => {
     vi.stubEnv("NODE_ENV", "production");
     vi.stubEnv("NEXT_PHASE", "phase-production-server");
