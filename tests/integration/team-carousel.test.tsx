@@ -183,6 +183,69 @@ describe("TeamCarousel", () => {
     await waitFor(() => expect(transform()).toBe(offset(3)));
   });
 
+  it("does not drop rapid forward clicks that reach the end of the cloned runway", async () => {
+    renderRealCarousel();
+    fireEvent.click(screen.getByRole("button", { name: "Go to Gunner" }));
+
+    // Nine presses fill the cloned runway through index 19; the tenth must
+    // remain queued instead of being swallowed by the runway boundary.
+    for (let i = 0; i < 10; i++) fireEvent.click(nextButton());
+    expect(transform()).toBe(offset(19));
+
+    fireEvent.transitionEnd(track(), { propertyName: "transform" });
+    await waitFor(() => expect(transform()).toBe(offset(9)));
+  });
+
+  it("keeps queued boundary presses when the track is only tapped", async () => {
+    renderRealCarousel();
+    fireEvent.click(screen.getByRole("button", { name: "Go to Gunner" }));
+
+    for (let i = 0; i < 10; i++) fireEvent.click(nextButton());
+    expect(transform()).toBe(offset(19));
+
+    fireEvent.pointerDown(region(), { clientX: 500, clientY: 500, button: 0 });
+    fireEvent.pointerUp(region(), { clientX: 500, clientY: 500, button: 0 });
+
+    fireEvent.transitionEnd(track(), { propertyName: "transform" });
+    await waitFor(() => expect(transform()).toBe(offset(9)));
+  });
+
+  it("does not drop rapid backward clicks that reach the start of the cloned runway", async () => {
+    renderRealCarousel();
+
+    // Eleven presses fill the leading cloned runway through index -11; the
+    // twelfth must remain queued instead of being swallowed by the boundary.
+    for (let i = 0; i < 12; i++) fireEvent.click(prevButton());
+    expect(transform()).toBe(offset(-11));
+
+    fireEvent.transitionEnd(track(), { propertyName: "transform" });
+    await waitFor(() => expect(transform()).toBe(offset(-1)));
+    fireEvent.transitionEnd(track(), { propertyName: "transform" });
+    await waitFor(() => expect(transform()).toBe(offset(10)));
+  });
+
+  it("replays overflow from very long bursts across repeated wrap snaps", async () => {
+    render(
+      <TeamCarousel members={["A", "B", "C", "D"].map(member)} />
+    );
+
+    // Four presses fill the leading runway; the remaining six are pending.
+    // Replaying them reaches the opposite runway with two steps still left over.
+    for (let i = 0; i < 10; i++) fireEvent.click(prevButton());
+    expect(transform()).toBe(offset(-4, 4, 3));
+
+    fireEvent.transitionEnd(track(), { propertyName: "transform" });
+    await waitFor(() => expect(transform()).toBe(offset(0, 4, 3)));
+    await waitFor(() => expect(transform()).toBe(offset(-4, 4, 3)));
+
+    fireEvent.transitionEnd(track(), { propertyName: "transform" });
+    await waitFor(() => expect(transform()).toBe(offset(0, 4, 3)));
+    await waitFor(() => expect(transform()).toBe(offset(-2, 4, 3)));
+
+    fireEvent.transitionEnd(track(), { propertyName: "transform" });
+    await waitFor(() => expect(transform()).toBe(offset(2, 4, 3)));
+  });
+
   it("reverses direction cleanly at the boundaries", async () => {
     renderRealCarousel();
     // Forward over the boundary, then back before the transition settles.
