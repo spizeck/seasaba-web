@@ -61,8 +61,8 @@ describe("individual dive site pages", () => {
     const iframe = container.querySelector("iframe");
     expect(iframe).toBeInTheDocument();
     expect(iframe).toHaveAttribute("title", "Twilight Zone dive site");
-    expect(iframe?.getAttribute("src")).toContain(
-      "https://www.youtube-nocookie.com/embed/-OBgucAKms0"
-    );
+    const embedUrl = new URL(iframe?.getAttribute("src") ?? "");
+    expect(embedUrl.origin).toBe("https://www.youtube-nocookie.com");
+    expect(embedUrl.pathname).toBe("/embed/-OBgucAKms0");
   });
 });
