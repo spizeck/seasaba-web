@@ -114,6 +114,8 @@ query. Choosing "Past 30 days", "Past 90 days" or "All time", the
 "show all time" recovery button, or a `?site=` deep link calls the
 `loadDiveLogHistory` server action (`app/(en)/(content)/dive-log/actions.ts`),
 which requests `startDate` 30/90 days back, or all history (no `startDate`).
+The action's requests skip the Next data cache, so the wider list is never
+older than the page and replaces it (the API keeps its own hourly snapshot).
 Loaded ranges are reused; narrowing never refetches. The action accepts only
 those range keys and is refused when API mode is off. Filter options reflect
 the loaded range, and selections for export survive widening. A failed load

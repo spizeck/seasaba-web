@@ -115,8 +115,13 @@ describe("loadPublicDivesFromApi", () => {
     fetchMock
       .mockResolvedValueOnce(jsonResponse(divesPage([apiDive({ id: "a" })], { hasMore: true, nextCursor: "c1" })))
       .mockResolvedValueOnce(jsonResponse(divesPage([])));
-    await loadPublicDivesFromApi({ startDate: diveLogStartDate(14, Date.parse("2026-09-15T12:00:00Z")) });
+    await loadPublicDivesFromApi({
+      startDate: diveLogStartDate(14, Date.parse("2026-09-15T12:00:00Z")),
+      fresh: true,
+    });
     expect(requestedUrl(0).searchParams.get("startDate")).toBe("2026-09-01");
+    expect(fetchMock.mock.calls[0][1]).toMatchObject({ cache: "no-store" });
+    expect(fetchMock.mock.calls[0][1]).not.toHaveProperty("next");
     expect(requestedUrl(1).searchParams.get("startDate")).toBe("2026-09-01");
     expect(requestedUrl(1).searchParams.get("cursor")).toBe("c1");
   });

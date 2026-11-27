@@ -20,7 +20,10 @@ export async function loadDiveLogHistory(range: string) {
     throw new Error("Dive log history is unavailable");
   }
   const days = HISTORY_DAYS[range];
+  // Uncached, so the wider list is never older than the page that asked for
+  // it and can replace it outright (the API keeps its own hourly snapshot).
   return loadPublicDivesFromApi({
     startDate: days === undefined ? undefined : diveLogStartDate(days),
+    fresh: true,
   });
 }

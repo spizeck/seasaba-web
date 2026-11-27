@@ -118,13 +118,7 @@ function useDiveLogData(initialDives: PublicDive[] | undefined, source: DiveLogS
       try {
         const result = await loadDiveLogHistory(range);
         startHistory(() =>
-          setHistory((h) => {
-            if (h && coversRange(h.range, range)) return h;
-            // The wider list can be an older hourly snapshot; keep newer dives already shown.
-            const ids = new Set(result.dives.map((d) => d.id));
-            const newer = (h?.dives ?? initialDives ?? []).filter((d) => !ids.has(d.id));
-            return { range, dives: [...newer, ...result.dives] };
-          })
+          setHistory((h) => (h && coversRange(h.range, range) ? h : { range, dives: result.dives }))
         );
       } catch (err) {
         console.error("Dive log history failed to load", err);

@@ -18,9 +18,9 @@ it("bounds 30/90-day ranges and requests all history only for all-time", async (
   await loadDiveLogHistory("90");
   await loadDiveLogHistory("all");
   expect(vi.mocked(loadPublicDivesFromApi).mock.calls).toEqual([
-    [{ startDate: "start-30" }],
-    [{ startDate: "start-90" }],
-    [{ startDate: undefined }],
+    [{ startDate: "start-30", fresh: true }],
+    [{ startDate: "start-90", fresh: true }],
+    [{ startDate: undefined, fresh: true }],
   ]);
 });
 

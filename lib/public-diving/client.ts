@@ -63,15 +63,17 @@ function requireBaseUrl(): string {
   return base;
 }
 
-async function getJson(path: string, signal: AbortSignal): Promise<unknown> {
+async function getJson(path: string, signal: AbortSignal, fresh = false): Promise<unknown> {
   const url = `${requireBaseUrl()}/api/public/v1/${path}`;
   let res: Response;
   try {
     res = await fetch(url, {
       headers: { Accept: "application/json" },
       signal,
-      // Matches the pages' hourly ISR and the API's own hourly snapshot.
-      next: { revalidate: PUBLIC_DIVING_API_REVALIDATE_SECONDS },
+      // Hourly, matching the pages' ISR and the API's own hourly snapshot.
+      ...(fresh
+        ? { cache: "no-store" as const }
+        : { next: { revalidate: PUBLIC_DIVING_API_REVALIDATE_SECONDS } }),
     });
   } catch (err) {
     if (signal.aborted) throw new PublicDivingApiError("Public diving API request timed out");
@@ -234,12 +236,14 @@ export function diveLogStartDate(days: number, nowMs = Date.now()): string {
 
 /**
  * Pass `startDate` to bound the request (the API then uses a date-range
- * query); omitting it requests all history, per the v1 contract.
+ * query); omitting it requests all history, per the v1 contract. `fresh`
+ * skips the Next data cache so the result is never older than the page.
  */
 export async function loadPublicDivesFromApi({
   startDate,
+  fresh = false,
   timeoutMs = 20_000,
-}: { startDate?: string; timeoutMs?: number } = {}): Promise<{ dives: PublicDive[]; generatedAt: number }> {
+}: { startDate?: string; fresh?: boolean; timeoutMs?: number } = {}): Promise<{ dives: PublicDive[]; generatedAt: number }> {
   return withTimeout(timeoutMs, async (signal) => {
     const dives: PublicDive[] = [];
     const seenCursors = new Set<string>();
@@ -248,7 +252,7 @@ export async function loadPublicDivesFromApi({
       const params = new URLSearchParams({ limit: String(PAGE_LIMIT) });
       if (startDate) params.set("startDate", startDate);
       if (cursor) params.set("cursor", cursor);
-      const body = await getJson(`dives?${params}`, signal);
+      const body = await getJson(`dives?${params}`, signal, fresh);
       if (!isObject(body) || !Array.isArray(body.data) || !isObject(body.pagination)) {
         malformed("dives response");
       }
