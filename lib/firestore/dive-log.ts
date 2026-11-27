@@ -211,7 +211,7 @@ function unique<T>(arr: T[]): T[] {
   return Array.from(new Set(arr));
 }
 
-function parseDiveSlotMinutes(slot: string): number {
+export function parseDiveSlotMinutes(slot: string): number {
   const match = slot.match(/^(\d{1,2})(?::(\d{2}))?\s*(am|pm)$/i);
   if (!match) return 0;
   let hours = parseInt(match[1], 10);

@@ -8,7 +8,9 @@ export function JsonLd({ data }: { data: Record<string, unknown> }) {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      // Escape "<" so string values (e.g. published CMS copy) cannot close
+      // the script element; JSON parsers read \u003c back as "<".
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(data).replace(/</g, "\\u003c") }}
     />
   );
 }

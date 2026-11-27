@@ -18,8 +18,8 @@ import { test, expect } from "./fixtures";
  * patches can be dropped — these tests must keep passing either way.
  */
 
-// This app defines no server actions, so any Next-Action value is
-// unrecognized and takes the not-found path. The status comes from
+// These IDs name no server action in the app, so they are unrecognized
+// and take the not-found path. The status comes from
 // getUnrecognizedActionStatusCode: 400 when the ID cannot be a server
 // reference (wrong length), 409 when it is well-formed but unknown.
 const MALFORMED_ACTION_ID = "0000000000000000000000000000000000000000"; // 40 chars

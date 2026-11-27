@@ -4,8 +4,16 @@ import DiveLogPage from "@/app/(en)/(content)/dive-log/page";
 import { DiveLogClient } from "@/components/dive-log-client";
 import { loadPublicDives } from "@/lib/firestore/dive-log";
 
+import { isPublicDivingApiEnabled, loadPublicDivesFromApi } from "@/lib/public-diving/client";
+
 vi.mock("@/lib/firestore/dive-log", () => ({
   loadPublicDives: vi.fn(),
+}));
+
+vi.mock("@/lib/public-diving/client", () => ({
+  isPublicDivingApiEnabled: vi.fn(() => false),
+  loadPublicDivesFromApi: vi.fn(),
+  diveLogDefaultStartDate: () => "start-14",
 }));
 
 function findClient(node: ReactNode): ReactElement | undefined {
@@ -24,6 +32,8 @@ function findClient(node: ReactNode): ReactElement | undefined {
 
 beforeEach(() => {
   vi.mocked(loadPublicDives).mockReset();
+  vi.mocked(loadPublicDivesFromApi).mockReset();
+  vi.mocked(isPublicDivingApiEnabled).mockReturnValue(false);
 });
 
 afterEach(() => vi.unstubAllEnvs());
@@ -87,5 +97,47 @@ describe("dive-log ISR resilience", () => {
     const client = findClient(el);
     expect((client!.props as { initialDives?: unknown }).initialDives).toBe(dives);
     expect((client!.props as { generatedAt?: number }).generatedAt).toBe(456);
+  });
+});
+
+describe("dive-log public API source (issue #325)", () => {
+  beforeEach(() => vi.mocked(isPublicDivingApiEnabled).mockReturnValue(true));
+
+  it("renders from the API, not Firestore, when commissioned", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("NEXT_PHASE", "phase-production-server");
+    const dives = [{ id: "api-1" }];
+    vi.mocked(loadPublicDivesFromApi).mockResolvedValue({ dives: dives as never, generatedAt: 789 });
+    const client = findClient(await DiveLogPage());
+    expect((client!.props as { initialDives?: unknown }).initialDives).toBe(dives);
+    expect(loadPublicDivesFromApi).toHaveBeenCalledWith({ startDate: "start-14" });
+
+    expect(loadPublicDives).not.toHaveBeenCalled();
+  });
+
+  it("renders a genuine empty API result instead of treating it as a failure", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("NEXT_PHASE", "phase-production-server");
+    vi.mocked(loadPublicDivesFromApi).mockResolvedValue({ dives: [], generatedAt: 789 });
+    const props = findClient(await DiveLogPage())!.props as { initialDives?: unknown; source?: string };
+    expect(props.initialDives).toEqual([]);
+    expect(props.source).toBe("api");
+  });
+
+  it("throws on API failure at runtime so ISR keeps the last good page", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("NEXT_PHASE", "phase-production-server");
+    vi.mocked(loadPublicDivesFromApi).mockRejectedValue(
+      new Error("Public diving API responded 503 (backend_unavailable)")
+    );
+    await expect(DiveLogPage()).rejects.toThrow("backend_unavailable");
+  });
+
+  it("renders the client-fetch shell at build when the API is unavailable", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("NEXT_PHASE", "phase-production-build");
+    vi.mocked(loadPublicDivesFromApi).mockRejectedValue(new Error("down"));
+    const client = findClient(await DiveLogPage());
+    expect((client!.props as { initialDives?: unknown }).initialDives).toBeUndefined();
   });
 });

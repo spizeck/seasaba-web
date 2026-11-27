@@ -1,8 +1,8 @@
 "use client";
 
-import { Suspense, useState, useMemo, useEffect, useId } from "react";
+import { Suspense, useState, useMemo, useEffect, useEffectEvent, useId, useTransition } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { PageHero } from "@/components/page-hero";
 import { BubbleLoader } from "@/components/bubble-loader";
 import { StatePanel } from "@/components/state-panel";
@@ -22,6 +22,9 @@ import {
   type PublicDive,
 } from "@/lib/firestore/dive-log";
 import { trackEvent } from "@/lib/analytics";
+import { loadDiveLogHistory, loadDiveLogSiteHistory } from "@/app/(en)/(content)/dive-log/actions";
+import { diveLogRangeStartDate } from "@/lib/dive-log-dates";
+import { parseDiveSlotMinutes } from "@/lib/firestore/dive-log";
 import { BookOpen, SlidersHorizontal, X, ChevronDown, Download } from "lucide-react";
 
 function unique<T>(arr: T[]): T[] {
@@ -33,7 +36,21 @@ function unique<T>(arr: T[]): T[] {
 // error state instead of a loading skeleton that never resolves.
 const LOAD_TIMEOUT_MS = 15_000;
 
-function useDiveLogData(initialDives?: PublicDive[]) {
+const LOAD_ERROR = "The dive log couldn't be loaded right now. Please try again.";
+
+/**
+ * Where the server-rendered list came from. With the public API
+ * commissioned (issue #325) the browser never reads Firestore: the server
+ * renders the default 14 days, wider ranges load on demand through a
+ * server action, an empty array is a genuine empty result, and retry asks
+ * the server to re-render (ISR) instead of fetching client-side.
+ */
+export type DiveLogSource = "firestore" | "api";
+
+function useDiveLogData(initialDives: PublicDive[] | undefined, source: DiveLogSource) {
+  const serverOnly = source === "api";
+  const router = useRouter();
+  const [refreshing, startRefresh] = useTransition();
   // An empty payload is ambiguous — Firestore can resolve an empty snapshot
   // when its backend is unreachable — so only a non-empty list counts.
   const hasInitial = Boolean(initialDives?.length);
@@ -59,7 +76,7 @@ function useDiveLogData(initialDives?: PublicDive[]) {
     // manual retry, or when no initial payload was provided. Depending on
     // initialDives itself (not just presence) means a refreshed server
     // payload cancels an in-flight retry rather than racing it.
-    if (initialDives?.length && attempt === 0) return;
+    if (serverOnly || (initialDives?.length && attempt === 0)) return;
     let cancelled = false;
 
     const timeout = setTimeout(() => {
@@ -79,7 +96,7 @@ function useDiveLogData(initialDives?: PublicDive[]) {
         // nontechnical message instead of a raw Firestore/network exception.
         console.error("Dive log failed to load", err);
         if (cancelled) return;
-        setError("The dive log couldn't be loaded right now. Please try again.");
+        setError(LOAD_ERROR);
         setLoading(false);
       })
       .finally(() => clearTimeout(timeout));
@@ -88,7 +105,96 @@ function useDiveLogData(initialDives?: PublicDive[]) {
       cancelled = true;
       clearTimeout(timeout);
     };
-  }, [attempt, initialDives]);
+  }, [attempt, initialDives, serverOnly]);
+
+  const [history, setHistory] = useState<{ range: DateRange; dives: PublicDive[] } | null>(null);
+  // All-history chunks for individual sites, keyed by site name. They are
+  // never a complete dataset, so they don't widen `loadedRange`.
+  const [siteChunks, setSiteChunks] = useState<Record<string, PublicDive[]>>({});
+  const [lastRequest, setLastRequest] = useState<{ type: "range"; range: DateRange } | { type: "site"; site: string }>({ type: "range", range: "14" });
+  const [historyFailed, setHistoryFailed] = useState(false);
+  const [loadingHistory, startHistory] = useTransition();
+  const loadedRange: DateRange = serverOnly ? history?.range ?? "14" : "all";
+
+  function loadRange(range: DateRange) {
+    setLastRequest({ type: "range", range });
+    setHistoryFailed(false);
+    startHistory(async () => {
+      try {
+        const result = await loadDiveLogHistory(range);
+        startHistory(() =>
+          setHistory((h) => (h && coversRange(h.range, range) ? h : { range, dives: result.dives }))
+        );
+      } catch (err) {
+        console.error("Dive log history failed to load", err);
+        setHistoryFailed(true);
+      }
+    });
+  }
+
+  function loadSiteHistory(site: string) {
+    setLastRequest({ type: "site", site });
+    setHistoryFailed(false);
+    startHistory(async () => {
+      try {
+        const result = await loadDiveLogSiteHistory(site);
+        if (!result) {
+          // Unknown site: only full history can confirm whether it has dives.
+          loadRange("all");
+          return;
+        }
+        startHistory(() =>
+          setSiteChunks((prev) => (prev[site] ? prev : { ...prev, [site]: result.dives }))
+        );
+      } catch (err) {
+        console.error("Dive log site history failed to load", err);
+        setHistoryFailed(true);
+      }
+    });
+  }
+
+  /**
+   * API mode: fetch whatever the (range, site) view needs. A range chunk
+   * covers every site within it; a site chunk covers that site at any
+   * range. For a site-filtered all-time view the site chunk is much
+   * smaller than full history.
+   */
+  function ensureCoverage(range: DateRange, site?: string) {
+    if (!serverOnly) return;
+    const rangeOk = coversRange(loadedRange, range);
+    const covered = site ? rangeOk || Boolean(siteChunks[site]) : rangeOk;
+    if (covered) {
+      if (historyFailed) setHistoryFailed(false);
+      return;
+    }
+    if (loadingHistory) return;
+    if (site && range === "all") loadSiteHistory(site);
+    else loadRange(range);
+  }
+
+  // Union of every loaded chunk, deduplicated, in API order. Selections
+  // survive widening because ids persist across chunks.
+  const mergedDives = useMemo(() => {
+    const byId = new Map<string, PublicDive>();
+    for (const list of [initialDives ?? [], ...(history ? [history.dives] : []), ...Object.values(siteChunks)]) {
+      for (const d of list) if (!byId.has(d.id)) byId.set(d.id, d);
+    }
+    return Array.from(byId.values()).sort(compareDives);
+  }, [initialDives, history, siteChunks]);
+
+  if (serverOnly) {
+    return {
+      dives: mergedDives,
+      loading: refreshing || loadingHistory,
+      error: historyFailed ? LOAD_ERROR : initialDives || history || refreshing ? null : LOAD_ERROR,
+      retry: historyFailed
+        ? () => (lastRequest.type === "site" ? loadSiteHistory(lastRequest.site) : loadRange(lastRequest.range))
+        : () => startRefresh(() => router.refresh()),
+      loadedRange,
+      siteChunks,
+      ensureCoverage,
+    };
+  }
 
   return {
     dives,
@@ -99,10 +205,19 @@ function useDiveLogData(initialDives?: PublicDive[]) {
       setError(null);
       setAttempt((a) => a + 1);
     },
+    loadedRange,
+    siteChunks,
+    ensureCoverage,
   };
 }
 
 type DateRange = "14" | "30" | "90" | "all";
+
+const RANGE_ORDER: DateRange[] = ["14", "30", "90", "all"];
+
+function coversRange(loaded: DateRange, wanted: DateRange): boolean {
+  return RANGE_ORDER.indexOf(loaded) >= RANGE_ORDER.indexOf(wanted);
+}
 
 const DATE_RANGE_LABELS: Record<DateRange, string> = {
   "14": "Past 14 days",
@@ -121,8 +236,16 @@ interface Filters {
 // Date-string comparison against an explicit reference instant — calling
 // new Date() here would make SSR and hydration disagree around the cutoff.
 function isWithinDateRange(dateStr: string, days: number, nowMs: number): boolean {
-  const cutoff = new Date(nowMs - days * 86_400_000).toISOString().slice(0, 10);
-  return dateStr >= cutoff;
+  return dateStr >= diveLogRangeStartDate(days, nowMs);
+}
+
+/** Same newest-first order the API returns: date, then dive slot, then id. */
+function compareDives(a: PublicDive, b: PublicDive): number {
+  const dateDiff = new Date(b.date).getTime() - new Date(a.date).getTime();
+  if (dateDiff !== 0) return dateDiff;
+  const slotDiff = parseDiveSlotMinutes(b.diveSlot) - parseDiveSlotMinutes(a.diveSlot);
+  if (slotDiff !== 0) return slotDiff;
+  return b.id.localeCompare(a.id);
 }
 
 function DiveCard({
@@ -292,11 +415,13 @@ function DiveLogSearchParam({ onSite }: { onSite: (site: string | null) => void 
 export function DiveLogClient({
   initialDives,
   generatedAt,
+  source = "firestore",
 }: {
   initialDives?: PublicDive[];
   generatedAt?: number;
+  source?: DiveLogSource;
 }) {
-  const { dives, loading, error, retry } = useDiveLogData(initialDives);
+  const { dives, loading, error, retry, loadedRange, siteChunks, ensureCoverage } = useDiveLogData(initialDives, source);
   // Date filtering must produce identical markup during SSR and hydration:
   // seed "now" from the serialized render timestamp, then adopt local time
   // post-mount (the effect schedules rather than setting synchronously).
@@ -339,7 +464,12 @@ export function DiveLogClient({
     // the auto-applied value; a manual site choice stays untouched.
     setFilters((f) => (f.site === lastAppliedSiteParam ? { ...f, site: "" } : f));
     setLastAppliedSiteParam(null);
-  } else if (siteParam && siteParam !== lastAppliedSiteParam && dives.length > 0) {
+  } else if (
+    siteParam &&
+    siteParam !== lastAppliedSiteParam &&
+    dives.length > 0 &&
+    (loadedRange === "all" || Boolean(siteChunks[siteParam]))
+  ) {
     setLastAppliedSiteParam(siteParam);
     if (ALL_SITES.includes(siteParam)) {
       setFilters((f) => ({ ...f, site: siteParam }));
@@ -348,6 +478,14 @@ export function DiveLogClient({
       setCurrentPage(1);
     }
   }
+  // In API mode the current view (and a deep link, which widens to
+  // all-time for one site) loads whatever history it doesn't have yet.
+  // `dives` in the deps re-checks coverage when a chunk lands.
+  const loadCoverage = useEffectEvent((range: DateRange, site?: string) => ensureCoverage(range, site));
+  useEffect(() => {
+    if (siteParam) loadCoverage("all", siteParam);
+    loadCoverage(dateRange, filters.site || undefined);
+  }, [siteParam, dateRange, filters.site, dives]);
 
   const dateFilteredDives = useMemo(() => {
     if (dateRange === "all") return dives;
@@ -537,7 +675,7 @@ export function DiveLogClient({
                   unitSystem={unitSystem}
                 />
               ))
-            ) : dives.length === 0 ? (
+            ) : dives.length === 0 && loadedRange === "all" ? (
               <StatePanel
                 role="status"
                 title="No dives logged yet"
