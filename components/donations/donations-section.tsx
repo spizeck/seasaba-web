@@ -145,8 +145,8 @@ function DonationCard({ recipient }: { recipient: DonationRecipient }) {
               buttonText={`Visit ${recipient.name}`}
               ariaLabel={
                 recipient.donationUrl
-                  ? `Visit website — ${recipient.name}, opens in a new tab`
-                  : `Visit their website — ${recipient.name}, opens in a new tab`
+                  ? `Visit website: ${recipient.name}, opens in a new tab`
+                  : `Visit their website: ${recipient.name}, opens in a new tab`
               }
               className="inline-flex items-center gap-1.5 text-sm font-medium text-primary transition-colors hover:text-primary/80"
             >

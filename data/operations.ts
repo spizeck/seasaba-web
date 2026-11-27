@@ -148,7 +148,7 @@ export const DIVE_PRODUCTS = {
     name: "Afternoon Snorkel Trip",
     checkfrontItemId: "246",
     schedule: { taxiPickup: "12:30 PM", departure: "1:00 PM", returns: "3:00 PM" },
-    requirement: "Comfortable swimmers — unguided",
+    requirement: "Comfortable swimmers, unguided",
   },
   private: {
     slug: "private",

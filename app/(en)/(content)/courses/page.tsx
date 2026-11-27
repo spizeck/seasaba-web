@@ -95,7 +95,7 @@ const COURSES: Course[] = [
     level: "Beginner",
     duration: "Full day",
     description:
-      "Your first breath underwater, taken on a real dive site. No certification required — just curiosity. A Sea Saba instructor guides you every step of the way, from a quick skills introduction in Fort Bay Harbor to a supervised boat dive on the reef.",
+      "Your first breath underwater, taken on a real dive site. No certification required, just curiosity. A Sea Saba instructor guides you every step of the way, from a quick skills introduction in Fort Bay Harbor to a supervised boat dive on the reef.",
     includes: ["All equipment provided", "Supervised boat dive", "2:1 instructor-to-student ratio max", "No experience needed"],
     cta: "Request Try Scuba Info",
     path: "/contact?interest=try-scuba",
@@ -258,7 +258,7 @@ export default function CoursesPage() {
           <div>
             <h2 className="text-xl font-semibold text-foreground">Modern Rental Equipment</h2>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              All courses include full use of our modern Scubapro equipment — BCDs, regulators,
+              All courses include full use of our modern Scubapro equipment: BCDs, regulators,
               wetsuits, masks, fins, and wrist-mounted dive computers. XDeep backplate and wing
               systems are also available for divers who prefer a streamlined technical setup.
               Nitrox is complimentary for certified divers when appropriate.

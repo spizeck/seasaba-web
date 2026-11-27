@@ -134,22 +134,19 @@ export default async function DiveSitePage({
           >
             Saba National Marine Park
           </TrackedOutboundLink>
-          , most of them 5–15 minutes by boat from Fort Bay Harbor. The
-          park&apos;s permanent moorings — maintained by the Saba Conservation
-          Foundation — keep anchors off the reef, and every diver&apos;s park fee
-          supports that protection directly. Sites are chosen each day for the
-          actual conditions and the divers aboard, so let us know if there&apos;s
-          a site you&apos;re hoping to visit.
+          . Our dive team selects sites each day based on weather, sea
+          conditions and the experience of our divers. If there&apos;s a
+          particular site you&apos;d love to explore, just let us know.
         </p>
         {site.techSuitable && (
           <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
             {site.name} can support deeper and technical profiles. Technical
-            dives are planned in advance — tell us what you have in mind and
+            dives are planned in advance. Tell us what you have in mind and
             we&apos;ll talk through logistics.
           </p>
         )}
         <div className="mt-4 flex flex-col gap-3 sm:flex-row">
-          <Button asChild variant="outline" size="sm">
+          <Button asChild size="sm">
             <Link href={`/diving#${divingAnchors.options}`}>
               View Diving Options
             </Link>
@@ -174,6 +171,8 @@ export default async function DiveSitePage({
             src={area.image}
             alt={`${area.title} dive area in the Saba Marine Park`}
             imageRight={area.imagePosition === "right"}
+            objectPosition={"imageObjectPosition" in area ? area.imageObjectPosition : "center"}
+              caption={"caption" in area ? area.caption : undefined}
           >
             <div>
               <h2 className="text-xl font-semibold text-foreground">
@@ -184,7 +183,7 @@ export default async function DiveSitePage({
               </p>
               <Button asChild variant="outline" size="sm" className="mt-4">
                 <Link href={`/dive-sites#${area.id}`}>
-                  More about {area.title}
+                  Explore the {area.title.replace(/^The /, "")} Area
                 </Link>
               </Button>
             </div>
@@ -206,7 +205,7 @@ export default async function DiveSitePage({
       {siblings.length > 0 && (
         <section className="mt-12">
           <h2 className="text-xl font-semibold text-foreground">
-            More Sites in {site.area}
+            Explore More of {site.area.replace(/^The /, "")}
           </h2>
           <div className="mt-3 flex flex-wrap gap-2">
             {siblings.map((name) => (
@@ -226,7 +225,7 @@ export default async function DiveSitePage({
       <section className="mt-12 grid gap-4 sm:grid-cols-2">
         <Link
           href={`/dive-log?site=${encodeURIComponent(site.name).replace(/'/g, "%27")}`}
-          className="rounded-lg border border-border/40 bg-muted/20 p-4 pressable hover:border-border"
+          className="group no-underline rounded-lg border border-border/40 bg-muted/20 p-4 pressable hover:border-primary/40 hover:bg-muted/40"
         >
           <div className="flex items-center gap-2">
             <Waves className="h-4 w-4 text-primary" />
@@ -238,10 +237,11 @@ export default async function DiveSitePage({
             See recent dives at {site.name} and what our guides have
             spotted there.
           </p>
+          <span className="mt-2 inline-block text-xs font-medium text-primary transition-transform group-hover:translate-x-0.5">Explore →</span>
         </Link>
         <Link
           href="/dive-sites"
-          className="rounded-lg border border-border/40 bg-muted/20 p-4 pressable hover:border-border"
+          className="group no-underline rounded-lg border border-border/40 bg-muted/20 p-4 pressable hover:border-primary/40 hover:bg-muted/40"
         >
           <div className="flex items-center gap-2">
             <MapPin className="h-4 w-4 text-primary" />
@@ -253,6 +253,7 @@ export default async function DiveSitePage({
             Browse all five dive areas and more than 30 protected sites in the
             Saba Marine Park.
           </p>
+          <span className="mt-2 inline-block text-xs font-medium text-primary transition-transform group-hover:translate-x-0.5">Explore →</span>
         </Link>
       </section>
 

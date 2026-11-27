@@ -47,6 +47,9 @@ export function personJsonLd(member: ProfiledTeamMember): Record<string, unknown
     url: teamMemberProfileUrl(member),
     ...(member.image && { image: `${SITE_URL}${member.image}` }),
     worksFor: { "@id": BUSINESS_ID },
+    ...(member.externalLinks?.length && {
+      sameAs: member.externalLinks.map((link) => link.href),
+    }),
     ...(member.languages && { knowsLanguage: member.languages }),
   };
 }

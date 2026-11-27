@@ -22,7 +22,7 @@ export const DIVE_SITES: DiveSite[] = [
     name: "Third Encounter",
     area: "The Pinnacles",
     description:
-      "One of Saba's most celebrated dives — a deep volcanic seamount rising from the ocean floor with dramatic topography, large barrel sponges, and frequent pelagic visitors including sharks and schooling jacks.",
+      "One of Saba's most celebrated dives, a deep volcanic seamount rising from the ocean floor with dramatic topography, large barrel sponges, and frequent pelagic visitors including sharks and schooling jacks.",
     videoId: "GcIUiaNwoCE",
     techSuitable: true,
   },
@@ -38,7 +38,7 @@ export const DIVE_SITES: DiveSite[] = [
     name: "Outer Limits",
     area: "The Pinnacles",
     description:
-      "Saba's most remote dive — a deep offshore seamount for advanced and technical divers. Exceptional sponge life and frequent shark sightings reward the journey.",
+      "Saba's most remote dive, a deep offshore seamount for advanced and technical divers. Exceptional sponge life and frequent shark sightings reward the journey.",
     videoId: "6UOwt2FjgoE",
     techSuitable: true,
   },
@@ -64,7 +64,7 @@ export const DIVE_SITES: DiveSite[] = [
     name: "Tent Shallow",
     area: "Tent Reef",
     description:
-      "The shallower profile of the Tent Reef area — healthy coral gardens, turtles, and abundant reef fish. Excellent for second dives and underwater photography.",
+      "The shallower profile of the Tent Reef area, with healthy coral gardens, turtles, and abundant reef fish. Excellent for second dives and underwater photography.",
     videoId: undefined,
   },
   {
@@ -79,7 +79,7 @@ export const DIVE_SITES: DiveSite[] = [
     name: "Tent Reef",
     area: "Tent Reef",
     description:
-      "The signature site of the area — a diverse reef with healthy coral, swim-throughs, turtles, and lobsters. One of the most frequently dived and consistently rewarding sites in the Marine Park.",
+      "The signature site of the area, a diverse reef with healthy coral, swim-throughs, turtles, and lobsters. One of the most frequently dived and consistently rewarding sites in the Marine Park.",
     videoId: "q2mf_ypzPYk",
   },
   {

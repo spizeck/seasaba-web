@@ -63,7 +63,7 @@ type Reading = {
   y: number;
 };
 
-const CONTENT_SEL = "h1,h2,h3,h4,h5,h6,p,li,figure,img,blockquote,td,th";
+const CONTENT_SEL = "h1,h2,h3,h4,h5,h6,p,li,figure,figcaption,img,blockquote,td,th";
 const CHROME_SEL = '[class*="sticky"], [class*="fixed"]';
 
 // Replicates the keeper's geometric scan in-page: the bottom edge of
@@ -96,7 +96,9 @@ const probeFns = `(() => {
     if (!(hit instanceof HTMLElement)) continue;
     const r = hit.getBoundingClientRect();
     if (r.height === 0) continue;
-    if (r.height > window.innerHeight * 2 && !hit.matches("img,figure")) continue;
+    const isMedia = hit.matches("img,figure");
+    if (!isMedia && r.bottom - y < r.height / 2) continue;
+    if (r.height > window.innerHeight * 2 && !isMedia) continue;
     landmark = hit;
     break;
   }

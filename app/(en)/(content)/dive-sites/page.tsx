@@ -36,9 +36,9 @@ export default function DiveSitesPage() {
         >
           Saba National Marine Park
         </TrackedOutboundLink>{" "}
-        protects over 30 dive sites around this volcanic island.
-        Explore the world-famous pinnacles, dramatic walls, healthy reefs, and seamounts
-        that make Saba one of the Caribbean&apos;s most rewarding dive destinations.
+        protects more than 30 dive sites around this volcanic island.
+        Our dive team selects sites each day based on weather, sea conditions and the experience
+        of our divers. If there&apos;s a particular site you&apos;d love to explore, just let us know.
       </p>
 
       {/* Dive Area Sections */}
@@ -49,6 +49,8 @@ export default function DiveSitesPage() {
               src={area.image}
               alt={`Diving at ${area.title} in the Saba Marine Park`}
               imageRight={area.imagePosition === "right"}
+              objectPosition={"imageObjectPosition" in area ? area.imageObjectPosition : "center"}
+              caption={"caption" in area ? area.caption : undefined}
             >
               <div>
                 <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">

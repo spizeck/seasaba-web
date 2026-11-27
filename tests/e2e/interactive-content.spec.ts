@@ -160,7 +160,7 @@ test("donate button links are not underlined, text links are", async ({ page }) 
   await expect(donateButton).toBeVisible();
   await expect(donateButton).toHaveCSS("text-decoration-line", "none");
 
-  const visitLink = page.getByRole("link", { name: /Visit website — Sea & Learn/i });
+  const visitLink = page.getByRole("link", { name: /Visit website: Sea & Learn/i });
   await expect(visitLink).toBeVisible();
   await expect(visitLink).toHaveCSS("text-decoration-line", "underline");
 });
