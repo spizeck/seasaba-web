@@ -39,8 +39,8 @@ export function PageHero({
 }: PageHeroProps) {
   return (
     <div
-      className="not-prose relative mb-8 overflow-hidden rounded-none lg:rounded-3xl"
-      style={{ width: "100vw", marginLeft: "calc(50% - 50vw)", marginRight: "calc(50% - 50vw)", maxHeight: "640px" }}
+      className="full-bleed-viewport not-prose relative mb-8 overflow-hidden rounded-none lg:rounded-3xl"
+      style={{ maxHeight: "640px" }}
     >
       {/* aspect-ratio shell: 4/3 mobile → 2.4/1 lg. No max-h here — outer clips it.
           w-full is required: without a definite width, min-h clamps through the

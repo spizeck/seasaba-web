@@ -4,6 +4,7 @@ import { LocalBusinessJsonLd } from "@/components/structured-data";
 import { Analytics } from "@vercel/analytics/next";
 import { AnalyticsLoader } from "@/components/analytics-loader";
 import { ScrollPositionKeeper } from "@/components/scroll-position-keeper";
+import { ViewportScrollbarWidth } from "@/components/viewport-scrollbar-width";
 import { RespondIoWidget } from "@/components/respond-io-widget";
 
 /**
@@ -25,6 +26,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
       <main id="main-content">{children}</main>
       <FooterWrapper />
       <ScrollPositionKeeper />
+      <ViewportScrollbarWidth />
       <LocalBusinessJsonLd />
       <RespondIoWidget />
       <Analytics />
