@@ -3,8 +3,8 @@ import { createMetadata } from "@/lib/metadata";
 import { IMAGE_ATTRIBUTIONS, type ImageAttribution } from "@/data/image-attribution";
 
 export const metadata = createMetadata({
-  title: "Photography Credits",
-  description: "Photography credits for homepage images used on the Sea Saba website.",
+  title: "Homepage Photography Credits",
+  description: "Verified attribution records for selected photography used on the Sea Saba homepage.",
   path: "/photography-credits",
 });
 
@@ -14,10 +14,10 @@ export default function PhotographyCreditsPage() {
   return (
     <>
       <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-        Photography Credits
+        Homepage Photography Credits
       </h1>
       <p className="mt-4 max-w-3xl text-base leading-relaxed text-muted-foreground">
-        Credits for homepage photography. Dates, locations, and source links are shown only where verified.
+        Verified attribution records for selected homepage photography. Dates, locations, and source links are shown only where verified. This is not a complete inventory of every photograph used on the homepage or elsewhere on the website.
       </p>
 
       <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
