@@ -115,16 +115,6 @@ export default async function DiveSitePage({
         )}
       </div>
 
-      {/* Video — click-to-play so YouTube is never contacted on load */}
-      {site.videoId && (
-        <div className="mt-8">
-          <YouTubeEmbed
-            videoId={site.videoId}
-            title={`${site.name} dive site`}
-          />
-        </div>
-      )}
-
       {/* About this site */}
       <p className="mt-8 text-base leading-relaxed text-muted-foreground">
         {site.description}
@@ -199,6 +189,16 @@ export default async function DiveSitePage({
             </div>
           </FeatureImage>
         </section>
+      )}
+
+      {/* Video — click-to-play so YouTube is never contacted on load */}
+      {site.videoId && (
+        <div className="mt-12">
+          <YouTubeEmbed
+            videoId={site.videoId}
+            title={`${site.name} dive site`}
+          />
+        </div>
       )}
 
       {/* Sibling sites */}
