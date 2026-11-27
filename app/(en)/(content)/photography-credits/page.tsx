@@ -4,7 +4,7 @@ import { IMAGE_ATTRIBUTIONS, type ImageAttribution } from "@/data/image-attribut
 
 export const metadata = createMetadata({
   title: "Photography Credits",
-  description: "Photography credits for images used on the Sea Saba website.",
+  description: "Photography credits for homepage images used on the Sea Saba website.",
   path: "/photography-credits",
 });
 
@@ -17,7 +17,7 @@ export default function PhotographyCreditsPage() {
         Photography Credits
       </h1>
       <p className="mt-4 max-w-3xl text-base leading-relaxed text-muted-foreground">
-        Credits for photography used on the Sea Saba website. Dates, locations, and source links are shown only where verified.
+        Credits for homepage photography. Dates, locations, and source links are shown only where verified.
       </p>
 
       <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
