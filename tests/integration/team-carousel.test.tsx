@@ -210,6 +210,28 @@ describe("TeamCarousel", () => {
     await waitFor(() => expect(transform()).toBe(offset(10)));
   });
 
+  it("replays overflow from very long bursts across repeated wrap snaps", async () => {
+    render(
+      <TeamCarousel members={["A", "B", "C", "D"].map(member)} />
+    );
+
+    // Four presses fill the leading runway; the remaining six are pending.
+    // Replaying them reaches the opposite runway with two steps still left over.
+    for (let i = 0; i < 10; i++) fireEvent.click(prevButton());
+    expect(transform()).toBe(offset(-4, 4, 3));
+
+    fireEvent.transitionEnd(track(), { propertyName: "transform" });
+    await waitFor(() => expect(transform()).toBe(offset(0, 4, 3)));
+    await waitFor(() => expect(transform()).toBe(offset(-4, 4, 3)));
+
+    fireEvent.transitionEnd(track(), { propertyName: "transform" });
+    await waitFor(() => expect(transform()).toBe(offset(0, 4, 3)));
+    await waitFor(() => expect(transform()).toBe(offset(-2, 4, 3)));
+
+    fireEvent.transitionEnd(track(), { propertyName: "transform" });
+    await waitFor(() => expect(transform()).toBe(offset(2, 4, 3)));
+  });
+
   it("reverses direction cleanly at the boundaries", async () => {
     renderRealCarousel();
     // Forward over the boundary, then back before the transition settles.
