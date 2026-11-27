@@ -230,6 +230,18 @@ it("API mode loads wider date ranges on demand and keeps selections for export",
   expect(exportDiveLogToPdf).toHaveBeenCalledWith([expect.objectContaining({ diveSite: "Tent Reef" })], "metric");
   expect(fetchDiveLogData).not.toHaveBeenCalled();
 });
+it("API mode keeps newer shown dives (and their selection) when wider history is an older snapshot", async () => {
+  const today = new Date().toISOString().slice(0, 10);
+  const recent = buildPublicDives(diveData([rawDive({ date: today })]));
+  const staleAll = buildPublicDives(diveData([rawDive({ id: "old", date: "2000-01-01", diveSiteId: "site-2", diveSlot: "9 am" })]));
+  vi.mocked(loadDiveLogHistory).mockResolvedValue({ dives: staleAll, generatedAt: Date.now() });
+  render(<DiveLogClient source="api" initialDives={recent} generatedAt={Date.now()} />);
+  await userEvent.click(screen.getByRole("button", { name: "+ Add Tent Reef to my dive log" }));
+  await userEvent.selectOptions(screen.getByLabelText("Date range"), "all");
+  expect(await screen.findByRole("heading", { name: "2 dives" })).toBeVisible();
+  await userEvent.click(screen.getByRole("button", { name: "Export My Dive Log" }));
+  expect(exportDiveLogToPdf).toHaveBeenCalledWith([expect.objectContaining({ diveSite: "Tent Reef" })], "metric");
+});
 it("API mode surfaces a failed history load and retries it", async () => {
   const today = new Date().toISOString().slice(0, 10);
   const recent = buildPublicDives(diveData([rawDive({ date: today })]));
