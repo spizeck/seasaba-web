@@ -104,3 +104,22 @@ the server re-renders through the API (and the ISR cache).
    `components/dive-log-client.tsx`), both commissioning variables, and the
    static descriptions superseded by published content. The variables are
    transition switches, not a permanent dual-source design.
+
+### Follow-up: date-bounded Dive Log fetching
+
+`loadPublicDivesFromApi()` requests all history (no `startDate`) and follows
+every cursor. That runs once per ISR regeneration (about hourly), not per
+visitor, but it cannot use the API's date-bounded range queries. Requesting
+only the default 14 days needs more than a `startDate` parameter, because
+the client derives these from the full list:
+
+- the site, boat, guide and species filter options;
+- the 30-day, 90-day and all-time ranges;
+- `?site=` deep links, which widen to all-time;
+- the selection used by "Export My Dive Log".
+
+Loading only 14 days without also fetching older history on demand would
+shrink these, which is a regression. Fetching history on demand needs a new
+browser-to-server path (for example a server action calling the API with
+`startDate`/`endDate`), plus loading states and caching for it. Do this as a
+separate change after commissioning, without changing the v1 contract.
