@@ -12,7 +12,7 @@ import { diveSiteAnchors, divingAnchors, planYourTripAnchors } from "@/lib/ancho
 import { diveSitePath } from "@/data/dive-site-videos";
 import { loadWeeklyDiveStats, type WeeklyDiveStats } from "@/lib/dive-stats";
 import { OPERATIONS } from "@/data/operations";
-import { HOME_DIVE_AREA_IMAGES, formatImageCaption, type ImageAttribution } from "@/data/image-attribution";
+import { HOME_DIVE_AREA_IMAGES, IMAGE_ATTRIBUTIONS, formatImageCaption, type ImageAttribution } from "@/data/image-attribution";
 import { SITE_URL } from "@/lib/constants";
 
 // Hourly ISR — the dive-team statistics regenerate from Firestore on this
@@ -25,26 +25,26 @@ const WHY_SABA_FEATURED = [
   {
     heading: "World-Famous Pinnacles",
     body: "Saba's volcanic origins created spectacular underwater pinnacles that rise from the depths. These dramatic formations are home to vibrant marine life and offer some of the island's most memorable diving experiences.",
-    image: "/images/optimized/divers-above-pinnacle-saba.webp",
+    image: IMAGE_ATTRIBUTIONS["divers-above-pinnacle-saba.webp"].imageUrl,
     imageAlt: "Scuba divers hovering above a coral-covered volcanic pinnacle in the Saba Marine Park.",
     bgPosition: "top",
-    caption: "The Needle - Candice Landau",
+    caption: formatImageCaption(IMAGE_ATTRIBUTIONS["divers-above-pinnacle-saba.webp"]),
   },
   {
     heading: "Uncrowded by Design",
     body: "Without large resorts or mass tourism, Saba offers a quieter, more personal Caribbean experience. Small dive groups and uncrowded dive sites allow visitors to enjoy the island at a different pace, both above and below the surface.",
-    image: "/images/optimized/fin-and-tonic-boat-diamond-rock.webp",
+    image: IMAGE_ATTRIBUTIONS["fin-and-tonic-boat-diamond-rock.webp"].imageUrl,
     imageAlt: "Sea Saba dive boat Fin & Tonic moored beside Diamond Rock off Saba.",
     bgPosition: "center",
-    caption: "Fin & Tonic at Diamond Rock - Candice Landau",
+    caption: formatImageCaption(IMAGE_ATTRIBUTIONS["fin-and-tonic-boat-diamond-rock.webp"]),
   },
   {
     heading: "Small Island, Big Heart",
     body: "Our greatest asset isn't found underwater. It's the people: friendly villages, genuine island hospitality, and a crew that has been diving these reefs for decades.",
-    image: "/images/optimized/windwardside-village-saba.webp",
+    image: IMAGE_ATTRIBUTIONS["windwardside-village-saba.webp"].imageUrl,
     imageAlt: "Colorful red-roofed cottages of Windwardside village on the green hillside of Saba.",
     bgPosition: "center",
-    caption: "Windwardside from the Mas Cahones lookout - Chris Kurzatkowski",
+    caption: formatImageCaption(IMAGE_ATTRIBUTIONS["windwardside-village-saba.webp"]),
   },
 ] as const;
 
@@ -88,7 +88,7 @@ const DIVE_EXPERIENCES = [
     anchor: diveSiteAnchors.pinnacles,
     title: "The Pinnacles",
     subtitle: "The dives that made Saba famous.",
-    image: "/images/optimized/diver-volcanic-pinnacle-saba.webp",
+    image: IMAGE_ATTRIBUTIONS["diver-volcanic-pinnacle-saba.webp"].imageUrl,
     caption: formatImageCaption(HOME_DIVE_AREA_IMAGES.pinnacles),
     imageAlt: "Diver above a coral-covered volcanic pinnacle in the Saba Marine Park.",
     objectPosition: "center top",
@@ -99,7 +99,7 @@ const DIVE_EXPERIENCES = [
     anchor: diveSiteAnchors.tentReef,
     title: "Tent Reef",
     subtitle: "Something different on every dive.",
-    image: "/images/optimized/green-turtle-tent-reef.webp",
+    image: IMAGE_ATTRIBUTIONS["green-turtle-tent-reef.webp"].imageUrl,
     caption: formatImageCaption(HOME_DIVE_AREA_IMAGES.tentReef),
     imageAlt: "Green turtle gliding over healthy coral reef with sea fans and sponges, Saba.",
     objectPosition: "center",
@@ -110,7 +110,7 @@ const DIVE_EXPERIENCES = [
     anchor: diveSiteAnchors.ladderBay,
     title: "Ladder Bay",
     subtitle: "History meets volcanic geology.",
-    image: "/images/optimized/nurse-shark-ladder-bay-saba.webp",
+    image: IMAGE_ATTRIBUTIONS["nurse-shark-ladder-bay-saba.webp"].imageUrl,
     caption: formatImageCaption(HOME_DIVE_AREA_IMAGES.ladderBay),
     imageAlt: "Nurse shark resting on the sandy bottom at Ladder Bay, Saba.",
     objectPosition: "center",
@@ -121,9 +121,9 @@ const DIVE_EXPERIENCES = [
     anchor: diveSiteAnchors.wellsBay,
     title: "Wells Bay",
     subtitle: "Classic Caribbean reef diving.",
-    image: "/images/optimized/wells-bay-dive-site-saba.webp",
+    image: IMAGE_ATTRIBUTIONS["wells-bay-dive-site-saba.webp"].imageUrl,
     caption: formatImageCaption(HOME_DIVE_AREA_IMAGES.wellsBay),
-    imageAlt: "Wells Bay along Saba's rugged northwest coast, Caribbean Netherlands.",
+    imageAlt: "Coral- and sponge-covered reef structure underwater at Wells Bay, Saba.",
     objectPosition: "center",
     body: "Healthy coral reefs, Diamond Rock, Man O' War Shoals, turtles, reef sharks, and long relaxing dives create spectacular scenery above and below.",
     sites: ["Otto's Limits", "Torrens Point", "Diamond Rock", "Man O'War Shoals"],
@@ -132,9 +132,9 @@ const DIVE_EXPERIENCES = [
     anchor: diveSiteAnchors.windwardside,
     title: "Windwardside",
     subtitle: "A completely different side of Saba.",
-    image: "/images/optimized/windwardside-dive-site-saba.webp",
+    image: IMAGE_ATTRIBUTIONS["windwardside-dive-site-saba.webp"].imageUrl,
     caption: formatImageCaption(HOME_DIVE_AREA_IMAGES.windwardside),
-    imageAlt: "Dramatic coastline along Saba's Windwardside, Caribbean Netherlands.",
+    imageAlt: "Elkhorn coral growing on a shallow coral reef off Saba's Windwardside.",
     objectPosition: "center",
     body: "White sand, thriving hard corals, and Saba's only true coral reefs create a vibrant underwater landscape unlike anywhere else around the island.",
     sites: ["Green Island", "Big Rock Market", "Core Gut", "Cove Bay", "Abrams Hole", "Hole in the Corner"],
@@ -171,12 +171,14 @@ const HOMEPAGE_FAQS = [
     question: "What is included in a Sea Saba diving trip?",
     answer: (
       <>
-        Taxi pickup, tanks, weights, and an experienced guide are included,
-        with never more than {OPERATIONS.maxRecreationalDiversPerGuide} divers per guide.
-        Rental gear is available. A conservation contribution of{" "}
+        Complimentary taxi pickup anywhere on Saba, tanks, weights, and an
+        experienced dive guide are included. Recreational groups have a maximum of{" "}
+        {OPERATIONS.maxRecreationalDiversPerGuide} divers per guide. Rental equipment
+        and dive computers are available. A conservation contribution of{" "}
         ${OPERATIONS.conservationFees.marineParkPerDiveUsd + OPERATIONS.conservationFees.chamberContributionPerDiveUsd}{" "}
-        per diver, per dive applies. Full details on our{" "}
-        <Link href="/diving" className="font-medium text-primary hover:underline underline-offset-4">diving page</Link>.
+        per diver, per dive applies. See our{" "}
+        <Link href="/diving" className="font-medium text-primary hover:underline underline-offset-4">diving page</Link>{" "}
+        for full details.
       </>
     ),
   },
@@ -489,7 +491,7 @@ export default async function Home() {
         <JsonLd
           data={{
             "@context": "https://schema.org",
-            "@graph": (Object.values(HOME_DIVE_AREA_IMAGES) as ImageAttribution[])
+            "@graph": (Object.values(IMAGE_ATTRIBUTIONS) as ImageAttribution[])
               .filter((image) => image.photographer)
               .map((image) => ({
                 "@type": "ImageObject",

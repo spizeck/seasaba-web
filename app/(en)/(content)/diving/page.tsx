@@ -898,7 +898,7 @@ export default function DivingPage() {
           One of the most common questions we receive is whether it&apos;s safe to dive on Saba and fly back to St. Maarten the same day.
         </p>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          Unlike a typical commercial airline flight, the Winair Twin Otter route between Saba and St. Maarten is a short inter-island flight. Owner-supplied operational figures put the route at approximately 2,000 to 2,500 feet, with an average flight time of 12 minutes and a maximum of approximately 20 minutes.
+          Unlike a typical commercial airline flight, the Winair Twin Otter route between Saba and St. Maarten is a short inter-island flight. The route typically operates at approximately 2,000 to 2,500 feet, with an average flight time of 12 minutes and a maximum of approximately 20 minutes.
         </p>
 
         <div className="mt-5 rounded-lg border border-border/40 bg-muted/20 p-5">
@@ -921,7 +921,7 @@ export default function DivingPage() {
               <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>The Winair flight is short and relatively low, but decompression risk is not eliminated.</span></li>
               <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Plan a conservative dive profile.</span></li>
               <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Stay well hydrated.</span></li>
-              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Follow your dive computer.</span></li>
+              <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>Use your dive computer as one input, not as clearance to fly.</span></li>
               <li className="flex items-start gap-2"><span className="text-primary">✓</span><span>If you have medical concerns, consult DAN or your physician before diving.</span></li>
             </ul>
           </div>
@@ -951,7 +951,7 @@ export default function DivingPage() {
           and talk with our team about your flight before planning a same-day departure.
         </p>
         <p className="mt-3 text-xs text-muted-foreground italic">
-          This information is provided for planning purposes only and does not constitute medical advice. Follow your dive computer, physician, and DAN recommendations.
+          This information is provided for planning purposes only and does not constitute medical advice. Follow your physician&apos;s guidance and DAN recommendations.
         </p>
       </section>
 

@@ -459,7 +459,7 @@ export function DiveLogClient({
                     setDateRange(e.target.value as DateRange);
                     resetPage();
                   }}
-                  className="rounded-md border border-border/60 bg-background px-2 py-1.5 text-base font-medium text-muted-foreground focus:border-primary lg:text-xs focus:outline-none focus:ring-1 focus:ring-primary/30"
+                  className="rounded-md border border-border/60 bg-background px-2 py-1.5 text-xs font-medium text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30"
                 >
                   {(Object.keys(DATE_RANGE_LABELS) as DateRange[]).map((key) => (
                     <option key={key} value={key}>
