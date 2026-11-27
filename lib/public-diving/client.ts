@@ -1,6 +1,7 @@
 import "server-only";
 
 import type { PublicDive } from "@/lib/firestore/dive-log";
+import { diveLogRangeStartDate } from "@/lib/dive-log-dates";
 import type { WeeklyDiveStats } from "@/lib/dive-stats";
 
 /**
@@ -225,6 +226,15 @@ async function withTimeout<T>(timeoutMs: number, run: (signal: AbortSignal) => P
  */
 /** The Dive Log's default range; wider ranges are loaded on demand. */
 export const DIVE_LOG_DEFAULT_DAYS = 14;
+
+/**
+ * Inclusive start date of the default range at render/regeneration time.
+ * Lives here (not in the page component) because server components must be
+ * pure for the React Compiler; each ISR regeneration calls it fresh.
+ */
+export function diveLogDefaultStartDate(): string {
+  return diveLogRangeStartDate(DIVE_LOG_DEFAULT_DAYS, Date.now());
+}
 
 /**
  * Pass `startDate` to bound the request (the API then uses a date-range

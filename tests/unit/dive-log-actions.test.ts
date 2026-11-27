@@ -1,6 +1,6 @@
 import { beforeEach, expect, it, vi } from "vitest";
 import { loadDiveLogHistory, loadDiveLogSiteHistory } from "@/app/(en)/(content)/dive-log/actions";
-import { isPublicDivingApiEnabled, loadDiveSitesFromApi, loadPublicDivesFromApi } from "@/lib/public-diving/client";
+import { isPublicDivingApiEnabled, loadPublicDivesFromApi } from "@/lib/public-diving/client";
 
 vi.mock("@/lib/public-diving/client", () => ({
   isPublicDivingApiEnabled: vi.fn(() => true),
