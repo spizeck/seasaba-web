@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ImageCard } from "@/components/image-card";
 import { FeatureImage } from "@/components/feature-image";
 import { TrackedInternalButton } from "@/components/tracked-internal-button";
-import { JsonLd, jsxToText } from "@/components/structured-data";
+import { BUSINESS_ID, JsonLd, jsxToText } from "@/components/structured-data";
 import { DiveStatsSection } from "@/components/dive-stats-section";
 import { createMetadata } from "@/lib/metadata";
 import { diveSiteAnchors, divingAnchors, planYourTripAnchors } from "@/lib/anchors";
@@ -13,7 +13,7 @@ import { diveSitePath } from "@/data/dive-site-videos";
 import { loadWeeklyDiveStats, type WeeklyDiveStats } from "@/lib/dive-stats";
 import { OPERATIONS } from "@/data/operations";
 import { HOME_DIVE_AREA_IMAGES, IMAGE_ATTRIBUTIONS, formatImageCaption, type ImageAttribution } from "@/data/image-attribution";
-import { SITE_URL } from "@/lib/constants";
+import { SITE_NAME, SITE_URL } from "@/lib/constants";
 
 // Hourly ISR — the dive-team statistics regenerate from Firestore on this
 // cadence. The rest of the homepage is editorial and changes rarely, so an
@@ -24,7 +24,7 @@ export const revalidate = 3600;
 const WHY_SABA_FEATURED = [
   {
     heading: "World-Famous Pinnacles",
-    body: "Saba's volcanic origins created spectacular underwater pinnacles that rise from the depths. These dramatic formations are home to vibrant marine life and offer some of the island's most memorable diving experiences.",
+    body: "Saba's volcanic origins created underwater pinnacles that rise from the deep. These dramatic formations support vibrant marine life and memorable dives.",
     image: IMAGE_ATTRIBUTIONS["divers-above-pinnacle-saba.webp"].imageUrl,
     imageAlt: "Scuba divers hovering above a coral-covered volcanic pinnacle in the Saba Marine Park.",
     bgPosition: "top",
@@ -32,7 +32,7 @@ const WHY_SABA_FEATURED = [
   },
   {
     heading: "Uncrowded by Design",
-    body: "Without large resorts or mass tourism, Saba offers a quieter, more personal Caribbean experience. Small dive groups and uncrowded dive sites allow visitors to enjoy the island at a different pace, both above and below the surface.",
+    body: "Without large resorts or mass tourism, the island feels quieter and more personal. Small dive groups and uncrowded sites create a relaxed pace above and below the surface.",
     image: IMAGE_ATTRIBUTIONS["fin-and-tonic-boat-diamond-rock.webp"].imageUrl,
     imageAlt: "Sea Saba dive boat Fin & Tonic moored beside Diamond Rock off Saba.",
     bgPosition: "center",
@@ -63,13 +63,13 @@ const WHY_SABA_SECONDARY = [
           Saba National Marine Park
         </a>{" "}
         has actively protected local waters since 1987. That long-standing stewardship
-        helps preserve the reefs and marine life that make Saba distinctive.
+        helps preserve the reefs and marine life that make the island distinctive.
       </>
     ),
   },
   {
     heading: "Encounters That Feel Wild",
-    body: "Saba's protected waters and relatively low diving pressure offer wonderful opportunities to observe marine life in its natural environment. Sharks, turtles and rays are regularly encountered, making every dive a chance to discover something extraordinary.",
+    body: "Protected waters and low diving pressure let marine life behave naturally. Sharks, turtles, and rays are regular encounters, so every dive can bring something extraordinary.",
   },
   {
     heading: "Active Conservation",
@@ -91,7 +91,7 @@ const DIVE_EXPERIENCES = [
     image: IMAGE_ATTRIBUTIONS["diver-volcanic-pinnacle-saba.webp"].imageUrl,
     caption: formatImageCaption(HOME_DIVE_AREA_IMAGES.pinnacles),
     imageAlt: "Diver swimming in deep blue water above a faint volcanic pinnacle formation.",
-    objectPosition: "center top",
+    objectPosition: "center",
     body: "Towering volcanic seamounts rise from the deep blue, attracting sharks, turtles, schooling fish, and unforgettable pelagic encounters that define Saba diving.",
     sites: ["Third Encounter", "Twilight Zone", "Outer Limits", "Mt. Michel", "Shark Shoals"],
   },
@@ -103,7 +103,7 @@ const DIVE_EXPERIENCES = [
     caption: formatImageCaption(HOME_DIVE_AREA_IMAGES.tentReef),
     imageAlt: "Green turtle gliding over a coral reef with sea fans and sponges.",
     objectPosition: "center",
-    body: "A diverse mix of coral gardens, mini walls, canyons, swim-throughs, and dramatic drop-offs sits just minutes from Fort Bay Harbor.",
+    body: "Coral gardens, mini walls, canyons, swim-throughs, and dramatic drop-offs sit minutes from Fort Bay Harbor.",
     sites: ["Tent Shallow", "Tent Deep", "Tent Reef", "Tent Boulders", "Tent Wall", "Tedran Wall"],
   },
   {
@@ -114,7 +114,7 @@ const DIVE_EXPERIENCES = [
     caption: formatImageCaption(HOME_DIVE_AREA_IMAGES.ladderBay),
     imageAlt: "Nurse shark resting beneath a rocky reef ledge.",
     objectPosition: "center",
-    body: "Explore lava formations, underwater hot springs, coral-covered boulders, resting turtles, and some of the best macro life in the Caribbean.",
+    body: "Explore lava formations, underwater hot springs, coral-covered boulders, and resting turtles. The macro life is among the Caribbean's best.",
     sites: ["Rays n\u2019 Anchors", "Ladder Labyrinth", "Hot Springs", "50/50", "Porites Point", "Customs House", "Babylon"],
   },
   {
@@ -125,7 +125,7 @@ const DIVE_EXPERIENCES = [
     caption: formatImageCaption(HOME_DIVE_AREA_IMAGES.wellsBay),
     imageAlt: "Coral- and sponge-covered reef structure underwater.",
     objectPosition: "center",
-    body: "Healthy coral reefs, Diamond Rock, Man O' War Shoals, turtles, reef sharks, and long relaxing dives create spectacular scenery above and below.",
+    body: "Healthy coral reefs, turtles, and reef sharks create spectacular scenery. Diamond Rock and Man O' War Shoals offer long, relaxing dives.",
     sites: ["Otto's Limits", "Torrens Point", "Diamond Rock", "Man O'War Shoals"],
   },
   {
@@ -136,7 +136,7 @@ const DIVE_EXPERIENCES = [
     caption: formatImageCaption(HOME_DIVE_AREA_IMAGES.windwardside),
     imageAlt: "Elkhorn coral growing on a shallow coral reef.",
     objectPosition: "center",
-    body: "White sand, thriving hard corals, and Saba's only true coral reefs create a vibrant underwater landscape unlike anywhere else around the island.",
+    body: "White sand and thriving hard corals form the island's only true coral reefs. The result is a vibrant landscape unlike anywhere else around Saba.",
     sites: ["Green Island", "Big Rock Market", "Core Gut", "Cove Bay", "Abrams Hole", "Hole in the Corner"],
   },
 ] as const;
@@ -260,10 +260,10 @@ export default async function Home() {
               Saba is just different.
             </h2>
             <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-              Saba feels different from anywhere else in the Caribbean, both above and below
-              the surface. With dramatic underwater landscapes, protected reefs and welcoming
-              island communities, it offers a truly distinctive diving experience. Sea Saba has
-              been introducing divers to this extraordinary island since {OPERATIONS.establishedYear}.
+              The island feels different from anywhere else in the Caribbean, both above and
+              below the surface. Volcanic terrain, protected reefs, and welcoming communities
+              create a distinctive diving experience. Sea Saba has introduced divers to this
+              island since {OPERATIONS.establishedYear}.
             </p>
           </div>
 
@@ -310,9 +310,8 @@ export default async function Home() {
             </h2>
             <p className="mt-4 text-base leading-relaxed text-white/70">
               Ancient volcanic forces created one of the Caribbean&apos;s most spectacular
-              underwater landscapes. From towering seamounts and dramatic walls to thriving
-              coral reefs and volcanic lava formations, every corner of Saba offers a distinctly
-              different diving experience.
+              underwater landscapes. Towering seamounts, dramatic walls, coral reefs, and
+              volcanic lava formations make each part of the island distinct.
             </p>
           </div>
 
@@ -325,7 +324,7 @@ export default async function Home() {
                 alt={exp.imageAlt}
                 objectPosition={exp.objectPosition}
                 caption={exp.caption}
-                captionClassName="text-white/70"
+                captionClassName="text-white/90"
                 imageRight={i % 2 === 1}
                 centerText
               >
@@ -491,24 +490,35 @@ export default async function Home() {
         <JsonLd
           data={{
             "@context": "https://schema.org",
-            "@graph": (Object.values(IMAGE_ATTRIBUTIONS) as ImageAttribution[])
-              .filter((image) => image.photographer)
-              .map((image) => ({
-                "@type": "ImageObject",
-                contentUrl: `${SITE_URL}${image.imageUrl}`,
-                name: image.description,
-                caption: formatImageCaption(image),
-                creditText: image.photographer,
-                creator: { "@type": "Person", name: image.photographer },
-                copyrightHolder: image.copyrightHolder
-                  ? { "@type": "Person", name: image.copyrightHolder }
-                  : undefined,
-                dateCreated: image.dateTaken,
-                sameAs: image.sourceUrl,
-                contentLocation: image.location
-                  ? { "@type": "Place", name: image.location }
-                  : undefined,
-              })),
+            "@graph": [
+              {
+                "@type": "WebPage",
+                "@id": `${SITE_URL}/#webpage`,
+                url: SITE_URL,
+                name: SITE_NAME,
+                author: { "@id": BUSINESS_ID },
+                publisher: { "@id": BUSINESS_ID },
+                about: { "@id": BUSINESS_ID },
+              },
+              ...(Object.values(IMAGE_ATTRIBUTIONS) as ImageAttribution[])
+                .filter((image) => image.photographer)
+                .map((image) => ({
+                  "@type": "ImageObject",
+                  contentUrl: `${SITE_URL}${image.imageUrl}`,
+                  name: image.description,
+                  caption: formatImageCaption(image),
+                  creditText: image.photographer,
+                  creator: { "@type": "Person", name: image.photographer },
+                  copyrightHolder: image.copyrightHolder
+                    ? { "@type": "Person", name: image.copyrightHolder }
+                    : undefined,
+                  dateCreated: image.dateTaken,
+                  sameAs: image.sourceUrl,
+                  contentLocation: image.location
+                    ? { "@type": "Place", name: image.location }
+                    : undefined,
+                })),
+            ],
           }}
         />
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
