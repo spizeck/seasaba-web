@@ -56,7 +56,7 @@ export const IMAGE_ATTRIBUTIONS = {
   },
   "nurse-shark-ladder-bay-saba.webp": {
     description: "Nurse shark resting beneath a rocky reef ledge",
-    photographer: "Chad Nuttall",
+    photographer: "Candice Landau",
     imageUrl: "/images/optimized/nurse-shark-ladder-bay-saba.webp",
   },
   "wells-bay-dive-site-saba.webp": {
