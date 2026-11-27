@@ -30,7 +30,6 @@ export function ViewportScrollbarWidth() {
 
     update();
     window.addEventListener("resize", scheduleUpdate);
-    window.addEventListener("orientationchange", scheduleUpdate);
     const observer = new ResizeObserver(scheduleUpdate);
     observer.observe(document.documentElement);
 
@@ -38,7 +37,6 @@ export function ViewportScrollbarWidth() {
       cancelAnimationFrame(frame);
       observer.disconnect();
       window.removeEventListener("resize", scheduleUpdate);
-      window.removeEventListener("orientationchange", scheduleUpdate);
       document.documentElement.style.removeProperty("--classic-scrollbar-width");
     };
   }, []);
